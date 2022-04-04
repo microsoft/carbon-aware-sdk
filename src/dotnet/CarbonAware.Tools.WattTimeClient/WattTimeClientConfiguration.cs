@@ -8,7 +8,14 @@ namespace CarbonAware.Tools.WattTimeClient
     {
         public const string Key = "WattTimeClient";
 
+        /// <summary>
+        /// Gets or sets the username to use when connecting to WattTime.
+        /// </summary>
         public string? Username { get; set; }
+
+        /// <summary>
+        /// Gets or sets the password to use when connecting to WattTime
+        /// </summary>
         public string? Password { get; set; }
 
         /// <summary>
