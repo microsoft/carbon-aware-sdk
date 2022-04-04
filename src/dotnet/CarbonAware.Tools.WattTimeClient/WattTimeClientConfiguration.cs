@@ -6,7 +6,7 @@ namespace CarbonAware.Tools.WattTimeClient
     /// </summary>
     public class WattTimeClientConfiguration
     {
-        public const string Key = "wattTimeClient";
+        public const string Key = "WattTimeClient";
 
         public string? Username { get; set; }
         public string? Password { get; set; }
