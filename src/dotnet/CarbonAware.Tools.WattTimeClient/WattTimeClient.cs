@@ -204,10 +204,18 @@ namespace CarbonAware.Tools.WattTimeClient
 
                 Log.LogInformation("Attempting to log in user {username}", this.Configuration.Username);
 
-                var data = await this.client.GetStringAsync("login");
+                var result = await this.client.GetStringAsync("login");
 
                 // Store token for use with API requests
-                this.authToken = JsonSerializer.Deserialize<LoginResult>(data, options).Token;
+                var data = JsonSerializer.Deserialize<LoginResult>(result, options);
+
+                if(data is not null)
+                {
+                    this.authToken = data.Token;
+                } else {
+                    throw new System.Exception("Serialized response from WattTime was null.");
+                }
+                
                 this.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.authToken);
             }
         }
