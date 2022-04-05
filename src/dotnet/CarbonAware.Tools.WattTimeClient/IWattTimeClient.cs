@@ -21,7 +21,7 @@ namespace CarbonAware.Tools.WattTimeClient
         /// <param name="balancingAuthority">Balancing authority abbreviation</param>
         /// <returns>An <see cref="Task{Forecast}"/> which contains forecasted emissions data points.</returns>
         /// </summary>
-        public Task<Forecast> GetCurrentForecastAsync(string balancingAuthority);
+        public Task<Forecast?> GetCurrentForecastAsync(string balancingAuthority);
 
         /// <summary>
         /// Async method to get all generated forecasts in the given period and balancing authority.
@@ -38,6 +38,6 @@ namespace CarbonAware.Tools.WattTimeClient
         /// <param name="longitude">Longitude of the location</param>
         /// <returns>An <see cref="Task{BalancingAuthority}"/> which contains the balancing authority details.</returns>
         /// </summary>
-        public Task<BalancingAuthority> GetBalancingAuthorityAsync(string latitude, string longitude);
+        public Task<BalancingAuthority?> GetBalancingAuthorityAsync(string latitude, string longitude);
     }
 }

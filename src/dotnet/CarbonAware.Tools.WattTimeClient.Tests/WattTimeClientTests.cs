@@ -84,6 +84,8 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             client.authToken = this.DefaultTokenValue;
 
             var data = await client.GetDataAsync("balauth", "start", "end");
+
+            Assert.IsTrue(data.Count() > 0);
             var gridDataPoint = data.ToList().First();
             Assert.AreEqual("ba", gridDataPoint.BalancingAuthority);
             Assert.AreEqual("dt", gridDataPoint.Datatype);
@@ -114,6 +116,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             var data = await client.GetDataAsync("balauth", "start", "end");
            
             Assert.AreEqual("REFRESHTOKEN", client.authToken);
+            Assert.IsTrue(data.Count() > 0);
             var gridDataPoint = data.ToList().First();
             Assert.AreEqual("ba", gridDataPoint.BalancingAuthority);
         }
@@ -138,6 +141,8 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             var data = await client.GetDataAsync("balauth", "start", "end");
 
             Assert.AreEqual("REFRESHTOKEN", client.authToken);
+
+            Assert.IsTrue(data.Count() > 0);
             var gridDataPoint = data.ToList().First();
             Assert.AreEqual("ba", gridDataPoint.BalancingAuthority);
         }
@@ -174,12 +179,14 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             client.authToken = this.DefaultTokenValue;
 
             var forecast = await client.GetCurrentForecastAsync("balauth");
-            Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast.GeneratedAt);
-            var forecastDataPoint = forecast.ForecastData.ToList().First();
-            Assert.AreEqual("ba", forecastDataPoint.BalancingAuthority);
-            Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecastDataPoint.PointTime);
-            Assert.AreEqual("999.99", forecastDataPoint.Value.ToString("0.00")); //Format float to avoid precision issues
-            Assert.AreEqual("1.0", forecastDataPoint.Version);
+
+            Assert.IsNotNull(forecast);
+            Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast?.GeneratedAt);
+            var forecastDataPoint = forecast?.ForecastData.First();
+            Assert.AreEqual("ba", forecastDataPoint?.BalancingAuthority);
+            Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecastDataPoint?.PointTime);
+            Assert.AreEqual("999.99", forecastDataPoint?.Value.ToString("0.00")); //Format float to avoid precision issues
+            Assert.AreEqual("1.0", forecastDataPoint?.Version);
         }
 
         [Test]
@@ -198,10 +205,12 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             client.authToken = this.DefaultTokenValue;
 
             var forecast = await client.GetCurrentForecastAsync("balauth");
+
+            Assert.IsNotNull(forecast);
             Assert.AreEqual("REFRESHTOKEN", client.authToken);
-            Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast.GeneratedAt);
-            var forecastDataPoint = forecast.ForecastData.ToList().First();
-            Assert.AreEqual("ba", forecastDataPoint.BalancingAuthority);
+            Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast?.GeneratedAt);
+            var forecastDataPoint = forecast?.ForecastData.First();
+            Assert.AreEqual("ba", forecastDataPoint?.BalancingAuthority);
         }
 
         [Test]
@@ -221,10 +230,12 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             this.HttpClient.DefaultRequestHeaders.Authorization = null;
 
             var forecast = await client.GetCurrentForecastAsync("balauth");
+
+            Assert.IsNotNull(forecast);
             Assert.AreEqual("REFRESHTOKEN", client.authToken);
-            Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast.GeneratedAt);
-            var forecastDataPoint = forecast.ForecastData.ToList().First();
-            Assert.AreEqual("ba", forecastDataPoint.BalancingAuthority);
+            Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast?.GeneratedAt);
+            var forecastDataPoint = forecast?.ForecastData.First();
+            Assert.AreEqual("ba", forecastDataPoint?.BalancingAuthority);
         }
 
         [Test]
@@ -259,6 +270,8 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             client.authToken = this.DefaultTokenValue;
 
             var forecasts = await client.GetForecastByDateAsync("balauth", "start", "end");
+
+            Assert.IsTrue(forecasts.Count() > 0);
             var forecast = forecasts.ToList().First();
             Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast.GeneratedAt);
             var forecastDataPoint = forecast.ForecastData.ToList().First();
@@ -285,6 +298,8 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
 
             var forecasts = await client.GetForecastByDateAsync("balauth", "start", "end");
             Assert.AreEqual("REFRESHTOKEN", client.authToken);
+
+            Assert.IsTrue(forecasts.Count() > 0);
             var forecast = forecasts.ToList().First();
             Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast.GeneratedAt);
         }
@@ -307,6 +322,8 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
 
             var forecasts = await client.GetForecastByDateAsync("balauth", "start", "end");
             Assert.AreEqual("REFRESHTOKEN", client.authToken);
+            
+            Assert.IsTrue(forecasts.Count() > 0);
             var forecast = forecasts.ToList().First();
             Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast.GeneratedAt);
         }
@@ -342,9 +359,11 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             client.authToken = this.DefaultTokenValue;
 
             var ba = await client.GetBalancingAuthorityAsync("lat", "long");
-            Assert.AreEqual(12345, ba.Id);
-            Assert.AreEqual("TEST_BA", ba.Abbreviation);
-            Assert.AreEqual("Test Balancing Authority", ba.Name);
+
+            Assert.IsNotNull(ba);
+            Assert.AreEqual(12345, ba?.Id);
+            Assert.AreEqual("TEST_BA", ba?.Abbreviation);
+            Assert.AreEqual("Test Balancing Authority", ba?.Name);
         }
 
         [Test]
@@ -362,8 +381,10 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             client.authToken = this.DefaultTokenValue;
 
             var ba = await client.GetBalancingAuthorityAsync("lat", "long");
+
+            Assert.IsNotNull(ba);
             Assert.AreEqual("REFRESHTOKEN", client.authToken);
-            Assert.AreEqual(12345, ba.Id);
+            Assert.AreEqual(12345, ba?.Id);
         }
 
         [Test]
@@ -382,8 +403,10 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             this.HttpClient.DefaultRequestHeaders.Authorization = null;
 
             var ba = await client.GetBalancingAuthorityAsync("lat", "long");
+
+            Assert.IsNotNull(ba);
             Assert.AreEqual("REFRESHTOKEN", client.authToken);
-            Assert.AreEqual(12345, ba.Id);
+            Assert.AreEqual(12345, ba?.Id);
         }
 
         private void CreateHttpClient(Func<HttpRequestMessage, Task<HttpResponseMessage>> requestDelegate)

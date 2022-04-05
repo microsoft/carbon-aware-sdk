@@ -56,19 +56,12 @@ namespace CarbonAware.Tools.WattTimeClient
 
                 Log.LogDebug("For query {url}, received data {result}", url, result);
 
-                var data = JsonSerializer.Deserialize<List<GridEmissionDataPoint>>(result, options);
-
-                if (data is not null)
-                {
-                    return data;
-                } else {
-                    throw new System.Exception("Serialized response from WattTime was null.");
-                }
+                return JsonSerializer.Deserialize<List<GridEmissionDataPoint>>(result, options) ?? new List<GridEmissionDataPoint>();
             }
         }
 
         /// <inheritdoc/>
-        public async Task<Forecast> GetCurrentForecastAsync(string balancingAuthority){
+        public async Task<Forecast?> GetCurrentForecastAsync(string balancingAuthority){
             var url = BuildUrlWithQueryString(
                 "forecast",
                 new Dictionary<string, string>() {
@@ -85,14 +78,7 @@ namespace CarbonAware.Tools.WattTimeClient
 
                 Log.LogDebug("For query {url}, received data {result}", url, result);
 
-                var data = JsonSerializer.Deserialize<Forecast>(result);
-
-                if (data is not null)
-                {
-                    return data;
-                } else {
-                    throw new System.Exception("Serialized response from WattTime was null.");
-                }
+                return JsonSerializer.Deserialize<Forecast?>(result);
             }
         }
 
@@ -116,19 +102,12 @@ namespace CarbonAware.Tools.WattTimeClient
 
                 Log.LogDebug("For query {url}, received data {result}", url, result);
 
-                var data = JsonSerializer.Deserialize<List<Forecast>>(result, options);
-                
-                if (data is not null)
-                {
-                    return data;
-                } else {
-                    throw new System.Exception("Serialized response from WattTime was null.");
-                }
+                return JsonSerializer.Deserialize<List<Forecast>>(result, options) ?? new List<Forecast>();
             }
         }
 
         /// <inheritdoc/>
-        public async Task<BalancingAuthority> GetBalancingAuthorityAsync(string latitude, string longitude){
+        public async Task<BalancingAuthority?> GetBalancingAuthorityAsync(string latitude, string longitude){
             var url = BuildUrlWithQueryString(
                 "ba-from-loc",
                 new Dictionary<string, string>() {
@@ -147,14 +126,7 @@ namespace CarbonAware.Tools.WattTimeClient
 
                 Log.LogDebug("For query {url}, received data {result}", url, result);
 
-                var data = JsonSerializer.Deserialize<BalancingAuthority>(result, options);
-
-                if (data is not null)
-                {
-                    return data;
-                } else {
-                    throw new System.Exception("Serialized response from WattTime was null.");
-                }
+                return JsonSerializer.Deserialize<BalancingAuthority>(result, options);
             }
         }
 
