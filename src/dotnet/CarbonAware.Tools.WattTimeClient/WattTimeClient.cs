@@ -56,7 +56,14 @@ namespace CarbonAware.Tools.WattTimeClient
 
                 Log.LogDebug("For query {url}, received data {result}", url, result);
 
-                return JsonSerializer.Deserialize<List<GridEmissionDataPoint>>(result, options);
+                var data = JsonSerializer.Deserialize<List<GridEmissionDataPoint>>(result, options);
+
+                if (data is not null)
+                {
+                    return data;
+                } else {
+                    throw new System.Exception("Serialized response from WattTime was null.");
+                }
             }
         }
 
@@ -78,7 +85,14 @@ namespace CarbonAware.Tools.WattTimeClient
 
                 Log.LogDebug("For query {url}, received data {result}", url, result);
 
-                return JsonSerializer.Deserialize<Forecast>(result);
+                var data = JsonSerializer.Deserialize<Forecast>(result);
+
+                if (data is not null)
+                {
+                    return data;
+                } else {
+                    throw new System.Exception("Serialized response from WattTime was null.");
+                }
             }
         }
 
@@ -102,7 +116,14 @@ namespace CarbonAware.Tools.WattTimeClient
 
                 Log.LogDebug("For query {url}, received data {result}", url, result);
 
-                return JsonSerializer.Deserialize<List<Forecast>>(result, options);
+                var data = JsonSerializer.Deserialize<List<Forecast>>(result, options);
+                
+                if (data is not null)
+                {
+                    return data;
+                } else {
+                    throw new System.Exception("Serialized response from WattTime was null.");
+                }
             }
         }
 
@@ -126,7 +147,14 @@ namespace CarbonAware.Tools.WattTimeClient
 
                 Log.LogDebug("For query {url}, received data {result}", url, result);
 
-                return JsonSerializer.Deserialize<BalancingAuthority>(result, options);
+                var data = JsonSerializer.Deserialize<BalancingAuthority>(result, options);
+
+                if (data is not null)
+                {
+                    return data;
+                } else {
+                    throw new System.Exception("Serialized response from WattTime was null.");
+                }
             }
         }
 

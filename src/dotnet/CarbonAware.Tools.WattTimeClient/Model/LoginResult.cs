@@ -12,5 +12,5 @@ public record LoginResult
     /// The Bearer token used to authenticate future requests.
     /// </summary>
     [JsonPropertyName("token")]
-    public string Token { get; set; }
+    public string Token { get; set; } = string.Empty;
 }

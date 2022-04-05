@@ -12,7 +12,7 @@ public record GridEmissionDataPoint
     /// Balancing authority abbreviation
     /// </summary>
     [JsonPropertyName("ba")]
-    public string BalancingAuthority { get; set; }
+    public string BalancingAuthority { get; set; } = string.Empty;
 
     /// <summary>
     /// Type of data. eg MOER
@@ -48,5 +48,5 @@ public record GridEmissionDataPoint
     /// MOER version (Not present and not applicable for other datatypes)
     /// </summary>
     [JsonPropertyName("version")]
-    public string Version { get; set; }
+    public string Version { get; set; } = string.Empty;
 }

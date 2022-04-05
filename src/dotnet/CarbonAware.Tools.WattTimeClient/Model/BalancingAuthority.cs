@@ -12,7 +12,7 @@ public record BalancingAuthority
     /// Balancing authority abbreviation.
     /// </summary>
     [JsonPropertyName("abbrev")]
-    public string Abbreviation { get; set; }
+    public string Abbreviation { get; set; } = string.Empty;
 
     /// <summary>
     /// Unique WattTime id for the region.
@@ -24,5 +24,6 @@ public record BalancingAuthority
     /// Human readable name/description for the region.
     /// </summary>
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
+
 }

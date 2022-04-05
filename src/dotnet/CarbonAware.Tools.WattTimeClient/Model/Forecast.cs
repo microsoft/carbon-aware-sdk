@@ -18,5 +18,5 @@ public record Forecast
     /// List of GridEmissionDataPoints representing the predicted values for those points in time.
     /// </summary>
     [JsonPropertyName("forecast")]
-    public List<GridEmissionDataPoint> ForecastData { get; set; }
+    public List<GridEmissionDataPoint> ForecastData { get; set; } = new List<GridEmissionDataPoint>();
 }
