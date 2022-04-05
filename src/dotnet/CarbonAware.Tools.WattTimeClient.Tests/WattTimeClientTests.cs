@@ -17,9 +17,10 @@ using System.Threading.Tasks;
 
 namespace CarbonAware.Tools.WatTimeClient.Tests
 {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public class WattTimeClientTests
     {
-        private MockHttpMessageHandler MessageHandler { get; set; } = default;
+        private MockHttpMessageHandler MessageHandler { get; set; }
 
         private HttpClient HttpClient { get; set; }
 
@@ -51,15 +52,15 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         }
 
         [Test]
-        public async Task GetDataAsync_ThrowsWhenBadJsonIsReturned()
+        public void GetDataAsync_ThrowsWhenBadJsonIsReturned()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
                 var response = this.MockWattTimeAuthResponse(m, new StringContent("This is bad json."));
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = this.DefaultTokenValue;
 
             Assert.ThrowsAsync<JsonException>(async () => await client.GetDataAsync("ba", "start", "end"));
@@ -68,9 +69,9 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         [Test]
         public async Task GetDataAsync_DeserializesExpectedResponse()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
-                Assert.AreEqual("https://api2.watttime.org/v2/data?ba=balauth&starttime=start&endtime=end", m.RequestUri.ToString());
+                Assert.AreEqual("https://api2.watttime.org/v2/data?ba=balauth&starttime=start&endtime=end", m.RequestUri?.ToString());
                 Assert.AreEqual(HttpMethod.Get, m.Method);
                 var response = this.MockWattTimeAuthResponse(m, new StringContent("[" +
                     "{\"ba\":\"ba\",\"datatype\":\"dt\",\"frequency\": 300,\"market\":\"mkt\"," +
@@ -79,7 +80,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = this.DefaultTokenValue;
 
             var data = await client.GetDataAsync("balauth", "start", "end");
@@ -96,7 +97,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         [Test]
         public async Task GetDataAsync_RefreshesTokenWhenExpired()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
                 var content = new StringContent("[" +
                         "{\"ba\":\"ba\",\"datatype\":\"dt\",\"frequency\": 300,\"market\":\"mkt\"," +
@@ -107,7 +108,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = this.DefaultTokenValue;
 
             var data = await client.GetDataAsync("balauth", "start", "end");
@@ -120,7 +121,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         [Test]
         public async Task GetDataAsync_RefreshesTokenWhenNoneSet()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
                 var content = new StringContent("[" +
                         "{\"ba\":\"ba\",\"datatype\":\"dt\",\"frequency\": 300,\"market\":\"mkt\"," +
@@ -131,7 +132,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = null;
 
             var data = await client.GetDataAsync("balauth", "start", "end");
@@ -142,15 +143,15 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         }
 
         [Test]
-        public async Task GetCurrentForecastAsync_ThrowsWhenBadJsonIsReturned()
+        public void GetCurrentForecastAsync_ThrowsWhenBadJsonIsReturned()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
                 var response = this.MockWattTimeAuthResponse(m, new StringContent("This is bad json."));
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = this.DefaultTokenValue;
 
             Assert.ThrowsAsync<JsonException>(async () => await client.GetCurrentForecastAsync("balauth"));
@@ -159,9 +160,9 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         [Test]
         public async Task GetCurrentForecastAsync_DeserializesExpectedResponse()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
-                Assert.AreEqual("https://api2.watttime.org/v2/forecast?ba=balauth", m.RequestUri.ToString());
+                Assert.AreEqual("https://api2.watttime.org/v2/forecast?ba=balauth", m.RequestUri?.ToString());
                 Assert.AreEqual(HttpMethod.Get, m.Method);
                 var response = this.MockWattTimeAuthResponse(m, new StringContent("{\"generated_at\":\"2099-01-01T00:00:00Z\",\"forecast\":[" +
                     "{\"ba\":\"ba\",\"point_time\":\"2099-01-01T00:00:00Z\",\"value\":999.99,\"version\":\"1.0\"}" +
@@ -169,7 +170,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = this.DefaultTokenValue;
 
             var forecast = await client.GetCurrentForecastAsync("balauth");
@@ -184,7 +185,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         [Test]
         public async Task GetCurrentForecastAsync_RefreshesTokenWhenExpired()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
                 var content = new StringContent("{\"generated_at\":\"2099-01-01T00:00:00Z\",\"forecast\":[" +
                     "{\"ba\":\"ba\",\"point_time\":\"2099-01-01T00:00:00Z\",\"value\":999.99,\"version\":\"1.0\"}" +
@@ -193,7 +194,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = this.DefaultTokenValue;
 
             var forecast = await client.GetCurrentForecastAsync("balauth");
@@ -206,7 +207,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         [Test]
         public async Task GetCurrentForecastAsync_RefreshesTokenWhenNoneSet()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
                 var content = new StringContent("{\"generated_at\":\"2099-01-01T00:00:00Z\",\"forecast\":[" +
                     "{\"ba\":\"ba\",\"point_time\":\"2099-01-01T00:00:00Z\",\"value\":999.99,\"version\":\"1.0\"}" +
@@ -215,7 +216,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = null;
             this.HttpClient.DefaultRequestHeaders.Authorization = null;
 
@@ -227,15 +228,15 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         }
 
         [Test]
-        public async Task GetForecastByDateAsync_ThrowsWhenBadJsonIsReturned()
+        public void GetForecastByDateAsync_ThrowsWhenBadJsonIsReturned()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
                 var response = this.MockWattTimeAuthResponse(m, new StringContent("This is bad json."));
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = this.DefaultTokenValue;
 
             Assert.ThrowsAsync<JsonException>(async () => await client.GetForecastByDateAsync("balauth","start","end"));
@@ -244,9 +245,9 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         [Test]
         public async Task GetForecastByDateAsync_DeserializesExpectedResponse()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
-                Assert.AreEqual("https://api2.watttime.org/v2/forecast?ba=balauth&starttime=start&endtime=end", m.RequestUri.ToString());
+                Assert.AreEqual("https://api2.watttime.org/v2/forecast?ba=balauth&starttime=start&endtime=end", m.RequestUri?.ToString());
                 Assert.AreEqual(HttpMethod.Get, m.Method);
                 var response = this.MockWattTimeAuthResponse(m, new StringContent("[{\"generated_at\":\"2099-01-01T00:00:00Z\",\"forecast\":[" +
                     "{\"ba\":\"ba\",\"point_time\":\"2099-01-01T00:00:00Z\",\"value\":999.99,\"version\":\"1.0\"}" +
@@ -254,7 +255,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = this.DefaultTokenValue;
 
             var forecasts = await client.GetForecastByDateAsync("balauth", "start", "end");
@@ -270,7 +271,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         [Test]
         public async Task GetForecastByDateAsync_RefreshesTokenWhenExpired()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
                 var content = new StringContent("[{\"generated_at\":\"2099-01-01T00:00:00Z\",\"forecast\":[" +
                     "{\"ba\":\"ba\",\"point_time\":\"2099-01-01T00:00:00Z\",\"value\":999.99,\"version\":\"1.0\"}" +
@@ -279,7 +280,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = this.DefaultTokenValue;
 
             var forecasts = await client.GetForecastByDateAsync("balauth", "start", "end");
@@ -291,7 +292,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         [Test]
         public async Task GetForecastByDateAsync_RefreshesTokenWhenNoneSet()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
                 var content = new StringContent("[{\"generated_at\":\"2099-01-01T00:00:00Z\",\"forecast\":[" +
                     "{\"ba\":\"ba\",\"point_time\":\"2099-01-01T00:00:00Z\",\"value\":999.99,\"version\":\"1.0\"}" +
@@ -300,7 +301,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = null;
             this.HttpClient.DefaultRequestHeaders.Authorization = null;
 
@@ -311,15 +312,15 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         }
 
         [Test]
-        public async Task GetBalancingAuthorityAsync_ThrowsWhenBadJsonIsReturned()
+        public void GetBalancingAuthorityAsync_ThrowsWhenBadJsonIsReturned()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
                 var response = this.MockWattTimeAuthResponse(m, new StringContent("This is bad json."));
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = this.DefaultTokenValue;
 
             Assert.ThrowsAsync<JsonException>(async () => await client.GetBalancingAuthorityAsync("lat", "long"));
@@ -328,16 +329,16 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         [Test]
         public async Task GetBalancingAuthorityAsync_DeserializesExpectedResponse()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
-                Assert.AreEqual("https://api2.watttime.org/v2/ba-from-loc?latitude=lat&longitude=long", m.RequestUri.ToString());
+                Assert.AreEqual("https://api2.watttime.org/v2/ba-from-loc?latitude=lat&longitude=long", m.RequestUri?.ToString());
                 Assert.AreEqual(HttpMethod.Get, m.Method);
                 var response = this.MockWattTimeAuthResponse(m, new StringContent(
                     "{\"id\":\"12345\",\"abbrev\":\"TEST_BA\",\"name\":\"Test Balancing Authority\"}"));
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = this.DefaultTokenValue;
 
             var ba = await client.GetBalancingAuthorityAsync("lat", "long");
@@ -349,7 +350,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         [Test]
         public async Task GetBalancingAuthorityAsync_RefreshesTokenWhenExpired()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
                 var content = new StringContent(
                     "{\"id\":\"12345\",\"abbrev\":\"TEST_BA\",\"name\":\"Test Balancing Authority\"}");
@@ -357,7 +358,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = this.DefaultTokenValue;
 
             var ba = await client.GetBalancingAuthorityAsync("lat", "long");
@@ -368,7 +369,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         [Test]
         public async Task GetBalancingAuthorityAsync_RefreshesTokenWhenNoneSet()
         {
-            var httpClient = this.CreateHttpClient(m =>
+            this.CreateHttpClient(m =>
             {
                 var content = new StringContent(
                     "{\"id\":\"12345\",\"abbrev\":\"TEST_BA\",\"name\":\"Test Balancing Authority\"}");
@@ -376,7 +377,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
                 return Task.FromResult(response);
             });
 
-            var client = new WattTimeClient.WattTimeClient(httpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
             client.authToken = null;
             this.HttpClient.DefaultRequestHeaders.Authorization = null;
 
@@ -385,13 +386,12 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             Assert.AreEqual(12345, ba.Id);
         }
 
-        private HttpClient CreateHttpClient(Func<HttpRequestMessage, Task<HttpResponseMessage>> requestDelegate)
+        private void CreateHttpClient(Func<HttpRequestMessage, Task<HttpResponseMessage>> requestDelegate)
         {
-            var messageHandler = new MockHttpMessageHandler(requestDelegate);
-            var client = new HttpClient(messageHandler);
-            client.BaseAddress = new Uri("https://api2.watttime.org/v2/");
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.DefaultTokenValue);
-            return client;
+            this.MessageHandler = new MockHttpMessageHandler(requestDelegate);
+            this.HttpClient = new HttpClient(this.MessageHandler);
+            this.HttpClient.BaseAddress = new Uri("https://api2.watttime.org/v2/");
+            this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.DefaultTokenValue);
         }
 
         private HttpResponseMessage MockWattTimeAuthResponse(HttpRequestMessage request, StringContent reponseContent, string? validToken = null)
@@ -439,4 +439,5 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             }
         }
     }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 }
