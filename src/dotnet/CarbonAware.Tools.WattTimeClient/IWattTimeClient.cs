@@ -59,11 +59,20 @@ namespace CarbonAware.Tools.WattTimeClient
 
 
         /// <summary>
-        /// Async method to get the balancing authority for a given location.
+        /// Async method to get the balancing authority abbreviation for a given location.
         /// <param name="latitude">Latitude of the location</param>
         /// <param name="longitude">Longitude of the location</param>
         /// <returns>An <see cref="Task{BalancingAuthority}"/> which contains the balancing authority details.</returns>
         /// </summary>
         public Task<BalancingAuthority?> GetBalancingAuthorityAsync(string latitude, string longitude);
+
+        /// <summary>
+        /// Async method to get the balancing authority abbreviation for a given location.
+        /// <param name="latitude">Latitude of the location</param>
+        /// <param name="longitude">Longitude of the location</param>
+        /// <returns>A string which contains the balancing authority details.</returns>
+        /// </summary>
+        public Task<string?> GetBalancingAuthorityAbbreviationAsync(string latitude, string longitude);
+
     }
 }
