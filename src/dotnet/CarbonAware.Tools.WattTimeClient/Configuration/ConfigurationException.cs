@@ -1,4 +1,4 @@
-﻿namespace CarbonAware.Tools.WattTimeClient;
+﻿namespace CarbonAware.Tools.WattTimeClient.Configuration;
 
 /// <summary>
 /// An exception class thrown when the WattTime client is misconfigured.
