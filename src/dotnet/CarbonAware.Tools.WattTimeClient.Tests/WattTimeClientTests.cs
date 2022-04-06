@@ -1,4 +1,5 @@
 ﻿using CarbonAware.Tools.WattTimeClient;
+using CarbonAware.Tools.WattTimeClient.Configuration;
 using CarbonAware.Tools.WattTimeClient.Model;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -61,7 +62,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = this.DefaultTokenValue;
+            client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
 
             Assert.ThrowsAsync<JsonException>(async () => await client.GetDataAsync("ba", "start", "end"));
         }
@@ -81,7 +82,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = this.DefaultTokenValue;
+            client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
 
             var data = await client.GetDataAsync("balauth", "start", "end");
 
@@ -111,11 +112,10 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = this.DefaultTokenValue;
+            client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
 
             var data = await client.GetDataAsync("balauth", "start", "end");
            
-            Assert.AreEqual("REFRESHTOKEN", client.authToken);
             Assert.IsTrue(data.Count() > 0);
             var gridDataPoint = data.ToList().First();
             Assert.AreEqual("ba", gridDataPoint.BalancingAuthority);
@@ -136,11 +136,8 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = null;
 
             var data = await client.GetDataAsync("balauth", "start", "end");
-
-            Assert.AreEqual("REFRESHTOKEN", client.authToken);
 
             Assert.IsTrue(data.Count() > 0);
             var gridDataPoint = data.ToList().First();
@@ -157,7 +154,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = this.DefaultTokenValue;
+            client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
 
             Assert.ThrowsAsync<JsonException>(async () => await client.GetCurrentForecastAsync("balauth"));
         }
@@ -176,7 +173,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = this.DefaultTokenValue;
+            client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
 
             var forecast = await client.GetCurrentForecastAsync("balauth");
 
@@ -202,12 +199,11 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = this.DefaultTokenValue;
+            client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
 
             var forecast = await client.GetCurrentForecastAsync("balauth");
 
             Assert.IsNotNull(forecast);
-            Assert.AreEqual("REFRESHTOKEN", client.authToken);
             Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast?.GeneratedAt);
             var forecastDataPoint = forecast?.ForecastData.First();
             Assert.AreEqual("ba", forecastDataPoint?.BalancingAuthority);
@@ -226,13 +222,12 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = null;
+
             this.HttpClient.DefaultRequestHeaders.Authorization = null;
 
             var forecast = await client.GetCurrentForecastAsync("balauth");
 
             Assert.IsNotNull(forecast);
-            Assert.AreEqual("REFRESHTOKEN", client.authToken);
             Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast?.GeneratedAt);
             var forecastDataPoint = forecast?.ForecastData.First();
             Assert.AreEqual("ba", forecastDataPoint?.BalancingAuthority);
@@ -248,7 +243,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = this.DefaultTokenValue;
+            client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
 
             Assert.ThrowsAsync<JsonException>(async () => await client.GetForecastByDateAsync("balauth","start","end"));
         }
@@ -267,7 +262,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = this.DefaultTokenValue;
+            client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
 
             var forecasts = await client.GetForecastByDateAsync("balauth", "start", "end");
 
@@ -294,10 +289,9 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = this.DefaultTokenValue;
+            client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
 
             var forecasts = await client.GetForecastByDateAsync("balauth", "start", "end");
-            Assert.AreEqual("REFRESHTOKEN", client.authToken);
 
             Assert.IsTrue(forecasts.Count() > 0);
             var forecast = forecasts.ToList().First();
@@ -317,11 +311,10 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = null;
+
             this.HttpClient.DefaultRequestHeaders.Authorization = null;
 
             var forecasts = await client.GetForecastByDateAsync("balauth", "start", "end");
-            Assert.AreEqual("REFRESHTOKEN", client.authToken);
             
             Assert.IsTrue(forecasts.Count() > 0);
             var forecast = forecasts.ToList().First();
@@ -338,7 +331,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = this.DefaultTokenValue;
+            client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
 
             Assert.ThrowsAsync<JsonException>(async () => await client.GetBalancingAuthorityAsync("lat", "long"));
         }
@@ -356,7 +349,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = this.DefaultTokenValue;
+            client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
 
             var ba = await client.GetBalancingAuthorityAsync("lat", "long");
 
@@ -378,12 +371,11 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = this.DefaultTokenValue;
+            client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
 
             var ba = await client.GetBalancingAuthorityAsync("lat", "long");
 
             Assert.IsNotNull(ba);
-            Assert.AreEqual("REFRESHTOKEN", client.authToken);
             Assert.AreEqual(12345, ba?.Id);
         }
 
@@ -399,13 +391,12 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             });
 
             var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
-            client.authToken = null;
+
             this.HttpClient.DefaultRequestHeaders.Authorization = null;
 
             var ba = await client.GetBalancingAuthorityAsync("lat", "long");
 
             Assert.IsNotNull(ba);
-            Assert.AreEqual("REFRESHTOKEN", client.authToken);
             Assert.AreEqual(12345, ba?.Id);
         }
 
