@@ -57,9 +57,8 @@ public interface IWattTimeClient
     /// </summary>
     public Task<IEnumerable<Forecast>> GetForecastByDateAsync(BalancingAuthority balancingAuthority, string startTime, string endTime);
 
-
     /// <summary>
-    /// Async method to get the balancing authority abbreviation for a given location.
+    /// Async method to get the balancing authority for a given location.
     /// <param name="latitude">Latitude of the location</param>
     /// <param name="longitude">Longitude of the location</param>
     /// <returns>An <see cref="Task{BalancingAuthority}"/> which contains the balancing authority details.</returns>
@@ -75,14 +74,14 @@ public interface IWattTimeClient
     public Task<string?> GetBalancingAuthorityAbbreviationAsync(string latitude, string longitude);
 
     /// <summary>
-    /// Async method to get all generated forecasts in the given period and balancing authority.
+    /// Async method to get binary data (representing a zip file) of the historical emissions data for the given balancing authority.
     /// <param name="balancingAuthorityAbbreviation">Balancing authority abbreviation</param>
-    /// <returns>An <see cref="Task{Stream}"/> which contains the data Stream of the .zip file.</returns>
+    /// <returns>An <see cref="Task{Stream}"/> which contains the binary data stream of the .zip file.</returns>
     /// </summary>
     public Task<Stream> GetHistoricalDataAsync(string balancingAuthorityAbbreviation);
 
     /// <summary>
-    /// Async method to get all generated forecasts in the given period and balancing authority.
+    /// Async method to get binary data (representing a zip file) of the historical emissions data for the given balancing authority.
     /// <param name="balancingAuthority">Balancing authority</param>
     /// <returns>An <see cref="Task{Stream}"/> which contains the data Stream of the .zip file.</returns>
     /// </summary>
