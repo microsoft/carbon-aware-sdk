@@ -54,14 +54,14 @@ public class WattTimeClient : IWattTimeClient
 
         var parameters = new Dictionary<string, string>()
         {
-            { Constants.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation },
-            { Constants.StartTime, startTime },
-            { Constants.EndTime, endTime }
+            { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation },
+            { QueryStrings.StartTime, startTime },
+            { QueryStrings.EndTime, endTime }
         };
 
         var tags = new Dictionary<string, string>()
         {
-            { Constants.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
+            { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
         };
 
         var result = await this.MakeRequestAsync(Paths.Data, parameters, tags);
@@ -83,12 +83,12 @@ public class WattTimeClient : IWattTimeClient
 
         var parameters = new Dictionary<string, string>()
         {
-            { Constants.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
+            { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
         };
 
         var tags = new Dictionary<string, string>()
         {
-            { Constants.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
+            { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
         };
 
         var result = await this.MakeRequestAsync(Paths.Forecast, parameters, tags);
@@ -109,14 +109,14 @@ public class WattTimeClient : IWattTimeClient
 
         var parameters = new Dictionary<string, string>()
         {
-            { Constants.BalancingAuthorityAbbreviation, balancingAuthority },
-            { Constants.StartTime, startTime },
-            { Constants.EndTime, endTime }
+            { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthority },
+            { QueryStrings.StartTime, startTime },
+            { QueryStrings.EndTime, endTime }
         };
 
         var tags = new Dictionary<string, string>()
         {
-            { Constants.BalancingAuthorityAbbreviation, balancingAuthority }
+            { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthority }
         };
 
         var result = await this.MakeRequestAsync(Paths.Forecast, parameters, tags);
@@ -137,14 +137,14 @@ public class WattTimeClient : IWattTimeClient
 
         var parameters = new Dictionary<string, string>()
         {
-            { Constants.Latitude, latitude },
-            { Constants.Longitude, longitude }
+            { QueryStrings.Latitude, latitude },
+            { QueryStrings.Longitude, longitude }
         };
 
         var tags = new Dictionary<string, string>()
         {
-            { Constants.Latitude, latitude },
-            { Constants.Longitude, longitude }
+            { QueryStrings.Latitude, latitude },
+            { QueryStrings.Longitude, longitude }
         };
 
         var result = await this.MakeRequestAsync(Paths.BalancingAuthorityFromLocation, parameters, tags);
@@ -158,7 +158,38 @@ public class WattTimeClient : IWattTimeClient
         return (await this.GetBalancingAuthorityAsync(latitude, longitude))?.Abbreviation;
     }
 
-    private async Task<string> GetAsyncWithAuthRetries(string uriPath)
+    /// <inheritdoc/>
+    public async Task<Stream> GetHistoricalDataAsync(string balancingAuthorityAbbreviation)
+    {
+        Log.LogInformation("Requesting historical data for balancing authority {balancingAuthority}", balancingAuthorityAbbreviation);
+
+        var parameters = new Dictionary<string, string>()
+        {
+            { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
+        };
+
+        using (var activity = ActivitySource.StartActivity(nameof(WattTimeClient)))
+        {
+            var url = BuildUrlWithQueryString(Paths.Historical, parameters);
+
+            Log.LogInformation("Requesting data using url {url}", url);
+            activity?.AddTag(QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation);
+
+            var result = await this.GetAsyncStreamWithAuthRetry(url);
+
+            Log.LogDebug("For query {url}, received data stream", url);
+
+            return result;
+        }
+    }
+
+    /// <inheritdoc/>
+    public Task<Stream> GetHistoricalDataAsync(BalancingAuthority balancingAuthority)
+    {
+        return this.GetHistoricalDataAsync(balancingAuthority.Abbreviation);
+    }
+
+    private async Task<HttpResponseMessage> GetAsyncWithAuthRetry(string uriPath)
     {
         await this.EnsureTokenAsync();
 
@@ -178,9 +209,22 @@ public class WattTimeClient : IWattTimeClient
             throw new System.Exception($"Error getting data from WattTime: {response.StatusCode}");
         }
 
+        return response;
+    }
+
+    private async Task<string> GetAsyncStringWithAuthRetry(string uriPath)
+    {
+        var response = await this.GetAsyncWithAuthRetry(uriPath);
         var data = response.Content.ReadAsStringAsync();
         return data.Result ?? string.Empty;
     }
+
+    private async Task<Stream> GetAsyncStreamWithAuthRetry(string uriPath)
+    {
+        var response = await this.GetAsyncWithAuthRetry(uriPath);
+        return await response.Content.ReadAsStreamAsync();
+    }
+
 
     private async Task EnsureTokenAsync()
     {
@@ -194,7 +238,7 @@ public class WattTimeClient : IWattTimeClient
     {
         using (var activity = ActivitySource.StartActivity())
         {
-            activity?.SetTag(Constants.Username, this.Configuration.Username);
+            activity?.SetTag(QueryStrings.Username, this.Configuration.Username);
 
             Log.LogInformation("Attempting to log in user {username}", this.Configuration.Username);
 
@@ -215,17 +259,17 @@ public class WattTimeClient : IWattTimeClient
     private void SetBasicAuthenticationHeader()
     {
         var authToken = Encoding.ASCII.GetBytes($"{this.Configuration.Username}:{this.Configuration.Password}");
-        this.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Constants.BasicAuthentication, Convert.ToBase64String(authToken));
+        this.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(AuthenticationHeaderTypes.Basic, Convert.ToBase64String(authToken));
     }
 
     internal void SetBearerAuthenticationHeader(string token)
     {
-        this.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Constants.BearerAuthentication, token);
+        this.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(AuthenticationHeaderTypes.Bearer, token);
     }
 
-    private async Task<string> MakeRequestAsync(string path, Dictionary<string, string> parameters, Dictionary<string, string>? tags = null, [CallerMemberName] string activityName = "N/A")
+    private async Task<string> MakeRequestAsync(string path, Dictionary<string, string> parameters, Dictionary<string, string>? tags = null)
     {
-        using (var activity = ActivitySource.StartActivity(activityName))
+        using (var activity = ActivitySource.StartActivity(nameof(WattTimeClient)))
         {
             var url = BuildUrlWithQueryString(path, parameters);
 
@@ -239,7 +283,7 @@ public class WattTimeClient : IWattTimeClient
                 }
             }
 
-            var result = await this.GetAsyncWithAuthRetries(url);
+            var result = await this.GetAsyncStringWithAuthRetry(url);
 
             Log.LogDebug("For query {url}, received data {result}", url, result);
 

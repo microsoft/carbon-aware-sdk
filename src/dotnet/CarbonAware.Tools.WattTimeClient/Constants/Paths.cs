@@ -6,5 +6,5 @@ internal class Paths
     public const string Forecast = "forecast";
     public const string BalancingAuthorityFromLocation = "ba-from-loc";
     public const string Login = "login";
-    public const string History = "history";
+    public const string Historical = "historical";
 }

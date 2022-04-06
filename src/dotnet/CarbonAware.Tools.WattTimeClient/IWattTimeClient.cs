@@ -74,4 +74,17 @@ public interface IWattTimeClient
     /// </summary>
     public Task<string?> GetBalancingAuthorityAbbreviationAsync(string latitude, string longitude);
 
+    /// <summary>
+    /// Async method to get all generated forecasts in the given period and balancing authority.
+    /// <param name="balancingAuthorityAbbreviation">Balancing authority abbreviation</param>
+    /// <returns>An <see cref="Task{Stream}"/> which contains the data Stream of the .zip file.</returns>
+    /// </summary>
+    public Task<Stream> GetHistoricalDataAsync(string balancingAuthorityAbbreviation);
+
+    /// <summary>
+    /// Async method to get all generated forecasts in the given period and balancing authority.
+    /// <param name="balancingAuthority">Balancing authority</param>
+    /// <returns>An <see cref="Task{Stream}"/> which contains the data Stream of the .zip file.</returns>
+    /// </summary>
+    public Task<Stream> GetHistoricalDataAsync(BalancingAuthority balancingAuthority);
 }

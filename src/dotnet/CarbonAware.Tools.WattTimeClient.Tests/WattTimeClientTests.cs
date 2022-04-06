@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -400,6 +401,72 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             Assert.AreEqual(12345, ba?.Id);
         }
 
+        [Test]
+        public async Task GetHistoricalDataAsync_StreamsExpectedContent()
+        {
+            using (var testStream = new MemoryStream(Encoding.UTF8.GetBytes("myStreamResults")))
+            {
+                this.CreateHttpClient(m =>
+                {
+                    var response = this.MockWattTimeAuthResponse(m, new StreamContent(testStream));
+                    return Task.FromResult(response);
+                });
+
+                var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+                client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
+
+                var result = await client.GetHistoricalDataAsync("ba");
+                var sr = new StreamReader(result);
+                string streamResult = sr.ReadToEnd();
+
+                Assert.AreEqual("myStreamResults", streamResult);
+            }
+        }
+
+        [Test]
+        public async Task GetHistoricalDataAsync_RefreshesTokenWhenExpired()
+        {
+            using (var testStream = new MemoryStream(Encoding.UTF8.GetBytes("myStreamResults")))
+            {
+                this.CreateHttpClient(m =>
+                {
+                    var response = this.MockWattTimeAuthResponse(m, new StreamContent(testStream), "REFRESHTOKEN");
+                    return Task.FromResult(response);
+                });
+
+                this.HttpClient.DefaultRequestHeaders.Authorization = null;
+                var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+
+                var result = await client.GetHistoricalDataAsync("ba");
+                var sr = new StreamReader(result);
+                string streamResult = sr.ReadToEnd();
+
+                Assert.AreEqual("myStreamResults", streamResult);
+            }
+        }
+
+        [Test]
+        public async Task GetHistoricalDataAsync_RefreshesTokenWhenNoneSet()
+        {
+            using (var testStream = new MemoryStream(Encoding.UTF8.GetBytes("myStreamResults")))
+            {
+                this.CreateHttpClient(m =>
+                {
+                    var response = this.MockWattTimeAuthResponse(m, new StreamContent(testStream), "REFRESHTOKEN");
+                    return Task.FromResult(response);
+                });
+
+                var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+                client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
+
+                var result = await client.GetHistoricalDataAsync("ba");
+                var sr = new StreamReader(result);
+                string streamResult = sr.ReadToEnd();
+
+                Assert.AreEqual("myStreamResults", streamResult);
+            }
+        }
+
         private void CreateHttpClient(Func<HttpRequestMessage, Task<HttpResponseMessage>> requestDelegate)
         {
             this.MessageHandler = new MockHttpMessageHandler(requestDelegate);
@@ -408,7 +475,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.DefaultTokenValue);
         }
 
-        private HttpResponseMessage MockWattTimeAuthResponse(HttpRequestMessage request, StringContent reponseContent, string? validToken = null)
+        private HttpResponseMessage MockWattTimeAuthResponse(HttpRequestMessage request, HttpContent reponseContent, string? validToken = null)
         {
             if (validToken == null)
             {

@@ -1,10 +1,8 @@
 ﻿namespace CarbonAware.Tools.WattTimeClient;
 
-internal class Constants
+internal class QueryStrings
 {
     public const string BalancingAuthorityAbbreviation = "ba";
-    public const string BasicAuthentication = "Basic";
-    public const string BearerAuthentication = "Bearer";
     public const string StartTime = "starttime";
     public const string EndTime = "endtime";
     public const string Latitude = "latitude";
