@@ -11,6 +11,7 @@ using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using System.Net;
 using CarbonAware.Tools.WattTimeClient.Configuration;
+using CarbonAware.Tools.WattTimeClient.Constants;
 
 namespace CarbonAware.Tools.WattTimeClient;
 
