@@ -8,6 +8,9 @@ using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using System.Security.Authentication;
 using System.Net.Mime;
+using System.Runtime.CompilerServices;
+using System.Collections.Specialized;
+using System.Net;
 
 namespace CarbonAware.Tools.WattTimeClient
 {
@@ -15,9 +18,15 @@ namespace CarbonAware.Tools.WattTimeClient
     {
         private const string BaseUrl = "https://api2.watttime.org/v2/";
         private HttpClient client;
-        internal string? authToken = null;
+        internal string? authToken;
 
         private static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+
+        private static readonly HttpStatusCode[] RetriableStatusCodes = new HttpStatusCode[]
+        {
+            HttpStatusCode.Unauthorized, 
+            HttpStatusCode.Forbidden
+        };
 
         private IOptionsMonitor<WattTimeClientConfiguration> ConfigurationMonitor { get; }
 
@@ -26,6 +35,8 @@ namespace CarbonAware.Tools.WattTimeClient
         private ActivitySource ActivitySource { get; }
 
         private ILogger<WattTimeClient> Log { get; }
+
+
 
         public WattTimeClient(HttpClient httpClient, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log, ActivitySource source)
         {
@@ -39,27 +50,25 @@ namespace CarbonAware.Tools.WattTimeClient
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<GridEmissionDataPoint>> GetDataAsync(string balancingAuthorityAbbreviation, string startTime, string endTime){
-            var url = BuildUrlWithQueryString(
-                Paths.Data,
-                new Dictionary<string, string>() {
-                    { Constants.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation },
-                    { Constants.StartTime, startTime },
-                    { Constants.EndTime, endTime }
-                });
+        public async Task<IEnumerable<GridEmissionDataPoint>> GetDataAsync(string balancingAuthorityAbbreviation, string startTime, string endTime)
+        {
+            Log.LogInformation("Requesting grid emission data using start time {startTime} and endTime {endTime}", startTime, endTime);
 
-            Log.LogInformation("Requesting grid emission data using url {url}", url);
-
-            using (var activity = ActivitySource.StartActivity())
+            var parameters = new Dictionary<string, string>()
             {
-                activity?.AddTag(Constants.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation);
+                { Constants.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation },
+                { Constants.StartTime, startTime },
+                { Constants.EndTime, endTime }
+            };
 
-                var result = await this.GetAsyncWithAuthRetries(url);
+            var tags = new Dictionary<string, string>()
+            {
+                { Constants.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
+            };
 
-                Log.LogDebug("For query {url}, received data {result}", url, result);
+            var result = await this.MakeRequestAsync(Paths.Data, parameters, tags);
 
-                return JsonSerializer.Deserialize<List<GridEmissionDataPoint>>(result, options) ?? new List<GridEmissionDataPoint>();
-            }
+            return JsonSerializer.Deserialize<List<GridEmissionDataPoint>>(result, options) ?? new List<GridEmissionDataPoint>();
         }
 
         /// <inheritdoc/>
@@ -69,25 +78,24 @@ namespace CarbonAware.Tools.WattTimeClient
         }
 
         /// <inheritdoc/>
-        public async Task<Forecast?> GetCurrentForecastAsync(string balancingAuthority){
-            var url = BuildUrlWithQueryString(
-                Paths.Forecast,
-                new Dictionary<string, string>() {
-                    { Constants.BalancingAuthorityAbbreviation, balancingAuthority }
-                });
+        public async Task<Forecast?> GetCurrentForecastAsync(string balancingAuthorityAbbreviation)
+        {
 
-            Log.LogInformation("Requesting current forecast using url {url}", url);
+            Log.LogInformation("Requesting current forecast from balancing authority {balancingAuthority}", balancingAuthorityAbbreviation);
 
-            using (var activity = ActivitySource.StartActivity())
+            var parameters = new Dictionary<string, string>()
             {
-                activity?.AddTag(Constants.BalancingAuthorityAbbreviation, balancingAuthority);
+                { Constants.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
+            };
 
-                var result = await this.GetAsyncWithAuthRetries(url);
+            var tags = new Dictionary<string, string>()
+            {
+                { Constants.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
+            };
 
-                Log.LogDebug("For query {url}, received data {result}", url, result);
+            var result = await this.MakeRequestAsync(Paths.Forecast, parameters, tags);
 
-                return JsonSerializer.Deserialize<Forecast?>(result);
-            }
+            return JsonSerializer.Deserialize<Forecast?>(result);
         }
 
         /// <inheritdoc/>
@@ -97,27 +105,25 @@ namespace CarbonAware.Tools.WattTimeClient
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<Forecast>> GetForecastByDateAsync(string balancingAuthority, string startTime, string endTime){
-            var url = BuildUrlWithQueryString(
-                Paths.Forecast,
-                new Dictionary<string, string>() {
-                    { Constants.BalancingAuthorityAbbreviation, balancingAuthority },
-                    { Constants.StartTime, startTime },
-                    { Constants.EndTime, endTime }
-                });
+        public async Task<IEnumerable<Forecast>> GetForecastByDateAsync(string balancingAuthority, string startTime, string endTime)
+        {
+            Log.LogInformation("Requesting forecast from balancingAuthority {balancingAuthority} using start time {startTime} and endTime {endTime}", balancingAuthority, startTime, endTime);
 
-            Log.LogInformation("Getting forecast by date using url {url}", url);
-
-            using (var activity = ActivitySource.StartActivity())
+            var parameters = new Dictionary<string, string>()
             {
-                activity?.AddTag(Constants.BalancingAuthorityAbbreviation, balancingAuthority);
+                { Constants.BalancingAuthorityAbbreviation, balancingAuthority },
+                { Constants.StartTime, startTime },
+                { Constants.EndTime, endTime }
+            };
 
-                var result = await this.GetAsyncWithAuthRetries(url);
+            var tags = new Dictionary<string, string>()
+            {
+                { Constants.BalancingAuthorityAbbreviation, balancingAuthority }
+            };
 
-                Log.LogDebug("For query {url}, received data {result}", url, result);
+            var result = await this.MakeRequestAsync(Paths.Forecast, parameters, tags);
 
-                return JsonSerializer.Deserialize<List<Forecast>>(result, options) ?? new List<Forecast>();
-            }
+            return JsonSerializer.Deserialize<List<Forecast>>(result, options) ?? new List<Forecast>();
         }
 
         /// <inheritdoc/>
@@ -127,27 +133,25 @@ namespace CarbonAware.Tools.WattTimeClient
         }
 
         /// <inheritdoc/>
-        public async Task<BalancingAuthority?> GetBalancingAuthorityAsync(string latitude, string longitude){
-            var url = BuildUrlWithQueryString(
-                Paths.BalancingAuthorityFromLocation,
-                new Dictionary<string, string>() {
-                    { Constants.Latitude, latitude },
-                    { Constants.Longitude, longitude }
-                });
+        public async Task<BalancingAuthority?> GetBalancingAuthorityAsync(string latitude, string longitude)
+        {
+            Log.LogInformation("Requesting balancing authority for lattitude {lattitude} and longitude {longitude}", latitude, longitude);
 
-            Log.LogInformation("Getting balancing authority using url {url}", url);
-
-            using (var activity = ActivitySource.StartActivity())
+            var parameters = new Dictionary<string, string>()
             {
-                activity?.AddTag(Constants.Latitude, latitude);
-                activity?.AddTag(Constants.Longitude, longitude);
+                { Constants.Latitude, latitude },
+                { Constants.Longitude, longitude }
+            };
 
-                var result = await this.GetAsyncWithAuthRetries(url);
+            var tags = new Dictionary<string, string>()
+            {
+                { Constants.Latitude, latitude },
+                { Constants.Longitude, longitude }
+            };
 
-                Log.LogDebug("For query {url}, received data {result}", url, result);
+            var result = await this.MakeRequestAsync(Paths.BalancingAuthorityFromLocation, parameters, tags);
 
-                return JsonSerializer.Deserialize<BalancingAuthority>(result, options);
-            }
+            return JsonSerializer.Deserialize<BalancingAuthority>(result, options);
         }
 
         /// <inheritdoc/>
@@ -158,18 +162,10 @@ namespace CarbonAware.Tools.WattTimeClient
 
         private async Task<string> GetAsyncWithAuthRetries(string uriPath, int retries = 1)
         {
-            var retriableStatusCodes = new List<System.Net.HttpStatusCode>()
-                {
-                    System.Net.HttpStatusCode.Unauthorized, System.Net.HttpStatusCode.Forbidden
-                };
-
-            if( this.authToken == null )
-            {
-                Log.LogDebug("No authtoken provided.  Authenticating.");
-                await this.UpdateAuthTokenAsync();
-            }
+            await this.EnsureTokenAsync();
 
             var response = await this.client.GetAsync(uriPath);
+
             if (response.IsSuccessStatusCode)
             {
                 Log.LogDebug("Successfully retrieved {url}", uriPath);
@@ -177,7 +173,7 @@ namespace CarbonAware.Tools.WattTimeClient
                 var data = response.Content.ReadAsStringAsync();
                 return data.Result ?? string.Empty; 
             }
-            else if (retries > 0 && retriableStatusCodes.Contains(response.StatusCode))
+            else if (retries > 0 && RetriableStatusCodes.Contains(response.StatusCode))
             {
                 Log.LogDebug("Failed to get url {url} with status code {statusCode}.  {retries} retries remaining.", uriPath, response.StatusCode, retries);
                 retries--;
@@ -186,9 +182,17 @@ namespace CarbonAware.Tools.WattTimeClient
             }
             else
             {
-                Log.LogError("Error getting data from WattTime.  StatusCode: {statusCode}", response.StatusCode);
+                Log.LogError("Error getting data from WattTime.  StatusCode: {statusCode}. Response: {response}", response.StatusCode, response);
 
                 throw new System.Exception($"Error getting data from WattTime: {response.StatusCode}");
+            }
+        }
+
+        private async Task EnsureTokenAsync()
+        {
+            if (this.authToken == null)
+            {
+                await this.UpdateAuthTokenAsync();
             }
         }
 
@@ -221,6 +225,30 @@ namespace CarbonAware.Tools.WattTimeClient
             }
         }
 
+        private async Task<string> MakeRequestAsync(string path, Dictionary<string, string> parameters, Dictionary<string, string>? tags = null, [CallerMemberName] string activityName = "N/A")
+        {
+            using (var activity = ActivitySource.StartActivity(activityName))
+            {
+                var url = BuildUrlWithQueryString(path, parameters);
+
+                Log.LogInformation("Requesting data using url {url}", url);
+
+                if (tags != null)
+                {
+                    foreach (var kvp in tags)
+                    {
+                        activity?.AddTag(kvp.Key, kvp.Value);
+                    }
+                }
+
+                var result = await this.GetAsyncWithAuthRetries(url);
+
+                Log.LogDebug("For query {url}, received data {result}", url, result);
+
+                return result;
+            }
+        }
+
         private string BuildUrlWithQueryString(string url, IDictionary<string, string> queryStringParams)
         {
             if (Log.IsEnabled(LogLevel.Debug))
@@ -228,7 +256,9 @@ namespace CarbonAware.Tools.WattTimeClient
                 Log.LogDebug("Attempting to build a url using url {url} and query string parameters {parameters}", url, string.Join(";", queryStringParams.Select(k => $"\"{k.Key}\":\"{k.Value}\"")));
             }
 
-            var query = HttpUtility.ParseQueryString("");
+            // this will get a specialized namevalue collection for formatting query strings.
+            var query = HttpUtility.ParseQueryString(string.Empty);
+
             foreach(var kvp in queryStringParams)
             {
                 query[kvp.Key] = kvp.Value;

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace CarbonAware.Tools.WattTimeClient
 {
@@ -16,7 +17,7 @@ namespace CarbonAware.Tools.WattTimeClient
         public static IServiceCollection ConfigureWattTimeClient(this IServiceCollection services, IConfiguration configuration)
         {
 
-            var source = new ActivitySource("CarbonAware.Tools.WattTimeClient");
+            var source = new ActivitySource("WattTimeClient");
 
             WattTimeClientConfiguration config = new WattTimeClientConfiguration();
 
