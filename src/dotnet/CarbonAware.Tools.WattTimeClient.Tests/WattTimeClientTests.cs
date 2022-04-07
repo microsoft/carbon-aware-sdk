@@ -1,5 +1,6 @@
 ﻿using CarbonAware.Tools.WattTimeClient;
 using CarbonAware.Tools.WattTimeClient.Configuration;
+using CarbonAware.Tools.WattTimeClient.Constants;
 using CarbonAware.Tools.WattTimeClient.Model;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -54,6 +55,26 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
         }
 
         [Test]
+        public void AllPublicMethods_ThrowsWhenInvalidLogin()
+        {
+            this.CreateHttpClient(m =>
+            {
+                var response = this.MockWattTimeAuthResponse(m, new StringContent(""), "token");
+                return Task.FromResult(response);
+            });
+
+            this.BasicAuthValue = "invalid";
+            var client = new WattTimeClient.WattTimeClient(this.HttpClient, this.Options.Object, this.Log.Object, this.ActivitySource);
+            
+            Assert.ThrowsAsync<WattTimeClientException>(async () => await client.GetDataAsync("ba", "start", "end"));
+            Assert.ThrowsAsync<WattTimeClientException>(async () => await client.GetCurrentForecastAsync("ba"));
+            Assert.ThrowsAsync<WattTimeClientException>(async () => await client.GetForecastByDateAsync("ba", "start", "end"));
+            Assert.ThrowsAsync<WattTimeClientException>(async () => await client.GetBalancingAuthorityAsync("lat", "long"));
+            Assert.ThrowsAsync<WattTimeClientException>(async () => await client.GetBalancingAuthorityAbbreviationAsync("lat", "long"));
+            Assert.ThrowsAsync<WattTimeClientException>(async () => await client.GetHistoricalDataAsync("ba"));
+        }
+
+        [Test]
         public void GetDataAsync_ThrowsWhenBadJsonIsReturned()
         {
             this.CreateHttpClient(m =>
@@ -67,6 +88,7 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
 
             Assert.ThrowsAsync<JsonException>(async () => await client.GetDataAsync("ba", "start", "end"));
         }
+
 
         [Test]
         public async Task GetDataAsync_DeserializesExpectedResponse()
@@ -490,9 +512,8 @@ namespace CarbonAware.Tools.WatTimeClient.Tests
             var authHeader = auth.ToString();
             var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
 
-            if (request.RequestUri == new Uri("https://api2.watttime.org/v2/login"))
+            if ((request.RequestUri == new Uri("https://api2.watttime.org/v2/login") && ($"Basic {this.BasicAuthValue}".Equals(authHeader))))
             {
-                Assert.AreEqual($"Basic {this.BasicAuthValue}", authHeader);
                 response.Content = new StringContent("{\"token\":\""+validToken+"\"}");
             }
             else if (authHeader == $"Bearer {validToken}")
