@@ -207,7 +207,7 @@ public class WattTimeClient : IWattTimeClient
         {
             Log.LogError("Error getting data from WattTime.  StatusCode: {statusCode}. Response: {response}", response.StatusCode, response);
 
-            throw new System.Exception($"Error getting data from WattTime: {response.StatusCode}");
+            throw new WattTimeClientException($"Error getting data from WattTime: {response.StatusCode}", response);
         }
 
         return response;
@@ -244,13 +244,21 @@ public class WattTimeClient : IWattTimeClient
             Log.LogInformation("Attempting to log in user {username}", this.Configuration.Username);
 
             this.SetBasicAuthenticationHeader();
+            var response = await this.client.GetAsync(Paths.Login);
 
-            var data = JsonSerializer.Deserialize<LoginResult>(await this.client.GetStringAsync(Paths.Login), options);
+            LoginResult? data = null;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync() ?? String.Empty;
+
+                data = JsonSerializer.Deserialize<LoginResult>(json, options);
+            }
 
             if (data == null)
             {
-                Log.LogError("Login failed for user {username}", this.Configuration.Username);
-                throw new AuthenticationException("Login failed.");
+                Log.LogError("Login failed for user {username}.  Response: {response}", this.Configuration.Username, response);
+                throw new WattTimeClientException("Login failed.", response);
             }
 
             this.SetBearerAuthenticationHeader(data.Token);
