@@ -7,17 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware", "CarbonAware\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Plugins.BasicJsonPlugin", "CarbonAware.Plugins.BasicJsonPlugin\CarbonAware.Plugins.BasicJsonPlugin.csproj", "{7F8C741C-3101-44F9-A352-B5CBEC00FEFC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Plugins.BasicJsonPlugin.Tests", "..\..\tests\dotnet\CarbonAware.Plugins.BasicJsonPlugin.Tests\CarbonAware.Plugins.BasicJsonPlugin.Tests.csproj", "{0B53454A-CB47-41D2-8A39-5C056E43695C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Plugins.BasicJsonPlugin.Tests", "..\..\tests\CarbonAware.Plugins.BasicJsonPlugin.Tests\CarbonAware.Plugins.BasicJsonPlugin.Tests.csproj", "{0B53454A-CB47-41D2-8A39-5C056E43695C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.CLI", "CarbonAware.CLI\CarbonAware.CLI.csproj", "{D057DD75-CFFA-496F-B493-171E122AC91D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.WebApi", "CarbonAware.WebApi\CarbonAware.WebApi.csproj", "{1A606EAE-C8BE-454F-B3F7-C649C9293B65}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tests", "..\..\tests\dotnet\CarbonAware.Tests\CarbonAware.Tests.csproj", "{834D7E6B-8807-4808-96CF-1BCA36C17F6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tests", "..\..\tests\CarbonAware.Tests\CarbonAware.Tests.csproj", "{834D7E6B-8807-4808-96CF-1BCA36C17F6D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tools.AWSRegionTestDataGenerator", "..\..\tests\dotnet\CarbonAware.Tools.AWSRegionTestDataGenerator\CarbonAware.Tools.AWSRegionTestDataGenerator.csproj", "{58D5E35B-E717-4C73-B034-AA6EFEB7AA17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tools.AWSRegionTestDataGenerator", "..\..\tests\CarbonAware.Tools.AWSRegionTestDataGenerator\CarbonAware.Tools.AWSRegionTestDataGenerator.csproj", "{58D5E35B-E717-4C73-B034-AA6EFEB7AA17}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tools.AzureRegionTestDataGenerator", "..\..\tests\dotnet\CarbonAware.Tools.AzureRegionTestDataGenerator\CarbonAware.Tools.AzureRegionTestDataGenerator.csproj", "{8B5D8681-D9A5-4AA1-BA13-3E6D86D3082A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tools.AzureRegionTestDataGenerator", "..\..\tests\CarbonAware.Tools.AzureRegionTestDataGenerator\CarbonAware.Tools.AzureRegionTestDataGenerator.csproj", "{8B5D8681-D9A5-4AA1-BA13-3E6D86D3082A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

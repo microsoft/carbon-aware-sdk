@@ -10,7 +10,7 @@
         "args": [
           "build",
           // Ask dotnet build to generate full paths for file names.
-          "src/dotnet/CarbonAware.WebApi/",
+          "src/CarbonAware.WebApi/",
           // Do not generate summary otherwise it leads to duplicate errors in Problems panel
           "/consoleloggerparameters:NoSummary"
         ],

@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\dotnet\CarbonAware\CarbonAware.csproj" />
+    <ProjectReference Include="..\..\..\src\CarbonAware\CarbonAware.csproj" />
   </ItemGroup>
 
 </Project>
