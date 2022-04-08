@@ -23,11 +23,11 @@ jobs:
     
     - name: Docker Target Build
       run: docker build --target=build . -f ${DOCKERFILE_PATH} -t ca-api-build
-      working-directory: ./src/dotnet
+      working-directory: ./src
 
     - name: Docker Unit Test
       run: docker run -w //src/ ca-api-build dotnet test
-      working-directory: ./src/dotnet
+      working-directory: ./src
 
   container-validation:
       runs-on: ubuntu-latest
@@ -37,7 +37,7 @@ jobs:
 
       - name: Docker Target Final
         run: docker build . -f ${DOCKERFILE_PATH} -t ca-api
-        working-directory: ./src/dotnet
+        working-directory: ./src
         
       - name: Docker Run Container
         run: |
