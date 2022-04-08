@@ -7,7 +7,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["CarbonAware.WebApi/CarbonAware.WebApi.csproj", "CarbonAware.WebApi/"]
-COPY ["CarbonAware/CarbonAware.csproj", "CarbonAware/"]
+COPY ["CarbonAware/src/CarbonAware.csproj", "CarbonAware/"]
 COPY ["CarbonAware.Plugins.BasicJsonPlugin/CarbonAware.Plugins.BasicJsonPlugin.csproj", "CarbonAware.Plugins.BasicJsonPlugin/"]
 RUN dotnet restore "CarbonAware.WebApi/CarbonAware.WebApi.csproj"
 COPY . .

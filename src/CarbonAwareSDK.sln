@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware", "CarbonAware\CarbonAware.csproj", "{40FC1BA4-ABDB-4D9F-A53A-8F44F0AC67DA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Plugins.BasicJsonPlugin", "CarbonAware.Plugins.BasicJsonPlugin\CarbonAware.Plugins.BasicJsonPlugin.csproj", "{7F8C741C-3101-44F9-A352-B5CBEC00FEFC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Plugins.BasicJsonPlugin.Tests", "..\..\tests\CarbonAware.Plugins.BasicJsonPlugin.Tests\CarbonAware.Plugins.BasicJsonPlugin.Tests.csproj", "{0B53454A-CB47-41D2-8A39-5C056E43695C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.CLI", "CarbonAware.CLI\CarbonAware.CLI.csproj", "{D057DD75-CFFA-496F-B493-171E122AC91D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.WebApi", "CarbonAware.WebApi\CarbonAware.WebApi.csproj", "{1A606EAE-C8BE-454F-B3F7-C649C9293B65}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tests", "..\..\tests\CarbonAware.Tests\CarbonAware.Tests.csproj", "{834D7E6B-8807-4808-96CF-1BCA36C17F6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tests", "CarbonAware\tests\CarbonAware.Tests.csproj", "{B9F70F0B-D825-4979-9945-CBA2DFCCF02B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tools.AWSRegionTestDataGenerator", "..\..\tests\CarbonAware.Tools.AWSRegionTestDataGenerator\CarbonAware.Tools.AWSRegionTestDataGenerator.csproj", "{58D5E35B-E717-4C73-B034-AA6EFEB7AA17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware", "CarbonAware\src\CarbonAware.csproj", "{0682A5B1-22C2-4ADB-8C46-ABAB78E628FE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tools.AzureRegionTestDataGenerator", "..\..\tests\CarbonAware.Tools.AzureRegionTestDataGenerator\CarbonAware.Tools.AzureRegionTestDataGenerator.csproj", "{8B5D8681-D9A5-4AA1-BA13-3E6D86D3082A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tools.AWSRegionTestDataGenerator", "CarbonAware.Tools\CarbonAware.Tools.AWSRegionTestDataGenerator\CarbonAware.Tools.AWSRegionTestDataGenerator.csproj", "{B7F016DE-C6D6-4993-93F4-99B8B9A40381}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tools.AzureRegionTestDataGenerator", "CarbonAware.Tools\CarbonAware.Tools.AzureRegionTestDataGenerator\CarbonAware.Tools.AzureRegionTestDataGenerator.csproj", "{1A3066C4-D437-4089-ACFD-36600880DA0B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Plugins.BasicJsonPlugin", "CarbonAware.Plugins\CarbonAware.Plugins.BasicJsonPlugin\src\CarbonAware.Plugins.BasicJsonPlugin.csproj", "{A24B68C1-EACC-4094-83D5-822DADD6CF50}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Plugins.BasicJsonPlugin.Tests", "CarbonAware.Plugins\CarbonAware.Plugins.BasicJsonPlugin\tests\CarbonAware.Plugins.BasicJsonPlugin.Tests.csproj", "{68686DE6-0E5B-4DE2-9D22-6428D2D682AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,18 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{40FC1BA4-ABDB-4D9F-A53A-8F44F0AC67DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{40FC1BA4-ABDB-4D9F-A53A-8F44F0AC67DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{40FC1BA4-ABDB-4D9F-A53A-8F44F0AC67DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{40FC1BA4-ABDB-4D9F-A53A-8F44F0AC67DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7F8C741C-3101-44F9-A352-B5CBEC00FEFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7F8C741C-3101-44F9-A352-B5CBEC00FEFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7F8C741C-3101-44F9-A352-B5CBEC00FEFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7F8C741C-3101-44F9-A352-B5CBEC00FEFC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0B53454A-CB47-41D2-8A39-5C056E43695C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B53454A-CB47-41D2-8A39-5C056E43695C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0B53454A-CB47-41D2-8A39-5C056E43695C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B53454A-CB47-41D2-8A39-5C056E43695C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D057DD75-CFFA-496F-B493-171E122AC91D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D057DD75-CFFA-496F-B493-171E122AC91D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D057DD75-CFFA-496F-B493-171E122AC91D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,18 +33,30 @@ Global
 		{1A606EAE-C8BE-454F-B3F7-C649C9293B65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A606EAE-C8BE-454F-B3F7-C649C9293B65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A606EAE-C8BE-454F-B3F7-C649C9293B65}.Release|Any CPU.Build.0 = Release|Any CPU
-		{834D7E6B-8807-4808-96CF-1BCA36C17F6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{834D7E6B-8807-4808-96CF-1BCA36C17F6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{834D7E6B-8807-4808-96CF-1BCA36C17F6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{834D7E6B-8807-4808-96CF-1BCA36C17F6D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{58D5E35B-E717-4C73-B034-AA6EFEB7AA17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{58D5E35B-E717-4C73-B034-AA6EFEB7AA17}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{58D5E35B-E717-4C73-B034-AA6EFEB7AA17}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{58D5E35B-E717-4C73-B034-AA6EFEB7AA17}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8B5D8681-D9A5-4AA1-BA13-3E6D86D3082A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8B5D8681-D9A5-4AA1-BA13-3E6D86D3082A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B5D8681-D9A5-4AA1-BA13-3E6D86D3082A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8B5D8681-D9A5-4AA1-BA13-3E6D86D3082A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9F70F0B-D825-4979-9945-CBA2DFCCF02B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9F70F0B-D825-4979-9945-CBA2DFCCF02B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9F70F0B-D825-4979-9945-CBA2DFCCF02B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9F70F0B-D825-4979-9945-CBA2DFCCF02B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0682A5B1-22C2-4ADB-8C46-ABAB78E628FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0682A5B1-22C2-4ADB-8C46-ABAB78E628FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0682A5B1-22C2-4ADB-8C46-ABAB78E628FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0682A5B1-22C2-4ADB-8C46-ABAB78E628FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7F016DE-C6D6-4993-93F4-99B8B9A40381}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7F016DE-C6D6-4993-93F4-99B8B9A40381}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7F016DE-C6D6-4993-93F4-99B8B9A40381}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7F016DE-C6D6-4993-93F4-99B8B9A40381}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A3066C4-D437-4089-ACFD-36600880DA0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A3066C4-D437-4089-ACFD-36600880DA0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A3066C4-D437-4089-ACFD-36600880DA0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A3066C4-D437-4089-ACFD-36600880DA0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A24B68C1-EACC-4094-83D5-822DADD6CF50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A24B68C1-EACC-4094-83D5-822DADD6CF50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A24B68C1-EACC-4094-83D5-822DADD6CF50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A24B68C1-EACC-4094-83D5-822DADD6CF50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68686DE6-0E5B-4DE2-9D22-6428D2D682AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68686DE6-0E5B-4DE2-9D22-6428D2D682AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68686DE6-0E5B-4DE2-9D22-6428D2D682AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68686DE6-0E5B-4DE2-9D22-6428D2D682AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

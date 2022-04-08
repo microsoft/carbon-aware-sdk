@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -55,8 +55,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\CarbonAware.Plugins.BasicJsonPlugin\CarbonAware.Plugins.BasicJsonPlugin.csproj" />
-    <ProjectReference Include="..\..\..\src\CarbonAware\CarbonAware.csproj" />
+    <ProjectReference Include="..\..\CarbonAware.Plugins\CarbonAware.Plugins.BasicJsonPlugin\src\CarbonAware.Plugins.BasicJsonPlugin.csproj" />
+    <ProjectReference Include="..\src\CarbonAware.csproj" />
   </ItemGroup>
 
 </Project>

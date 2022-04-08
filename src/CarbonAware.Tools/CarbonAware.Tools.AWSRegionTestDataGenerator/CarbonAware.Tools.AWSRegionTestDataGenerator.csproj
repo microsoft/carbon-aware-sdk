@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="azure-regions.json" />
+    <None Remove="aws-regions.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="azure-regions.json">
+    <Content Include="aws-regions.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -22,8 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\CarbonAware.Plugins.BasicJsonPlugin\CarbonAware.Plugins.BasicJsonPlugin.csproj" />
-    <ProjectReference Include="..\..\..\src\CarbonAware\CarbonAware.csproj" />
+    <ProjectReference Include="..\..\CarbonAware\src\CarbonAware.csproj" />
   </ItemGroup>
 
 </Project>
