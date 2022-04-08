@@ -196,7 +196,7 @@ public class WattTimeClient : IWattTimeClient
 
         var response = await this.client.GetAsync(uriPath);
 
-        if (!response.IsSuccessStatusCode && RetriableStatusCodes.Contains(response.StatusCode))
+        if (RetriableStatusCodes.Contains(response.StatusCode))
         {
             Log.LogDebug("Failed to get url {url} with status code {statusCode}.  Attempting to log in again.", uriPath, response.StatusCode);
             await this.UpdateAuthTokenAsync();
@@ -216,8 +216,8 @@ public class WattTimeClient : IWattTimeClient
     private async Task<string> GetAsyncStringWithAuthRetry(string uriPath)
     {
         var response = await this.GetAsyncWithAuthRetry(uriPath);
-        var data = response.Content.ReadAsStringAsync();
-        return data.Result ?? string.Empty;
+        var data = await response.Content.ReadAsStringAsync();
+        return data ?? string.Empty;
     }
 
     private async Task<Stream> GetAsyncStreamWithAuthRetry(string uriPath)
