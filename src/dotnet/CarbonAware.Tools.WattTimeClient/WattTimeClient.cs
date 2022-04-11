@@ -17,8 +17,6 @@ namespace CarbonAware.Tools.WattTimeClient;
 
 public class WattTimeClient : IWattTimeClient
 {
-    private const string BaseUrl = "https://api2.watttime.org/v2/";
-
     private static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
     private static readonly HttpStatusCode[] RetriableStatusCodes = new HttpStatusCode[]
@@ -40,12 +38,12 @@ public class WattTimeClient : IWattTimeClient
     public WattTimeClient(HttpClient httpClient, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log, ActivitySource source)
     {
         this.client = httpClient;
-        this.client.BaseAddress = new Uri(BaseUrl);
-        this.client.DefaultRequestHeaders.Accept.Clear();
-        this.client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
         this.ConfigurationMonitor = configurationMonitor;
         this.ActivitySource = source;
         this.Log = log;
+        this.client.BaseAddress = new Uri(this.Configuration.BaseUrl);
+        this.client.DefaultRequestHeaders.Accept.Clear();
+        this.client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
     }
 
     /// <inheritdoc/>
