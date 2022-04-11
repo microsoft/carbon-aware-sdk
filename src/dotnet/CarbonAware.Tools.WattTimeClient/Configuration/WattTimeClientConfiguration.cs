@@ -19,18 +19,28 @@ public class WattTimeClientConfiguration
     public string? Password { get; set; }
 
     /// <summary>
+    /// Gets or sets the base url to use when connecting to WattTime
+    /// </summary>
+    public string? BaseUrl { get; set; } = "https://api2.watttime.org/v2/";
+
+    /// <summary>
     /// Validate that this object is properly configured.
     /// </summary>
     public void Validate()
     {
-        if (string.IsNullOrEmpty(this.Username))
+        if (string.IsNullOrWhiteSpace(this.Username))
         {
             throw new ConfigurationException($"{Key}:{nameof(this.Username)} is required for WattTime.");
         }
 
-        if (string.IsNullOrEmpty(this.Password))
+        if (string.IsNullOrWhiteSpace(this.Password))
         {
             throw new ConfigurationException($"{Key}:{nameof(this.Password)} is required for WattTime.");
-        }        
+        }
+
+        if (!Uri.IsWellFormedUriString(this.BaseUrl, UriKind.Absolute))
+        {
+            throw new ConfigurationException($"{Key}:{nameof(this.BaseUrl)} is not a valid absolute url.");
+        }
     }
 }

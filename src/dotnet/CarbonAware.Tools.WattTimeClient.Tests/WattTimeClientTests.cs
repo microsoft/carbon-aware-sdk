@@ -467,7 +467,6 @@ namespace CarbonAware.Tools.WattTimeClient.Tests
         {
             this.MessageHandler = new MockHttpMessageHandler(requestDelegate);
             this.HttpClient = new HttpClient(this.MessageHandler);
-            this.HttpClient.BaseAddress = new Uri("https://api2.watttime.org/v2/");
             this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.DefaultTokenValue);
         }
 
