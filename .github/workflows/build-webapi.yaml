@@ -10,7 +10,7 @@ on:
       - '.github/workflows/**'
 
 env:
-  DOCKERFILE_PATH: "CarbonAware.WebApi/Dockerfile"
+  DOCKERFILE_PATH: "CarbonAware.WebApi/src/Dockerfile"
   HEALTH_ENDPOINT: "0.0.0.0:8080/emissions/bylocation?location=eastus"
   #Health Check Endpoint to be added as another story and replaced here
 

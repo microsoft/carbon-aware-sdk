@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.CLI", "CarbonAware.CLI\CarbonAware.CLI.csproj", "{D057DD75-CFFA-496F-B493-171E122AC91D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.WebApi", "CarbonAware.WebApi\CarbonAware.WebApi.csproj", "{1A606EAE-C8BE-454F-B3F7-C649C9293B65}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tests", "CarbonAware\tests\CarbonAware.Tests.csproj", "{B9F70F0B-D825-4979-9945-CBA2DFCCF02B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware", "CarbonAware\src\CarbonAware.csproj", "{0682A5B1-22C2-4ADB-8C46-ABAB78E628FE}"
@@ -19,6 +17,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Plugins.BasicJs
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Plugins.BasicJsonPlugin.Tests", "CarbonAware.Plugins\CarbonAware.Plugins.BasicJsonPlugin\tests\CarbonAware.Plugins.BasicJsonPlugin.Tests.csproj", "{68686DE6-0E5B-4DE2-9D22-6428D2D682AD}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tools.WattTimeClient", "CarbonAware.Tools\CarbonAware.Tools.WattTimeClient\src\CarbonAware.Tools.WattTimeClient.csproj", "{C520A2A9-C67C-4319-BA96-9E9B520358AF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Tools.WattTimeClient.Tests", "CarbonAware.Tools\CarbonAware.Tools.WattTimeClient\tests\CarbonAware.Tools.WattTimeClient.Tests.csproj", "{0CDB29BC-4D74-48CA-92FC-F3AC27CDE73D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.WebApi", "CarbonAware.WebApi\src\CarbonAware.WebApi.csproj", "{4D4FE21A-0F4A-4CB8-B200-9619C03856A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +33,6 @@ Global
 		{D057DD75-CFFA-496F-B493-171E122AC91D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D057DD75-CFFA-496F-B493-171E122AC91D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D057DD75-CFFA-496F-B493-171E122AC91D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A606EAE-C8BE-454F-B3F7-C649C9293B65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A606EAE-C8BE-454F-B3F7-C649C9293B65}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A606EAE-C8BE-454F-B3F7-C649C9293B65}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A606EAE-C8BE-454F-B3F7-C649C9293B65}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B9F70F0B-D825-4979-9945-CBA2DFCCF02B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B9F70F0B-D825-4979-9945-CBA2DFCCF02B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9F70F0B-D825-4979-9945-CBA2DFCCF02B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,6 +57,18 @@ Global
 		{68686DE6-0E5B-4DE2-9D22-6428D2D682AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68686DE6-0E5B-4DE2-9D22-6428D2D682AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68686DE6-0E5B-4DE2-9D22-6428D2D682AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C520A2A9-C67C-4319-BA96-9E9B520358AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C520A2A9-C67C-4319-BA96-9E9B520358AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C520A2A9-C67C-4319-BA96-9E9B520358AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C520A2A9-C67C-4319-BA96-9E9B520358AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CDB29BC-4D74-48CA-92FC-F3AC27CDE73D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CDB29BC-4D74-48CA-92FC-F3AC27CDE73D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CDB29BC-4D74-48CA-92FC-F3AC27CDE73D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CDB29BC-4D74-48CA-92FC-F3AC27CDE73D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D4FE21A-0F4A-4CB8-B200-9619C03856A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D4FE21A-0F4A-4CB8-B200-9619C03856A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D4FE21A-0F4A-4CB8-B200-9619C03856A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D4FE21A-0F4A-4CB8-B200-9619C03856A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
