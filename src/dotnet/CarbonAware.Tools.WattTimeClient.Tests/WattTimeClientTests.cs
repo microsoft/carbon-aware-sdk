@@ -108,7 +108,7 @@ namespace CarbonAware.Tools.WattTimeClient.Tests
 
             Assert.IsTrue(data.Count() > 0);
             var gridDataPoint = data.ToList().First();
-            Assert.AreEqual("ba", gridDataPoint.BalancingAuthority);
+            Assert.AreEqual("ba", gridDataPoint.BalancingAuthorityAbbreviation);
             Assert.AreEqual("dt", gridDataPoint.Datatype);
             Assert.AreEqual(300, gridDataPoint.Frequency);
             Assert.AreEqual("mkt", gridDataPoint.Market);
@@ -134,7 +134,7 @@ namespace CarbonAware.Tools.WattTimeClient.Tests
            
             Assert.IsTrue(data.Count() > 0);
             var gridDataPoint = data.ToList().First();
-            Assert.AreEqual("ba", gridDataPoint.BalancingAuthority);
+            Assert.AreEqual("ba", gridDataPoint.BalancingAuthorityAbbreviation);
         }
 
         [Test]
@@ -153,7 +153,7 @@ namespace CarbonAware.Tools.WattTimeClient.Tests
 
             Assert.IsTrue(data.Count() > 0);
             var gridDataPoint = data.ToList().First();
-            Assert.AreEqual("ba", gridDataPoint.BalancingAuthority);
+            Assert.AreEqual("ba", gridDataPoint.BalancingAuthorityAbbreviation);
         }
 
         [Test]
@@ -190,7 +190,7 @@ namespace CarbonAware.Tools.WattTimeClient.Tests
             Assert.IsNotNull(forecast);
             Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast?.GeneratedAt);
             var forecastDataPoint = forecast?.ForecastData.First();
-            Assert.AreEqual("ba", forecastDataPoint?.BalancingAuthority);
+            Assert.AreEqual("ba", forecastDataPoint?.BalancingAuthorityAbbreviation);
             Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecastDataPoint?.PointTime);
             Assert.AreEqual("999.99", forecastDataPoint?.Value.ToString("0.00")); //Format float to avoid precision issues
             Assert.AreEqual("1.0", forecastDataPoint?.Version);
@@ -214,7 +214,7 @@ namespace CarbonAware.Tools.WattTimeClient.Tests
             Assert.IsNotNull(forecast);
             Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast?.GeneratedAt);
             var forecastDataPoint = forecast?.ForecastData.First();
-            Assert.AreEqual("ba", forecastDataPoint?.BalancingAuthority);
+            Assert.AreEqual("ba", forecastDataPoint?.BalancingAuthorityAbbreviation);
         }
 
         [Test]
@@ -236,7 +236,7 @@ namespace CarbonAware.Tools.WattTimeClient.Tests
             Assert.IsNotNull(forecast);
             Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast?.GeneratedAt);
             var forecastDataPoint = forecast?.ForecastData.First();
-            Assert.AreEqual("ba", forecastDataPoint?.BalancingAuthority);
+            Assert.AreEqual("ba", forecastDataPoint?.BalancingAuthorityAbbreviation);
         }
 
         [Test]
@@ -274,7 +274,7 @@ namespace CarbonAware.Tools.WattTimeClient.Tests
             var forecast = forecasts.ToList().First();
             Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast.GeneratedAt);
             var forecastDataPoint = forecast.ForecastData.ToList().First();
-            Assert.AreEqual("ba", forecastDataPoint.BalancingAuthority);
+            Assert.AreEqual("ba", forecastDataPoint.BalancingAuthorityAbbreviation);
             Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecastDataPoint.PointTime);
             Assert.AreEqual("999.99", forecastDataPoint.Value.ToString("0.00")); //Format float to avoid precision issues
             Assert.AreEqual("1.0", forecastDataPoint.Version);
