@@ -1,3 +1,4 @@
+using CarbonAware.Aggregators.SciScores;
 using CarbonAware.Model;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -10,25 +11,28 @@ public class SciScoreController : ControllerBase
 {
     private readonly ILogger<SciScoreController> _logger;
 
-    public SciScoreController(ILogger<SciScoreController> logger)
+    private ISciScoreAggregator SciScoreAggregator { get; }
+
+    public SciScoreController(ILogger<SciScoreController> logger, ISciScoreAggregator sciScoreAggregator)
     {
         _logger = logger;
+        this.SciScoreAggregator = sciScoreAggregator;
     }
 
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateAsync(SciScoreCalculation calculation)
+    public Task<IActionResult> CreateAsync(SciScoreCalculation calculation)
     {
         if (String.IsNullOrEmpty(calculation.AzRegion))
         {
-            return BadRequest("AzRegion is required");
+            return Task.FromResult((IActionResult)BadRequest("AzRegion is required"));
         }
 
         if (String.IsNullOrEmpty(calculation.Duration))
         {
-            return BadRequest("Duration is required");
+            return Task.FromResult((IActionResult)BadRequest("Duration is required"));
         }
 
         SciScore score = new SciScore
@@ -40,6 +44,6 @@ public class SciScoreController : ControllerBase
                 FunctionalUnitValue = 1
             };
 
-        return await Task.Run(() => Ok(score));
+        return Task.FromResult((IActionResult)Ok(score));
     }
 }
