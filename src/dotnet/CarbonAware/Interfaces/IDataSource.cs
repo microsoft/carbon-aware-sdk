@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarbonAware.Aggregators
+namespace CarbonAware
 {
-    public interface IAggregator
+    public interface IDataSource
     {
     }
 }
