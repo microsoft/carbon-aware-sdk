@@ -1,4 +1,5 @@
 using CarbonAware.Model;
+using CarbonAware.Plugin;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarbonAware.WebApi.Controllers;
