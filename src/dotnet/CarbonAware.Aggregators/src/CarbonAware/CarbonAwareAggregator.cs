@@ -18,8 +18,19 @@ namespace CarbonAware.Aggregators.CarbonAware
             this._plugin = plugin;
         }
 
-        public async Task<double> GetEmissionsAveragageAsync(IDictionary props)
+        public async Task<double> GetEmissionsAverageAsync(string location, DateTime startTime, int durationMinutes)
         {
+            var props = new Dictionary<string, object?>() {
+                {
+                    CarbonAwareConstants.Locations, new List<string>() { location }
+                },
+                {
+                    CarbonAwareConstants.Start, startTime
+                },
+                {
+                    CarbonAwareConstants.Duration, durationMinutes
+                }
+            };
             var list = await GetEmissionsDataAsync(props);
             return list.Any() ? list.Select(x => x.Rating).Average() : 0;
         }
@@ -27,7 +38,6 @@ namespace CarbonAware.Aggregators.CarbonAware
         public async Task<IEnumerable<EmissionsData>> GetEmissionsDataAsync(IDictionary props)
         {
             return await this._plugin.GetEmissionsDataAsync(props);
-
         }
     }
 }

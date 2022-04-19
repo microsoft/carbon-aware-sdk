@@ -69,6 +69,25 @@ public class CarbonAwareController : ControllerBase
         return await GetEmissionsDataAsync(props);
     }
 
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(double))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [HttpGet("byduration")]
+    public async Task<IActionResult> GetEmissionsAverageForLocationByTime(string location, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
+    {
+        var props = new Dictionary<string, object?>() {
+            { CarbonAwareConstants.Locations, new List<string>(){ location } },
+            { CarbonAwareConstants.Start, time ?? DateTime.Now },
+            { CarbonAwareConstants.End, toTime },
+            { CarbonAwareConstants.Duration, durationMinutes },
+        };
+        
+        return await GetEmissionsDataAsync(props);
+    }
+
+
+
     /// <summary>
     /// Given a dictionary of properties, handles call to GetEmissionsDataAsync including logging and response handling.
     /// </summary>
