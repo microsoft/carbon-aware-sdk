@@ -20,6 +20,13 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
     private IRegionConverter RegionConverter { get; }
 
+    /// <summary>
+    /// Creates a new instance of the <see cref="WattTimeDataSource"/> class.
+    /// </summary>
+    /// <param name="logger">The logger for the datasource</param>
+    /// <param name="client">The WattTime Client</param>
+    /// <param name="activitySource">The activity source for telemetry.</param>
+    /// <param name="regionConverter">The region converter to be used to convert Azure regions to BA's.</param>
     public WattTimeDataSource(ILogger<WattTimeDataSource> logger, IWattTimeClient client, ActivitySource activitySource, IRegionConverter regionConverter)
     {
         this.Logger = logger;
@@ -28,6 +35,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         this.RegionConverter = regionConverter;
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(string region, DateTimeOffset startPeriod, DateTimeOffset endPeriod)
     {
         this.Logger.LogInformation("Getting carbon intensity for region {region} for period {startPeriod} to {endPeriod}.", region, startPeriod, endPeriod);

@@ -2,6 +2,9 @@
 
 namespace CarbonAware.DataSources.WattTime;
 
+/// <summary>
+/// Represents a WattTime region converter.
+/// </summary>
 public interface IRegionConverter
 {
     /// <summary>
