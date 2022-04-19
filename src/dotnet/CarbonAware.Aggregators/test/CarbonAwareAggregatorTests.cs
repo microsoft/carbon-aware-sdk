@@ -11,13 +11,15 @@ using NUnit.Framework;
 
 namespace CarbonAware.Aggregators.Tests;
 
+[TestFixture]
 public class CarbonAwareAggregatorTests
 {
 
     [TestCase("westus", "2021-11-17", 10, ExpectedResult = 25)]
-    [TestCase("east", "2021-11-17", 10, ExpectedResult = 0)]
+    [TestCase("eastus", "2021-11-17", 10, ExpectedResult = 60)]
     [TestCase("westus", "2021-11-19", 10, ExpectedResult = 0)]
-    [TestCase("eastus", "2021-11-18", 10, ExpectedResult = 60)]
+    [TestCase("eastus", "2021-11-19", 10, ExpectedResult = 0)]
+    [TestCase("fakelocation", "2021-11-18", 10, ExpectedResult = 0)]
     public async Task<double> Test_Emissions_Average(string location, string startTime, int durationMinutes)
     {
         var logger = Mock.Of<ILogger<CarbonAwareAggregator>>();
@@ -38,7 +40,7 @@ public class CarbonAwareAggregatorTests
     {
         return RawFakeEmissionData.Where(x => x.Location == location && x.Time >= startTime);
     }
-    
+
     static IEnumerable<EmissionsData> RawFakeEmissionData =  new List<EmissionsData>()
         {
             new EmissionsData {
