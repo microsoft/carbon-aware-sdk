@@ -8,6 +8,14 @@ namespace CarbonAware.Plugins.JsonReaderPlugin;
 
 public class CarbonAwareJsonReaderPlugin : ICarbonAware
 {
+    public string Name => "CarbonAwareJsonReaderPlugin";
+
+    public string Description => "Example plugin to read data from a json for Carbon Aware SDK";
+
+    public string Author => "Microsoft";
+
+    public string Version => "0.0.1";
+
     private readonly ILogger<CarbonAwareJsonReaderPlugin> _logger;
 
     private List<EmissionsData>? emissionsData;
