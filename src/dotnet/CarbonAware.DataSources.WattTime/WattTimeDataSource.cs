@@ -62,16 +62,20 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
             var data = (await this.WattTimeClient.GetForecastByDateAsync(balancingAuthority, startPeriod.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture), endPeriod.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture))).ToList();
 
-            Logger.LogDebug("Found {count} total forcasts for location {location} for period {startPeriod} to {endPeriod}.", data.Count, location, startPeriod, endPeriod);
+            Logger.LogDebug("Found {count} total forecasts for location {location} for period {startPeriod} to {endPeriod}.", data.Count, location, startPeriod, endPeriod);
 
+            // Linq statement to convert WattTime forecast data into EmissionsData for the CarbonAware SDK.
             var result = data.SelectMany(i => i.ForecastData).Select(e => new EmissionsData() 
             { 
                 Location = balancingAuthority.Abbreviation, 
                 Rating = e.Value, 
                 Time = e.PointTime 
-            }).ToList();
+            });
 
-            Logger.LogDebug("Found {count} total emissions data records for location {location} for period {startPeriod} to {endPeriod}.", result.Count, location, startPeriod, endPeriod);
+            if (Logger.IsEnabled(LogLevel.Debug))
+            {
+                Logger.LogDebug("Found {count} total emissions data records for location {location} for period {startPeriod} to {endPeriod}.", result.ToList().Count, location, startPeriod, endPeriod);
+            }
 
             return result;
         }
