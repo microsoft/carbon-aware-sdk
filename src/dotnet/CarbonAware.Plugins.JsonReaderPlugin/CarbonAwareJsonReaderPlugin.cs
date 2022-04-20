@@ -3,7 +3,6 @@ using CarbonAware.Model;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 using Newtonsoft.Json;
-using CarbonAware.Plugins;
 
 namespace CarbonAware.Plugins.JsonReaderPlugin;
 
@@ -27,7 +26,6 @@ public class CarbonAwareJsonReaderPlugin : ICarbonAware
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<EmissionsData>> GetEmissionsDataAsync(IDictionary props)
     {
         List<EmissionsData>? emissionsData = GetSampleJson();
@@ -40,11 +38,10 @@ public class CarbonAwareJsonReaderPlugin : ICarbonAware
         return await Task.FromResult(GetFilteredData(emissionsData, props));
     }
 
-    private IEnumerable<EmissionsData> GetFilteredData(IEnumerable<EmissionsData> data, IDictionary props) {
-        var location = props[CarbonAwareConstants.Locations] as IEnumerable<string>;
-        List<String> locations = location !=null ? location.ToList() : new List<string>();
-
-        var startDate = getStartDateFromProps(props);
+    private IEnumerable<EmissionsData> GetFilteredData(IEnumerable<EmissionsData> data, IDictionary props)
+    {
+        var locations = GetLocationsFromProps(props);
+        var startDate = GetStartDateFromProps(props);
         var endDate = props[CarbonAwareConstants.End];
         
         data = filterByLocation(data, locations);
@@ -75,26 +72,41 @@ public class CarbonAwareJsonReaderPlugin : ICarbonAware
         return data;
     }
 
-    private IEnumerable<EmissionsData> filterByLocation(IEnumerable<EmissionsData> data, List<string> locations)
+    private IEnumerable<EmissionsData> filterByLocation(IEnumerable<EmissionsData> data, IEnumerable<string>? locations)
     {
-        if (locations.Any()) 
+        if (locations!.Any()) 
         {
-            data = data.Where(ed => locations.Contains(ed.Location));
+            data = data.Where(ed => locations!.Contains(ed.Location));
         }
-
         return data;
     }
 
-    private DateTime getStartDateFromProps(IDictionary props) {
+    private DateTime GetStartDateFromProps(IDictionary props) {
         var start = props[CarbonAwareConstants.Start];
         var startDate = DateTime.Now;
         if (start != null && !DateTime.TryParse(start.ToString(), out startDate))
         {
             startDate = DateTime.Now;
         }
-       
         return startDate;
     }
+
+    private IEnumerable<string>? GetLocationsFromProps(IDictionary props)
+    {
+        if (!props.Contains(CarbonAwareConstants.Locations) ||
+            props[CarbonAwareConstants.Locations] is null)
+        {
+            return Enumerable.Empty<string>();
+        }
+        var locValue = props[CarbonAwareConstants.Locations];
+        var type = locValue?.GetType();
+        if (type?.GetInterface(nameof(IEnumerable)) != null)
+        {
+            return locValue as IEnumerable<string>;
+        }
+        throw new ArgumentException("Invalid location data type. Must be an IEnumerable");
+    }
+
     private string ReadFromResource(string key)
     {
         var assembly = Assembly.GetExecutingAssembly();

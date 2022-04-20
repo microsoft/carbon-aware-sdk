@@ -17,35 +17,36 @@ namespace CarbonAware.Aggregators.Tests;
 public class CarbonAwareAggregatorTests
 {
 
-    [TestCase("westus", "2021-11-17", 10, ExpectedResult = 25)]
-    [TestCase("eastus", "2021-11-17", 10, ExpectedResult = 60)]
-    [TestCase("westus", "2021-11-19", 10, ExpectedResult = 0)]
-    [TestCase("eastus", "2021-11-19", 10, ExpectedResult = 0)]
-    [TestCase("fakelocation", "2021-11-18", 10, ExpectedResult = 0)]
-    public async Task<double> Test_Emissions_Average_FakeData(string location, string startTime, int durationMinutes)
+    [TestCase("westus", "2021-11-17", "2021-11-20", ExpectedResult = 25)]
+    [TestCase("eastus", "2021-11-17", "2021-12-20", ExpectedResult = 60)]
+    [TestCase("westus", "2021-11-17", "2021-11-18", ExpectedResult = 20)]
+    [TestCase("eastus", "2021-11-19", "2021-12-30", ExpectedResult = 0)]
+    [TestCase("fakelocation", "2021-11-18", "2021-12-30", ExpectedResult = 0)]
+    public async Task<double> Test_Emissions_Average_FakeData(string location, string startTime, string endTime)
     {
         var logger = Mock.Of<ILogger<CarbonAwareAggregator>>();
         var mockPlugin = new Mock<ICarbonAware>();
 
-        DateTime sTime;
+        DateTime sTime, eTime;
         Assert.True(DateTime.TryParse(startTime, out sTime));
+        Assert.True(DateTime.TryParse(endTime, out eTime));
 
         mockPlugin.Setup(x => x.GetEmissionsDataAsync(It.IsAny<Dictionary<string, object>>()))
-            .ReturnsAsync(FilterRawFakeData(location, sTime));
+            .ReturnsAsync(FilterRawFakeData(location, sTime, eTime));
         
         var aggregator = new CarbonAwareAggregator(logger, mockPlugin.Object);
         var props = new Dictionary<string, object>() {
             { CarbonAwareConstants.Locations, new List<string>() { location }},
             { CarbonAwareConstants.Start, sTime },
-            { CarbonAwareConstants.Duration, durationMinutes }
+            { CarbonAwareConstants.End, eTime }
         };
         return await aggregator.CalcEmissionsAverageAsync(props);
     }
 
-    [TestCase("westus", "2021-11-17", 10, 20)]
-    [TestCase("eastus", "2021-12-19", 10, 20)]
-    [TestCase("fake", "2021-12-19", 10, 0)]
-    public async Task Test_With_Plugin_Association(string location, string startTime, int durationMinutes, int expected)
+    [TestCase("westus", "2021-11-17", "2021-11-20", 20)]
+    [TestCase("eastus", "2021-12-19", "2021-12-30", 20)]
+    [TestCase("fake", "2021-12-19", "2021-12-30", 0)]
+    public async Task Test_With_Plugin_Association(string location, string startTime, string endTime, int expected)
     {
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddLogging(); 
@@ -55,12 +56,13 @@ public class CarbonAwareAggregatorTests
         Assert.NotNull(aggregators);
         Assert.IsNotEmpty(aggregators);
 
-        DateTime sTime;
+        DateTime sTime, eTime;
         Assert.True(DateTime.TryParse(startTime, out sTime));
+        Assert.True(DateTime.TryParse(endTime, out eTime));
         var props = new Dictionary<string, object>() {
             { CarbonAwareConstants.Locations, new List<string>() { location } },
             { CarbonAwareConstants.Start, sTime },
-            { CarbonAwareConstants.Duration, durationMinutes }
+            { CarbonAwareConstants.End, eTime}
         };
         var aggregator = aggregators.First();
 
@@ -68,9 +70,9 @@ public class CarbonAwareAggregatorTests
         Assert.GreaterOrEqual(average, expected);
     }
 
-    private IEnumerable<EmissionsData> FilterRawFakeData(string location, DateTime startTime)
+    private IEnumerable<EmissionsData> FilterRawFakeData(string location, DateTime startTime, DateTime endTime)
     {
-        return RawFakeEmissionData.Where(x => x.Location == location && x.Time >= startTime);
+        return RawFakeEmissionData.Where(x => x.Location == location && x.Time >= startTime && x.Time <= endTime);
     }
 
     static IEnumerable<EmissionsData> RawFakeEmissionData =  new List<EmissionsData>()
@@ -92,7 +94,7 @@ public class CarbonAwareAggregatorTests
             },
             new EmissionsData {
                 Location = "westus",
-                Time = DateTime.Parse("2021-11-18T04:45:11.5104575+00:00"),
+                Time = DateTime.Parse("2021-11-19T04:45:11.5104575+00:00"),
                 Rating = 40
             },
             new EmissionsData {
