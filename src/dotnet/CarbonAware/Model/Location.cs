@@ -20,14 +20,14 @@ public class Location
     public decimal? Longitude { get; set; }
 
     /// <summary>
-    /// Gets or sets the Azure region name.
+    /// Gets or sets the type of location this location object represents.
     /// </summary>
-    public string AzureRegionName { get; set; }
+    public LocationType LocationType { get; set; }
 
     /// <summary>
-    /// Gets or sets the AWS Region name.
+    /// Gets or sets the region name to use.  When set to GeoPosition, this value should be null, otherwise, it should be the region name for the specified provider.
     /// </summary>
-    public string AwsRegionName { get; set; }
+    public string RegionName { get; set; }
 
     /// <inheritdoc />
     public override string ToString()
