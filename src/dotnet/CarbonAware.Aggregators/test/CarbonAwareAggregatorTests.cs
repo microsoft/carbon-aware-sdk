@@ -70,6 +70,7 @@ public class CarbonAwareAggregatorTests
         Assert.GreaterOrEqual(average, expected);
     }
 
+    [TestCase(null, null, null)]
     [TestCase("westus", null, null)]
     [TestCase(null, "2021-12-19", null)]
     [TestCase(null, null, "2021-12-20")]
