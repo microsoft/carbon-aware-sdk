@@ -1,6 +1,7 @@
 ﻿using CarbonAware.Interfaces;
 using CarbonAware.Model;
 using CarbonAware.Tools.WattTimeClient;
+using CarbonAware.Tools.WattTimeClient.Model;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Globalization;
@@ -18,7 +19,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
     private ActivitySource ActivitySource { get; }
 
-    private IRegionConverter RegionConverter { get; }
+    private ILocationConverter LocationConverter { get; }
 
     /// <summary>
     /// Creates a new instance of the <see cref="WattTimeDataSource"/> class.
@@ -26,47 +27,51 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
     /// <param name="logger">The logger for the datasource</param>
     /// <param name="client">The WattTime Client</param>
     /// <param name="activitySource">The activity source for telemetry.</param>
-    /// <param name="regionConverter">The region converter to be used to convert Azure regions to BA's.</param>
-    public WattTimeDataSource(ILogger<WattTimeDataSource> logger, IWattTimeClient client, ActivitySource activitySource, IRegionConverter regionConverter)
+    /// <param name="locationConverter">The location converter to be used to convert a location to BA's.</param>
+    public WattTimeDataSource(ILogger<WattTimeDataSource> logger, IWattTimeClient client, ActivitySource activitySource, ILocationConverter locationConverter)
     {
         this.Logger = logger;
         this.WattTimeClient = client;
         this.ActivitySource = activitySource;
-        this.RegionConverter = regionConverter;
+        this.LocationConverter = locationConverter;
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(string region, DateTimeOffset startPeriod, DateTimeOffset endPeriod)
+    public async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(Location location, DateTimeOffset startPeriod, DateTimeOffset endPeriod)
     {
-        this.Logger.LogInformation("Getting carbon intensity for region {region} for period {startPeriod} to {endPeriod}.", region, startPeriod, endPeriod);
+        this.Logger.LogInformation("Getting carbon intensity for location {location} for period {startPeriod} to {endPeriod}.", location, startPeriod, endPeriod);
 
         using (var activity = ActivitySource.StartActivity())
         {
-            var balancingAuthority = await this.RegionConverter.ConvertAzureRegionAsync(region);
-
-            if (balancingAuthority == null)
+            BalancingAuthority balancingAuthority;
+            try
             {
-                Logger.LogError("Unable to find a balancing authority for region {region}", region);
-                throw new Exception($"Unable to find a balancing authority for region {region}");
+                balancingAuthority = await this.LocationConverter.ConvertLocationToBalancingAuthorityAsync(location);
+            }
+            catch(LocationConversionException ex)
+            {
+                activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+                Logger.LogError(ex, "Failed to convert the location {location} into a Balancying Authority.", location);
+                throw;
             }
 
-            activity?.AddTag("region", region);
+            activity?.AddTag("location", location);
             activity?.AddTag("balancingAuthorityAbbreviation", balancingAuthority.Abbreviation);
 
-            Logger.LogDebug("Converted region {region} to balancing authority {balancingAuthorityAbbreviation}", region, balancingAuthority.Abbreviation);
+            Logger.LogDebug("Converted location {location} to balancing authority {balancingAuthorityAbbreviation}", location, balancingAuthority.Abbreviation);
 
             var data = (await this.WattTimeClient.GetForecastByDateAsync(balancingAuthority, startPeriod.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture), endPeriod.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture))).ToList();
 
-            Logger.LogDebug("Found {count} total forcasts for region {region} for period {startPeriod} to {endPeriod}.", data.Count, region, startPeriod, endPeriod);
+            Logger.LogDebug("Found {count} total forcasts for location {location} for period {startPeriod} to {endPeriod}.", data.Count, location, startPeriod, endPeriod);
 
             var result = data.SelectMany(i => i.ForecastData).Select(e => new EmissionsData() 
             { 
-                Location = region, 
+                Location = balancingAuthority.Abbreviation, 
                 Rating = e.Value, 
                 Time = e.PointTime 
             }).ToList();
 
-            Logger.LogDebug("Found {count} total emissions data records for region {region} for period {startPeriod} to {endPeriod}.", result.Count, region, startPeriod, endPeriod);
+            Logger.LogDebug("Found {count} total emissions data records for location {location} for period {startPeriod} to {endPeriod}.", result.Count, location, startPeriod, endPeriod);
 
             return result;
         }
