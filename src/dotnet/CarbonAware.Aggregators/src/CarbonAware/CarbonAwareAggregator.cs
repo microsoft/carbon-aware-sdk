@@ -18,21 +18,21 @@ namespace CarbonAware.Aggregators.CarbonAware
             this._plugin = plugin;
         }
 
-        public async Task<double> GetEmissionsAverageAsync(string location, DateTime startTime, int durationMinutes)
+        public async Task<double> CalcEmissionsAverageAsync(IDictionary props)
         {
-            var props = new Dictionary<string, object?>() {
-                {
-                    CarbonAwareConstants.Locations, new List<string>() { location }
-                },
-                {
-                    CarbonAwareConstants.Start, startTime
-                },
-                {
-                    CarbonAwareConstants.Duration, durationMinutes
-                }
-            };
+            ValidateAverageProps(props);
             var list = await GetEmissionsDataAsync(props);
             return list.Any() ? list.Select(x => x.Rating).Average() : 0;
+        }
+
+        private void ValidateAverageProps(IDictionary props)
+        {
+            if (!props.Contains(CarbonAwareConstants.Locations) &&
+                !props.Contains(CarbonAwareConstants.Start) &&
+                !props.Contains(CarbonAwareConstants.Duration))
+            {
+                throw new ArgumentException("Missing properties to calculate average");
+            }
         }
 
         public async Task<IEnumerable<EmissionsData>> GetEmissionsDataAsync(IDictionary props)

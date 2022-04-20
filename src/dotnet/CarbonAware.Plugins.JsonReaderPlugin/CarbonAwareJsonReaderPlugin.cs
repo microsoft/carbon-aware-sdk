@@ -55,7 +55,7 @@ public class CarbonAwareJsonReaderPlugin : ICarbonAware
         }
         else
         {
-            data  = data.Where(ed => ed.Time <= startDate);
+            data  = data.Where(ed => ed.Time >= startDate);
         }
 
         if (data.Count() != 0)

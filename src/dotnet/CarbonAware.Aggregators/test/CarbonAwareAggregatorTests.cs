@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
+using Microsoft.Extensions.DependencyInjection;
+using CarbonAware.Aggregators.Configuration;
 
 namespace CarbonAware.Aggregators.Tests;
 
@@ -20,7 +22,7 @@ public class CarbonAwareAggregatorTests
     [TestCase("westus", "2021-11-19", 10, ExpectedResult = 0)]
     [TestCase("eastus", "2021-11-19", 10, ExpectedResult = 0)]
     [TestCase("fakelocation", "2021-11-18", 10, ExpectedResult = 0)]
-    public async Task<double> Test_Emissions_Average(string location, string startTime, int durationMinutes)
+    public async Task<double> Test_Emissions_Average_FakeData(string location, string startTime, int durationMinutes)
     {
         var logger = Mock.Of<ILogger<CarbonAwareAggregator>>();
         var mockPlugin = new Mock<ICarbonAware>();
@@ -32,8 +34,38 @@ public class CarbonAwareAggregatorTests
             .ReturnsAsync(FilterRawFakeData(location, sTime));
         
         var aggregator = new CarbonAwareAggregator(logger, mockPlugin.Object);
+        var props = new Dictionary<string, object>() {
+            { CarbonAwareConstants.Locations, new List<string>() { location }},
+            { CarbonAwareConstants.Start, sTime },
+            { CarbonAwareConstants.Duration, durationMinutes }
+        };
+        return await aggregator.CalcEmissionsAverageAsync(props);
+    }
 
-        return await aggregator.GetEmissionsAverageAsync(location, sTime, durationMinutes);
+    [TestCase("westus", "2021-11-17", 10, 20)]
+    [TestCase("eastus", "2021-12-19", 10, 20)]
+    [TestCase("fake", "2021-12-19", 10, 0)]
+    public async Task Test_With_Plugin_Association(string location, string startTime, int durationMinutes, int expected)
+    {
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddLogging(); 
+        serviceCollection.AddCarbonAwareEmissionServices();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var aggregators = serviceProvider.GetServices<ICarbonAwareAggregator>();
+        Assert.NotNull(aggregators);
+        Assert.IsNotEmpty(aggregators);
+
+        DateTime sTime;
+        Assert.True(DateTime.TryParse(startTime, out sTime));
+        var props = new Dictionary<string, object>() {
+            { CarbonAwareConstants.Locations, new List<string>() { location } },
+            { CarbonAwareConstants.Start, sTime },
+            { CarbonAwareConstants.Duration, durationMinutes }
+        };
+        var aggregator = aggregators.First();
+
+        var average = await aggregator.CalcEmissionsAverageAsync(props);
+        Assert.GreaterOrEqual(average, expected);
     }
 
     private IEnumerable<EmissionsData> FilterRawFakeData(string location, DateTime startTime)

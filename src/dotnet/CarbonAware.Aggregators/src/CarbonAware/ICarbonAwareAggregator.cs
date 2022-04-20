@@ -17,6 +17,6 @@ namespace CarbonAware.Aggregators.CarbonAware
         /// <returns>An IEnumerable instance with EmissionsData instances.</returns>
         Task<IEnumerable<EmissionsData>> GetEmissionsDataAsync(IDictionary props);
 
-        Task<double> GetEmissionsAverageAsync(string location, DateTime startTime, int durationMinutes);
+        Task<double> CalcEmissionsAverageAsync(IDictionary props);
     }
 }
