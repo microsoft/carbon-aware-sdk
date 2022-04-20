@@ -69,7 +69,6 @@ public class CarbonAwareController : ControllerBase
         return await GetEmissionsDataAsync(props);
     }
 
-
     /// <summary>
     /// Given a dictionary of properties, handles call to GetEmissionsDataAsync including logging and response handling.
     /// </summary>
