@@ -2,7 +2,6 @@ using CarbonAware.Model;
 using CarbonAware.Plugins;
 using Microsoft.Extensions.Logging;
 using System.Collections;
-using System.Linq;
 
 namespace CarbonAware.Aggregators.CarbonAware;
 

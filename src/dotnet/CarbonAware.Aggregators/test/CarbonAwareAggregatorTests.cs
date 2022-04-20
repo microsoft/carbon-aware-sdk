@@ -70,6 +70,39 @@ public class CarbonAwareAggregatorTests
         Assert.GreaterOrEqual(average, expected);
     }
 
+    [TestCase("westus", null, null)]
+    [TestCase(null, "2021-12-19", null)]
+    [TestCase(null, null, "2021-12-20")]
+    [TestCase(null, "2021-12-19", "2021-12-20")]
+    public void Test_Missing_Properties(string location, string startTime, string endTime)
+    {
+        var logger = Mock.Of<ILogger<CarbonAwareAggregator>>();
+        var mockPlugin = new Mock<ICarbonAware>();
+
+        mockPlugin.Setup(x => x.GetEmissionsDataAsync(It.IsAny<Dictionary<string, object>>()))
+            .ReturnsAsync(It.IsAny<IEnumerable<EmissionsData>>);
+        
+        var aggregator = new CarbonAwareAggregator(logger, mockPlugin.Object);
+        var props = new Dictionary<string, object>();
+        if (location != null)
+        {
+            props.Add(CarbonAwareConstants.Locations, new List<string>() { location });
+        }
+        if (startTime != null)
+        {
+            DateTime sTime;
+            Assert.True(DateTime.TryParse(startTime, out sTime));
+            props.Add(CarbonAwareConstants.Start, sTime);
+        }
+        if (endTime != null)
+        {
+            DateTime eTime;
+            Assert.True(DateTime.TryParse(endTime, out eTime));
+            props.Add(CarbonAwareConstants.End, eTime);
+        }
+        Assert.ThrowsAsync<ArgumentException>(async () => await aggregator.CalcEmissionsAverageAsync(props));
+    }
+
     private IEnumerable<EmissionsData> FilterRawFakeData(string location, DateTime startTime, DateTime endTime)
     {
         return RawFakeEmissionData.Where(x => x.Location == location && x.Time >= startTime && x.Time <= endTime);
@@ -79,27 +112,27 @@ public class CarbonAwareAggregatorTests
         {
             new EmissionsData {
                 Location = "westus",
-                Time = DateTime.Parse("2021-11-17T04:45:11.5104572+00:00"),
+                Time = DateTime.Parse("2021-11-17"),
                 Rating = 10
             },
             new EmissionsData {
                 Location = "westus",
-                Time = DateTime.Parse("2021-11-17T12:45:11.5104574+00:00"),
+                Time = DateTime.Parse("2021-11-17"),
                 Rating = 20
             },
             new EmissionsData {
                 Location = "westus",
-                Time = DateTime.Parse("2021-11-17T20:45:11.5104575+00:00"),
+                Time = DateTime.Parse("2021-11-17"),
                 Rating = 30
             },
             new EmissionsData {
                 Location = "westus",
-                Time = DateTime.Parse("2021-11-19T04:45:11.5104575+00:00"),
+                Time = DateTime.Parse("2021-11-19"),
                 Rating = 40
             },
             new EmissionsData {
                 Location = "eastus",
-                Time = DateTime.Parse("2021-11-18T07:06:11.510457+00:00"),
+                Time = DateTime.Parse("2021-11-18"),
                 Rating = 60
             }
         };
