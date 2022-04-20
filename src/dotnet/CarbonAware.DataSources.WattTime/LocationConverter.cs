@@ -3,9 +3,7 @@ using CarbonAware.Tools.WattTimeClient.Model;
 
 namespace CarbonAware.DataSources.WattTime;
 
-/// <summary>
-/// Class RegionConverter.
-/// </summary>
+/// <inheritdoc />
 public class LocationConverter : ILocationConverter
 {
     /// <inheritdoc />
@@ -18,10 +16,5 @@ public class LocationConverter : ILocationConverter
         // if no ba, throw LocationConvertsionException
         // return BA.
         throw new NotImplementedException();
-    }
-
-    private void Validate(Location location)
-    {
-
     }
 }

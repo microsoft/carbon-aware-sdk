@@ -4,7 +4,7 @@ using CarbonAware.Tools.WattTimeClient.Model;
 namespace CarbonAware.DataSources.WattTime;
 
 /// <summary>
-/// Represents a WattTime region converter.
+/// Represents a WattTime location converter.
 /// </summary>
 public interface ILocationConverter
 {
