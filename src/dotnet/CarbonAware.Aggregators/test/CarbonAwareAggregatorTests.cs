@@ -46,7 +46,7 @@ public class CarbonAwareAggregatorTests
     [TestCase("westus", "2021-11-17", "2021-11-20", 20)]
     [TestCase("eastus", "2021-12-19", "2021-12-30", 20)]
     [TestCase("fake", "2021-12-19", "2021-12-30", 0)]
-    public async Task Test_With_Plugin_Association(string location, string startTime, string endTime, int expected)
+    public async Task Test_Emissions_Average_With_Plugin_Association(string location, string startTime, string endTime, int expected)
     {
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddLogging(); 
@@ -74,7 +74,7 @@ public class CarbonAwareAggregatorTests
     [TestCase(null, "2021-12-19", null)]
     [TestCase(null, null, "2021-12-20")]
     [TestCase(null, "2021-12-19", "2021-12-20")]
-    public void Test_Missing_Properties(string location, string startTime, string endTime)
+    public void Test_Emissions_Average_Missing_Properties(string location, string startTime, string endTime)
     {
         var logger = Mock.Of<ILogger<CarbonAwareAggregator>>();
         var mockPlugin = new Mock<ICarbonAware>();
