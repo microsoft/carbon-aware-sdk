@@ -87,19 +87,19 @@ public class CarbonAwareAggregatorTests
         var props = new Dictionary<string, object>();
         if (location != null)
         {
-            props.Add(CarbonAwareConstants.Locations, new List<string>() { location });
+            props[CarbonAwareConstants.Locations] =  new List<string>() { location };
         }
         if (startTime != null)
         {
             DateTime sTime;
             Assert.True(DateTime.TryParse(startTime, out sTime));
-            props.Add(CarbonAwareConstants.Start, sTime);
+            props[CarbonAwareConstants.Start] = sTime;
         }
         if (endTime != null)
         {
             DateTime eTime;
             Assert.True(DateTime.TryParse(endTime, out eTime));
-            props.Add(CarbonAwareConstants.End, eTime);
+            props[CarbonAwareConstants.End] = eTime;
         }
         Assert.ThrowsAsync<ArgumentException>(async () => await aggregator.CalcEmissionsAverageAsync(props));
     }
