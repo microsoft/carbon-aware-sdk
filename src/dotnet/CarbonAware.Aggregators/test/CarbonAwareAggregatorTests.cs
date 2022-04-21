@@ -48,16 +48,14 @@ public class CarbonAwareAggregatorTests
         serviceCollection.AddLogging(); 
         serviceCollection.AddCarbonAwareEmissionServices();
         var serviceProvider = serviceCollection.BuildServiceProvider();
-        var aggregators = serviceProvider.GetServices<ICarbonAwareAggregator>();
-        Assert.NotNull(aggregators);
-        Assert.IsNotEmpty(aggregators);
+        var aggregator = serviceProvider.GetRequiredService<ICarbonAwareAggregator>();
+        Assert.NotNull(aggregator);
 
         var props = new Dictionary<string, object>() {
             { CarbonAwareConstants.Locations, new List<string>() { location } },
             { CarbonAwareConstants.Start, startTime },
             { CarbonAwareConstants.End, endTime}
         };
-        var aggregator = aggregators.First();
 
         var average = await aggregator.CalcEmissionsAverageAsync(props);
         Assert.GreaterOrEqual(average, expected);
