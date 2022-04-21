@@ -27,18 +27,14 @@ public class CarbonAwareAggregatorTests
         var logger = Mock.Of<ILogger<CarbonAwareAggregator>>();
         var mockPlugin = new Mock<ICarbonAware>();
 
-        DateTime sTime, eTime;
-        Assert.True(DateTime.TryParse(startTime, out sTime));
-        Assert.True(DateTime.TryParse(endTime, out eTime));
-
         mockPlugin.Setup(x => x.GetEmissionsDataAsync(It.IsAny<Dictionary<string, object>>()))
-            .ReturnsAsync(FilterRawFakeData(location, sTime, eTime));
+            .ReturnsAsync(FilterRawFakeData(location, startTime, endTime));
         
         var aggregator = new CarbonAwareAggregator(logger, mockPlugin.Object);
         var props = new Dictionary<string, object>() {
             { CarbonAwareConstants.Locations, new List<string>() { location }},
-            { CarbonAwareConstants.Start, sTime },
-            { CarbonAwareConstants.End, eTime }
+            { CarbonAwareConstants.Start, startTime },
+            { CarbonAwareConstants.End, endTime }
         };
         return await aggregator.CalcEmissionsAverageAsync(props);
     }
@@ -56,13 +52,10 @@ public class CarbonAwareAggregatorTests
         Assert.NotNull(aggregators);
         Assert.IsNotEmpty(aggregators);
 
-        DateTime sTime, eTime;
-        Assert.True(DateTime.TryParse(startTime, out sTime));
-        Assert.True(DateTime.TryParse(endTime, out eTime));
         var props = new Dictionary<string, object>() {
             { CarbonAwareConstants.Locations, new List<string>() { location } },
-            { CarbonAwareConstants.Start, sTime },
-            { CarbonAwareConstants.End, eTime}
+            { CarbonAwareConstants.Start, startTime },
+            { CarbonAwareConstants.End, endTime}
         };
         var aggregator = aggregators.First();
 
@@ -85,28 +78,27 @@ public class CarbonAwareAggregatorTests
         
         var aggregator = new CarbonAwareAggregator(logger, mockPlugin.Object);
         var props = new Dictionary<string, object>();
-        if (location != null)
+        if (!String.IsNullOrEmpty(location))
         {
             props[CarbonAwareConstants.Locations] =  new List<string>() { location };
         }
-        if (startTime != null)
+        if (!String.IsNullOrEmpty(startTime))
         {
-            DateTime sTime;
-            Assert.True(DateTime.TryParse(startTime, out sTime));
-            props[CarbonAwareConstants.Start] = sTime;
+            props[CarbonAwareConstants.Start] = startTime;
         }
-        if (endTime != null)
+        if (!String.IsNullOrEmpty(endTime))
         {
-            DateTime eTime;
-            Assert.True(DateTime.TryParse(endTime, out eTime));
-            props[CarbonAwareConstants.End] = eTime;
+            props[CarbonAwareConstants.End] = endTime;
         }
         Assert.ThrowsAsync<ArgumentException>(async () => await aggregator.CalcEmissionsAverageAsync(props));
     }
 
-    private IEnumerable<EmissionsData> FilterRawFakeData(string location, DateTime startTime, DateTime endTime)
+    private IEnumerable<EmissionsData> FilterRawFakeData(string location, string startTime, string endTime)
     {
-        return RawFakeEmissionData.Where(x => x.Location == location && x.Time >= startTime && x.Time <= endTime);
+        DateTime start, end;
+        Assert.True(DateTime.TryParse(startTime, out start));
+        Assert.True(DateTime.TryParse(endTime, out end));
+        return RawFakeEmissionData.Where(x => x.Location == location && x.Time >= start && x.Time <= end);
     }
 
     static IEnumerable<EmissionsData> RawFakeEmissionData =  new List<EmissionsData>()

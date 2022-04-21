@@ -30,10 +30,9 @@ public class CarbonAwareJsonReaderPlugin : ICarbonAware
     {
         List<EmissionsData>? emissionsData = GetSampleJson();
         if (emissionsData == null) {
-            _logger.LogDebug("Emission data list is empty");
-            return new List<EmissionsData>();
+            return Enumerable.Empty<EmissionsData>();
         }
-        _logger.LogDebug("Total emission records retrieved " + emissionsData.Count);
+        _logger.LogDebug($"Total emission records retrieved {emissionsData.Count}");
         
         return await Task.FromResult(GetFilteredData(emissionsData, props));
     }
@@ -42,13 +41,13 @@ public class CarbonAwareJsonReaderPlugin : ICarbonAware
     {
         var locations = GetLocationsFromProps(props);
         var startDate = GetStartDateFromProps(props);
-        var endDate = props[CarbonAwareConstants.End];
+        var endDate = GetEndDateFromProps(props);
         
-        data = filterByLocation(data, locations);
+        data = FilterByLocation(data, locations);
 
         if (endDate != null)
         {
-            data = filterByDateRange(data, startDate, endDate);
+            data = FilterByDateRange(data, startDate, endDate);
         }
         else
         {
@@ -63,16 +62,13 @@ public class CarbonAwareJsonReaderPlugin : ICarbonAware
         return data;
     }
 
-    private IEnumerable<EmissionsData> filterByDateRange(IEnumerable<EmissionsData> data, DateTime startDate, object endDate)
+    private IEnumerable<EmissionsData> FilterByDateRange(IEnumerable<EmissionsData> data, DateTime startDate, DateTime? endDate)
     {
-        DateTime end;
-        DateTime.TryParse(endDate.ToString(), out end);
-        data = data.Where(ed => ed.TimeBetween(startDate, end));  
-
+        data = data.Where(ed => ed.TimeBetween(startDate, endDate));
         return data;
     }
 
-    private IEnumerable<EmissionsData> filterByLocation(IEnumerable<EmissionsData> data, IEnumerable<string>? locations)
+    private IEnumerable<EmissionsData> FilterByLocation(IEnumerable<EmissionsData> data, IEnumerable<string>? locations)
     {
         if (locations!.Any()) 
         {
@@ -81,7 +77,8 @@ public class CarbonAwareJsonReaderPlugin : ICarbonAware
         return data;
     }
 
-    private DateTime GetStartDateFromProps(IDictionary props) {
+    private DateTime GetStartDateFromProps(IDictionary props)
+    {
         var start = props[CarbonAwareConstants.Start];
         var startDate = DateTime.Now;
         if (start != null && !DateTime.TryParse(start.ToString(), out startDate))
@@ -89,6 +86,17 @@ public class CarbonAwareJsonReaderPlugin : ICarbonAware
             startDate = DateTime.Now;
         }
         return startDate;
+    }
+
+    private DateTime? GetEndDateFromProps(IDictionary props)
+    {
+        DateTime value;
+        var end = props[CarbonAwareConstants.End];
+        if (end == null || !DateTime.TryParse(end.ToString(), out value))
+        {
+            return null;
+        }
+        return value;
     }
 
     private IEnumerable<string>? GetLocationsFromProps(IDictionary props)
