@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.Model;
-using CarbonAware.Plugins;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using CarbonAware.Aggregators.Configuration;
+using CarbonAware.Interfaces;
 
 namespace CarbonAware.Aggregators.Tests;
 
@@ -25,14 +25,15 @@ public class CarbonAwareAggregatorTests
     public async Task<double> Test_Emissions_Average_FakeData(string location, string startTime, string endTime)
     {
         var logger = Mock.Of<ILogger<CarbonAwareAggregator>>();
-        var mockPlugin = new Mock<ICarbonAware>();
+        var mockDataSrc = new Mock<ICarbonIntensityDataSource>();
 
-        mockPlugin.Setup(x => x.GetEmissionsDataAsync(It.IsAny<Dictionary<string, object>>()))
+        mockDataSrc.Setup(x => x.GetCarbonIntensityAsync(It.IsAny<IEnumerable<Location>>(), 
+            It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
             .ReturnsAsync(FilterRawFakeData(location, startTime, endTime));
         
-        var aggregator = new CarbonAwareAggregator(logger, mockPlugin.Object);
+        var aggregator = new CarbonAwareAggregator(logger, mockDataSrc.Object);
         var props = new Dictionary<string, object>() {
-            { CarbonAwareConstants.Locations, new List<string>() { location }},
+            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = location } }},
             { CarbonAwareConstants.Start, startTime },
             { CarbonAwareConstants.End, endTime }
         };
@@ -52,7 +53,7 @@ public class CarbonAwareAggregatorTests
         Assert.NotNull(aggregator);
 
         var props = new Dictionary<string, object>() {
-            { CarbonAwareConstants.Locations, new List<string>() { location } },
+            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = location } } },
             { CarbonAwareConstants.Start, startTime },
             { CarbonAwareConstants.End, endTime}
         };
@@ -69,16 +70,17 @@ public class CarbonAwareAggregatorTests
     public void Test_Emissions_Average_Missing_Properties(string location, string startTime, string endTime)
     {
         var logger = Mock.Of<ILogger<CarbonAwareAggregator>>();
-        var mockPlugin = new Mock<ICarbonAware>();
+        var mockDataSrc = new Mock<ICarbonIntensityDataSource>();
 
-        mockPlugin.Setup(x => x.GetEmissionsDataAsync(It.IsAny<Dictionary<string, object>>()))
+        mockDataSrc.Setup(x => x.GetCarbonIntensityAsync(It.IsAny<IEnumerable<Location>>(), 
+            It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
             .ReturnsAsync(It.IsAny<IEnumerable<EmissionsData>>);
         
-        var aggregator = new CarbonAwareAggregator(logger, mockPlugin.Object);
+        var aggregator = new CarbonAwareAggregator(logger, mockDataSrc.Object);
         var props = new Dictionary<string, object>();
         if (!String.IsNullOrEmpty(location))
         {
-            props[CarbonAwareConstants.Locations] =  new List<string>() { location };
+            props[CarbonAwareConstants.Locations] =  new List<Location>() { new Location() { RegionName = location } };
         }
         if (!String.IsNullOrEmpty(startTime))
         {
