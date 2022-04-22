@@ -49,28 +49,21 @@ public class WattTimeDataSourceTests
         var startDate = new DateTimeOffset(2022, 4, 18, 12, 32, 42, TimeSpan.FromHours(-6));
         var endDate = new DateTimeOffset(2022, 4, 18, 12, 33, 42, TimeSpan.FromHours(-6));
 
-        var forecasts = new List<Forecast>()
+        var emissionData = new List<GridEmissionDataPoint>()
         {
-            new Forecast()
+            new GridEmissionDataPoint()
             {
-                GeneratedAt = startDate.DateTime,
-                ForecastData = new List<GridEmissionDataPoint>()
-                {
-                    new GridEmissionDataPoint()
-                    {
-                        BalancingAuthorityAbbreviation = balancingAuthority.Abbreviation,
-                        PointTime = startDate.DateTime,
-                        Value = 5,
-                    }
-                }
+                BalancingAuthorityAbbreviation = balancingAuthority.Abbreviation,
+                PointTime = startDate.DateTime,
+                Value = 5,
             }
         };
 
-        this.WattTimeClient.Setup(w => w.GetForecastByDateAsync(
+        this.WattTimeClient.Setup(w => w.GetDataAsync(
             balancingAuthority,
             startDate,
             endDate)
-        ).ReturnsAsync(() => forecasts);
+        ).ReturnsAsync(() => emissionData);
 
         this.LocationConverter.Setup(r => r.ConvertLocationToBalancingAuthorityAsync(location)).ReturnsAsync(balancingAuthority);
 
@@ -96,11 +89,11 @@ public class WattTimeDataSourceTests
         var startDate = new DateTimeOffset(2022, 4, 18, 12, 32, 42, TimeSpan.FromHours(-6));
         var endDate = new DateTimeOffset(2022, 4, 18, 12, 33, 42, TimeSpan.FromHours(-6));
 
-        this.WattTimeClient.Setup(w => w.GetForecastByDateAsync(
+        this.WattTimeClient.Setup(w => w.GetDataAsync(
             balancingAuthority,
             startDate,
             endDate)
-        ).ReturnsAsync(() => new List<Forecast>());
+        ).ReturnsAsync(() => new List<GridEmissionDataPoint>());
 
         this.LocationConverter.Setup(r => r.ConvertLocationToBalancingAuthorityAsync(location)).ReturnsAsync(balancingAuthority);
 

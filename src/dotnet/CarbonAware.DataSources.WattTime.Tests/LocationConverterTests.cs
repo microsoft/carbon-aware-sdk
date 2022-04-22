@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CarbonAware.DataSources.WattTime.Tests
 {
-    public class RegionConverterTests
+    public class LocationConverterTests
     {
         [SetUp]
         public void Setup()

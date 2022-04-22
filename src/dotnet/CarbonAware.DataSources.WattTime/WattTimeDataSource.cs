@@ -37,9 +37,9 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(Location location, DateTimeOffset startPeriod, DateTimeOffset endPeriod)
+    public async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(Location location, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
     {
-        this.Logger.LogInformation("Getting carbon intensity for location {location} for period {startPeriod} to {endPeriod}.", location, startPeriod, endPeriod);
+        this.Logger.LogInformation("Getting carbon intensity for location {location} for period {periodStartTime} to {periodEndTime}.", location, periodStartTime, periodEndTime);
 
         using (var activity = ActivitySource.StartActivity())
         {
@@ -60,21 +60,21 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
             Logger.LogDebug("Converted location {location} to balancing authority {balancingAuthorityAbbreviation}", location, balancingAuthority.Abbreviation);
 
-            var data = (await this.WattTimeClient.GetForecastByDateAsync(balancingAuthority, startPeriod, endPeriod)).ToList();
+            var data = (await this.WattTimeClient.GetDataAsync(balancingAuthority, periodStartTime, periodEndTime)).ToList();
 
-            Logger.LogDebug("Found {count} total forecasts for location {location} for period {startPeriod} to {endPeriod}.", data.Count, location, startPeriod, endPeriod);
+            Logger.LogDebug("Found {count} total forecasts for location {location} for period {periodStartTime} to {periodEndTime}.", data.Count, location, periodStartTime, periodEndTime);
 
             // Linq statement to convert WattTime forecast data into EmissionsData for the CarbonAware SDK.
-            var result = data.SelectMany(i => i.ForecastData).Select(e => new EmissionsData() 
+            var result = data.Select(e => new EmissionsData() 
             { 
-                Location = balancingAuthority.Abbreviation, 
+                Location = e.BalancingAuthorityAbbreviation, 
                 Rating = e.Value, 
                 Time = e.PointTime 
             });
 
             if (Logger.IsEnabled(LogLevel.Debug))
             {
-                Logger.LogDebug("Found {count} total emissions data records for location {location} for period {startPeriod} to {endPeriod}.", result.ToList().Count, location, startPeriod, endPeriod);
+                Logger.LogDebug("Found {count} total emissions data records for location {location} for period {periodStartTime} to {periodEndTime}.", result.ToList().Count, location, periodStartTime, periodEndTime);
             }
 
             return result;
