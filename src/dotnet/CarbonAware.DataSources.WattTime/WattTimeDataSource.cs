@@ -60,7 +60,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
             Logger.LogDebug("Converted location {location} to balancing authority {balancingAuthorityAbbreviation}", location, balancingAuthority.Abbreviation);
 
-            var data = (await this.WattTimeClient.GetForecastByDateAsync(balancingAuthority, startPeriod.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture), endPeriod.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture))).ToList();
+            var data = (await this.WattTimeClient.GetForecastByDateAsync(balancingAuthority, startPeriod, endPeriod)).ToList();
 
             Logger.LogDebug("Found {count} total forecasts for location {location} for period {startPeriod} to {endPeriod}.", data.Count, location, startPeriod, endPeriod);
 

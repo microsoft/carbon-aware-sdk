@@ -68,8 +68,8 @@ public class WattTimeDataSourceTests
 
         this.WattTimeClient.Setup(w => w.GetForecastByDateAsync(
             balancingAuthority,
-            startDate.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture),
-            endDate.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture))
+            startDate,
+            endDate)
         ).ReturnsAsync(() => forecasts);
 
         this.LocationConverter.Setup(r => r.ConvertLocationToBalancingAuthorityAsync(location)).ReturnsAsync(balancingAuthority);
@@ -98,8 +98,8 @@ public class WattTimeDataSourceTests
 
         this.WattTimeClient.Setup(w => w.GetForecastByDateAsync(
             balancingAuthority,
-            startDate.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture),
-            endDate.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture))
+            startDate,
+            endDate)
         ).ReturnsAsync(() => new List<Forecast>());
 
         this.LocationConverter.Setup(r => r.ConvertLocationToBalancingAuthorityAsync(location)).ReturnsAsync(balancingAuthority);
