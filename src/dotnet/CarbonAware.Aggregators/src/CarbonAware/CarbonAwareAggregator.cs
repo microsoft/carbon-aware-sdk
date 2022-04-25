@@ -58,6 +58,15 @@ namespace CarbonAware.Aggregators.CarbonAware
             throw ex;
         }
 
+        public async Task<double> CalcEmissionsAverageAsync(IDictionary props)
+        {
+            ValidateAverageProps(props);
+            var list = await GetEmissionsDataAsync(props);
+            var value = list.Any() ? list.Select(x => x.Rating).Average() : 0;
+            _logger.LogInformation($"Carbon Intensity Average: {value}");
+            return value;
+        }
+
         private void ValidateAverageProps(IDictionary props)
         {
             if (!props.Contains(CarbonAwareConstants.Locations) ||
