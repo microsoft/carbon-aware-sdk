@@ -8,7 +8,7 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["CarbonAware.WebApi/src/CarbonAware.WebApi.csproj", "CarbonAware.WebApi/"]
 COPY ["CarbonAware/src/CarbonAware.csproj", "CarbonAware/"]
-COPY ["CarbonAware.Plugins/CarbonAware.Plugins.BasicJsonPlugin/src/CarbonAware.Plugins.BasicJsonPlugin.csproj", "CarbonAware.Plugins.BasicJsonPlugin/"]
+COPY ["CarbonAware.Plugins.BasicJsonPlugin/src/CarbonAware.Plugins.BasicJsonPlugin.csproj", "CarbonAware.Plugins.BasicJsonPlugin/"]
 RUN dotnet restore "CarbonAware.WebApi/CarbonAware.WebApi.csproj"
 COPY . .
 WORKDIR "/src/CarbonAware.WebApi/src"
