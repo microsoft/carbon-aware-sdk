@@ -57,5 +57,16 @@ namespace CarbonAware.Aggregators.CarbonAware
             _logger.LogError("argument exception", ex);
             throw ex;
         }
+
+        private void ValidateAverageProps(IDictionary props)
+        {
+            if (!props.Contains(CarbonAwareConstants.Locations) ||
+                !props.Contains(CarbonAwareConstants.Start) ||
+                !props.Contains(CarbonAwareConstants.End))
+            {
+                throw new ArgumentException("Missing properties to calculate average");
+            }
+        }
+
     }
 }
