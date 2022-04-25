@@ -62,6 +62,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
     {
         ValidateAverageProps(props);
         var list = await GetEmissionsDataAsync(props);
+        // check whether the list if empty, if not, return Rating's average, otherwise 0.
         var value = list.Any() ? list.Select(x => x.Rating).Average() : 0;
         _logger.LogInformation($"Carbon Intensity Average: {value}");
         return value;
