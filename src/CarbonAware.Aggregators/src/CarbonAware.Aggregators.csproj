@@ -8,7 +8,7 @@
 
     <ItemGroup>
 	    <ProjectReference Include="..\..\CarbonAware\src\CarbonAware.csproj" />
-	    <ProjectReference Include="..\..\CarbonAware.Plugins\CarbonAware.Plugins.Registration\CarbonAware.Plugins.Registration.csproj" />
+	    <ProjectReference Include="..\..\CarbonAware.DataSources\CarbonAware.DataSources.Registration\CarbonAware.DataSources.Registration.csproj" />
     </ItemGroup>
 
 </Project>
