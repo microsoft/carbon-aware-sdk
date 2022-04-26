@@ -53,7 +53,6 @@ public class SciScoreController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    // TODO why can createasync take sciscorecalculation, but we take json object payload 
     public async Task<IActionResult> GetCarbonIntensityAsync(JsonObject payload)
     {
         var props = new Dictionary<string, object>();
