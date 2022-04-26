@@ -21,11 +21,11 @@ public class SciScoreControllerTests : TestsBase
     [Test]
     public async Task SuccessfulCallReturnsOk_sciscore()
     {
-        float data = 0.7F;
+        double data = 0.7;
         var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregatorWithData(data).Object);
         Location location = new Location() { LocationType = LocationType.Geoposition, Latitude = (decimal)1.0, Longitude = (decimal)2.0 };
         string timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z";
-        SciScoreCalculation calc = new SciScoreCalculation()
+        SciScoreInput calc = new SciScoreInput()
         {
             Location = location,
             TimeInterval = timeInterval
@@ -44,7 +44,7 @@ public class SciScoreControllerTests : TestsBase
 
         Location location = new Location() { LocationType = LocationType.Geoposition, Latitude = (decimal)1.0, Longitude = (decimal)2.0 };
         string timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z";
-        SciScoreCalculation calc = new SciScoreCalculation()
+        SciScoreInput calc = new SciScoreInput()
         {
             Location = location,
             TimeInterval = timeInterval

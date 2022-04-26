@@ -26,7 +26,7 @@ public class SciScoreController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-    public async Task<IActionResult> CreateAsync(SciScoreCalculation calculation)
+    public async Task<IActionResult> CreateAsync(SciScoreInput calculation)
     {
         if (calculation.Location == null)
         {
@@ -54,7 +54,7 @@ public class SciScoreController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetCarbonIntensityAsync(SciScoreCalculation calculation)
+    public async Task<IActionResult> GetCarbonIntensityAsync(SciScoreInput calculation)
     {
         _logger.LogInformation(" calling to aggregator to ");
         var carbonIntensity = await _aggregator.CalculateAverageCarbonIntensityAsync(calculation.Location, calculation.TimeInterval);

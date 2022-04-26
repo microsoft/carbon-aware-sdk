@@ -39,7 +39,7 @@ public abstract class TestsBase
     }
 
     // Mocks for SciScoreAggregator
-    protected static Mock<ISciScoreAggregator> CreateSciScoreAggregatorWithData(float data)
+    protected static Mock<ISciScoreAggregator> CreateSciScoreAggregatorWithData(double data)
     {
         var aggregator = new Mock<ISciScoreAggregator>();
         aggregator.Setup(x =>
