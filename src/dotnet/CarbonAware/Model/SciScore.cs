@@ -13,8 +13,6 @@ public record SciScore
 [Serializable]
 public record SciScoreCalculation
 {
-    public string LocationType { get; set; }
-
     public Location Location { get; set; }
     public string TimeInterval { get; set; }
 }

@@ -27,14 +27,14 @@ public class SciScoreController : ControllerBase
 
     public async Task<IActionResult> CreateAsync(SciScoreCalculation calculation)
     {
-        if (String.IsNullOrEmpty(calculation.AzRegion))
+        if (calculation.Location.Equals(null))
         {
-            return BadRequest("AzRegion is required");
+            return BadRequest("Location is required");
         }
 
-        if (String.IsNullOrEmpty(calculation.Duration))
+        if (String.IsNullOrEmpty(calculation.TimeInterval))
         {
-            return BadRequest("Duration is required");
+            return BadRequest("Time Interval is required");
         }
 
         SciScore score = new SciScore
@@ -53,6 +53,7 @@ public class SciScoreController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    // TODO why can createasync take sciscorecalculation, but we take json object payload 
     public async Task<IActionResult> GetCarbonIntensityAsync(JsonObject payload)
     {
         var props = new Dictionary<string, object>();
