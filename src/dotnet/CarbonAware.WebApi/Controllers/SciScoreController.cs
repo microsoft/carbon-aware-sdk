@@ -1,5 +1,5 @@
-using CarbonAware.Model;
 using CarbonAware.Aggregators.SciScore;
+using CarbonAware.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Text.Json;
@@ -27,14 +27,14 @@ public class SciScoreController : ControllerBase
 
     public async Task<IActionResult> CreateAsync(SciScoreCalculation calculation)
     {
-        if (String.IsNullOrEmpty(calculation.AzRegion))
+        if (calculation.Location == null)
         {
-            return BadRequest("AzRegion is required");
+            return BadRequest("Location is required");
         }
 
-        if (String.IsNullOrEmpty(calculation.Duration))
+        if (String.IsNullOrEmpty(calculation.TimeInterval))
         {
-            return BadRequest("Duration is required");
+            return BadRequest("TimeInterval is required");
         }
 
         SciScore score = new SciScore
@@ -53,18 +53,10 @@ public class SciScoreController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetCarbonIntensityAsync(JsonObject payload)
+    public async Task<IActionResult> GetCarbonIntensityAsync(SciScoreCalculation calculation)
     {
-        var props = new Dictionary<string, object>();
-        props.Add("timeInterval", payload["timeInterval"]);
-        props.Add("locationType", payload["location"]["locationType"]);
-        foreach (var prop in payload["location"]["value"])
-        {
-            props.Add(prop.Name, prop.Value);
-        }
-
         _logger.LogInformation(" calling to aggregator to ");
-        var carbonIntensity = await _aggregator.CalculateCarbonIntensityAsync(props);
+        var carbonIntensity = await _aggregator.CalculateCarbonIntensityAsync(calculation.Location, calculation.TimeInterval);
 
         SciScore score = new SciScore
         {
