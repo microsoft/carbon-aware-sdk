@@ -12,11 +12,11 @@ using Moq;
 /// </summary>
 public abstract class TestsBase
 {
-    protected Mock<ILogger<CarbonAwareController>> MockLogger { get; }
+    protected Mock<ILogger<CarbonAwareController>> MockCarbonAwareLogger { get; }
     protected Mock<ILogger<SciScoreController>> MockSciScoreLogger { get; }
     protected TestsBase()
     {
-        this.MockLogger = new Mock<ILogger<CarbonAwareController>>();
+        this.MockCarbonAwareLogger = new Mock<ILogger<CarbonAwareController>>();
         this.MockSciScoreLogger = new Mock<ILogger<SciScoreController>>();
     }
 

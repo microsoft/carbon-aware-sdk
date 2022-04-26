@@ -31,11 +31,11 @@ public class SciScoreControllerTests : TestsBase
             Location = location,
             TimeInterval = timeInterval
         };
-        var ar1 = (await controller.GetCarbonIntensityAsync(input)) as ObjectResult;
-        TestHelpers.AssertStatusCode(ar1, HttpStatusCode.OK);
+        var carbonIntensityOutput = (await controller.GetCarbonIntensityAsync(input)) as ObjectResult;
+        TestHelpers.AssertStatusCode(carbonIntensityOutput, HttpStatusCode.OK);
 
         var expected = new SciScore() { MarginalCarbonEmissionsValue = 0.7 };
-        Assert.AreEqual(ar1.Value, expected);
+        Assert.AreEqual(carbonIntensityOutput.Value, expected);
     }
 
     /// <summary>
@@ -54,10 +54,10 @@ public class SciScoreControllerTests : TestsBase
             TimeInterval = timeInterval
         };
 
-        IActionResult ar1 = await controller.GetCarbonIntensityAsync(input);
+        var carbonIntensityOutput = (await controller.GetCarbonIntensityAsync(input)) as ObjectResult;
 
         // Assert
-        TestHelpers.AssertStatusCode(ar1, HttpStatusCode.BadRequest);
+        TestHelpers.AssertStatusCode(carbonIntensityOutput, HttpStatusCode.BadRequest);
     }
 
 }
