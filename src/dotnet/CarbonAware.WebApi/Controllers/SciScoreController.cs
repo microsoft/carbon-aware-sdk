@@ -26,14 +26,14 @@ public class SciScoreController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-    public async Task<IActionResult> CreateAsync(SciScoreInput calculation)
+    public async Task<IActionResult> CreateAsync(SciScoreInput input)
     {
-        if (calculation.Location == null)
+        if (input.Location == null)
         {
             return BadRequest("Location is required");
         }
 
-        if (String.IsNullOrEmpty(calculation.TimeInterval))
+        if (String.IsNullOrEmpty(input.TimeInterval))
         {
             return BadRequest("TimeInterval is required");
         }
@@ -54,21 +54,21 @@ public class SciScoreController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetCarbonIntensityAsync(SciScoreInput calculation)
+    public async Task<IActionResult> GetCarbonIntensityAsync(SciScoreInput input)
     {
         _logger.LogInformation(" calling to aggregator to ");
-        if (calculation.Location == null)
+        if (input.Location == null)
         {
             return BadRequest("Location is required");
         }
 
-        if (String.IsNullOrEmpty(calculation.TimeInterval))
+        if (String.IsNullOrEmpty(input.TimeInterval))
         {
             return BadRequest("TimeInterval is required");
         }
         try
         {
-            var carbonIntensity = await _aggregator.CalculateAverageCarbonIntensityAsync(calculation.Location, calculation.TimeInterval);
+            var carbonIntensity = await _aggregator.CalculateAverageCarbonIntensityAsync(input.Location, input.TimeInterval);
 
             SciScore score = new SciScore
             {
