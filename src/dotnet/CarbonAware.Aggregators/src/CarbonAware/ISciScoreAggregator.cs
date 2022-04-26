@@ -7,12 +7,12 @@ namespace CarbonAware.Aggregators.SciScore
     public interface ISciScoreAggregator : IAggregator
     {
         /// <summary>
-        /// Returns a double that is made up of 
+        /// Returns emissions data records.
         /// </summary>
         /// <param name="location">Location object representing the location for the carbon intensity data.</param>
         /// <param name="timeInterval">ISO8601 time interval representing the interval to calculate carbon intensity over.</param>
-        /// <returns>An IEnumerable instance with EmissionsData instances.</returns>
+        /// <returns>An average value over the specified time interval.</returns>
         // Location, 
-        public Task<double> CalculateAverageCarbonIntensityAsync(Location location, string timeInterval);
+        Task<double> CalculateAverageCarbonIntensityAsync(Location location, string timeInterval);
     }
 }

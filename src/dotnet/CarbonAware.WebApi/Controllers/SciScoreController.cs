@@ -40,10 +40,10 @@ public class SciScoreController : ControllerBase
 
         SciScore score = new SciScore
         {
-            SciScoreValue = 100.0f,
-            EnergyValue = 1.0f,
-            MarginalCarbonEmissionsValue = 100.0f,
-            EmbodiedEmissionsValue = 0.0f,
+            SciScoreValue = 100.0,
+            EnergyValue = 1.0,
+            MarginalCarbonEmissionsValue = 100.0,
+            EmbodiedEmissionsValue = 0.0,
             FunctionalUnitValue = 1
         };
 
