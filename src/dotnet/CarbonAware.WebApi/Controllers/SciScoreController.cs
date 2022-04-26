@@ -28,12 +28,14 @@ public class SciScoreController : ControllerBase
     {
         if (input.Location == null)
         {
-            return BadRequest("Location is required");
+            var error = new CarbonAwareWebApiError() { Message = "Location is required" };
+            return BadRequest(error);
         }
 
         if (String.IsNullOrEmpty(input.TimeInterval))
         {
-            return BadRequest("TimeInterval is required");
+            var error = new CarbonAwareWebApiError() { Message = "TimeInterval is required" };
+            return BadRequest(error);
         }
 
         SciScore score = new SciScore
@@ -57,12 +59,14 @@ public class SciScoreController : ControllerBase
         _logger.LogInformation(" calling to aggregator to ");
         if (input.Location == null)
         {
-            return BadRequest("Location is required");
+            var error = new CarbonAwareWebApiError() { Message = "Location is required" };
+            return BadRequest(error);
         }
 
         if (String.IsNullOrEmpty(input.TimeInterval))
         {
-            return BadRequest("TimeInterval is required");
+            var error = new CarbonAwareWebApiError() { Message = "TimeInterval is required" };
+            return BadRequest(error);
         }
         try
         {
@@ -78,7 +82,8 @@ public class SciScoreController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError("Exception occured during marginal calculation execution", ex);
-            return BadRequest(ex.ToString());
+            var error = new CarbonAwareWebApiError() { Message = ex.ToString() };
+            return BadRequest(error);
         }
 
     }

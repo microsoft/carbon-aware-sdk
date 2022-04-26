@@ -26,13 +26,16 @@ public class SciScoreControllerTests : TestsBase
         var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregatorWithData(data).Object);
         Location location = new Location() { LocationType = LocationType.Geoposition, Latitude = (decimal)1.0, Longitude = (decimal)2.0 };
         string timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z";
-        SciScoreInput calc = new SciScoreInput()
+        SciScoreInput input = new SciScoreInput()
         {
             Location = location,
             TimeInterval = timeInterval
         };
-        IActionResult ar1 = await controller.GetCarbonIntensityAsync(calc);
+        var ar1 = (await controller.GetCarbonIntensityAsync(input)) as ObjectResult;
         TestHelpers.AssertStatusCode(ar1, HttpStatusCode.OK);
+
+        var expected = new SciScore() { MarginalCarbonEmissionsValue = 0.7 };
+        Assert.AreEqual(ar1.Value, expected);
     }
 
     /// <summary>
@@ -45,13 +48,13 @@ public class SciScoreControllerTests : TestsBase
 
         Location location = new Location() { LocationType = LocationType.Geoposition, Latitude = (decimal)1.0, Longitude = (decimal)2.0 };
         string timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z";
-        SciScoreInput calc = new SciScoreInput()
+        SciScoreInput input = new SciScoreInput()
         {
             Location = location,
             TimeInterval = timeInterval
         };
 
-        IActionResult ar1 = await controller.GetCarbonIntensityAsync(calc);
+        IActionResult ar1 = await controller.GetCarbonIntensityAsync(input);
 
         // Assert
         TestHelpers.AssertStatusCode(ar1, HttpStatusCode.BadRequest);
