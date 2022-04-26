@@ -15,11 +15,12 @@ using NUnit.Framework;
 [TestFixture]
 public class SciScoreControllerTests : TestsBase
 {
+
     /// <summary>
     /// Tests that successfull call to the aggregator with any data returned results in action with OK status.
     /// </summary>
     [Test]
-    public async Task SuccessfulCallReturnsOk_sciscore()
+    public async Task SuccessfulCallReturnsOk_MarginalCarbonIntensity()
     {
         double data = 0.7;
         var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregatorWithData(data).Object);
@@ -38,7 +39,7 @@ public class SciScoreControllerTests : TestsBase
     /// Tests that exception thrown by plugin results in action with BadRequest status
     /// </summary> location 
     [Test]
-    public async Task ExceptionReturnsBadRequest_sciscore()
+    public async Task ExceptionReturnsBadRequest_MarginalCarbonIntensity()
     {
         var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregatorWithException().Object);
 
@@ -55,4 +56,5 @@ public class SciScoreControllerTests : TestsBase
         // Assert
         TestHelpers.AssertStatusCode(ar1, HttpStatusCode.BadRequest);
     }
+
 }

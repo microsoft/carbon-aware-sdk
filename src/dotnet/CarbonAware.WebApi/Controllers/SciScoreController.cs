@@ -57,14 +57,32 @@ public class SciScoreController : ControllerBase
     public async Task<IActionResult> GetCarbonIntensityAsync(SciScoreInput calculation)
     {
         _logger.LogInformation(" calling to aggregator to ");
-        var carbonIntensity = await _aggregator.CalculateAverageCarbonIntensityAsync(calculation.Location, calculation.TimeInterval);
-
-        SciScore score = new SciScore
+        if (calculation.Location == null)
         {
-            MarginalCarbonEmissionsValue = carbonIntensity,
-        };
+            return BadRequest("Location is required");
+        }
 
-        return Ok(score);
+        if (String.IsNullOrEmpty(calculation.TimeInterval))
+        {
+            return BadRequest("TimeInterval is required");
+        }
+        try
+        {
+            var carbonIntensity = await _aggregator.CalculateAverageCarbonIntensityAsync(calculation.Location, calculation.TimeInterval);
+
+            SciScore score = new SciScore
+            {
+                MarginalCarbonEmissionsValue = carbonIntensity,
+            };
+
+            return Ok(score);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception occured during marginal calculation execution", ex);
+            return BadRequest(ex.ToString());
+        }
+
     }
 
 
