@@ -39,21 +39,19 @@ public abstract class TestsBase
     }
 
     // Mocks for SciScoreAggregator
-    protected static Mock<ISciScoreAggregator> CreateSciScoreAggregatorWithData(List<EmissionsData> data)
+    protected static Mock<ISciScoreAggregator> CreateSciScoreAggregatorWithData(float data)
     {
-        var aggregator = new Mock<ICarbonAwareAggregator>();
+        var aggregator = new Mock<ISciScoreAggregator>();
         aggregator.Setup(x =>
-            x.GetEmissionsDataAsync(
-                It.IsAny<Dictionary<string, object>>())).ReturnsAsync(data);
+            x.CalculateAverageCarbonIntensityAsync(It.IsAny<Location>(), It.IsAny<string>())).ReturnsAsync(data);
         return aggregator;
     }
 
-    protected static Mock<ICarbonAwareAggregator> CreateAggregatorWithException()
+    protected static Mock<ISciScoreAggregator> CreateSciScoreAggregatorWithException()
     {
-        var aggregator = new Mock<ICarbonAwareAggregator>();
+        var aggregator = new Mock<ISciScoreAggregator>();
         aggregator.Setup(x =>
-            x.GetEmissionsDataAsync(
-                It.IsAny<Dictionary<string, object>>())).Throws<Exception>();
+            x.CalculateAverageCarbonIntensityAsync(It.IsAny<Location>(), It.IsAny<string>())).Throws<Exception>();
         return aggregator;
     }
 }

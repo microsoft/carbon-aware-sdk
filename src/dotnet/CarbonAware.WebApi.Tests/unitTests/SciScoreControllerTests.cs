@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using CarbonAware.Model;
 using CarbonAware.WebApi.Controllers;
+using CarbonAware.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 
@@ -20,33 +21,17 @@ public class SciScoreControllerTests : TestsBase
     [Test]
     public async Task SuccessfulCallReturnsOk_sciscore()
     {
-        string location = "Sydney";
-        var data = new List<EmissionsData>()
+        float data = 0.7F;
+        var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregatorWithData(data).Object);
+        Location location = new Location() { LocationType = LocationType.Geoposition, Latitude = (decimal)1.0, Longitude = (decimal)2.0 };
+        string timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z";
+        SciScoreCalculation calc = new SciScoreCalculation()
         {
-            new EmissionsData()
-            {
-                Location = location,
-                Rating = 0.9,
-                Time = DateTime.Now
-            }
+            Location = location,
+            TimeInterval = timeInterval
         };
-        var controller = new SciScoreController(this.MockLogger.Object, CreateAggregatorWithData(data).Object);
-
-        // IActionResult ar1 = await controller.GetEmissionsDataForLocationByTime(location);
-        // TestHelpers.AssertStatusCode(ar1, HttpStatusCode.OK);
-    }
-
-    /// <summary>
-    /// Tests that a success call to plugin with no data returned results in action with No Content status.
-    /// </summary>
-    [Test]
-    public async Task EmptyResultRetunsNoContent_sciscore()
-    {
-        var controller = new SciScoreController(this.MockLogger.Object, CreateAggregatorWithData(new List<EmissionsData>()).Object);
-        
-        // IActionResult ar1 = await controller.GetEmissionsDataForLocationByTime(location);
-        //Assert
-    //     TestHelpers.AssertStatusCode(ar1, HttpStatusCode.NoContent);
+        IActionResult ar1 = await controller.GetCarbonIntensityAsync(calc);
+        TestHelpers.AssertStatusCode(ar1, HttpStatusCode.OK);
     }
 
     /// <summary>
@@ -55,12 +40,19 @@ public class SciScoreControllerTests : TestsBase
     [Test]
     public async Task ExceptionReturnsBadRequest_sciscore()
     {
-        var controller = new SciScoreController(this.MockLogger.Object, CreateAggregatorWithException().Object);
- 
-        // string location = "Sydney";
-        // IActionResult ar1 = await controller.GetEmissionsDataForLocationByTime(location);
+        var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregatorWithException().Object);
 
-        // // Assert
-        // TestHelpers.AssertStatusCode(ar1, HttpStatusCode.BadRequest);
+        Location location = new Location() { LocationType = LocationType.Geoposition, Latitude = (decimal)1.0, Longitude = (decimal)2.0 };
+        string timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z";
+        SciScoreCalculation calc = new SciScoreCalculation()
+        {
+            Location = location,
+            TimeInterval = timeInterval
+        };
+
+        IActionResult ar1 = await controller.GetCarbonIntensityAsync(calc);
+
+        // Assert
+        TestHelpers.AssertStatusCode(ar1, HttpStatusCode.BadRequest);
     }
 }
