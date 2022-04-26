@@ -9,10 +9,3 @@ public record SciScore
     public float? EmbodiedEmissionsValue { get; set; }
     public Int64? FunctionalUnitValue { get; set; }
 }
-
-[Serializable]
-public record SciScoreCalculation
-{
-    public Location Location { get; set; }
-    public string TimeInterval { get; set; }
-}

@@ -1,5 +1,4 @@
 ﻿using CarbonAware.Model;
-
 namespace CarbonAware.WebApi.Models;
 
 [Serializable]

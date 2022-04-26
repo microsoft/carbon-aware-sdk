@@ -1,5 +1,6 @@
 using CarbonAware.Aggregators.SciScore;
 using CarbonAware.WebApi.Models;
+using CarbonAware.Model;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Text.Json;
@@ -56,7 +57,7 @@ public class SciScoreController : ControllerBase
     public async Task<IActionResult> GetCarbonIntensityAsync(SciScoreCalculation calculation)
     {
         _logger.LogInformation(" calling to aggregator to ");
-        var carbonIntensity = await _aggregator.CalculateCarbonIntensityAsync(calculation.Location, calculation.TimeInterval);
+        var carbonIntensity = await _aggregator.CalculateAverageCarbonIntensityAsync(calculation.Location, calculation.TimeInterval);
 
         SciScore score = new SciScore
         {
