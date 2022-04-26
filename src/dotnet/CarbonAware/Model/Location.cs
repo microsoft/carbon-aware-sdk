@@ -8,6 +8,10 @@ namespace CarbonAware.Model;
 public class Location
 {
     private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+    /// <summary>
+    /// Gets or sets the type of location this location object represents.
+    /// </summary>
+    public LocationType LocationType { get; set; } = LocationType.NotProvided;
 
     /// <summary>
     /// Gets or sets the latitude.
@@ -19,15 +23,16 @@ public class Location
     /// </summary>
     public decimal? Longitude { get; set; }
 
-    /// <summary>
-    /// Gets or sets the type of location this location object represents.
-    /// </summary>
-    public LocationType LocationType { get; set; } = LocationType.NotProvided;
 
     /// <summary>
-    /// Gets or sets the region name to use.  When set to GeoPosition, this value should be null, otherwise, it should be the region name for the specified provider.
+    /// Gets or sets the cloud provider name to use.  When loation type is GeoPosition, this value should be null..
     /// </summary>
-    public string RegionName { get; set; }
+    public CloudProvider? ProviderName { get; set; }
+
+    /// <summary>
+    /// Gets or sets the region name to use.  When set to GeoPosition, this value should be null.
+    /// </summary>
+    public string? RegionName { get; set; }
 
     /// <inheritdoc />
     public override string ToString()
