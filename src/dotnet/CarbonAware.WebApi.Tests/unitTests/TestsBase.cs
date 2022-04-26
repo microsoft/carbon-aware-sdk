@@ -39,7 +39,7 @@ public abstract class TestsBase
     }
 
     // Mocks for SciScoreAggregator
-    protected static Mock<ISciScoreAggregator> CreateSciScoreAggregatorWithData(double data)
+    protected static Mock<ISciScoreAggregator> CreateSciScoreAggregator(double data)
     {
         var aggregator = new Mock<ISciScoreAggregator>();
         aggregator.Setup(x =>
@@ -47,11 +47,4 @@ public abstract class TestsBase
         return aggregator;
     }
 
-    protected static Mock<ISciScoreAggregator> CreateSciScoreAggregatorWithException()
-    {
-        var aggregator = new Mock<ISciScoreAggregator>();
-        aggregator.Setup(x =>
-            x.CalculateAverageCarbonIntensityAsync(It.IsAny<Location>(), It.IsAny<string>())).Throws<Exception>();
-        return aggregator;
-    }
 }

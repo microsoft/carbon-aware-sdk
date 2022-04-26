@@ -23,7 +23,7 @@ public class SciScoreControllerTests : TestsBase
     public async Task SuccessfulCallReturnsOk_MarginalCarbonIntensity()
     {
         double data = 0.7;
-        var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregatorWithData(data).Object);
+        var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregator(data).Object);
         Location location = new Location() { LocationType = LocationType.Geoposition, Latitude = (decimal)1.0, Longitude = (decimal)2.0 };
         string timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z";
         SciScoreInput input = new SciScoreInput()
@@ -35,19 +35,20 @@ public class SciScoreControllerTests : TestsBase
         TestHelpers.AssertStatusCode(carbonIntensityOutput, HttpStatusCode.OK);
 
         var expected = new SciScore() { MarginalCarbonEmissionsValue = 0.7 };
-        Assert.AreEqual(carbonIntensityOutput.Value, expected);
+        Assert.AreEqual(expected, carbonIntensityOutput.Value);
     }
 
     /// <summary>
-    /// Tests that exception thrown by plugin results in action with BadRequest status
+    /// Tests that without location, ends up having a badRequest error
     /// </summary> location 
     [Test]
     public async Task ExceptionReturnsBadRequest_MarginalCarbonIntensity()
     {
-        var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregatorWithException().Object);
+        var data = 0.7;
+        var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregator(data).Object);
 
         Location location = new Location() { LocationType = LocationType.Geoposition, Latitude = (decimal)1.0, Longitude = (decimal)2.0 };
-        string timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z";
+        string timeInterval = "";
         SciScoreInput input = new SciScoreInput()
         {
             Location = location,
@@ -55,9 +56,10 @@ public class SciScoreControllerTests : TestsBase
         };
 
         var carbonIntensityOutput = (await controller.GetCarbonIntensityAsync(input)) as ObjectResult;
-
+        var expected = new CarbonAwareWebApiError() { Message = "TimeInterval is required" };
         // Assert
         TestHelpers.AssertStatusCode(carbonIntensityOutput, HttpStatusCode.BadRequest);
+        Assert.AreEqual(expected, carbonIntensityOutput.Value);
     }
 
 }
