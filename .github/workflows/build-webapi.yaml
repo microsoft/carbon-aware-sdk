@@ -11,7 +11,7 @@ on:
 
 env:
   DOCKERFILE_PATH: "CarbonAware.WebApi/Dockerfile"
-  HEALTH_ENDPOINT: "0.0.0.0:8080/emissions/bylocation?location=eastus"
+  HEALTH_ENDPOINT: "0.0.0.0:8080/health"
   #Health Check Endpoint to be added as another story and replaced here
 
 jobs:
