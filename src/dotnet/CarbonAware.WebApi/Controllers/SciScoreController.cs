@@ -3,8 +3,6 @@ using CarbonAware.WebApi.Models;
 using CarbonAware.Model;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 
 namespace CarbonAware.WebApi.Controllers;
 
