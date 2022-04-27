@@ -21,6 +21,10 @@ public static class ServiceCollectionExtensions
                     services.AddWattTimeDataSourceService();
                     break;
             }
+            case DataSourceType.None:
+            {
+                throw new NotSupportedException("DataSource type not supported");
+            }
         }
     }
 }

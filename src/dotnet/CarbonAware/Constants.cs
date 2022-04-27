@@ -11,3 +11,8 @@ public class Constants
     public const string Duration = "duration";
     public const string Best = "best";
 }
+
+public class EnvironmentVariables
+{
+    public const string CarbonIntensityDataSource = "CARBON_INTENSITY_DATASOURCE";
+}
