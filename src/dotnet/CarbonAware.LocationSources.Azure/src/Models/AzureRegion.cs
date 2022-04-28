@@ -1,6 +1,6 @@
 namespace CarbonAware.LocationSources.Azure.Model;
 
-public class AzureRegionJson
+public class AzureRegion
 {
     public string Name { get; set; } = string.Empty;
     public AzureRegionMetadata Metadata { get; set; } = new AzureRegionMetadata();

@@ -15,11 +15,11 @@ public class AzureLocationSource : ILocationSource
 {
     public string Name => "Azure Location Source";
 
-    public string Description => "Location source that knows how to get Azure location information and do necessary conversions";
+    public string Description => "Location source that knows how to get and work with Azure location information.";
 
     private readonly ILogger<AzureLocationSource> _logger;
 
-    private Dictionary<string, AzureRegionJson> azureRegions;
+    private Dictionary<string, AzureRegion> azureRegions;
 
     /// <summary>
     /// Creates a new instance of the <see cref="AzureLocationSource"/> class.
@@ -28,8 +28,7 @@ public class AzureLocationSource : ILocationSource
     public AzureLocationSource(ILogger<AzureLocationSource> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        azureRegions = new Dictionary<string, AzureRegionJson>();
-        GetAzureRegions();
+        azureRegions = GetAzureRegions();
     }
 
     public Task<Location> ToGeopositionLocation(Location location)
@@ -41,15 +40,15 @@ public class AzureLocationSource : ILocationSource
         }
 
         string regionName = location.RegionName;
-        _logger.LogInformation("Converting Azure Location named '{regionName}' to Geoposition Location.", regionName);
+        _logger.LogInformation("Converting Azure Location named {regionName} to Geoposition Location.", regionName);
 
         if (!azureRegions.ContainsKey(regionName))
         {
-            Exception ex = new ArgumentException("Region name '{regionName}' not found in Azure location registry.", regionName);
+            Exception ex = new ArgumentException("Region name {regionName} not found in Azure location registry.", regionName);
             _logger.LogError("argument exception for region name", ex);
             throw ex;
         }
-        AzureRegionJson regionJson = azureRegions[regionName];
+        AzureRegion regionJson = azureRegions[regionName];
         decimal? latitude = decimal.Parse(regionJson.Metadata.Latitude, CultureInfo.InvariantCulture);
         decimal? longitude = decimal.Parse(regionJson.Metadata.Longitude, CultureInfo.InvariantCulture);
 
@@ -78,19 +77,17 @@ public class AzureLocationSource : ILocationSource
         return readerMetaData.ReadToEnd();
     }
 
-    protected virtual List<AzureRegionJson> GetAzureRegions(string[]? regionNames = null)
+    protected virtual Dictionary<string, AzureRegion> GetAzureRegions()
     {
         var data = ReadFromResource("azure-regions.json");
-        List<AzureRegionJson> regionList = JsonConvert.DeserializeObject<List<AzureRegionJson>>(data);
-
-        // Filter results by region names if provided
-        if (regionNames != null && regionNames.Any())
+        List<AzureRegion> regionList = JsonConvert.DeserializeObject<List<AzureRegion>>(data);
+        foreach(AzureRegion regionInfo in regionList)
         {
-            regionList = regionList.Where(region => regionNames.Contains(region.Name)).ToList();
-        }
-
+            Console.Write("region");
+            Console.WriteLine(regionInfo);
+        }    
         // Create mapping
-        var azureRegionsMapping = new Dictionary<string, AzureRegionJson>();
+        var azureRegionsMapping = new Dictionary<string, AzureRegion>();
         foreach (var region in regionList)
         {
             azureRegionsMapping[region.Name] = region;
@@ -101,6 +98,6 @@ public class AzureLocationSource : ILocationSource
            azureRegions = azureRegionsMapping;
         }
 
-        return regionList;
+        return azureRegionsMapping;
     }
 }
