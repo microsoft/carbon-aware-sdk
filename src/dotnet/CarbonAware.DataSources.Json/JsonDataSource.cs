@@ -44,7 +44,7 @@ public class JsonDataSource : ICarbonIntensityDataSource
             return Task.FromResult(Enumerable.Empty<EmissionsData>());
         }
         _logger.LogDebug($"Total emission records retrieved {emissionsData.Count()}");
-        IEnumerable<string> stringLocations = locations.Select(loc => loc.RegionName);
+        IEnumerable<string> stringLocations = locations.Select(loc => loc.RegionName!);
 
         var startDate = periodStartTime.DateTime;
         var endDate = periodEndTime.DateTime;

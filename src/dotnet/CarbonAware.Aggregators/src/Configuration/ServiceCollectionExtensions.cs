@@ -9,7 +9,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddCarbonAwareEmissionServices(this IServiceCollection services)
     {
-        services.AddDataSourceService(DataSourceType.JSON);
+        services.AddDataSourceService(DataSourceType.WattTime);
         services.TryAddSingleton<ICarbonAwareAggregator, CarbonAwareAggregator>();
     }
 }
