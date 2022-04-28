@@ -15,11 +15,6 @@ public class LocationConverter : ILocationConverter
         // call watttime client with lat/long to get ba
         // if no ba, throw LocationConvertsionException
         // return BA.
-        var ba = new BalancingAuthority {
-            Name = "California ISO Northern",
-            Abbreviation = "CAISO_NORTH",
-            Id = 1
-        };
-        return Task.FromResult(ba);
+        throw new NotImplementedException();
     }
 }
