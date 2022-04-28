@@ -25,9 +25,9 @@ public class Location
 
 
     /// <summary>
-    /// Gets or sets the cloud provider name to use.  When loation type is GeoPosition, this value should be null..
+    /// Gets or sets the cloud provider name to use.  When location type is GeoPosition, this value should be null..
     /// </summary>
-    public CloudProvider? ProviderName { get; set; }
+    public CloudProvider? CloudProvider { get; set; }
 
     /// <summary>
     /// Gets or sets the region name to use.  When set to GeoPosition, this value should be null.
