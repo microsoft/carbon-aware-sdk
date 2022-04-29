@@ -1,10 +1,8 @@
 using System.Globalization;
 using System.Reflection;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Logging;
 using CarbonAware.Model;
 using CarbonAware.Interfaces;
-using CarbonAware.LocationSources.Azure.Model;
+using Microsoft.Extensions.Logging;
 
 namespace CarbonAware.LocationSources.Azure;
 
@@ -19,7 +17,9 @@ public class AzureLocationSource : ILocationSource
 
     private readonly ILogger<AzureLocationSource> _logger;
 
-    private Dictionary<string, AzureRegion> azureRegions;
+    private Dictionary<string, DataRegion> azureRegions;
+
+    private Dictionary<string, RegionMetadata> regionCoordinates;
 
     /// <summary>
     /// Creates a new instance of the <see cref="AzureLocationSource"/> class.
@@ -28,7 +28,7 @@ public class AzureLocationSource : ILocationSource
     public AzureLocationSource(ILogger<AzureLocationSource> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        azureRegions = GetAzureRegions();
+        azureRegions = ParseRegionsFromJson();
     }
 
     public Task<Location> ToGeopositionLocation(Location location)
@@ -48,7 +48,7 @@ public class AzureLocationSource : ILocationSource
             _logger.LogError("argument exception for region name", ex);
             throw ex;
         }
-        AzureRegion regionJson = azureRegions[regionName];
+        DataRegion regionJson = azureRegions[regionName];
         decimal? latitude = decimal.Parse(regionJson.Metadata.Latitude, CultureInfo.InvariantCulture);
         decimal? longitude = decimal.Parse(regionJson.Metadata.Longitude, CultureInfo.InvariantCulture);
 
@@ -77,17 +77,17 @@ public class AzureLocationSource : ILocationSource
         return readerMetaData.ReadToEnd();
     }
 
-    protected virtual Dictionary<string, AzureRegion> GetAzureRegions()
+    protected virtual Dictionary<string, DataRegion> ParseRegionsFromJson()
     {
         var data = ReadFromResource("azure-regions.json");
-        List<AzureRegion> regionList = JsonConvert.DeserializeObject<List<AzureRegion>>(data);
-        foreach(AzureRegion regionInfo in regionList)
+        List<DataRegion> regionList = JsonConvert.DeserializeObject<List<DataRegion>>(data);
+        foreach(DataRegion regionInfo in regionList)
         {
             Console.Write("region");
             Console.WriteLine(regionInfo);
         }    
         // Create mapping
-        var azureRegionsMapping = new Dictionary<string, AzureRegion>();
+        var azureRegionsMapping = new Dictionary<string, DataRegion>();
         foreach (var region in regionList)
         {
             azureRegionsMapping[region.Name] = region;
@@ -99,5 +99,10 @@ public class AzureLocationSource : ILocationSource
         }
 
         return azureRegionsMapping;
+    }
+
+    public Dictionary<string, RegionMetadata> GetRegionCordinates()
+    {
+        return regionCoordinates;
     }
 }

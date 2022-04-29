@@ -63,10 +63,18 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
         using (var activity = ActivitySource.StartActivity())
         {
+
+
+            RegionMetadata regionMetadata;
             BalancingAuthority balancingAuthority;
             try
             {
-                balancingAuthority = await this.LocationConverter.ConvertLocationToBalancingAuthorityAsync(location);
+                regionMetadata = await this.LocationConverter.ConvertLocationToLatLongAsync(location);
+                balancingAuthority = await WattTimeClient.GetBalancingAuthorityAsync(regionMetadata.Latitude, regionMetadata.Longitude);
+
+                if(balancingAuthority == null) {
+                    throw new LocationConversionException();
+                }
             }
             catch(LocationConversionException ex)
             {

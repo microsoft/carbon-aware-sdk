@@ -9,10 +9,10 @@ namespace CarbonAware.DataSources.WattTime;
 public interface ILocationConverter
 {
     /// <summary>
-    /// Converts a location to a balancing authority for WattTime.
+    /// Converts a location to a its geological coordinates (lat/long).
     /// </summary>
     /// <param name="location">The location to convert.</param>
-    /// <returns>The balancing authority to use.</returns>
-    /// <exception cref="LocationConversionException">Thrown when the given location can't be converted to a balancing authority.</exception>
-    public Task<BalancingAuthority> ConvertLocationToBalancingAuthorityAsync(Location location);
+    /// <returns>Region metadata that contains latitude and longitude for the region</returns>
+    /// <exception cref="LocationConversionException">Thrown when the given location can't be converted to lat/long.</exception>
+    public Task<RegionMetadata> ConvertLocationToLatLongAsync(Location location);
 }
