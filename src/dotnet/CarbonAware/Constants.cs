@@ -12,7 +12,11 @@ public class Constants
     public const string Best = "best";
 }
 
-public class EnvironmentVariables
+/// <summary>
+/// Carbon Aware Environment variables bindings
+/// </summary>
+public class EnvironmentVariablesConfiguration
 {
-    public const string CarbonIntensityDataSource = "CARBON_INTENSITY_DATASOURCE";
+    public const string Key = "EnvironmentVariables";
+    public string CarbonIntensityDataSource { get; set; }
 }
