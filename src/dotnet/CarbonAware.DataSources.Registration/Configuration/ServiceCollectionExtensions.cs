@@ -10,7 +10,7 @@ public static class ServiceCollectionExtensions
     {
         // find all the Classes in the Assembly that implements AddEmissionServices method,
         // and added them here with the specific implementation class.
-        var envVars = configuration?.GetSection(EnvironmentVariablesConfiguration.Key).Get<EnvironmentVariablesConfiguration>();
+        var envVars = configuration?.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
         var dataSourceType = GetDataSourceTypeFromValue(envVars?.CarbonIntensityDataSource);
 
         switch (dataSourceType)

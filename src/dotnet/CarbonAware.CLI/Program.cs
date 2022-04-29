@@ -21,7 +21,7 @@ class Program
                 .AddEnvironmentVariables();
         var config = configurationBuilder.Build();
         var services = new ServiceCollection();
-        services.Configure<EnvironmentVariablesConfiguration>(config.GetSection(EnvironmentVariablesConfiguration.Key));
+        services.Configure<CarbonAwareVariablesConfiguration>(config.GetSection(CarbonAwareVariablesConfiguration.Key));
         services.AddSingleton<IConfiguration>(config);
         services.AddCarbonAwareEmissionServices(config);
 

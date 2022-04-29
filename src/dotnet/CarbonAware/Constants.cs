@@ -13,10 +13,10 @@ public class Constants
 }
 
 /// <summary>
-/// Carbon Aware Environment variables bindings
+/// Carbon Aware Variables bindings
 /// </summary>
-public class EnvironmentVariablesConfiguration
+public class CarbonAwareVariablesConfiguration
 {
-    public const string Key = "EnvironmentVariables";
+    public const string Key = "CarbonAwareVars";
     public string CarbonIntensityDataSource { get; set; }
 }

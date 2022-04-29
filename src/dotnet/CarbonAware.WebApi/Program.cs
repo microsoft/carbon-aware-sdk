@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.Configure<EnvironmentVariablesConfiguration>(builder.Configuration.GetSection(EnvironmentVariablesConfiguration.Key));
+builder.Services.Configure<CarbonAwareVariablesConfiguration>(builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key));
 builder.Services.AddCarbonAwareEmissionServices(builder.Configuration);
 
 var app = builder.Build();
