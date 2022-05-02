@@ -59,18 +59,21 @@ public class SciScoreController : ControllerBase
         _logger.LogInformation(" calling to aggregator to ");
         if (input.Location == null)
         {
-            var error = new CarbonAwareWebApiError() { Message = "Location is required" };
+            var error = new CarbonAwareWebApiError() { Message = "location is required" };
             return BadRequest(error);
         }
 
         if (String.IsNullOrEmpty(input.TimeInterval))
         {
-            var error = new CarbonAwareWebApiError() { Message = "TimeInterval is required" };
+            var error = new CarbonAwareWebApiError() { Message = "timeInterval is required" };
             return BadRequest(error);
         }
+
         try
         {
-            var carbonIntensity = await _aggregator.CalculateAverageCarbonIntensityAsync(input.Location, input.TimeInterval);
+            var location = this.GetLocation(input.Location);
+
+            var carbonIntensity = await _aggregator.CalculateAverageCarbonIntensityAsync(location, input.TimeInterval);
 
             SciScore score = new SciScore
             {
@@ -86,6 +89,38 @@ public class SciScoreController : ControllerBase
             return BadRequest(error);
         }
 
+    }
+
+    private Location GetLocation(LocationInput locationInput)
+    {
+        LocationType locationType;
+        CloudProvider cloudProvider;
+
+        if (!Enum.TryParse<LocationType>(locationInput.LocationType, true, out locationType))
+        {
+            throw new ArgumentException($"locationType '{locationInput.LocationType}' is invalid");
+        }
+
+        Enum.TryParse<CloudProvider>(locationInput.CloudProvider, true, out cloudProvider);
+
+        try
+        {
+            var location = new Location
+            {
+                LocationType = locationType,
+                Latitude = locationInput.Latitude,
+                Longitude = locationInput.Longitude,
+                CloudProvider = cloudProvider,
+                RegionName = locationInput.RegionName
+            };
+            
+            return location;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception occured during location creation", ex);
+            throw new ArgumentException("location provided is invalid"); 
+        }
     }
 
 
