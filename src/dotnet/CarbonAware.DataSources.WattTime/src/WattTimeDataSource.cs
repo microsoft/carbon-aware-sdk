@@ -27,7 +27,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
     private ActivitySource ActivitySource { get; }
 
-    private ILocationConverter LocationConverter { get; }
+    private ILocationSource LocationSource { get; }
 
     /// <summary>
     /// Creates a new instance of the <see cref="WattTimeDataSource"/> class.
@@ -35,13 +35,13 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
     /// <param name="logger">The logger for the datasource</param>
     /// <param name="client">The WattTime Client</param>
     /// <param name="activitySource">The activity source for telemetry.</param>
-    /// <param name="locationConverter">The location converter to be used to convert a location to BA's.</param>
-    public WattTimeDataSource(ILogger<WattTimeDataSource> logger, IWattTimeClient client, ActivitySource activitySource, ILocationConverter locationConverter)
+    /// <param name="locationSource">The location source to be used to convert a location to BA's.</param>
+    public WattTimeDataSource(ILogger<WattTimeDataSource> logger, IWattTimeClient client, ActivitySource activitySource, ILocationSource locationSource)
     {
         this.Logger = logger;
         this.WattTimeClient = client;
         this.ActivitySource = activitySource;
-        this.LocationConverter = locationConverter;
+        this.LocationSource = locationSource;
     }
 
     /// <inheritdoc />
@@ -63,14 +63,11 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
         using (var activity = ActivitySource.StartActivity())
         {
-
-
-            RegionMetadata regionMetadata;
-            BalancingAuthority balancingAuthority;
+            BalancingAuthority? balancingAuthority;
             try
             {
-                regionMetadata = await this.LocationConverter.ConvertLocationToLatLongAsync(location);
-                balancingAuthority = await WattTimeClient.GetBalancingAuthorityAsync(regionMetadata.Latitude, regionMetadata.Longitude);
+                this.LocationSource.GetGeopositionLocation(location);
+                balancingAuthority = await WattTimeClient.GetBalancingAuthorityAsync(location.Latitude.ToString(), location.Longitude.ToString());
 
                 if(balancingAuthority == null) {
                     throw new LocationConversionException();

@@ -3,6 +3,7 @@ using System.Reflection;
 using CarbonAware.Model;
 using CarbonAware.Interfaces;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace CarbonAware.LocationSources.Azure;
 
@@ -17,9 +18,9 @@ public class AzureLocationSource : ILocationSource
 
     private readonly ILogger<AzureLocationSource> _logger;
 
-    private Dictionary<string, DataRegion> azureRegions;
+    private List<NamedGeoposition>? namedGeopositions;
 
-    private Dictionary<string, RegionMetadata> regionCoordinates;
+    private static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
     /// <summary>
     /// Creates a new instance of the <see cref="AzureLocationSource"/> class.
@@ -28,45 +29,7 @@ public class AzureLocationSource : ILocationSource
     public AzureLocationSource(ILogger<AzureLocationSource> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        azureRegions = ParseRegionsFromJson();
-    }
-
-    public Task<Location> ToGeopositionLocation(Location location)
-    {
-        if (location.LocationType == LocationType.Geoposition)
-        {
-            _logger.LogInformation("Provided location is already of type Geoposition. Returning provided location.");
-            return Task.FromResult(location);
-        }
-
-        string regionName = location.RegionName;
-        _logger.LogInformation("Converting Azure Location named {regionName} to Geoposition Location.", regionName);
-
-        if (!azureRegions.ContainsKey(regionName))
-        {
-            Exception ex = new ArgumentException("Region name {regionName} not found in Azure location registry.", regionName);
-            _logger.LogError("argument exception for region name", ex);
-            throw ex;
-        }
-        DataRegion regionJson = azureRegions[regionName];
-        decimal? latitude = decimal.Parse(regionJson.Metadata.Latitude, CultureInfo.InvariantCulture);
-        decimal? longitude = decimal.Parse(regionJson.Metadata.Longitude, CultureInfo.InvariantCulture);
-
-        Location updatedLocation = new ()
-        {
-            RegionName = null,
-            LocationType = LocationType.Geoposition,
-            Latitude = latitude,
-            Longitude = longitude,
-        };
-
-        if (_logger.IsEnabled(LogLevel.Debug))
-        {
-            _logger.LogDebug("Converted Azure Location named '{regionName}' to Geoposition Location at latitude '{latitude}' and logitude '{longitude}'.", regionName, latitude, longitude);
-        }
-
-        return Task.FromResult(updatedLocation);
-
+        namedGeopositions = LoadRegionsFromJson();
     }
 
     private string ReadFromResource(string key)
@@ -77,32 +40,26 @@ public class AzureLocationSource : ILocationSource
         return readerMetaData.ReadToEnd();
     }
 
-    protected virtual Dictionary<string, DataRegion> ParseRegionsFromJson()
+    private List<NamedGeoposition>? LoadRegionsFromJson()
     {
-        var data = ReadFromResource("azure-regions.json");
-        List<DataRegion> regionList = JsonConvert.DeserializeObject<List<DataRegion>>(data);
-        foreach(DataRegion regionInfo in regionList)
-        {
-            Console.Write("region");
-            Console.WriteLine(regionInfo);
-        }    
-        // Create mapping
-        var azureRegionsMapping = new Dictionary<string, DataRegion>();
-        foreach (var region in regionList)
-        {
-            azureRegionsMapping[region.Name] = region;
-        }
-
-        // Cache mapping if didn't exist
-        if(!azureRegions.Any()) {
-           azureRegions = azureRegionsMapping;
-        }
-
-        return azureRegionsMapping;
+        var data = ReadFromResource("CarbonAware.LocationSources.Azure.azure-regions.json");
+        List<NamedGeoposition>? regionList = JsonSerializer.Deserialize<List<NamedGeoposition>>(data, options);
+       
+        return regionList;
     }
 
-    public Dictionary<string, RegionMetadata> GetRegionCordinates()
+    public Location GetGeopositionLocation(Location location)
     {
-        return regionCoordinates;
+        if(location.LocationType == LocationType.CloudProvider && location.CloudProvider != CloudProvider.Azure) {
+            throw new ArgumentException($"Incorrect Cloud provider region. Expected Azure but found '{ location.CloudProvider }'");
+        }
+        NamedGeoposition region = namedGeopositions.Where(l => l.RegionName.Equals(location.RegionName)).First();
+
+        return new Location {
+            RegionName = region.RegionName,
+            Latitude = Convert.ToDecimal(region.Latitude),
+            Longitude = Convert.ToDecimal(region.Longitude)
+        };
     }
+
 }

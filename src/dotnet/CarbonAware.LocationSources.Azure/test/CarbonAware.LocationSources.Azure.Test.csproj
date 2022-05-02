@@ -18,5 +18,6 @@
     <ProjectReference Include="..\src\CarbonAware.LocationSources.Azure.csproj" />
     <ProjectReference Include="..\..\CarbonAware\CarbonAware.csproj" />
   </ItemGroup>
+  
 
 </Project>
