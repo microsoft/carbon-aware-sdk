@@ -1,4 +1,3 @@
-namespace CarbonAware.WepApi.UnitTests;
 
 using System.Collections.Generic;
 using System.Net;
@@ -7,6 +6,9 @@ using CarbonAware.WebApi.Controllers;
 using CarbonAware.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
+
+namespace CarbonAware.WepApi.UnitTests;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
@@ -63,3 +65,4 @@ public class SciScoreControllerTests : TestsBase
     }
 
 }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
