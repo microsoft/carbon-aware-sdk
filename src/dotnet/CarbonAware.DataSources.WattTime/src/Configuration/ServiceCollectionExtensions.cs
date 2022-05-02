@@ -14,7 +14,6 @@ public static class ServiceCollectionExtensions
         var configurationBuilder = new ConfigurationBuilder();
         var config = configurationBuilder.Build();
         services.ConfigureWattTimeClient(config);
-        services.TryAddSingleton<ILocationSource, AzureLocationSource>();
         services.TryAddSingleton<ICarbonIntensityDataSource, WattTimeDataSource>();
     }
 }

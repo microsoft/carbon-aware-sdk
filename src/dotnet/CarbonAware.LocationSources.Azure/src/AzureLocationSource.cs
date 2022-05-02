@@ -18,7 +18,7 @@ public class AzureLocationSource : ILocationSource
 
     private readonly ILogger<AzureLocationSource> _logger;
 
-    private List<NamedGeoposition>? namedGeopositions;
+    private IDictionary<string, NamedGeoposition>? namedGeopositions;
 
     private static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
@@ -40,12 +40,15 @@ public class AzureLocationSource : ILocationSource
         return readerMetaData.ReadToEnd();
     }
 
-    private List<NamedGeoposition>? LoadRegionsFromJson()
+    private IDictionary<string, NamedGeoposition>? LoadRegionsFromJson()
     {
         var data = ReadFromResource("CarbonAware.LocationSources.Azure.azure-regions.json");
         List<NamedGeoposition>? regionList = JsonSerializer.Deserialize<List<NamedGeoposition>>(data, options);
-       
-        return regionList;
+        IDictionary<string, NamedGeoposition> namedGeopositions = new Dictionary<String, NamedGeoposition>();
+        foreach(NamedGeoposition region in regionList) {
+            namedGeopositions.Add(region.RegionName, region);
+        }
+        return namedGeopositions;
     }
 
     public Location GetGeopositionLocation(Location location)
@@ -53,7 +56,7 @@ public class AzureLocationSource : ILocationSource
         if(location.LocationType == LocationType.CloudProvider && location.CloudProvider != CloudProvider.Azure) {
             throw new ArgumentException($"Incorrect Cloud provider region. Expected Azure but found '{ location.CloudProvider }'");
         }
-        NamedGeoposition region = namedGeopositions.Where(l => l.RegionName.Equals(location.RegionName)).First();
+        NamedGeoposition region = namedGeopositions[location.RegionName];
 
         return new Location {
             RegionName = region.RegionName,

@@ -11,10 +11,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Remove="azure-regions.json" />
   	</ItemGroup>
 	<ItemGroup>
