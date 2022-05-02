@@ -36,7 +36,7 @@ public class SciScoreAggregatorTests
         // Arrange
         var location = new Location() { 
           LocationType = LocationType.CloudProvider,
-          ProviderName = CloudProvider.Azure,
+          CloudProvider = CloudProvider.Azure,
           RegionName = regionName
         };
 
