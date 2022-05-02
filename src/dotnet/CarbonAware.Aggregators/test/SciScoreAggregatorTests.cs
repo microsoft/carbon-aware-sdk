@@ -10,10 +10,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CarbonAware.Aggregators.Tests;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 public class SciScoreAggregatorTests
 {
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private Mock<ILogger<SciScoreAggregator>> Logger { get; set; }
     private Mock<ICarbonIntensityDataSource> CarbonIntensityDataSource { get; set; }
     private SciScoreAggregator Aggregator { get; set; }

@@ -17,6 +17,8 @@ namespace CarbonAware.Aggregators.SciScore
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this._carbonIntensityDataSource = carbonIntensityDataSource;
         }
+
+        /// <inheritdoc />
         public async Task<double> CalculateAverageCarbonIntensityAsync(Location location, string timeInterval)
         {
             (DateTimeOffset start, DateTimeOffset end) = this.ParseTimeInterval(timeInterval);
