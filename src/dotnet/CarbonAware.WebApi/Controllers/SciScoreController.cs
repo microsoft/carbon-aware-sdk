@@ -72,9 +72,7 @@ public class SciScoreController : ControllerBase
         try
         {
             var location = this.GetLocation(input.Location);
-
             var carbonIntensity = await _aggregator.CalculateAverageCarbonIntensityAsync(location, input.TimeInterval);
-
             SciScore score = new SciScore
             {
                 MarginalCarbonEmissionsValue = carbonIntensity,
