@@ -1,4 +1,5 @@
-﻿using CarbonAware.Model;
+﻿using CarbonAware.Interfaces;
+using CarbonAware.Model;
 using CarbonAware.Tools.WattTimeClient;
 using CarbonAware.Tools.WattTimeClient.Model;
 using Castle.Core.Logging;
@@ -26,7 +27,7 @@ public class WattTimeDataSourceTests
 
     private WattTimeDataSource DataSource { get; set; }
 
-    private Mock<ILocationConverter> LocationConverter { get; set; }
+    private Mock<ILocationSource> LocationSource { get; set; }
 
 
     [SetUp]
@@ -36,9 +37,9 @@ public class WattTimeDataSourceTests
 
         this.Logger = new Mock<ILogger<WattTimeDataSource>>();
         this.WattTimeClient = new Mock<IWattTimeClient>();
-        this.LocationConverter = new Mock<ILocationConverter>();
+        this.LocationSource = new Mock<ILocationSource>();
 
-        this.DataSource = new WattTimeDataSource(this.Logger.Object, this.WattTimeClient.Object, this.ActivitySource, this.LocationConverter.Object);
+        this.DataSource = new WattTimeDataSource(this.Logger.Object, this.WattTimeClient.Object, this.ActivitySource, this.LocationSource.Object);
     }
 
     [Test]
@@ -65,8 +66,7 @@ public class WattTimeDataSourceTests
             endDate)
         ).ReturnsAsync(() => emissionData);
 
-        this.LocationConverter.Setup(r => r.ConvertLocationToBalancingAuthorityAsync(location)).ReturnsAsync(balancingAuthority);
-
+        setupBalancingAuthority(balancingAuthority, location);
         var result = await this.DataSource.GetCarbonIntensityAsync(new List<Location>() { location }, startDate, endDate);
 
         Assert.IsNotNull(result);
@@ -78,7 +78,7 @@ public class WattTimeDataSourceTests
         Assert.AreEqual(balancingAuthority.Abbreviation, first.Location);
         Assert.AreEqual(startDate.DateTime, first.Time);
 
-        this.LocationConverter.Verify(r => r.ConvertLocationToBalancingAuthorityAsync(location));
+        this.LocationSource.Verify(r => r.ToGeopositionLocation(location));
     }
 
     [Test]
@@ -95,11 +95,9 @@ public class WattTimeDataSourceTests
             endDate)
         ).ReturnsAsync(() => new List<GridEmissionDataPoint>());
 
-        this.LocationConverter.Setup(r => r.ConvertLocationToBalancingAuthorityAsync(location)).ReturnsAsync(balancingAuthority);
-
+        setupBalancingAuthority(balancingAuthority, location);
 
         var result = await this.DataSource.GetCarbonIntensityAsync(new List<Location>() { location }, startDate, endDate);
-
 
         Assert.IsNotNull(result);
         Assert.AreEqual(0, result.Count());
@@ -112,9 +110,21 @@ public class WattTimeDataSourceTests
         var startDate = new DateTimeOffset(2022, 4, 18, 12, 32, 42, TimeSpan.FromHours(-6));
         var endDate = new DateTimeOffset(2022, 4, 18, 12, 33, 42, TimeSpan.FromHours(-6));
 
-        this.LocationConverter.Setup(l => l.ConvertLocationToBalancingAuthorityAsync(location)).Throws<LocationConversionException>();
+        this.LocationSource.Setup(l => l.ToGeopositionLocation(location)).Throws<LocationConversionException>();
 
         Assert.ThrowsAsync<LocationConversionException>(async () => await this.DataSource.GetCarbonIntensityAsync(new List<Location>() { location }, startDate, endDate));
     }
+    private void setupBalancingAuthority(BalancingAuthority balancingAuthority, Location location)
+    {
+        this.LocationSource.Setup(r => r.ToGeopositionLocation(location)).Returns(location);
+        
+        this.WattTimeClient.Setup(w => w.GetBalancingAuthorityAsync(
+            location.Latitude.ToString(),
+            location.Longitude.ToString()
+            )
+        ).ReturnsAsync(() => balancingAuthority);
+
+    }
+
 }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

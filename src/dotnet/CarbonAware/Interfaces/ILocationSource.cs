@@ -8,5 +8,5 @@ public interface ILocationSource
     string Name { get; }
     string Description { get; }
 
-    public Location GetGeopositionLocation(Location location);
+    public Location ToGeopositionLocation(Location location);
 }

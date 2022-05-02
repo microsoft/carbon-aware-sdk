@@ -66,7 +66,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
             BalancingAuthority? balancingAuthority;
             try
             {
-                this.LocationSource.GetGeopositionLocation(location);
+                this.LocationSource.ToGeopositionLocation(location);
                 balancingAuthority = await WattTimeClient.GetBalancingAuthorityAsync(location.Latitude.ToString(), location.Longitude.ToString());
 
                 if(balancingAuthority == null) {

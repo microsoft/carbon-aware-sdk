@@ -1,5 +1,4 @@
 using CarbonAware.Model;
-using CarbonAware.LocationSources.Azure.Model;
 using NUnit.Framework;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -10,34 +9,46 @@ namespace CarbonAware.LocationSources.Azure.Test;
 public class AzureLocationSourceTest
 {   
     [Test]
-    public async Task TestToGeoposition()
+    public void TestToGeopositionLocation()
     {
-        var mockLocationSource = SetupMockLocationSource().Object;
-        
-        var eastResult = await mockLocationSource.ToGeopositionLocation(Constants.EastUsAzureLocation);
-        var westResult = await mockLocationSource.ToGeopositionLocation(Constants.WestUsAzureLocation);
-        var northcentralResult = await mockLocationSource.ToGeopositionLocation(Constants.NorthCentralAzureLocation);
+        var logger = Mock.Of<ILogger<AzureLocationSource>>();
 
-        AssertLocationsEqual(Constants.EastUsGeoLocation, eastResult);
-        AssertLocationsEqual(Constants.WestUsGeoLocation, westResult);
-        AssertLocationsEqual(Constants.NorthCentralGeoLocation, northcentralResult);
+        AzureLocationSource source = new AzureLocationSource(logger);
+        var mockLocationSource = SetupMockLocationSource().Object;
+        Location location = new Location {
+            LocationType = LocationType.CloudProvider,
+            CloudProvider = CloudProvider.Azure,
+            RegionName = "eastus"
+        };
+        
+        var eastResult = mockLocationSource.ToGeopositionLocation(location);
+        AssertLocationsEqual(Constants.EastUsRegion, eastResult);
+
+        location = new Location {
+            LocationType = LocationType.CloudProvider,
+            CloudProvider = CloudProvider.Azure,
+            RegionName = "westus"
+        };
+
+        var westResult = mockLocationSource.ToGeopositionLocation(location);;
+        AssertLocationsEqual(Constants.WestUsRegion, westResult);
+
     }
 
-    /// <summary>
-    /// If an Azure Location with invalid RegionName is passed, should fail.
-    /// </summary>
+    // <summary>
+    // If an Azure Location with invalid RegionName is passed, should fail.
+    // </summary>
     [Test]
     public void TestToGeopositionInvalidLocation()
     {
         var mockLocationSource = SetupMockLocationSource().Object;
         Location invalidLocation = new()
         {
-            LocationType = LocationType.Azure,
             RegionName = "invalid location"
         };
         Assert.Throws<ArgumentException>(() =>
         {
-            Task<Location> result = mockLocationSource.ToGeopositionLocation(invalidLocation);
+            Location result = mockLocationSource.ToGeopositionLocation(invalidLocation);
         });
     }
 
@@ -46,11 +57,14 @@ public class AzureLocationSourceTest
     /// returns original Location.
     /// </summary>
     [Test]
-    public async Task TestToGeopositionWhenAlreadyGeopositionLocation()
+    public void TestToGeopositionWhenAlreadyGeopositionLocation()
     {
         var mockLocationSource = SetupMockLocationSource().Object;
-        var result = await mockLocationSource.ToGeopositionLocation(Constants.EastUsGeoLocation);
-        Assert.AreEqual(Constants.EastUsGeoLocation, result);
+        Location location = new Location {
+            LocationType = LocationType.Geoposition
+        };
+        var result = mockLocationSource.ToGeopositionLocation(location);
+        Assert.AreEqual(location, result);
     }
 
     private static Mock<AzureLocationSource> SetupMockLocationSource() {
@@ -58,27 +72,26 @@ public class AzureLocationSourceTest
         var mockLocationSource = new Mock<AzureLocationSource>(logger);
         
         mockLocationSource.Protected()
-            .Setup<Dictionary<string, AzureRegion>>("GetAzureRegions")
-            .Returns(GetTestAzureRegions())
+            .Setup<Dictionary<string, NamedGeoposition>>("LoadRegionsFromJson")
+            .Returns(GetTestDataRegions())
             .Verifiable();
 
         return mockLocationSource;
     }
 
-    private static Dictionary<string, AzureRegion> GetTestAzureRegions() {
+    private static Dictionary<string, NamedGeoposition> GetTestDataRegions() {
         // All the tests above correspond to values in this mock data. If the mock values are changed, the tests need to be updated 
-        return new Dictionary<string, AzureRegion>() {
+        return new Dictionary<string, NamedGeoposition>() {
             {"eastus", Constants.EastUsRegion },
             {"westus", Constants.WestUsRegion },
             {"northcentralus", Constants.NorthCentralRegion }
         };
     }
 
-    private static void AssertLocationsEqual(Location location1, Location location2)
+    private static void AssertLocationsEqual(NamedGeoposition data, Location result)
     {
-        Assert.AreEqual(location1.RegionName, location2.RegionName);
-        Assert.AreEqual(location1.LocationType, location2.LocationType);
-        Assert.AreEqual(location1.Latitude, location2.Latitude);
-        Assert.AreEqual(location1.Longitude, location2.Longitude);
+        Assert.AreEqual(LocationType.Geoposition, result.LocationType);
+        Assert.AreEqual(data.Latitude, result.Latitude.ToString());
+        Assert.AreEqual(data.Longitude, result.Longitude.ToString());
     }
 }

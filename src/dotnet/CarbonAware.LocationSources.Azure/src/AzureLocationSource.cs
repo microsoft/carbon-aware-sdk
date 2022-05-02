@@ -18,7 +18,7 @@ public class AzureLocationSource : ILocationSource
 
     private readonly ILogger<AzureLocationSource> _logger;
 
-    private IDictionary<string, NamedGeoposition>? namedGeopositions;
+    private IDictionary<string, NamedGeoposition> namedGeopositions = new Dictionary<string, NamedGeoposition>();
 
     private static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
@@ -40,29 +40,39 @@ public class AzureLocationSource : ILocationSource
         return readerMetaData.ReadToEnd();
     }
 
-    private IDictionary<string, NamedGeoposition>? LoadRegionsFromJson()
+    protected virtual Dictionary<string, NamedGeoposition>? LoadRegionsFromJson()
     {
         var data = ReadFromResource("CarbonAware.LocationSources.Azure.azure-regions.json");
-        List<NamedGeoposition>? regionList = JsonSerializer.Deserialize<List<NamedGeoposition>>(data, options);
-        IDictionary<string, NamedGeoposition> namedGeopositions = new Dictionary<String, NamedGeoposition>();
+        List<NamedGeoposition> regionList = JsonSerializer.Deserialize<List<NamedGeoposition>>(data, options) ?? new List<NamedGeoposition>();
+        Dictionary<string, NamedGeoposition> namedGeopositions = new Dictionary<String, NamedGeoposition>();
         foreach(NamedGeoposition region in regionList) {
             namedGeopositions.Add(region.RegionName, region);
         }
         return namedGeopositions;
     }
 
-    public Location GetGeopositionLocation(Location location)
+    public Location ToGeopositionLocation(Location location)
     {
-        if(location.LocationType == LocationType.CloudProvider && location.CloudProvider != CloudProvider.Azure) {
-            throw new ArgumentException($"Incorrect Cloud provider region. Expected Azure but found '{ location.CloudProvider }'");
-        }
-        NamedGeoposition region = namedGeopositions[location.RegionName];
+        switch (location.LocationType) {
+            case LocationType.Geoposition: {
+                return location;
+            }
+            case LocationType.CloudProvider: {
+                if(location.CloudProvider != CloudProvider.Azure) {
+                    throw new ArgumentException($"Incorrect Cloud provider region. Expected Azure but found '{ location.CloudProvider }'");
+                }
+                NamedGeoposition region = namedGeopositions[location.RegionName];
 
-        return new Location {
-            RegionName = region.RegionName,
-            Latitude = Convert.ToDecimal(region.Latitude),
-            Longitude = Convert.ToDecimal(region.Longitude)
-        };
+                return new Location {
+                    LocationType = LocationType.Geoposition,
+                    Latitude = Convert.ToDecimal(region.Latitude),
+                    Longitude = Convert.ToDecimal(region.Longitude)
+                };
+            }
+        }
+        
+        throw new ArgumentException($"Location '{ location.CloudProvider }' cannot be converted to Geoposition. ");
+;
     }
 
 }
