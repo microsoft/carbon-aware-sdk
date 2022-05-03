@@ -29,7 +29,7 @@ public class AzureLocationSource : ILocationSource
     public AzureLocationSource(ILogger<AzureLocationSource> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        if(namedGeopositions != null && !namedGeopositions.Any()) {
+        if(namedGeopositions == null || !namedGeopositions.Any()) {
             namedGeopositions = LoadRegionsFromJson();
         }
     }
@@ -44,21 +44,37 @@ public class AzureLocationSource : ILocationSource
             }
             case LocationType.CloudProvider: 
             {
-                if(location.CloudProvider != CloudProvider.Azure) 
+                if( location.CloudProvider != CloudProvider.Azure ) 
                 {
                     throw new ArgumentException($"Incorrect Cloud provider region. Expected Azure but found '{ location.CloudProvider }'");
                 }
-                NamedGeoposition region = namedGeopositions[location.RegionName ?? ""];
-
-                return new Location {
-                    LocationType = LocationType.Geoposition,
-                    Latitude = Convert.ToDecimal(region.Latitude),
-                    Longitude = Convert.ToDecimal(region.Longitude)
-                };
+                
+                return getGeoPositionLocationOrThrow(location);
             }
         }
         
         throw new ArgumentException($"Location '{ location.CloudProvider }' cannot be converted to Geoposition. ");
+    }
+
+    private Location getGeoPositionLocationOrThrow(Location location)
+    {
+        NamedGeoposition geopositionLocation = namedGeopositions[location.RegionName ?? ""];    
+        if(geopositionLocation == null) 
+        {
+            throw new ArgumentException($"Lat/long cannot be retrieved for region '{ location.RegionName }'");
+        }
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+            _logger.LogDebug("Converted Azure Location named '{regionName}' to Geoposition Location at latitude '{latitude}'" 
+                                + "and logitude '{longitude}'.", location.RegionName, geopositionLocation.Latitude, geopositionLocation.Longitude);
+        }
+        return new Location 
+                {
+                    LocationType = LocationType.Geoposition,
+                    Latitude = Convert.ToDecimal(geopositionLocation.Latitude),
+                    Longitude = Convert.ToDecimal(geopositionLocation.Longitude)
+                };
+            
     }
 
     protected virtual Dictionary<string, NamedGeoposition>? LoadRegionsFromJson()

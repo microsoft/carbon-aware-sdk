@@ -13,24 +13,23 @@ public class AzureLocationSourceTest
     {
         var logger = Mock.Of<ILogger<AzureLocationSource>>();
 
-        AzureLocationSource source = new AzureLocationSource(logger);
         var mockLocationSource = SetupMockLocationSource().Object;
-        Location location = new Location {
+        Location inputLocation = new Location {
             LocationType = LocationType.CloudProvider,
             CloudProvider = CloudProvider.Azure,
             RegionName = "eastus"
         };
         
-        var eastResult = mockLocationSource.ToGeopositionLocation(location);
+        var eastResult = mockLocationSource.ToGeopositionLocation(inputLocation);
         AssertLocationsEqual(Constants.EastUsRegion, eastResult);
 
-        location = new Location {
+        inputLocation = new Location {
             LocationType = LocationType.CloudProvider,
             CloudProvider = CloudProvider.Azure,
             RegionName = "westus"
         };
 
-        var westResult = mockLocationSource.ToGeopositionLocation(location);;
+        var westResult = mockLocationSource.ToGeopositionLocation(inputLocation);
         AssertLocationsEqual(Constants.WestUsRegion, westResult);
 
     }
