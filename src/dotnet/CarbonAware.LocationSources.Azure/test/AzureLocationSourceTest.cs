@@ -3,6 +3,7 @@ using NUnit.Framework;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
+using CarbonAware.Exceptions;
 
 namespace CarbonAware.LocationSources.Azure.Test;
 
@@ -45,7 +46,7 @@ public class AzureLocationSourceTest
         {
             RegionName = "invalid location"
         };
-        Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<LocationConversionException>(() =>
         {
             Location result = mockLocationSource.ToGeopositionLocation(invalidLocation);
         });
@@ -90,7 +91,7 @@ public class AzureLocationSourceTest
     private static void AssertLocationsEqual(Location expected, Location actual)
     {
         Assert.AreEqual(LocationType.Geoposition, actual.LocationType);
-        Assert.AreEqual(expected.Latitude, actual.Latitude.ToString());
-        Assert.AreEqual(expected.Longitude, actual.Longitude.ToString());
+        Assert.AreEqual(expected.Latitude, actual.Latitude);
+        Assert.AreEqual(expected.Longitude, actual.Longitude);
     }
 }
