@@ -20,4 +20,20 @@ public static class Constants
                     Latitude = "37.783",
                     Longitude = "-122.417"
                 };
+
+    public static readonly Location LocationEastUs = new () {
+                    RegionName = "eastus",
+                    Latitude = 37.3719m,
+                    Longitude = -79.8164m
+                    };
+    public static readonly Location LocationWestUs = new () {
+                    RegionName = "westus",
+                    Latitude = 37.783m,
+                    Longitude = -122.417m
+                };
+    public static readonly Location LocationNorthCentral = new () {
+                    RegionName = "northcentralus",
+                    Latitude = 37.783m,
+                    Longitude = -122.417m
+                };            
 }

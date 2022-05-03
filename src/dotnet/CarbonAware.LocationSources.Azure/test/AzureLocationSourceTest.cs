@@ -19,9 +19,9 @@ public class AzureLocationSourceTest
             CloudProvider = CloudProvider.Azure,
             RegionName = "eastus"
         };
-        
+
         var eastResult = mockLocationSource.ToGeopositionLocation(inputLocation);
-        AssertLocationsEqual(Constants.EastUsRegion, eastResult);
+        AssertLocationsEqual(Constants.LocationEastUs, eastResult);
 
         inputLocation = new Location {
             LocationType = LocationType.CloudProvider,
@@ -30,7 +30,7 @@ public class AzureLocationSourceTest
         };
 
         var westResult = mockLocationSource.ToGeopositionLocation(inputLocation);
-        AssertLocationsEqual(Constants.WestUsRegion, westResult);
+        AssertLocationsEqual(Constants.LocationWestUs, westResult);
 
     }
 
@@ -87,10 +87,10 @@ public class AzureLocationSourceTest
         };
     }
 
-    private static void AssertLocationsEqual(NamedGeoposition data, Location result)
+    private static void AssertLocationsEqual(Location expected, Location actual)
     {
-        Assert.AreEqual(LocationType.Geoposition, result.LocationType);
-        Assert.AreEqual(data.Latitude, result.Latitude.ToString());
-        Assert.AreEqual(data.Longitude, result.Longitude.ToString());
+        Assert.AreEqual(LocationType.Geoposition, actual.LocationType);
+        Assert.AreEqual(expected.Latitude, actual.Latitude.ToString());
+        Assert.AreEqual(expected.Longitude, actual.Longitude.ToString());
     }
 }

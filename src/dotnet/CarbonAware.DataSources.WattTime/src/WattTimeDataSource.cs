@@ -1,10 +1,10 @@
-﻿using CarbonAware.Interfaces;
+﻿using CarbonAware.Exceptions;
+using CarbonAware.Interfaces;
 using CarbonAware.Model;
 using CarbonAware.Tools.WattTimeClient;
 using CarbonAware.Tools.WattTimeClient.Model;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using System.Globalization;
 
 namespace CarbonAware.DataSources.WattTime;
 

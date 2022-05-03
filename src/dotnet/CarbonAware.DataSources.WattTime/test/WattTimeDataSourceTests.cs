@@ -1,4 +1,5 @@
-﻿using CarbonAware.Interfaces;
+﻿using CarbonAware.Exceptions;
+using CarbonAware.Interfaces;
 using CarbonAware.Model;
 using CarbonAware.Tools.WattTimeClient;
 using CarbonAware.Tools.WattTimeClient.Model;
@@ -119,8 +120,8 @@ public class WattTimeDataSourceTests
         this.LocationSource.Setup(r => r.ToGeopositionLocation(location)).Returns(location);
         
         this.WattTimeClient.Setup(w => w.GetBalancingAuthorityAsync(
-            location.Latitude.ToString(),
-            location.Longitude.ToString()
+            location.Latitude.ToString() ?? "",
+            location.Longitude.ToString() ?? ""
             )
         ).ReturnsAsync(() => balancingAuthority);
 

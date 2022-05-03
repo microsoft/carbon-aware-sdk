@@ -2,8 +2,10 @@ using System.Globalization;
 using System.Reflection;
 using CarbonAware.Model;
 using CarbonAware.Interfaces;
+using CarbonAware.Exceptions;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using CarbonAware.LocationSources.Azure;
 
 namespace CarbonAware.LocationSources.Azure;
 
@@ -29,9 +31,7 @@ public class AzureLocationSource : ILocationSource
     public AzureLocationSource(ILogger<AzureLocationSource> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        if(namedGeopositions == null || !namedGeopositions.Any()) {
-            namedGeopositions = LoadRegionsFromJson();
-        }
+        namedGeopositions = new Dictionary<string, NamedGeoposition>();
     }
 
     public Location ToGeopositionLocation(Location location)
@@ -46,18 +46,20 @@ public class AzureLocationSource : ILocationSource
             {
                 if( location.CloudProvider != CloudProvider.Azure ) 
                 {
-                    throw new ArgumentException($"Incorrect Cloud provider region. Expected Azure but found '{ location.CloudProvider }'");
+                    throw new LocationConversionException($"Incorrect Cloud provider region. Expected Azure but found '{ location.CloudProvider }'");
                 }
                 
                 return getGeoPositionLocationOrThrow(location);
             }
         }
         
-        throw new ArgumentException($"Location '{ location.CloudProvider }' cannot be converted to Geoposition. ");
+        throw new LocationConversionException($"Location '{ location.CloudProvider }' cannot be converted to Geoposition. ");
     }
 
     private Location getGeoPositionLocationOrThrow(Location location)
     {
+        loadRegionsFromFileIfNotPresent();
+        
         NamedGeoposition geopositionLocation = namedGeopositions[location.RegionName ?? ""];    
         if(geopositionLocation == null) 
         {
@@ -74,10 +76,9 @@ public class AzureLocationSource : ILocationSource
                     Latitude = Convert.ToDecimal(geopositionLocation.Latitude),
                     Longitude = Convert.ToDecimal(geopositionLocation.Longitude)
                 };
-            
     }
 
-    protected virtual Dictionary<string, NamedGeoposition>? LoadRegionsFromJson()
+    protected virtual Dictionary<string, NamedGeoposition> LoadRegionsFromJson()
     {
         var data = ReadFromResource("CarbonAware.LocationSources.Azure.azure-regions.json");
         List<NamedGeoposition> regionList = JsonSerializer.Deserialize<List<NamedGeoposition>>(data, options) ?? new List<NamedGeoposition>();
@@ -87,6 +88,13 @@ public class AzureLocationSource : ILocationSource
             namedGeopositions.Add(region.RegionName, region);
         }
         return namedGeopositions;
+    }
+
+    private void loadRegionsFromFileIfNotPresent() {
+        if(namedGeopositions == null || !namedGeopositions.Any())
+        {
+            namedGeopositions = LoadRegionsFromJson();
+        }
     }
     private string ReadFromResource(string key)
     {
