@@ -10,6 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCarbonAwareEmissionServices();
+builder.Services.AddCarbonAwareSciScoreServices();
 
 builder.Services.AddHealthChecks();
 
