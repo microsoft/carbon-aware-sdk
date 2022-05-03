@@ -18,7 +18,7 @@ public class AzureLocationSource : ILocationSource
 
     private readonly ILogger<AzureLocationSource> _logger;
 
-    private IDictionary<string, NamedGeoposition> namedGeopositions = new Dictionary<string, NamedGeoposition>();
+    private IDictionary<string, NamedGeoposition> namedGeopositions;
 
     private static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
@@ -29,39 +29,26 @@ public class AzureLocationSource : ILocationSource
     public AzureLocationSource(ILogger<AzureLocationSource> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        namedGeopositions = LoadRegionsFromJson();
-    }
-
-    private string ReadFromResource(string key)
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-        using Stream streamMetaData = assembly.GetManifestResourceStream(key) ?? throw new NullReferenceException("StreamMedataData is null");
-        using StreamReader readerMetaData = new StreamReader(streamMetaData);
-        return readerMetaData.ReadToEnd();
-    }
-
-    protected virtual Dictionary<string, NamedGeoposition>? LoadRegionsFromJson()
-    {
-        var data = ReadFromResource("CarbonAware.LocationSources.Azure.azure-regions.json");
-        List<NamedGeoposition> regionList = JsonSerializer.Deserialize<List<NamedGeoposition>>(data, options) ?? new List<NamedGeoposition>();
-        Dictionary<string, NamedGeoposition> namedGeopositions = new Dictionary<String, NamedGeoposition>();
-        foreach(NamedGeoposition region in regionList) {
-            namedGeopositions.Add(region.RegionName, region);
+        if(namedGeopositions != null && !namedGeopositions.Any()) {
+            namedGeopositions = LoadRegionsFromJson();
         }
-        return namedGeopositions;
     }
 
     public Location ToGeopositionLocation(Location location)
     {
-        switch (location.LocationType) {
-            case LocationType.Geoposition: {
+        switch (location.LocationType)
+        {
+            case LocationType.Geoposition:
+            {
                 return location;
             }
-            case LocationType.CloudProvider: {
-                if(location.CloudProvider != CloudProvider.Azure) {
+            case LocationType.CloudProvider: 
+            {
+                if(location.CloudProvider != CloudProvider.Azure) 
+                {
                     throw new ArgumentException($"Incorrect Cloud provider region. Expected Azure but found '{ location.CloudProvider }'");
                 }
-                NamedGeoposition region = namedGeopositions[location.RegionName];
+                NamedGeoposition region = namedGeopositions[location.RegionName ?? ""];
 
                 return new Location {
                     LocationType = LocationType.Geoposition,
@@ -72,7 +59,25 @@ public class AzureLocationSource : ILocationSource
         }
         
         throw new ArgumentException($"Location '{ location.CloudProvider }' cannot be converted to Geoposition. ");
-;
+    }
+
+    protected virtual Dictionary<string, NamedGeoposition>? LoadRegionsFromJson()
+    {
+        var data = ReadFromResource("CarbonAware.LocationSources.Azure.azure-regions.json");
+        List<NamedGeoposition> regionList = JsonSerializer.Deserialize<List<NamedGeoposition>>(data, options) ?? new List<NamedGeoposition>();
+        Dictionary<string, NamedGeoposition> namedGeopositions = new Dictionary<String, NamedGeoposition>();
+        foreach(NamedGeoposition region in regionList) 
+        {
+            namedGeopositions.Add(region.RegionName, region);
+        }
+        return namedGeopositions;
+    }
+    private string ReadFromResource(string key)
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        using Stream streamMetaData = assembly.GetManifestResourceStream(key) ?? throw new NullReferenceException("StreamMedataData is null");
+        using StreamReader readerMetaData = new StreamReader(streamMetaData);
+        return readerMetaData.ReadToEnd();
     }
 
 }
