@@ -24,16 +24,19 @@ public static class Constants
     public static readonly Location LocationEastUs = new () {
                     RegionName = "eastus",
                     Latitude = 37.3719m,
-                    Longitude = -79.8164m
+                    Longitude = -79.8164m,
+                    LocationType = LocationType.Geoposition
                     };
     public static readonly Location LocationWestUs = new () {
                     RegionName = "westus",
                     Latitude = 37.783m,
-                    Longitude = -122.417m
+                    Longitude = -122.417m,
+                    LocationType = LocationType.Geoposition
                 };
     public static readonly Location LocationNorthCentral = new () {
                     RegionName = "northcentralus",
                     Latitude = 37.783m,
-                    Longitude = -122.417m
+                    Longitude = -122.417m,
+                    LocationType = LocationType.Geoposition
                 };            
 }
