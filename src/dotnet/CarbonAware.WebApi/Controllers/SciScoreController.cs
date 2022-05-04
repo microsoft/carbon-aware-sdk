@@ -34,14 +34,14 @@ public class SciScoreController : ControllerBase
         if (input.Location == null)
         {
             var error = new CarbonAwareWebApiError() { Message = "Location is required" };
-            _logger.LogError("calculation failed with error: {error}");
+            _logger.LogError("calculation failed with error: {error}", error);
             return Task.FromResult<IActionResult>(BadRequest(error));
         }
 
         if (String.IsNullOrEmpty(input.TimeInterval))
         {
             var error = new CarbonAwareWebApiError() { Message = "TimeInterval is required" };
-            _logger.LogError("calculation failed with error: {error}");
+            _logger.LogError("calculation failed with error: {error}", error);
             return Task.FromResult<IActionResult>(BadRequest(error));
         }
 
@@ -123,13 +123,13 @@ public class SciScoreController : ControllerBase
                 CloudProvider = cloudProvider,
                 RegionName = locationInput.RegionName
             };
-            
+
             return location;
         }
         catch (Exception ex)
         {
             _logger.LogError("Exception occured during location creation", ex);
-            throw new ArgumentException("location provided is invalid"); 
+            throw new ArgumentException("location provided is invalid");
         }
     }
 
