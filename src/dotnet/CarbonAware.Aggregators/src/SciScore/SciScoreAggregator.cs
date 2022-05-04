@@ -31,19 +31,38 @@ namespace CarbonAware.Aggregators.SciScore
             return value;
         }
 
+        // Validate and parse time interval string into a tuple of (start, end) DateTimeOffsets.
+        // Throws ArgumentException for invalid input.
         private (DateTimeOffset start, DateTimeOffset end) ParseTimeInterval(string timeInterval)
         {
             DateTimeOffset start;
             DateTimeOffset end;
-            try
+
+            var timeIntervals = timeInterval.Split('/');
+            // Check that the time interval was split into exactly 2 parts
+            if(timeIntervals.Length != 2)
             {
-                var timeIntervals = timeInterval.Split('/');
-                start = DateTimeOffset.Parse(timeIntervals[0], CultureInfo.InvariantCulture.DateTimeFormat);
-                end = DateTimeOffset.Parse(timeIntervals[1], CultureInfo.InvariantCulture.DateTimeFormat);
+                throw new ArgumentException(
+                    $"Invalid TimeInterval. Expected exactly 2 dates separated by '/', recieved: {timeInterval}"
+                );
             }
-            catch (Exception) 
+
+            var rawStart = timeIntervals[0];
+            var rawEnd = timeIntervals[1];
+
+            if(!DateTimeOffset.TryParse(rawStart, CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AdjustToUniversal, out start))
             {
-                throw new ArgumentException("Invalid TimeInterval");
+                throw new ArgumentException($"Invalid TimeInterval. Could not parse start time: {rawStart}");
+            }
+
+            if(!DateTimeOffset.TryParse(rawEnd, CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AdjustToUniversal, out end))
+            {
+                throw new ArgumentException($"Invalid TimeInterval. Could not parse end time: {rawEnd}");
+            }
+
+            if(start > end)
+            {
+                throw new ArgumentException($"Invalid TimeInterval. Start time must come before end time: {timeInterval}");
             }
 
             return (start, end);

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CarbonAware.Aggregators.Tests;
+// Test class sets these fields in [SetUp] rather than traditional class constructor.
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 public class SciScoreAggregatorTests
@@ -103,11 +104,13 @@ public class SciScoreAggregatorTests
         var badStartDate = "not-a-date/2019-01-02";
         var badEndDate = "2019-01-01/not-a-date";
         var noSeparator = "2019-01-01 2019-01-02";
+        var startAfterEnd = "2020-01-01/2019-12-31";
 
         // Act // Assert
         Assert.ThrowsAsync<ArgumentException>(async () => await this.Aggregator.CalculateAverageCarbonIntensityAsync(location, badStartDate));
         Assert.ThrowsAsync<ArgumentException>(async () => await this.Aggregator.CalculateAverageCarbonIntensityAsync(location, badEndDate));
         Assert.ThrowsAsync<ArgumentException>(async () => await this.Aggregator.CalculateAverageCarbonIntensityAsync(location, noSeparator));
+        Assert.ThrowsAsync<ArgumentException>(async () => await this.Aggregator.CalculateAverageCarbonIntensityAsync(location, startAfterEnd));
     }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 }
