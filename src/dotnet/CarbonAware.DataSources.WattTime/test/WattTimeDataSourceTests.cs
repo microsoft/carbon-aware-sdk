@@ -79,7 +79,7 @@ public class WattTimeDataSourceTests
         Assert.AreEqual(balancingAuthority.Abbreviation, first.Location);
         Assert.AreEqual(startDate.DateTime, first.Time);
 
-        this.LocationSource.Verify(r => r.ToGeopositionLocation(location));
+        this.LocationSource.Verify(r => r.ToGeopositionLocationAsync(location));
     }
 
     [Test]
@@ -111,13 +111,13 @@ public class WattTimeDataSourceTests
         var startDate = new DateTimeOffset(2022, 4, 18, 12, 32, 42, TimeSpan.FromHours(-6));
         var endDate = new DateTimeOffset(2022, 4, 18, 12, 33, 42, TimeSpan.FromHours(-6));
 
-        this.LocationSource.Setup(l => l.ToGeopositionLocation(location)).Throws<LocationConversionException>();
+        this.LocationSource.Setup(l => l.ToGeopositionLocationAsync(location)).Throws<LocationConversionException>();
 
         Assert.ThrowsAsync<LocationConversionException>(async () => await this.DataSource.GetCarbonIntensityAsync(new List<Location>() { location }, startDate, endDate));
     }
     private void setupBalancingAuthority(BalancingAuthority balancingAuthority, Location location)
     {
-        this.LocationSource.Setup(r => r.ToGeopositionLocation(location)).Returns(location);
+        this.LocationSource.Setup(r => r.ToGeopositionLocationAsync(location)).Returns(Task.FromResult(location));
         
         this.WattTimeClient.Setup(w => w.GetBalancingAuthorityAsync(
             location.Latitude.ToString() ?? "",
