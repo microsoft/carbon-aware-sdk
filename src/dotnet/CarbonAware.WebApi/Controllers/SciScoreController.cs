@@ -3,6 +3,7 @@ using CarbonAware.WebApi.Models;
 using CarbonAware.Model;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using System.Diagnostics;
 
 namespace CarbonAware.WebApi.Controllers;
 
@@ -13,10 +14,13 @@ public class SciScoreController : ControllerBase
     private readonly ILogger<SciScoreController> _logger;
     private readonly ISciScoreAggregator _aggregator;
 
-    public SciScoreController(ILogger<SciScoreController> logger, ISciScoreAggregator aggregator)
+    private readonly ActivitySource _activitySource;
+
+    public SciScoreController(ILogger<SciScoreController> logger, ISciScoreAggregator aggregator, ActivitySource activitySource)
     {
         _logger = logger;
         _aggregator = aggregator;
+        _activitySource = activitySource;
     }
 
     [HttpPost]
@@ -29,12 +33,14 @@ public class SciScoreController : ControllerBase
         if (input.Location == null)
         {
             var error = new CarbonAwareWebApiError() { Message = "Location is required" };
+            _logger.LogInformation("location is not in the the request input");
             return BadRequest(error);
         }
 
         if (String.IsNullOrEmpty(input.TimeInterval))
         {
             var error = new CarbonAwareWebApiError() { Message = "TimeInterval is required" };
+            _logger.LogInformation("the time interval is not in the request input");
             return BadRequest(error);
         }
 
@@ -56,36 +62,43 @@ public class SciScoreController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetCarbonIntensityAsync(SciScoreInput input)
     {
-        _logger.LogInformation(" calling to aggregator to ");
-        if (input.Location == null)
+        using (var activity = _activitySource.StartActivity())
         {
-            var error = new CarbonAwareWebApiError() { Message = "Location is required" };
-            return BadRequest(error);
-        }
-
-        if (String.IsNullOrEmpty(input.TimeInterval))
-        {
-            var error = new CarbonAwareWebApiError() { Message = "TimeInterval is required" };
-            return BadRequest(error);
-        }
-        try
-        {
-            var carbonIntensity = await _aggregator.CalculateAverageCarbonIntensityAsync(input.Location, input.TimeInterval);
-
-            SciScore score = new SciScore
+            _logger.LogInformation("calling to aggregator to calculate the average carbon intensity");
+            // check that there is some location passed in
+            if (input.Location == null)
             {
-                MarginalCarbonEmissionsValue = carbonIntensity,
-            };
+                var error = new CarbonAwareWebApiError() { Message = "Location is required" };
+                _logger.LogInformation("the location is not in the request input");
+                return BadRequest(error);
+            }
 
-            return Ok(score);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError("Exception occured during marginal calculation execution", ex);
-            var error = new CarbonAwareWebApiError() { Message = ex.ToString() };
-            return BadRequest(error);
-        }
+            // check that there is a time interval passed in
+            if (String.IsNullOrEmpty(input.TimeInterval))
+            {
+                var error = new CarbonAwareWebApiError() { Message = "TimeInterval is required" };
+                _logger.LogInformation("the location is not in the request input");
+                return BadRequest(error);
+            }
+            try
+            {
+                var carbonIntensity = await _aggregator.CalculateAverageCarbonIntensityAsync(input.Location, input.TimeInterval);
 
+                SciScore score = new SciScore
+                {
+                    MarginalCarbonEmissionsValue = carbonIntensity,
+                };
+
+                return Ok(score);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Exception occured during marginal calculation execution", ex);
+                var error = new CarbonAwareWebApiError() { Message = ex.ToString() };
+                return BadRequest(error);
+            }
+
+        }
     }
 
 

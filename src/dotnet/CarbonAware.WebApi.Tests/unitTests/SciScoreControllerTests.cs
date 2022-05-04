@@ -23,7 +23,7 @@ public class SciScoreControllerTests : TestsBase
     public async Task SuccessfulCallReturnsOk_MarginalCarbonIntensity()
     {
         double data = 0.7;
-        var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregator(data).Object);
+        var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregator(data).Object, this.ActivitySource);
         Location location = new Location() { LocationType = LocationType.Geoposition, Latitude = (decimal)1.0, Longitude = (decimal)2.0 };
         string timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z";
         SciScoreInput input = new SciScoreInput()
@@ -45,7 +45,7 @@ public class SciScoreControllerTests : TestsBase
     public async Task ExceptionReturnsBadRequest_MarginalCarbonIntensity()
     {
         var data = 0.7;
-        var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregator(data).Object);
+        var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregator(data).Object, this.ActivitySource);
 
         Location location = new Location() { LocationType = LocationType.Geoposition, Latitude = (decimal)1.0, Longitude = (decimal)2.0 };
         string timeInterval = "";
