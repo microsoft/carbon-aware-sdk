@@ -63,9 +63,10 @@ public class SciScoreController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetCarbonIntensityAsync(SciScoreInput input)
     {
-        using (var activity = _activitySource.StartActivity())
+        using (var activity = _activitySource.StartActivity(nameof(SciScoreController)))
         {
             _logger.LogDebug("calling to aggregator to calculate the average carbon intensity with input: {input}", input);
+            
             // check that there is some location passed in
             if (input.Location == null)
             {
@@ -92,6 +93,7 @@ public class SciScoreController : ControllerBase
                 _logger.LogDebug("calculated marginal carbon intensity: {score}", score);
                 return Ok(score);
             }
+            // Catch ArgumentException for invalid inputs and broadly 3rd Party dependency exceptions
             catch (Exception ex)
             {
                 _logger.LogError("Exception occured during marginal calculation execution", ex);
@@ -101,6 +103,8 @@ public class SciScoreController : ControllerBase
         }
     }
 
+    /// Validate the user input location and convert it to the internal Location object.
+    /// Throws ArgumentException if the location input is invalid.
     private Location GetLocation(LocationInput locationInput)
     {
         LocationType locationType;
