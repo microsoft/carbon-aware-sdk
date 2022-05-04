@@ -101,5 +101,37 @@ public class SciScoreController : ControllerBase
         }
     }
 
+    private Location GetLocation(LocationInput locationInput)
+    {
+        LocationType locationType;
+        CloudProvider cloudProvider;
+
+        if (!Enum.TryParse<LocationType>(locationInput.LocationType, true, out locationType))
+        {
+            throw new ArgumentException($"locationType '{locationInput.LocationType}' is invalid");
+        }
+
+        Enum.TryParse<CloudProvider>(locationInput.CloudProvider, true, out cloudProvider);
+
+        try
+        {
+            var location = new Location
+            {
+                LocationType = locationType,
+                Latitude = locationInput.Latitude,
+                Longitude = locationInput.Longitude,
+                CloudProvider = cloudProvider,
+                RegionName = locationInput.RegionName
+            };
+            
+            return location;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Exception occured during location creation", ex);
+            throw new ArgumentException("location provided is invalid"); 
+        }
+    }
+
 
 }
