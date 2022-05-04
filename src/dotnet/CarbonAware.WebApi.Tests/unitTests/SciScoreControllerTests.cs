@@ -41,7 +41,7 @@ public class SciScoreControllerTests : TestsBase
 
         // Assert
         TestHelpers.AssertStatusCode(carbonIntensityOutput, HttpStatusCode.OK);
-        var expectedContent = new SciScore() { MarginalCarbonEmissionsValue = data };
+        var expectedContent = new SciScore() { MarginalCarbonIntensityValue = data };
         var actualContent = (carbonIntensityOutput == null) ? string.Empty : carbonIntensityOutput.Value;
         Assert.AreEqual(expectedContent, actualContent);
     }

@@ -49,7 +49,7 @@ public class SciScoreController : ControllerBase
         {
             SciScoreValue = 100.0,
             EnergyValue = 1.0,
-            MarginalCarbonEmissionsValue = 100.0,
+            MarginalCarbonIntensityValue = 100.0,
             EmbodiedEmissionsValue = 0.0,
             FunctionalUnitValue = 1
         };
@@ -88,7 +88,7 @@ public class SciScoreController : ControllerBase
 
                 SciScore score = new SciScore
                 {
-                    MarginalCarbonEmissionsValue = carbonIntensity,
+                    MarginalCarbonIntensityValue = carbonIntensity,
                 };
                 _logger.LogDebug("calculated marginal carbon intensity: {score}", score);
                 return Ok(score);
