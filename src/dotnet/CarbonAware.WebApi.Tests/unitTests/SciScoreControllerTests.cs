@@ -27,7 +27,7 @@ public class SciScoreControllerTests : TestsBase
     {
         double data = 0.7;
         var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregator(data).Object, this.ActivitySource);
-        Location location = new Location() { LocationType = LocationType.Geoposition, Latitude = (decimal)1.0, Longitude = (decimal)2.0 };
+        var location = new LocationInput() { LocationType = LocationType.Geoposition.ToString(), Latitude = (decimal)1.0, Longitude = (decimal)2.0 };
         string timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z";
         SciScoreInput input = new SciScoreInput()
         {
@@ -68,7 +68,7 @@ public class SciScoreControllerTests : TestsBase
         var carbonIntensityOutput = (await controller.GetCarbonIntensityAsync(input)) as ObjectResult;
 
         // Assert
-        var expected = new CarbonAwareWebApiError() { Message = "timeInterval is required" };
+        var expected = new CarbonAwareWebApiError() { Message = "TimeInterval is required" };
         TestHelpers.AssertStatusCode(carbonIntensityOutput, HttpStatusCode.BadRequest);
         Assert.AreEqual(expected, carbonIntensityOutput.Value);
     }
@@ -81,7 +81,7 @@ public class SciScoreControllerTests : TestsBase
     {
         // Arrange
         var data = 0.7;
-        var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregator(data).Object);
+        var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregator(data).Object, this.ActivitySource);
 
         string timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z";
 
@@ -94,7 +94,7 @@ public class SciScoreControllerTests : TestsBase
         var carbonIntensityOutput = (await controller.GetCarbonIntensityAsync(input)) as ObjectResult;
 
         // Assert
-        var expected = new CarbonAwareWebApiError() { Message = "location is required" };
+        var expected = new CarbonAwareWebApiError() { Message = "Location is required" };
         TestHelpers.AssertStatusCode(carbonIntensityOutput, HttpStatusCode.BadRequest);
         Assert.AreEqual(expected, carbonIntensityOutput.Value);
     }
@@ -106,7 +106,7 @@ public class SciScoreControllerTests : TestsBase
     {
         // Arrange
         var data = 0.7;
-        var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregator(data).Object);
+        var controller = new SciScoreController(this.MockSciScoreLogger.Object, CreateSciScoreAggregator(data).Object, this.ActivitySource);
 
         LocationInput locationInput = new LocationInput()
         {
