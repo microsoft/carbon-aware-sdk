@@ -13,5 +13,5 @@ public interface ILocationSource
     /// </summary>
     /// <param name="location">The location to be converted. </param>
     /// <returns>New location representing Geoposition information.</returns>
-    public Location ToGeopositionLocation(Location location);
+    public Task<Location> ToGeopositionLocationAsync(Location location);
 }

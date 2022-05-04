@@ -10,7 +10,7 @@ namespace CarbonAware.LocationSources.Azure.Test;
 public class AzureLocationSourceTest
 {   
     [Test]
-    public void TestToGeopositionLocation()
+    public async Task TestToGeopositionLocation()
     {
         var logger = Mock.Of<ILogger<AzureLocationSource>>();
 
@@ -21,7 +21,7 @@ public class AzureLocationSourceTest
             RegionName = "eastus"
         };
 
-        var eastResult = mockLocationSource.ToGeopositionLocation(inputLocation);
+        var eastResult = await mockLocationSource.ToGeopositionLocationAsync(inputLocation);
         AssertLocationsEqual(Constants.LocationEastUs, eastResult);
 
         inputLocation = new Location {
@@ -30,7 +30,7 @@ public class AzureLocationSourceTest
             RegionName = "westus"
         };
 
-        var westResult = mockLocationSource.ToGeopositionLocation(inputLocation);
+        var westResult = await mockLocationSource.ToGeopositionLocationAsync(inputLocation);
         AssertLocationsEqual(Constants.LocationWestUs, westResult);
 
     }
@@ -39,16 +39,16 @@ public class AzureLocationSourceTest
     // If an Azure Location with invalid RegionName is passed, should fail.
     // </summary>
     [Test]
-    public void TestToGeopositionInvalidLocation()
+    public async Task TestToGeopositionInvalidLocation()
     {
         var mockLocationSource = SetupMockLocationSource().Object;
         Location invalidLocation = new()
         {
             RegionName = "invalid location"
         };
-        Assert.Throws<LocationConversionException>(() =>
+        Assert.Throws<LocationConversionException>(async() =>
         {
-            Location result = mockLocationSource.ToGeopositionLocation(invalidLocation);
+            await mockLocationSource.ToGeopositionLocationAsync(invalidLocation);
         });
     }
 
@@ -57,13 +57,13 @@ public class AzureLocationSourceTest
     /// returns original Location.
     /// </summary>
     [Test]
-    public void TestToGeopositionWhenAlreadyGeopositionLocation()
+    public async Task TestToGeopositionWhenAlreadyGeopositionLocation()
     {
         var mockLocationSource = SetupMockLocationSource().Object;
         Location location = new Location {
             LocationType = LocationType.Geoposition
         };
-        var result = mockLocationSource.ToGeopositionLocation(location);
+        var result = await mockLocationSource.ToGeopositionLocationAsync(location);
         Assert.AreEqual(location, result);
     }
 
@@ -72,8 +72,8 @@ public class AzureLocationSourceTest
         var mockLocationSource = new Mock<AzureLocationSource>(logger);
         
         mockLocationSource.Protected()
-            .Setup<Dictionary<string, NamedGeoposition>>("LoadRegionsFromJson")
-            .Returns(GetTestDataRegions())
+            .Setup<Task<Dictionary<string, NamedGeoposition>>>("LoadRegionsFromJsonAsync")
+            .Returns(Task.FromResult(GetTestDataRegions()))
             .Verifiable();
 
         return mockLocationSource;
@@ -90,7 +90,7 @@ public class AzureLocationSourceTest
 
     private static void AssertLocationsEqual(Location expected, Location actual)
     {
-        Assert.AreEqual(LocationType.Geoposition, actual.LocationType);
+        Assert.AreEqual(expected.LocationType, actual.LocationType);
         Assert.AreEqual(expected.Latitude, actual.Latitude);
         Assert.AreEqual(expected.Longitude, actual.Longitude);
     }
