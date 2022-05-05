@@ -93,13 +93,6 @@ public class SciScoreController : ControllerBase
                 _logger.LogDebug("calculated marginal carbon intensity: {score}", score);
                 return Ok(score);
             }
-            // Catch ArgumentException 
-            catch (ArgumentException ex)
-            {
-                _logger.LogError("Argument exception in the input", ex);
-                var error = new CarbonAwareWebApiError() { Message = ex.ToString() };
-                return BadRequest(error);
-            }
             //for invalid inputs and broadly 3rd Party dependency exceptions
             catch (Exception ex)
             {
@@ -111,7 +104,6 @@ public class SciScoreController : ControllerBase
     }
 
     /// Validate the user input location and convert it to the internal Location object.
-    /// Throws ArgumentException if the location input is invalid.
     private Location GetLocation(LocationInput locationInput)
     {
         LocationType locationType;
@@ -123,24 +115,16 @@ public class SciScoreController : ControllerBase
         }
 
         Enum.TryParse<CloudProvider>(locationInput.CloudProvider, true, out cloudProvider);
-        try
+        var location = new Location
         {
-            var location = new Location
-            {
-                LocationType = locationType,
-                Latitude = locationInput.Latitude,
-                Longitude = locationInput.Longitude,
-                CloudProvider = cloudProvider,
-                RegionName = locationInput.RegionName
-            };
+            LocationType = locationType,
+            Latitude = locationInput.Latitude,
+            Longitude = locationInput.Longitude,
+            CloudProvider = cloudProvider,
+            RegionName = locationInput.RegionName
+        };
 
-            return location;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Exception occured during location creation");
-            throw new ArgumentException("Argument exception with the input: '{locationInput}'");
-        }
+        return location;
     }
 
 
