@@ -66,7 +66,7 @@ public class SciScoreController : ControllerBase
         using (var activity = _activitySource.StartActivity(nameof(SciScoreController)))
         {
             _logger.LogDebug("calling to aggregator to calculate the average carbon intensity with input: {input}", input);
-            
+
             // check that there is some location passed in
             if (input.Location == null)
             {
@@ -93,7 +93,14 @@ public class SciScoreController : ControllerBase
                 _logger.LogDebug("calculated marginal carbon intensity: {score}", score);
                 return Ok(score);
             }
-            // Catch ArgumentException for invalid inputs and broadly 3rd Party dependency exceptions
+            // Catch ArgumentException 
+            catch (ArgumentException ex)
+            {
+                _logger.LogError("Argument exception in the input", ex);
+                var error = new CarbonAwareWebApiError() { Message = ex.ToString() };
+                return BadRequest(error);
+            }
+            //for invalid inputs and broadly 3rd Party dependency exceptions
             catch (Exception ex)
             {
                 _logger.LogError("Exception occured during marginal calculation execution", ex);
@@ -116,7 +123,6 @@ public class SciScoreController : ControllerBase
         }
 
         Enum.TryParse<CloudProvider>(locationInput.CloudProvider, true, out cloudProvider);
-
         try
         {
             var location = new Location
@@ -132,8 +138,8 @@ public class SciScoreController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError("Exception occured during location creation", ex);
-            throw new ArgumentException("location provided is invalid");
+            _logger.LogError(ex, "Exception occured during location creation");
+            throw new ArgumentException("Argument exception with the input: '{locationInput}'");
         }
     }
 
