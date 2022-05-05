@@ -27,8 +27,7 @@ public class CarbonAwareController : ControllerBase
         //The LocationType and CloudProvider are hardcoded for now. Ideally this should be received from the request or configuration 
         IEnumerable<Location> locationEnumerable = locations.Select(loc => new Location()
                                                                             { RegionName = loc, 
-                                                                            LocationType=LocationType.CloudProvider, 
-                                                                            CloudProvider = CloudProvider.Azure });
+                                                                            LocationType=LocationType.CloudProvider});
         var props = new Dictionary<string, object?>() {
             { CarbonAwareConstants.Locations, locationEnumerable },
             { CarbonAwareConstants.Start, time},

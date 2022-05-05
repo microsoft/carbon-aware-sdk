@@ -44,7 +44,7 @@ public class AzureLocationSource : ILocationSource
             }
             case LocationType.CloudProvider: 
             {
-                if (location.CloudProvider != CloudProvider.Azure ) 
+                if (location.CloudProvider != null && location.CloudProvider != CloudProvider.Azure ) 
                 {
                     throw new LocationConversionException($"Incorrect Cloud provider region. Expected Azure but found '{ location.CloudProvider }'");
                 }

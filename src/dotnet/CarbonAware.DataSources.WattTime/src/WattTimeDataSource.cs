@@ -63,18 +63,13 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
         using (var activity = ActivitySource.StartActivity())
         {
-            BalancingAuthority? balancingAuthority;
+            BalancingAuthority balancingAuthority;
             try
             {
                 var geolocation = await this.LocationSource.ToGeopositionLocationAsync(location);
                 balancingAuthority = await WattTimeClient.GetBalancingAuthorityAsync(geolocation.Latitude.ToString() ?? "", geolocation.Longitude.ToString() ?? "");
-
-                if (balancingAuthority == null) 
-                {
-                    throw new LocationConversionException();
-                }
             }
-            catch(LocationConversionException ex)
+            catch(Exception ex) when (ex is LocationConversionException ||  ex is WattTimeClientException)
             {
                 activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
                 Logger.LogError(ex, "Failed to convert the location {location} into a Balancying Authority.", location);
