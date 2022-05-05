@@ -39,10 +39,10 @@ public class AzureLocationSourceTest
     // If an Azure Location with invalid RegionName is passed, should fail.
     // </summary>
     [Test]
-    public void TestToGeopositionInvalidLocation()
+    public void TestToGeopositionInvalidLocationAsync_ValidLocation()
     {
         var mockLocationSource = SetupMockLocationSource().Object;
-        Location invalidLocation = new()
+        Location invalidLocation = new Location
         {
             RegionName = "invalid location"
         };

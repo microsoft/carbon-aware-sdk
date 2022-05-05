@@ -5,4 +5,8 @@ public class NamedGeoposition
     public string RegionName { get; set; } = string.Empty;
     public string Latitude { get; set; } = string.Empty;
     public string Longitude { get; set; } = string.Empty;
+
+    public bool IsValidGeopositionLocation() {
+        return !String.IsNullOrEmpty(this.Latitude) && !String.IsNullOrEmpty(this.Latitude);
+    }
 }

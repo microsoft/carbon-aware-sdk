@@ -40,7 +40,7 @@ public class AzureLocationSource : ILocationSource
         {
             case LocationType.Geoposition:
             {
-                return location;
+                return await Task.FromResult(location);
             }
             case LocationType.CloudProvider: 
             {
@@ -49,7 +49,7 @@ public class AzureLocationSource : ILocationSource
                     throw new LocationConversionException($"Incorrect Cloud provider region. Expected Azure but found '{ location.CloudProvider }'");
                 }
                 var geoPositionLocation = await GetGeoPositionLocationOrThrowAsync(location);
-                return await Task.FromResult(geoPositionLocation);
+                return geoPositionLocation;
             }
         }
         
@@ -61,13 +61,13 @@ public class AzureLocationSource : ILocationSource
         LoadRegionsFromFileIfNotPresentAsync();
         
         NamedGeoposition geopositionLocation = namedGeopositions[location.RegionName!];    
-        if (IsValidGeopositionLocation(geopositionLocation))  
+        if (geopositionLocation == null || !geopositionLocation.IsValidGeopositionLocation())  
         {
             throw new LocationConversionException($"Lat/long cannot be retrieved for region '{ location.RegionName }'");
         }
         if (_logger.IsEnabled(LogLevel.Debug))
         {
-            _logger.LogDebug("Converted Azure Location named '{regionName}' to Geoposition Location at latitude '{latitude}'" 
+            _logger.LogDebug($"Converted Azure Location named '{location.RegionName}' to Geoposition Location at latitude '{location.Latitude}'" 
                                 + "and logitude '{longitude}'.", location.RegionName, geopositionLocation.Latitude, geopositionLocation.Longitude);
         }
         Location geoPosistionLocation = new Location 
@@ -93,9 +93,6 @@ public class AzureLocationSource : ILocationSource
         return Task.FromResult(regionGeopositionMapping);
     }
 
-    private bool IsValidGeopositionLocation(NamedGeoposition namedGeoposition) {
-        return namedGeoposition == null || String.IsNullOrEmpty(namedGeoposition.Latitude) || String.IsNullOrEmpty(namedGeoposition.Latitude);
-    }
     private async void LoadRegionsFromFileIfNotPresentAsync() {
         if (namedGeopositions == null || !namedGeopositions.Any())
         {
