@@ -20,7 +20,7 @@ public class AzureLocationSource : ILocationSource
 
     private readonly ILogger<AzureLocationSource> _logger;
 
-    private IDictionary<string, NamedGeoposition> namedGeopositions;
+    private IDictionary<string, NamedGeoposition>? namedGeopositions;
 
     private static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
@@ -31,7 +31,6 @@ public class AzureLocationSource : ILocationSource
     public AzureLocationSource(ILogger<AzureLocationSource> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        namedGeopositions = new Dictionary<string, NamedGeoposition>();
     }
 
     public async Task<Location> ToGeopositionLocationAsync(Location location)
@@ -60,7 +59,7 @@ public class AzureLocationSource : ILocationSource
     {
         LoadRegionsFromFileIfNotPresentAsync();
         
-        NamedGeoposition geopositionLocation = namedGeopositions[location.RegionName!];    
+        NamedGeoposition geopositionLocation = namedGeopositions![location.RegionName!];    
         if (geopositionLocation == null || !geopositionLocation.IsValidGeopositionLocation())  
         {
             throw new LocationConversionException($"Lat/long cannot be retrieved for region '{ location.RegionName }'");
