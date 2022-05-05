@@ -78,3 +78,14 @@ EG
   "functionalUnitValue": null
 }
 ```
+
+
+## Error Handling
+
+The WebAPI uses the [.Net controller filter pipeline](https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/filters?view=aspnetcore-6.0) to ensure that all requests respond with a consistent JSON schema.
+
+![.Net controller filter pipeline image](https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/filters/_static/filter-pipeline-2.png?view=aspnetcore-6.0)
+
+Controllers are responsible for managing the "Success" responses.  If an error occurs an exception will be thrown and the [custom Exception Filter](./Filters/HttpResponseExceptionFilter.cs) will manage converting that exception into the appropriate JSON response.
+
+The error schema used by this API is that of the [ValidationProblemDetails](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.validationproblemdetails?view=aspnetcore-6.0) class in order to provide a consistent error schema while taking advantage of errors automatically returned by the framework.
