@@ -7,6 +7,7 @@ namespace CarbonAware.CLI;
 
 using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.Interfaces;
+using Microsoft.Extensions.Logging;
 
 public class CarbonAwareCLI
 {
@@ -16,10 +17,14 @@ public class CarbonAwareCLI
     /// Indicates if the command line arguments have been parsed successfully 
     /// </summary>
     public bool Parsed { get; private set; } = false;
-    ICarbonAwareAggregator _aggregator {get; set;}     
-    public CarbonAwareCLI(string[] args, ICarbonAwareAggregator aggregator)
+    ICarbonAwareAggregator _aggregator {get; set;}
+
+    private readonly ILogger<CarbonAwareCLI> _logger;
+
+    public CarbonAwareCLI(string[] args, ICarbonAwareAggregator aggregator, ILogger<CarbonAwareCLI> logger)
     {
         this._aggregator = aggregator;
+        this._logger = logger;
         
         var parseResult = Parser.Default.ParseArguments<CLIOptions>(args);
         try
@@ -31,8 +36,8 @@ public class CarbonAwareCLI
         }
         catch (AggregateException e)
         {
-            Console.WriteLine("Error:");
-            Console.WriteLine(e.Message);
+            _logger.LogError("Error:");
+            _logger.LogError(e.Message);
         }
     }
 
@@ -76,7 +81,8 @@ public class CarbonAwareCLI
 
     public void OutputEmissionsData(IEnumerable<EmissionsData> emissions)
     {
-       Console.WriteLine($"{JsonConvert.SerializeObject(emissions, Formatting.Indented)}");
+        _logger.LogCritical($"{JsonConvert.SerializeObject(emissions, Formatting.Indented)}");
+        Console.WriteLine($"{JsonConvert.SerializeObject(emissions, Formatting.Indented)}");
     }
 
     private void ValidateCommandLineArguments(CLIOptions o)
