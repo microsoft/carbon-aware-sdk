@@ -27,7 +27,7 @@ public class AzureLocationSource : ILocationSource
     /// <summary>
     /// Creates a new instance of the <see cref="AzureLocationSource"/> class.
     /// </summary>
-    /// <param name="logger">The logger for the datasource</param>
+    /// <param name="logger">The logger for the LocationSource</param>
     public AzureLocationSource(ILogger<AzureLocationSource> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));

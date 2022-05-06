@@ -67,7 +67,7 @@ public class WattTimeDataSourceTests
             endDate)
         ).ReturnsAsync(() => emissionData);
 
-        SetupBalancingAuthority(balancingAuthority, location);
+        setupBalancingAuthority(balancingAuthority, location);
         var result = await this.DataSource.GetCarbonIntensityAsync(new List<Location>() { location }, startDate, endDate);
 
         Assert.IsNotNull(result);
@@ -96,7 +96,7 @@ public class WattTimeDataSourceTests
             endDate)
         ).ReturnsAsync(() => new List<GridEmissionDataPoint>());
 
-        SetupBalancingAuthority(balancingAuthority, location);
+        setupBalancingAuthority(balancingAuthority, location);
 
         var result = await this.DataSource.GetCarbonIntensityAsync(new List<Location>() { location }, startDate, endDate);
 
@@ -115,14 +115,13 @@ public class WattTimeDataSourceTests
 
         Assert.ThrowsAsync<LocationConversionException>(async () => await this.DataSource.GetCarbonIntensityAsync(new List<Location>() { location }, startDate, endDate));
     }
-    private void SetupBalancingAuthority(BalancingAuthority balancingAuthority, Location location)
+    private void setupBalancingAuthority(BalancingAuthority balancingAuthority, Location location)
     {
         this.LocationSource.Setup(r => r.ToGeopositionLocationAsync(location)).Returns(Task.FromResult(location));
-        
-        this.WattTimeClient.Setup(w => w.GetBalancingAuthorityAsync(
-            location.Latitude.ToString() ?? "",
-            location.Longitude.ToString() ?? ""
-            )
+        var latitude = location.Latitude.ToString() ?? throw new Exception();
+        var longitude = location.Longitude.ToString() ?? throw new Exception();
+
+        this.WattTimeClient.Setup(w => w.GetBalancingAuthorityAsync(latitude, longitude)
         ).ReturnsAsync(() => balancingAuthority);
 
     }

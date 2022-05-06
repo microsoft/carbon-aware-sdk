@@ -30,6 +30,6 @@ In `myProject.csproj`:
 
 Once the LocationSource is configured through dependency injection, you can instantiate using
 
-```charp
+```csharp
 services.TryAddSingleton<ILocationSource, AzureLocationSource>();
 ```
