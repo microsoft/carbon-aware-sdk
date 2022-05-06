@@ -10,7 +10,7 @@ namespace CarbonAware.LocationSources.Azure.Test;
 public class AzureLocationSourceTest
 {   
     [Test]
-    public async Task TestToGeopositionLocation()
+    public async Task TestToGeopositionLocation_ValidLocation()
     {
         var logger = Mock.Of<ILogger<AzureLocationSource>>();
 
@@ -39,10 +39,10 @@ public class AzureLocationSourceTest
     // If an Azure Location with invalid RegionName is passed, should fail.
     // </summary>
     [Test]
-    public void TestToGeopositionInvalidLocationAsync_ValidLocation()
+    public void TestToGeopositionLocation_InvalidLocation()
     {
         var mockLocationSource = SetupMockLocationSource().Object;
-        Location invalidLocation = new Location
+        Location invalidLocation = new Location()
         {
             RegionName = "invalid location"
         };
@@ -57,7 +57,7 @@ public class AzureLocationSourceTest
     /// returns original Location.
     /// </summary>
     [Test]
-    public async Task TestToGeopositionWhenAlreadyGeopositionLocation()
+    public async Task TestToGeopositionLocation_AlreadyGeopositionLocation()
     {
         var mockLocationSource = SetupMockLocationSource().Object;
         Location location = new Location {
