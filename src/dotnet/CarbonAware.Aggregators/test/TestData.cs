@@ -9,11 +9,11 @@ public static class TestData
 {
   public static IEnumerable<EmissionsData> GetFilteredEmissionDataList(string location, string startTime, string endTime)
     {
-        DateTime start, end;
-        DateTime.TryParse(startTime, out start);
-        DateTime.TryParse(endTime, out end);
+        DateTime start = DateTime.Parse(startTime);
+        DateTime end = DateTime.Parse(endTime);
         return GetAllEmissionDataList().Where(x => x.Location == location && x.Time >= start && x.Time <= end);
     }
+
   public static IEnumerable<EmissionsData> GetAllEmissionDataList()
   {
      return  new List<EmissionsData>()
