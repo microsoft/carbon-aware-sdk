@@ -11,10 +11,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddWattTimeDataSourceService(this IServiceCollection services, IConfiguration? configuration)
     {
-        if(configuration == null)
-        {
-            throw new ConfigurationException("WattTime configuration required.");
-        }
+        _ = configuration ?? throw new ConfigurationException("WattTime configuration required.");
         services.ConfigureWattTimeClient(configuration);
         services.TryAddSingleton<ICarbonIntensityDataSource, WattTimeDataSource>();
         services.TryAddSingleton<ILocationSource, AzureLocationSource>();
