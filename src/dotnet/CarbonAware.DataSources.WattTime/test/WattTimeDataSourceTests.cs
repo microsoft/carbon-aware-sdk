@@ -28,6 +28,9 @@ public class WattTimeDataSourceTests
 
     private Mock<ILocationConverter> LocationConverter { get; set; }
 
+    // Magic floating point tolerance to allow for minuscule differences in floating point arithmetic.
+    private const double FLOATING_POINT_TOLERANCE = 0.00000001;
+
 
     [SetUp]
     public void Setup()
@@ -42,7 +45,7 @@ public class WattTimeDataSourceTests
     }
 
     [Test]
-    [DefaultFloatingPointTolerance(0.00000001)]
+    [DefaultFloatingPointTolerance(FLOATING_POINT_TOLERANCE)]
     public async Task GetCarbonIntensity_ReturnsResultsWhenRecordsFound()
     {
         var location = new Location() { RegionName = "eastus", LocationType = LocationType.CloudProvider, CloudProvider = CloudProvider.Azure };
