@@ -7,6 +7,9 @@ using System.Diagnostics;
 
 namespace CarbonAware.WebApi.Controllers;
 
+/// <summary>
+/// Controller for the API routes that lead to retrieving the sci scores and marginal carbon intensities 
+/// </summary>
 [Route("sci-scores")]
 [ApiController]
 public class SciScoreController : ControllerBase
@@ -28,20 +31,24 @@ public class SciScoreController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
+    /// <summary> Gets sci-score value, currently dummy function to keep consistency </summary>
+    /// <param name="input"> input from JSON request converted to input object with location and time interval </param>
+    /// <returns>Result of the call to the aggregator that calculates the sci score</returns>
+
     public Task<IActionResult> CreateAsync(SciScoreInput input)
     {
         _logger.LogDebug("calculate sciscore with input: {input}", input);
         if (input.Location == null)
         {
             var error = new CarbonAwareWebApiError() { Message = "Location is required" };
-            _logger.LogError("calculation failed with error: {error}", error);
+            _logger.LogDebug("calculation failed with error: {error}", error);
             return Task.FromResult<IActionResult>(BadRequest(error));
         }
 
         if (String.IsNullOrEmpty(input.TimeInterval))
         {
             var error = new CarbonAwareWebApiError() { Message = "TimeInterval is required" };
-            _logger.LogError("calculation failed with error: {error}", error);
+            _logger.LogDebug("calculation failed with error: {error}", error);
             return Task.FromResult<IActionResult>(BadRequest(error));
         }
 
@@ -61,17 +68,20 @@ public class SciScoreController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    /// <summary> Gets the marginal carbon intensity value </summary>
+    /// <param name="input"> input from JSON request converted to input object with location and time interval </param>
+    /// <returns>Result of the call to the aggregator to retrieve carbon intenstiy</returns>
     public async Task<IActionResult> GetCarbonIntensityAsync(SciScoreInput input)
     {
         using (var activity = _activitySource.StartActivity(nameof(SciScoreController)))
         {
             _logger.LogDebug("calling to aggregator to calculate the average carbon intensity with input: {input}", input);
-            
+
             // check that there is some location passed in
             if (input.Location == null)
             {
                 var error = new CarbonAwareWebApiError() { Message = "Location is required" };
-                _logger.LogError("get carbon intensity failed with error: {error}", error);
+                _logger.LogDebug("get carbon intensity failed with error: {error}  with input {input}", error, input);
                 return BadRequest(error);
             }
 
@@ -79,7 +89,7 @@ public class SciScoreController : ControllerBase
             if (String.IsNullOrEmpty(input.TimeInterval))
             {
                 var error = new CarbonAwareWebApiError() { Message = "TimeInterval is required" };
-                _logger.LogError("get carbon intensity failed with error: {error}", error);
+                _logger.LogDebug("get carbon intensity failed with error: {error} with input {input}", error, input);
                 return BadRequest(error);
             }
             try
@@ -93,18 +103,20 @@ public class SciScoreController : ControllerBase
                 _logger.LogDebug("calculated marginal carbon intensity: {score}", score);
                 return Ok(score);
             }
-            // Catch ArgumentException for invalid inputs and broadly 3rd Party dependency exceptions
+            //for invalid inputs and broadly 3rd Party dependency exceptions
             catch (Exception ex)
             {
-                _logger.LogError("Exception occured during marginal calculation execution", ex);
+                _logger.LogError(ex, "Exception occured during marginal calculation execution of input :{input}", input);
                 var error = new CarbonAwareWebApiError() { Message = ex.ToString() };
                 return BadRequest(error);
             }
         }
     }
 
+    /// <summary>
     /// Validate the user input location and convert it to the internal Location object.
-    /// Throws ArgumentException if the location input is invalid.
+    /// </summary>
+
     private Location GetLocation(LocationInput locationInput)
     {
         LocationType locationType;
@@ -112,29 +124,21 @@ public class SciScoreController : ControllerBase
 
         if (!Enum.TryParse<LocationType>(locationInput.LocationType, true, out locationType))
         {
+            _logger.LogError("Can't parse location type with location input: ", locationInput);
             throw new ArgumentException($"locationType '{locationInput.LocationType}' is invalid");
         }
 
         Enum.TryParse<CloudProvider>(locationInput.CloudProvider, true, out cloudProvider);
-
-        try
+        var location = new Location
         {
-            var location = new Location
-            {
-                LocationType = locationType,
-                Latitude = locationInput.Latitude,
-                Longitude = locationInput.Longitude,
-                CloudProvider = cloudProvider,
-                RegionName = locationInput.RegionName
-            };
+            LocationType = locationType,
+            Latitude = locationInput.Latitude,
+            Longitude = locationInput.Longitude,
+            CloudProvider = cloudProvider,
+            RegionName = locationInput.RegionName
+        };
 
-            return location;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError("Exception occured during location creation", ex);
-            throw new ArgumentException("location provided is invalid");
-        }
+        return location;
     }
 
 

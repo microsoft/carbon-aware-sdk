@@ -1,3 +1,4 @@
+using CarbonAware;
 using CarbonAware.Aggregators.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,8 +10,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddCarbonAwareEmissionServices();
-builder.Services.AddCarbonAwareSciScoreServices();
+builder.Services.Configure<CarbonAwareVariablesConfiguration>(builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key));
+builder.Services.AddCarbonAwareEmissionServices(builder.Configuration);
+builder.Services.AddCarbonAwareSciScoreServices(builder.Configuration);
 
 builder.Services.AddHealthChecks();
 
