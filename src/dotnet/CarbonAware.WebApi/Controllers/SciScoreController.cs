@@ -7,6 +7,9 @@ using System.Diagnostics;
 
 namespace CarbonAware.WebApi.Controllers;
 
+/// <summary>
+/// Controller for the API routes that lead to retrieving the sci scores and marginal carbon intensities 
+/// </summary>
 [Route("sci-scores")]
 [ApiController]
 public class SciScoreController : ControllerBase
@@ -27,6 +30,10 @@ public class SciScoreController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
+    /// <summary> Gets sci-score value, currently dummy function to keep consistency </summary>
+    /// <param name="input"> input from JSON request converted to input object with location and time interval </param>
+    /// <returns>Result of the call to the aggregator that calculates the sci score</returns>
 
     public Task<IActionResult> CreateAsync(SciScoreInput input)
     {
@@ -61,6 +68,9 @@ public class SciScoreController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    /// <summary> Gets the marginal carbon intensity value </summary>
+    /// <param name="input"> input from JSON request converted to input object with location and time interval </param>
+    /// <returns>Result of the call to the aggregator to retrieve carbon intenstiy</returns>
     public async Task<IActionResult> GetCarbonIntensityAsync(SciScoreInput input)
     {
         using (var activity = _activitySource.StartActivity(nameof(SciScoreController)))
@@ -103,7 +113,10 @@ public class SciScoreController : ControllerBase
         }
     }
 
+    /// <summary>
     /// Validate the user input location and convert it to the internal Location object.
+    /// </summary>
+
     private Location GetLocation(LocationInput locationInput)
     {
         LocationType locationType;
