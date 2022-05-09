@@ -31,6 +31,10 @@ public class WattTimeDataSourceTests
     // Magic floating point tolerance to allow for minuscule differences in floating point arithmetic.
     private const double FLOATING_POINT_TOLERANCE = 0.00000001;
 
+    // Conversion factors for asserting proper unit conversions
+    private const double GRAMS_TO_POUNDS = 0.00220462262185;
+    private const double KWH_TO_MWH = 0.001;
+
 
     [SetUp]
     public void Setup()
@@ -85,6 +89,46 @@ public class WattTimeDataSourceTests
         Assert.AreEqual(startDate.DateTime, first.Time);
 
         this.LocationConverter.Verify(r => r.ConvertLocationToBalancingAuthorityAsync(location));
+    }
+
+    [DatapointSource]
+    public float[] moerValues = new float[] { 0.0F, 10.0F, -1.0F, 1000.0F, 579.31F };
+
+    [Theory]
+    public async Task GetCarbonIntensity_ConvertsMoerToGramsPerKwh(float lbsPerMwhEmissions)
+    {
+        Assume.That(lbsPerMwhEmissions >= 0.0);
+
+        var location = new Location() { RegionName = "eastus", LocationType = LocationType.CloudProvider, CloudProvider = CloudProvider.Azure };
+        var balancingAuthority = new BalancingAuthority() { Abbreviation = "BA" };
+        var startDate = new DateTimeOffset(2022, 4, 18, 12, 32, 42, TimeSpan.FromHours(-6));
+        var endDate = new DateTimeOffset(2022, 4, 18, 12, 33, 42, TimeSpan.FromHours(-6));
+
+        var emissionData = new List<GridEmissionDataPoint>()
+        {
+            new GridEmissionDataPoint()
+            {
+                BalancingAuthorityAbbreviation = balancingAuthority.Abbreviation,
+                PointTime = startDate.DateTime,
+                Value = lbsPerMwhEmissions,
+            }
+        };
+
+        this.WattTimeClient.Setup(w => w.GetDataAsync(
+            balancingAuthority,
+            startDate,
+            endDate)
+        ).ReturnsAsync(() => emissionData);
+
+        this.LocationConverter.Setup(r => r.ConvertLocationToBalancingAuthorityAsync(location)).ReturnsAsync(balancingAuthority);
+
+        var result = await this.DataSource.GetCarbonIntensityAsync(new List<Location>() { location }, startDate, endDate);
+
+        var first = result.First();
+        var rating = first.Rating;
+
+        Assert.That(rating >= 0.0);
+        Assert.That(rating * GRAMS_TO_POUNDS / KWH_TO_MWH, Is.EqualTo(lbsPerMwhEmissions).Within(FLOATING_POINT_TOLERANCE));
     }
 
     [Test]
