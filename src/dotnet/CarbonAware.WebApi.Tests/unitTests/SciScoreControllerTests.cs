@@ -50,7 +50,7 @@ public class SciScoreControllerTests : TestsBase
     /// Tests that invalid locationType inputs respond with a badRequest error
     /// </summary>
     [Test]
-    public async Task InvalidLocationTypeReturnsBadRequest_MarginalCarbonIntensity()
+    public void InvalidLocationTypeReturnsBadRequest_MarginalCarbonIntensity()
     {
         // Arrange
         var data = 0.7;

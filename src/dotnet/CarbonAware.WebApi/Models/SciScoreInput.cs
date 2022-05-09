@@ -8,7 +8,7 @@ public record SciScoreInput
 {
     [JsonPropertyName("location")]
     [Required()]
-    public LocationInput? Location { get; set; }
+    public LocationInput Location { get; set; } = new LocationInput();
 
     [JsonPropertyName("timeInterval")]
     [Required()]
