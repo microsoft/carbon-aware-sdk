@@ -113,10 +113,8 @@ public class SciScoreController : ControllerBase
         }
     }
 
-    /// <summary>
     /// Validate the user input location and convert it to the internal Location object.
-    /// </summary>
-
+    //  Throws ArgumentException if input is invalid.
     private Location GetLocation(LocationInput locationInput)
     {
         LocationType locationType;
