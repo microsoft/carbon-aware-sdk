@@ -79,7 +79,7 @@ public class WattTimeDataSourceTests
         Assert.AreEqual(balancingAuthority.Abbreviation, first.Location);
         Assert.AreEqual(startDate.DateTime, first.Time);
 
-        this.LocationSource.Verify(r => (async) r.ToGeopositionLocationAsync(location));
+        this.LocationSource.Verify(r => r.ToGeopositionLocationAsync(location));
     }
 
     [Test]
