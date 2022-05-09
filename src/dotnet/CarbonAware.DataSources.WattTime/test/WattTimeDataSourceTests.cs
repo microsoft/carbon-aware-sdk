@@ -118,8 +118,8 @@ public class WattTimeDataSourceTests
     private void SetupBalancingAuthority(BalancingAuthority balancingAuthority, Location location)
     {
         this.LocationSource.Setup(r => r.ToGeopositionLocationAsync(location)).Returns(Task.FromResult(location));
-        var latitude = location.Latitude.ToString() ?? throw new Exception();
-        var longitude = location.Longitude.ToString() ?? throw new Exception();
+        var latitude = location.Latitude.ToString() ?? throw new ArgumentNullException(String.Format("Could not find location"));
+        var longitude = location.Longitude.ToString() ?? throw new ArgumentNullException(String.Format("Could not find location"));
 
         this.WattTimeClient.Setup(w => w.GetBalancingAuthorityAsync(latitude, longitude)
         ).ReturnsAsync(() => balancingAuthority);
