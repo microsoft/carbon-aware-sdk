@@ -20,7 +20,7 @@ az aks get-credentials --resource-group <resource-group-name> --name <kubernetes
 ``` 
 
 ## Push an image to the container registry
-The following steps illustrates how to push a webservice image in order to used deployed in AKS using ACR (Azure Container Registry).
+The following steps illustrates how to push a webservice image in order to be deployed in AKS using ACR (Azure Container Registry).
 1. Build a `published` image using for instancee the following [Dockerfile](https://docs.microsoft.com/en-us/dotnet/core/docker/build-container?tabs=windows#create-the-dockerfile)
     ```sh
     docker build -t myapp:v1 .
