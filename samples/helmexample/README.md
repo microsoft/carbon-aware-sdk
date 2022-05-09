@@ -124,3 +124,15 @@ If you get an error deploying the helm chart and have ensured the image is pulli
 * Check on a specific pod: `kubectl describe pod <pod-name>`
 * Get logs on a specific pod: `kubectl logs <pod-name>`
 * Delete a specific pod: `kubectl delete pod <pod-name>`
+
+## References
+Helm 3 docs - https://helm.sh/docs/
+Helm 3 image docs - https://helm.sh/docs/chart_best_practices/pods/#images
+
+MS Docs: Creating an ingress controller in AKS - https://docs.microsoft.com/en-us/azure/aks/ingress-basic?tabs=azure-cli
+
+Github Issue: deploying a container from ACR to AKS - https://github.com/MicrosoftDocs/azure-docs/issues/33430
+
+MS Docs: Authenticate with ACR from AKS - https://docs.microsoft.com/en-us/azure/aks/cluster-container-registry-integration?tabs=azure-cli#access-with-kubernetes-secret
+
+ContainIQ: Troubleshooting ImagePullBackOff Error - https://www.containiq.com/post/kubernetes-imagepullbackoff
