@@ -34,14 +34,14 @@ public class SciScoreController : ControllerBase
         if (input.Location == null)
         {
             var error = new CarbonAwareWebApiError() { Message = "Location is required" };
-            _logger.LogError("calculation failed with error: {error}", error);
+            _logger.LogDebug("calculation failed with error: {error}", error);
             return Task.FromResult<IActionResult>(BadRequest(error));
         }
 
         if (String.IsNullOrEmpty(input.TimeInterval))
         {
             var error = new CarbonAwareWebApiError() { Message = "TimeInterval is required" };
-            _logger.LogError("calculation failed with error: {error}", error);
+            _logger.LogDebug("calculation failed with error: {error}", error);
             return Task.FromResult<IActionResult>(BadRequest(error));
         }
 
@@ -71,7 +71,7 @@ public class SciScoreController : ControllerBase
             if (input.Location == null)
             {
                 var error = new CarbonAwareWebApiError() { Message = "Location is required" };
-                _logger.LogError("get carbon intensity failed with error: {error}", error);
+                _logger.LogDebug("get carbon intensity failed with error: {error}  with input {input}", error, input);
                 return BadRequest(error);
             }
 
@@ -79,7 +79,7 @@ public class SciScoreController : ControllerBase
             if (String.IsNullOrEmpty(input.TimeInterval))
             {
                 var error = new CarbonAwareWebApiError() { Message = "TimeInterval is required" };
-                _logger.LogError("get carbon intensity failed with error: {error}", error);
+                _logger.LogDebug("get carbon intensity failed with error: {error} with input {input}", error, input);
                 return BadRequest(error);
             }
             try
@@ -96,7 +96,7 @@ public class SciScoreController : ControllerBase
             //for invalid inputs and broadly 3rd Party dependency exceptions
             catch (Exception ex)
             {
-                _logger.LogError("Exception occured during marginal calculation execution", ex);
+                _logger.LogError(ex, "Exception occured during marginal calculation execution of input :{input}", input);
                 var error = new CarbonAwareWebApiError() { Message = ex.ToString() };
                 return BadRequest(error);
             }
