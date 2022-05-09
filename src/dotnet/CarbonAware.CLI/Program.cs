@@ -10,12 +10,12 @@ class Program
 {
     public static async Task Main(string[] args)
     {
-        ServiceProvider serviceProvider = bootstrapServices();
+        ServiceProvider serviceProvider = BootstrapServices();
 
         await GetEmissionsAsync(args, serviceProvider.GetRequiredService<ICarbonAwareAggregator>(), serviceProvider.GetService<ILogger<CarbonAwareCLI>>());
     }
 
-    private static ServiceProvider bootstrapServices() {
+    private static ServiceProvider BootstrapServices() {
              
         var configurationBuilder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
