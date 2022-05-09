@@ -2,9 +2,9 @@
 
 ## Setup Resource Group
 
-1. Create a new Kubernetes service following the default settings
-2. Create a container registry
-3. Create a key vault
+  1. Create a new Kubernetes service following the default settings
+  1. Create a container registry
+  1. Create a key vault
 
 ## Connect to the Kubernetes service
 
@@ -20,7 +20,25 @@ az aks get-credentials --resource-group <resource-group-name> --name <kubernetes
 ``` 
 
 ## Push an image to the container registry
-@Juan - how to create ACR and push image to registry.
+The following steps illustrates how to push a webservice image in order to used deployed in AKS using ACR (Azure Container Registry).
+1. Build a `published` image using for instancee the following [Dockerfile](https://docs.microsoft.com/en-us/dotnet/core/docker/build-container?tabs=windows#create-the-dockerfile)
+    ```sh
+    docker build -t myapp:v1 .
+    ```
+1. Login into ACR using the username and password credentials that are needed in order to push. See Access Keys section of the ACR Portal.
+    ```sh
+    docker login <acrloginserver>.azurecr.io
+    ```
+1. Tag the image following ACR tagging scheme
+    ```sh
+    docker tag myapp <acrloginserver>.azurecr.io/myapp:v1
+    ```
+1. Push to ACR
+    ```sh
+    docker push <acrloginserver>.azurecr.io/myapp:v1
+    ```
+
+After these steps, using Azure's Portal ACR resource an image should be available under repositories following the naming convention mentioned above.
 
 ### Give cluster access to ACR
 To attach the ACR to the cluster so that the image can be accessed, run 
