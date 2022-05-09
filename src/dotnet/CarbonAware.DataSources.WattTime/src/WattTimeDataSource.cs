@@ -105,7 +105,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         }
     }
 
-    private double ConvertMoerToGramsPerKilowattHour(double value)
+    internal double ConvertMoerToGramsPerKilowattHour(double value)
     {
         return value * LBS_TO_GRAMS_CONVERSION_FACTOR / MWH_TO_KWH_CONVERSION_FACTOR;
     }
