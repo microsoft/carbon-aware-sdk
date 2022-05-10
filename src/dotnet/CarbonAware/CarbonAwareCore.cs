@@ -19,11 +19,11 @@ public class CarbonAwareCore : ICarbonAwareBase
 
         _logger.LogInformation("Carbon Aware Core loaded with carbon logic.");
 
-        _logger.LogVerbose($"\tName: '{plugin.Name}'");
-        _logger.LogVerbose($"\tAuthor: '{plugin.Author}'");
-        _logger.LogVerbose($"\tDescription: '{plugin.Description}'");
-        _logger.LogVerbose($"\tVersion: '{plugin.Version}'");
-        _logger.LogVerbose($"\tURL: '{plugin.URL}'");
+        _logger.LogDebug($"\tName: '{plugin.Name}'");
+        _logger.LogDebug($"\tAuthor: '{plugin.Author}'");
+        _logger.LogDebug($"\tDescription: '{plugin.Description}'");
+        _logger.LogDebug($"\tVersion: '{plugin.Version}'");
+        _logger.LogDebug($"\tURL: '{plugin.URL}'");
     }
 
     public List<EmissionsData> GetEmissionsDataForLocationByTime(string location, DateTime time, DateTime? toTime = null, int durationMinutes = 0)
