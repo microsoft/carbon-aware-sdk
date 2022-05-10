@@ -36,8 +36,7 @@ public class CarbonAwareCLI
         }
         catch (AggregateException e)
         {
-            _logger.LogError("Error:");
-            _logger.LogError(e.Message);
+            _logger.LogError("Error: {message}", e.Message);
         }
     }
 
