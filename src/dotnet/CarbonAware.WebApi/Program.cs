@@ -13,10 +13,18 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<CarbonAwareVariablesConfiguration>(builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key));
 builder.Services.AddCarbonAwareEmissionServices(builder.Configuration);
 builder.Services.AddCarbonAwareSciScoreServices(builder.Configuration);
+CarbonAwareVariablesConfiguration config = new CarbonAwareVariablesConfiguration();
+
+builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Bind(config);
 
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
+
+if (!string.IsNullOrWhiteSpace(config.WebApiRoutePrefix))
+{
+    app.UsePathBase(config.WebApiRoutePrefix);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -26,6 +34,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
 
 app.UseAuthorization();
 
