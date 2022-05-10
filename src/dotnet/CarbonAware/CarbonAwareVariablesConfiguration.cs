@@ -29,14 +29,9 @@ public class CarbonAwareVariablesConfiguration
 
         set
         {
-            if (!value.StartsWith('/'))
-            {
-                this.webApiRoutePrefix = $"/{value}";
-            }
-            else
-            {
-                this.webApiRoutePrefix = value;
-            }
+            UriBuilder builder = new UriBuilder("http://localhost");
+            builder.Path = value;
+            this.webApiRoutePrefix = builder.Uri.AbsolutePath;
         }
     }
 }
