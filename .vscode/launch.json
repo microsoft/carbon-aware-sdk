@@ -18,12 +18,7 @@
         "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
       },
       "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "CarbonAwareVars__CarbonIntensityDataSource": "Watttime",
-        "CarbonAwareVars__UseWebProxy": "true",
-        "CarbonAwareVars__WebProxyUrl": "http://myproxy.com:8080",
-        "CarbonAwareVars__WebProxyUsername": "testU",
-        "CarbonAwareVars__WebProxyPassword": "testP",
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "sourceFileMap": {
         "/Views": "${workspaceFolder}/Views"

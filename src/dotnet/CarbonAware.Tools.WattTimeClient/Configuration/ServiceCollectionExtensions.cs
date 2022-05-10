@@ -26,17 +26,20 @@ public static class ServiceCollectionExtensions
         {
             configuration?.GetSection(WattTimeClientConfiguration.Key).Bind(c);
         });
-        var proxyVars = configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
-        if (proxyVars.UseWebProxy)
+        var configVars = configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
+        if (configVars.UseWebProxy)
         {
+            if (String.IsNullOrEmpty(configVars.WebProxyUrl))
+            {
+                throw new ConfigurationException("WebProxyUrl is missing.");
+            }
+            var credentials = new NetworkCredential(configVars.WebProxyUsername, configVars.WebProxyPassword);
+            var proxy = new WebProxy(configVars.WebProxyUrl, true, null, credentials);
             services.AddHttpClient<WattTimeClient>()
                 .ConfigurePrimaryHttpMessageHandler(() => 
-                     new HttpClientHandler {
-                        Proxy = new WebProxy(proxyVars.WebProxyUrl),
-                        UseProxy = true,
-                        Credentials = new NetworkCredential(proxyVars.WebProxyUsername, proxyVars.WebProxyPassword)
-                    }
-                );
+                    new HttpClientHandler() {
+                        Proxy = proxy
+                });
         } else
         {
             services.AddHttpClient<WattTimeClient>();

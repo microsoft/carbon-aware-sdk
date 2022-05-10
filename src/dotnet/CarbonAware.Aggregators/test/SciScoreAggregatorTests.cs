@@ -63,7 +63,7 @@ public class SciScoreAggregatorTests
     }
 
     [Test]
-    public void CalculateAverageCarbonIntensityAsync_UnderspecifiedTimeInterval()
+    public async Task CalculateAverageCarbonIntensityAsync_UnderspecifiedTimeInterval()
     {
         // Arrange
         var location = new Location() { 
@@ -81,7 +81,7 @@ public class SciScoreAggregatorTests
         var end = new DateTimeOffset(2019, 1, 2, 0, 0, 0, TimeSpan.Zero);
 
         // Act
-        this.Aggregator.CalculateAverageCarbonIntensityAsync(location, timeInterval);
+        await this.Aggregator.CalculateAverageCarbonIntensityAsync(location, timeInterval);
 
         // Assert
         this.CarbonIntensityDataSource.Verify(r => r.GetCarbonIntensityAsync(locations, start, end), Times.Once);
