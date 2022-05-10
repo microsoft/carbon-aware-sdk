@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
     /// <param name="configuration">The configuration to use to configure the client.</param>
     /// <returns>The service collection with the configured client added.</returns>
     /// </summary>
-    public static IServiceCollection ConfigureWattTimeClient(this IServiceCollection services, IConfiguration? configuration)
+    public static IServiceCollection ConfigureWattTimeClient(this IServiceCollection services, IConfiguration configuration)
     {
 
         var source = new ActivitySource("WattTimeClient");
@@ -26,20 +26,17 @@ public static class ServiceCollectionExtensions
         {
             configuration?.GetSection(WattTimeClientConfiguration.Key).Bind(c);
         });
-        var proxyVars = configuration?.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
-        if (proxyVars!.UseWebProxy)
+        var proxyVars = configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
+        if (proxyVars.UseWebProxy)
         {
             services.AddHttpClient<WattTimeClient>()
-                .ConfigurePrimaryHttpMessageHandler(x => {
-                    var webProxy = new WebProxy(
-                        new Uri(proxyVars.WebProxyUrl!), 
-                        BypassOnLocal: false);
-                    HttpClientHandler proxyHandler = new HttpClientHandler();
-                    proxyHandler.Proxy = webProxy;
-                    proxyHandler.UseProxy = true;
-                    proxyHandler.Credentials = new NetworkCredential(proxyVars.WebProxyUsername, proxyVars.WebProxyPassword);
-                    return proxyHandler;
-                });
+                .ConfigurePrimaryHttpMessageHandler(() => 
+                     new HttpClientHandler {
+                        Proxy = new WebProxy(proxyVars.WebProxyUrl),
+                        UseProxy = true,
+                        Credentials = new NetworkCredential(proxyVars.WebProxyUsername, proxyVars.WebProxyPassword)
+                    }
+                );
         } else
         {
             services.AddHttpClient<WattTimeClient>();
