@@ -35,14 +35,14 @@ public static class ServiceCollectionExtensions
             }
             var credentials = new NetworkCredential(configVars.WebProxyUsername, configVars.WebProxyPassword);
             var proxy = new WebProxy(configVars.WebProxyUrl, true, null, credentials);
-            services.AddHttpClient<WattTimeClient>()
+            services.AddHttpClient<WattTimeClient>("WattTimeClient")
                 .ConfigurePrimaryHttpMessageHandler(() => 
                     new HttpClientHandler() {
                         Proxy = proxy
-                });
+                    });
         } else
         {
-            services.AddHttpClient<WattTimeClient>();
+            services.AddHttpClient<WattTimeClient>("WattTimeClient");
         }
 
         services.TryAddSingleton<IWattTimeClient, WattTimeClient>();
