@@ -4,20 +4,7 @@
 
   1. Create a new Kubernetes service following the default settings
   1. Create a container registry
-  1. Create a key vault
-
-## Connect to the Kubernetes service
-
-Open the kuberenetes service within the azure portal and spin up the cloud shell. The following commands (plus some other useful ones) can be found by clicking the connect button on the top ribbon
-
-To set the right subscription for the service, run: 
-```
-az account set --subscription <subscription-id>
-``` 
-To give credentials for the resource group to the kubernetes service, run:
-```
-az aks get-credentials --resource-group <resource-group-name> --name <kubernetes-service-name>
-``` 
+  1. Create a key vault 
 
 ## Push an image to the container registry
 The following steps illustrates how to push a webservice image in order to be deployed in AKS using ACR (Azure Container Registry).
@@ -75,9 +62,17 @@ In the `serviceAccount` section, ensure that
 In `deployment.yaml`, we will need to adjust the `livenessProbe` and `readinessProbe` that the helm chart will ping to ensure the sdk is ready. As a default, you should set the path to `/health` unless there are other endpoints added that can be pinged.
 
 ## Connecting to AKS from Helm
-To run any of the following commands, you need to be logged into the azure cli. Run `az login` and follow the prompts to get access to your azure subscriptions
+To connect to AKS you need to be logged into the azure. Run `az login` and follow the prompts to get access to your azure subscriptions. 
 
-With the current setup, Helm is not directly accessing ACR to pull the image, put instead is going through the cluster (which is why we gave the cluster authorized access to the ACR in the earlier section). If you do need helm to access your ACR for any reason, you will need to register it and login with the following 
+To set the right subscription for the service, run: 
+```
+az account set --subscription <subscription-id>
+``` 
+To give credentials for the resource group to the kubernetes service, run:
+```
+az aks get-credentials --resource-group <resource-group-name> --name <kubernetes-service-name>
+```
+With these two commands, helm should be setup to access AKS and be able to deploy on it. With the current setup, Helm is not directly accessing the ACR to pull the image, put instead is going through the cluster (which is why we gave the cluster authorized access to the ACR in the earlier section). If you do need helm to access your ACR for any reason, you will need to register it and login with the following 
 ```
 helm registry login <acr-login-server> \
   --username <acr-username> \
@@ -90,6 +85,7 @@ To install your helm chart, you should run
 ```
 helm install <fullNameOverride> <helm-chart-name>/
 ```
+(If you run into an error, see [the troubleshooting section](##troubleshooting) below.)
 
 ### Deploying your helm chart
 If the installation was successful, helm should give you a console out message for your to copy and paste to deploy the chart. We've replicated below for quick reference (you will need to fill in `nameOverride` and `fullNameOverride`):
@@ -102,6 +98,9 @@ kubectl --namespace default port-forward $POD_NAME 8080:$CONTAINER_PORT
 If the deployment works properly, you should be able to visit the link they provide and use it to query the SDK
 
 ## Troubleshooting
+
+### Error connecting to the kubernetes service
+If you get `Error: INSTALLATION FAILED: Kubernetes cluster unreachable: Get "http://localhost:8080/version": dial tcp 127.0.0.1:8080: connect: connection refused` that means that helm cannot connect to kubernetes. Helm connects to kuberentes either via the $KUBECONFIG env variable, or (if it's not set) looks for the default location kubectl files are location (`~/.kube/config`). This may occur the first time to try connecting the helm chart or if you clear the files/variables. To fix, follow the cli commands in the [connecting to AKS](##connecting-to-aks-from-helm) section and that should automatically generate the proper config files.
 
 ### Error installing the helm chart
 If  you get `Error: INSTALLATION FAILED: cannot re-use a name that is still in use` when you tried to install the helm chart, it means there is still an instance of that chart installed. If you started this instance, you can simply skip the install step and continue. If you're unsure that it's the right installation, or you've made changes, first run `helm uninstall <fullNameOverride>`. Once it's uninstalled, you can redo the helm install step.
