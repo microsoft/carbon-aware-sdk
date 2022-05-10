@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions
         // configuring dependency injection to have config.
         services.Configure<WattTimeClientConfiguration>(c =>
         {
-            configuration?.GetSection(WattTimeClientConfiguration.Key).Bind(c);
+            configuration.GetSection(WattTimeClientConfiguration.Key).Bind(c);
         });
         var configVars = configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
         if (configVars.UseWebProxy)

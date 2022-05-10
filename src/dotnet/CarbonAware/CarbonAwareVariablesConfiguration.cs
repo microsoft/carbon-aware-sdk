@@ -7,7 +7,8 @@ public class CarbonAwareVariablesConfiguration
 {
     public const string Key = "CarbonAwareVars";
     public string CarbonIntensityDataSource { get; set; }
-        /// <summary>
+    
+    /// <summary>
     /// Sets the UseWebProxy
     /// </summary>
     public bool UseWebProxy { get; set; }
