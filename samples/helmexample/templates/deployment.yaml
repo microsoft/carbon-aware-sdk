@@ -38,13 +38,9 @@ spec:
               containerPort: 80
               protocol: TCP
           livenessProbe:
-            httpGet:
-              path: /health
-              port: http
+            {{ .Values.monitorConfig.liveness | toYaml | indent 12 | trim }}
           readinessProbe:
-            httpGet:
-              path: /health
-              port: http
+            {{ .Values.monitorConfig.readiness | toYaml | indent 12 | trim }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

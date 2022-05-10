@@ -42,7 +42,7 @@ helm create <chart-name>
 ```
 
 ## Setting up the Helm chart
-Once you've got your helm chart open (whether from scratch or existing), the main files you will likely be working with are `Chart.yaml`, `values.yaml`, and `deployment.yaml`.
+Once you've got your helm chart open (whether from scratch or existing), the main files you will likely be working with are `Chart.yaml` and `values.yaml`.
 
 ### Chart.yaml
 In `Chart.yaml`, we won't need to make any changes but make note of the chart `name`, as you will need to reference it in commands later on.
@@ -58,8 +58,7 @@ Set the `nameOverride` and `fullNameOverride` fields to make it easier to refere
 In the `serviceAccount` section, ensure that
 * The `name` field is set to the name of the helm chart from `Chart.yaml`.
 
-### Deployment.yaml
-In `deployment.yaml`, we will need to adjust the `livenessProbe` and `readinessProbe` that the helm chart will ping to ensure the sdk is ready. As a default, you should set the path to `/health` unless there are other endpoints added that can be pinged.
+In the `monitorConfig` section, you will need to adjust the `liveness` and `readiness` that the helm chart will ping to ensure the sdk is ready. As a default, you should set the path to `/health` unless there are other endpoints added that can be pinged.
 
 ## Connecting to AKS from Helm
 To connect to AKS you need to be logged into the azure. Run `az login` and follow the prompts to get access to your azure subscriptions. 
