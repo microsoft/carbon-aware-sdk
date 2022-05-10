@@ -80,11 +80,9 @@ public class ServiceManager
         //catalog.Catalogs.Add(new AssemblyCatalog(typeof(Program).Assembly));
         var pluginsFolder = AppDomain.CurrentDomain.BaseDirectory + PLUGINS_FOLDER;
         _logger.LogInformation("plugins folder>" + pluginsFolder);
-        Console.WriteLine("plugins folder>" + pluginsFolder);
         // If there is no plugins folder, simply return
         if (!Directory.Exists(pluginsFolder)){
             _logger.LogError("Directory doesn't exist");
-            Console.WriteLine("Directory doesn't exist");
             return;
         } 
 
