@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics;
+using System.Net;
 
 namespace CarbonAware.Tools.WattTimeClient.Configuration;
 
@@ -13,7 +14,7 @@ public static class ServiceCollectionExtensions
     /// <param name="configuration">The configuration to use to configure the client.</param>
     /// <returns>The service collection with the configured client added.</returns>
     /// </summary>
-    public static IServiceCollection ConfigureWattTimeClient(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection ConfigureWattTimeClient(this IServiceCollection services, IConfiguration? configuration)
     {
 
         var source = new ActivitySource("WattTimeClient");
@@ -23,10 +24,26 @@ public static class ServiceCollectionExtensions
         // configuring dependency injection to have config.
         services.Configure<WattTimeClientConfiguration>(c =>
         {
-            configuration.GetSection(WattTimeClientConfiguration.Key).Bind(c);
+            configuration?.GetSection(WattTimeClientConfiguration.Key).Bind(c);
         });
-
-        services.AddHttpClient<WattTimeClient>();
+        var proxyVars = configuration?.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
+        if (proxyVars!.UseWebProxy)
+        {
+            services.AddHttpClient<WattTimeClient>()
+                .ConfigurePrimaryHttpMessageHandler(x => {
+                    var webProxy = new WebProxy(
+                        new Uri(proxyVars.WebProxyUrl!), 
+                        BypassOnLocal: false);
+                    HttpClientHandler proxyHandler = new HttpClientHandler();
+                    proxyHandler.Proxy = webProxy;
+                    proxyHandler.UseProxy = true;
+                    proxyHandler.Credentials = new NetworkCredential(proxyVars.WebProxyUsername, proxyVars.WebProxyPassword);
+                    return proxyHandler;
+                });
+        } else
+        {
+            services.AddHttpClient<WattTimeClient>();
+        }
 
         services.TryAddSingleton<IWattTimeClient, WattTimeClient>();
         services.TryAddSingleton<ActivitySource>(source);
