@@ -12,8 +12,6 @@ public class CarbonAwareVariablesConfiguration
     /// </summary>
     public const string Key = "CarbonAwareVars";
 
-    private string webApiRoutePrefix = null;
-
     /// <summary>
     /// Gets or sets the the carbon intensity data source to use.
     /// </summary>
