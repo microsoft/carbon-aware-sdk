@@ -58,7 +58,7 @@ Set the `nameOverride` and `fullNameOverride` fields to make it easier to refere
 In the `serviceAccount` section, ensure that
 * The `name` field is set to the name of the helm chart from `Chart.yaml`.
 
-In the `monitorConfig` section, you will need to adjust the `liveness` and `readiness` that the helm chart will ping to ensure the sdk is ready. As a default, you should set the path to `/health` unless there are other endpoints added that can be pinged.
+In the `monitorConfig` section, you will need to adjust the `liveness` and `readiness` that the helm chart will ping to ensure the sdk is ready. As a default, you should set the path to `/health`.
 
 ## Connecting to AKS from Helm
 To connect to AKS you need to be logged into the azure. Run `az login` and follow the prompts to get access to your azure subscriptions. 
