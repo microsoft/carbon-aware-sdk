@@ -1,6 +1,9 @@
 # How-To: Deploy to AKS using Helm
 
-## Setup Resource Group
+## Setup Dev Environment (optional)
+The easiest way to setup your environment is to use a VSCode dev container. Suggested setup is with the latest `debian` OS with `az CLI` and `kubectl-helm` packages enabled.
+
+## Setup Resource Group in Azure
 
   1. Create a new Kubernetes service following the default settings
   1. Create a container registry
@@ -34,9 +37,7 @@ az aks update -n <cluster-name> -g <resource-group-name> --attach-acr <acr-name>
 ```
 
 ## Create a new Helm chart (optional)
-The easiest way to create a helm chart is to use a VSCode dev container and when you set it up, ensure to set it up with the latest `debian` OS. For add-on packages, make sure to select the `azure CLI` and `kubernetes-helm` options.
-
-Once you've got the dev container open, run `helm` to ensure you have the helm CLI running properly. Then you can create a new helm chart by running
+Run `helm` to ensure you have the helm CLI running properly. Then you can create a new helm chart by running
 ```
 helm create <chart-name>
 ```
@@ -124,14 +125,10 @@ If you get an error deploying the helm chart and have ensured the image is pulli
 * Delete a specific pod: `kubectl delete pod <pod-name>`
 
 ## References
-Helm 3 docs - https://helm.sh/docs/
+Helm 3: [docs](https://helm.sh/docs/), [image docs](https://helm.sh/docs/chart_best_practices/pods/#images)
 
-Helm 3 image docs - https://helm.sh/docs/chart_best_practices/pods/#images
+MS Docs: [Creating an ingress controller in AKS](https://docs.microsoft.com/en-us/azure/aks/ingress-basic?tabs=azure-cli), [Authenticate with ACR from AKS](https://docs.microsoft.com/en-us/azure/aks/cluster-container-registry-integration?tabs=azure-cli#access-with-kubernetes-secret)
 
-MS Docs: Creating an ingress controller in AKS - https://docs.microsoft.com/en-us/azure/aks/ingress-basic?tabs=azure-cli
+Github Issue: [Deploying a container from ACR to AKS](https://github.com/MicrosoftDocs/azure-docs/issues/33430)
 
-Github Issue: deploying a container from ACR to AKS - https://github.com/MicrosoftDocs/azure-docs/issues/33430
-
-MS Docs: Authenticate with ACR from AKS - https://docs.microsoft.com/en-us/azure/aks/cluster-container-registry-integration?tabs=azure-cli#access-with-kubernetes-secret
-
-ContainIQ: Troubleshooting ImagePullBackOff Error - https://www.containiq.com/post/kubernetes-imagepullbackoff
+ContainIQ: [Troubleshooting ImagePullBackOff Error](https://www.containiq.com/post/kubernetes-imagepullbackoff)
