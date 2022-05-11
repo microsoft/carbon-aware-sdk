@@ -39,7 +39,8 @@ public static class ServiceCollectionExtensions
                         Proxy = new WebProxy(configVars.WebProxyUrl, true),
                         Credentials = new NetworkCredential(configVars.WebProxyUsername, configVars.WebProxyPassword)
                     });
-        } else
+        }
+        else
         {
             services.AddHttpClient<WattTimeClient>(IWattTimeClient.NamedClient);
         }
