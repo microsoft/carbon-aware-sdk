@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace CarbonAware;
 
 /// <summary>
@@ -18,20 +20,7 @@ public class CarbonAwareVariablesConfiguration
     public string CarbonIntensityDataSource { get; set; }
 
     /// <summary>
-    /// Gets or sets the route prefix to use for all web api routes.  Defaults to null.
+    /// Gets or sets the route prefix to use for all web api routes.
     /// </summary>
-    public string WebApiRoutePrefix
-    {
-        get
-        {
-            return this.webApiRoutePrefix;
-        }
-
-        set
-        {
-            UriBuilder builder = new UriBuilder("http://localhost");
-            builder.Path = value;
-            this.webApiRoutePrefix = builder.Uri.AbsolutePath;
-        }
-    }
+    public PathString WebApiRoutePrefix { get; set; }
 }

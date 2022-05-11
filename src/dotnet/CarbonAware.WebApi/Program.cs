@@ -21,7 +21,7 @@ builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
-if (!string.IsNullOrWhiteSpace(config.WebApiRoutePrefix))
+if (config.WebApiRoutePrefix != null)
 {
     app.UsePathBase(config.WebApiRoutePrefix);
 }
