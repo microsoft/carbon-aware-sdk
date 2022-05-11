@@ -125,6 +125,7 @@ If you get an error deploying the helm chart and have ensured the image is pulli
 
 ## References
 Helm 3 docs - https://helm.sh/docs/
+
 Helm 3 image docs - https://helm.sh/docs/chart_best_practices/pods/#images
 
 MS Docs: Creating an ingress controller in AKS - https://docs.microsoft.com/en-us/azure/aks/ingress-basic?tabs=azure-cli
