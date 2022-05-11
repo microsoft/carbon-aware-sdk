@@ -1,9 +1,12 @@
 ﻿using CarbonAware.Tools.WattTimeClient.Configuration;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -459,6 +462,23 @@ public class WattTimeClientTests
 
             Assert.AreEqual("myStreamResults", streamResult);
         }
+    }
+
+    [Test]
+    public void TestClient_With_Proxy_Failure()
+    {
+        var settings = new Dictionary<string, string> {
+                {"CarbonAwareVars:UseWebProxy", "true"},
+                {"CarbonAwareVars:WebProxyUrl", "http://fakeproxy:8080"},
+            };
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(settings)
+            .Build();
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.ConfigureWattTimeClient(configuration);
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var client = serviceProvider.GetRequiredService<IWattTimeClient>();
+        Assert.ThrowsAsync<HttpRequestException>(async () => await client.GetBalancingAuthorityAsync("lat", "long"));
     }
 
     private void CreateHttpClient(Func<HttpRequestMessage, Task<HttpResponseMessage>> requestDelegate)

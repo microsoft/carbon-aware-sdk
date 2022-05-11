@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
             configuration.GetSection(WattTimeClientConfiguration.Key).Bind(c);
         });
         var configVars = configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
-        if (configVars.UseWebProxy)
+        if (configVars != null && configVars.UseWebProxy)
         {
             if (String.IsNullOrEmpty(configVars.WebProxyUrl))
             {
