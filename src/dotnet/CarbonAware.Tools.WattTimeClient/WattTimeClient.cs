@@ -36,9 +36,9 @@ public class WattTimeClient : IWattTimeClient
 
     private ILogger<WattTimeClient> Log { get; }
 
-    public WattTimeClient(IHttpClientFactory clientFactory, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log, ActivitySource source)
+    public WattTimeClient(IHttpClientFactory factory, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log, ActivitySource source)
     {
-        this.client = clientFactory.CreateClient(IWattTimeClient.NamedHttpClient);
+        this.client = factory.CreateClient(IWattTimeClient.NamedClient);
         this.ConfigurationMonitor = configurationMonitor;
         this.ActivitySource = source;
         this.Log = log;

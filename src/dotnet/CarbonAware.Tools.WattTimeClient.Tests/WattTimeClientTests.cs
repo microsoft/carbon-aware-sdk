@@ -466,7 +466,7 @@ public class WattTimeClientTests
         this.MessageHandler = new MockHttpMessageHandler(requestDelegate);
         this.HttpClient = new HttpClient(this.MessageHandler);
         this.HttpClientFactory = Mock.Of<IHttpClientFactory>();
-        Mock.Get(this.HttpClientFactory).Setup(h => h.CreateClient(IWattTimeClient.NamedHttpClient)).Returns(this.HttpClient);
+        Mock.Get(this.HttpClientFactory).Setup(h => h.CreateClient(IWattTimeClient.NamedClient)).Returns(this.HttpClient);
         this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.DefaultTokenValue);
     }
 

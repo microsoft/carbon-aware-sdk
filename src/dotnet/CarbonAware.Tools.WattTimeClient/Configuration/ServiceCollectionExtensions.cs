@@ -33,16 +33,15 @@ public static class ServiceCollectionExtensions
             {
                 throw new ConfigurationException("WebProxyUrl is missing.");
             }
-            var credentials = new NetworkCredential(configVars.WebProxyUsername, configVars.WebProxyPassword);
-            var proxy = new WebProxy(configVars.WebProxyUrl, true, null, credentials);
-            services.AddHttpClient<WattTimeClient>(IWattTimeClient.NamedHttpClient)
+            services.AddHttpClient<WattTimeClient>(IWattTimeClient.NamedClient)
                 .ConfigurePrimaryHttpMessageHandler(() => 
                     new HttpClientHandler() {
-                        Proxy = proxy
+                        Proxy = new WebProxy(configVars.WebProxyUrl, true),
+                        Credentials = new NetworkCredential(configVars.WebProxyUsername, configVars.WebProxyPassword)
                     });
         } else
         {
-            services.AddHttpClient<WattTimeClient>(IWattTimeClient.NamedHttpClient);
+            services.AddHttpClient<WattTimeClient>(IWattTimeClient.NamedClient);
         }
 
         services.TryAddSingleton<IWattTimeClient, WattTimeClient>();
