@@ -467,8 +467,8 @@ public class WattTimeClientTests
     [Test]
     public void TestClient_With_Proxy_Failure()
     {
-        var key1 = $"{CarbonAwareVariablesConfiguration.Key}:UseWebProxy";
-        var key2 = $"{CarbonAwareVariablesConfiguration.Key}:WebProxyUrl";
+        var key1 = $"{CarbonAwareVariablesConfiguration.Key}:Proxy:UseWebProxy";
+        var key2 = $"{CarbonAwareVariablesConfiguration.Key}:Proxy:WebProxyUrl";
         var settings = new Dictionary<string, string> {
                 {key1, "true"},
                 {key2, "http://fakeproxy:8080"},
@@ -486,7 +486,7 @@ public class WattTimeClientTests
     [Test]
     public void TestClient_With_Missing_Proxy_URL()
     {
-        var key1 = $"{CarbonAwareVariablesConfiguration.Key}:UseWebProxy";
+        var key1 = $"{CarbonAwareVariablesConfiguration.Key}:Proxy:UseWebProxy";
         var settings = new Dictionary<string, string> {
                 {key1, "true"},
             };
