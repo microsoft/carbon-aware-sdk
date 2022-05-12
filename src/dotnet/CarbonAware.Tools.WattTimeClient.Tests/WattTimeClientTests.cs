@@ -467,9 +467,11 @@ public class WattTimeClientTests
     [Test]
     public void TestClient_With_Proxy_Failure()
     {
+        var key1 = $"{CarbonAwareVariablesConfiguration.Key}:UseWebProxy";
+        var key2 = $"{CarbonAwareVariablesConfiguration.Key}:WebProxyUrl";
         var settings = new Dictionary<string, string> {
-                {"CarbonAwareVars:UseWebProxy", "true"},
-                {"CarbonAwareVars:WebProxyUrl", "http://fakeproxy:8080"},
+                {key1, "true"},
+                {key2, "http://fakeproxy:8080"},
             };
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(settings)
@@ -479,6 +481,20 @@ public class WattTimeClientTests
         var serviceProvider = serviceCollection.BuildServiceProvider();
         var client = serviceProvider.GetRequiredService<IWattTimeClient>();
         Assert.ThrowsAsync<HttpRequestException>(async () => await client.GetBalancingAuthorityAsync("lat", "long"));
+    }
+
+    [Test]
+    public void TestClient_With_Missing_Proxy_URL()
+    {
+        var key1 = $"{CarbonAwareVariablesConfiguration.Key}:UseWebProxy";
+        var settings = new Dictionary<string, string> {
+                {key1, "true"},
+            };
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(settings)
+            .Build();
+        var serviceCollection = new ServiceCollection();
+        Assert.Throws<ConfigurationException>(() => serviceCollection.ConfigureWattTimeClient(configuration));
     }
 
     private void CreateHttpClient(Func<HttpRequestMessage, Task<HttpResponseMessage>> requestDelegate)
