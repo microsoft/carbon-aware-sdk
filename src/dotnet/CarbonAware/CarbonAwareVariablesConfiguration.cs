@@ -22,6 +22,8 @@ public class CarbonAwareVariablesConfiguration
     /// </summary>
     public string CarbonIntensityDataSource { get; set; }
 
-    public WebProxyConfiguration Proxy { get; set; }
+    #nullable enable
+    public WebProxyConfiguration? Proxy { get; set; }
+    #nullable disable
 
 }
