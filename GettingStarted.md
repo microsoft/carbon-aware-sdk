@@ -124,3 +124,37 @@ In normal use, you shouldn't need to set this value, but this value can be used 
 ### Logging Configuration
 
 This project is using standard [Microsoft.Extensions.Logging](https://docs.microsoft.com/en-us/dotnet/core/extensions/logging?tabs=command-line).  To configure different log levels, please see the documentation at this link.
+
+### Sample Environment Variable Configuration Using WattTime
+
+```bash
+carbonAwareVars__carbonIntensityDataSource="WattTime"
+carbonAwareVars__webApiRoutePrefix="/microsoft/cse/fsi"
+carbonAwareVars__proxy__useProxy=true
+carbonAwareVars__proxy__url="http://10.10.10.1"
+carbonAwareVars__proxy__username="proxyUsername"
+carbonAwareVars__proxy__password="proxyPassword"
+wattTimeClient__username="wattTimeUsername"
+wattTimeClient__password="wattTimePassword"
+```
+
+### Sample Json Configuration Using WattTime
+
+```json
+{
+    "carbonAwareVars": {
+        "carbonIntensityDataSource": "WattTime",
+        "webApiRoutePrefix": "/microsoft/cse/fsi",
+        "proxy": {
+            "useProxy": true,
+            "url": "http://10.10.10.1",
+            "username": "proxyUsername",
+            "password": "proxyPassword"
+        }
+    },
+    "wattTimeClient":{
+        "username": "wattTimeUsername",
+        "password": "wattTimePassword",
+    }
+}
+```
