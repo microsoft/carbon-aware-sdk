@@ -1,4 +1,4 @@
-The Carbon Aware SDk brings
+The Carbon Aware SDK provides api to get the carbon intensity for a location at a given time period. In order to use the following API, the environment has to be setup with the right configuration. Instructions on setting up the environment could be found here - https://github.com/microsoft/carbon-aware-sdk/blob/dev/GettingStarted.md
 
 # Carbon Aware REST API
 
