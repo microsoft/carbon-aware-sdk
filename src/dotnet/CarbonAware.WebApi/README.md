@@ -85,22 +85,12 @@ EG
 
 This endpoint calculates the observed emission data by location for a specified time period
 
-The payload object must include location. 
-If location is of type `CloudProvider`, the object should include the `providerName` and `regionName` attributes.
-If location if of type `Geoposition` then the object should include `latitude` and `longitude` attributes.
+location is a required parameter and is name of a data region for the given Cloud provider.
 If time period is not provided, it retrieves all the data until the current time.
 
 EG
 ```
-{
-    "location": {
-        "locationType": "CloudProvider",
-        "providerName": "Azure",
-        "regionName": "useast"
-    },
-    "startTime": "2020-03-01T13:00:00Z",
-    "endTime": "2021-03-01T15:30:00Z"
-}
+https://<server_name>/emissions/bylocation?location=useast&time=2022-01-01&toTime=2022-05-17
 ```
 
 The response is EmissionsData object that contains the location, time and the rating in Gms/KWH
@@ -118,29 +108,12 @@ EG
 
 This endpoint calculates the observed emission data by list of locations for a specified time period
 
-The payload object must include list of locations. 
-If location is of type `CloudProvider`, the object should include the `providerName` and `regionName` attributes.
-If location if of type `Geoposition` then the object should include `latitude` and `longitude` attributes.
+location is a required parameter and is a list of data regions for the given Cloud provider.
 If time period is not provided, it retrieves all the data until the current time.
 
 EG
 ```
-{
-    [
-      "location": {
-        "locationType": "CloudProvider",
-        "providerName": "Azure",
-        "regionName": "useast"
-      },
-      "location": {
-        "locationType": "CloudProvider",
-        "providerName": "Azure",
-        "regionName": "useast"
-      }
-    ]
-    "startTime": "2020-03-01T13:00:00Z",
-    "endTime": "2021-03-01T15:30:00Z"
-}
+https://<server_name>/emissions/bylocation?locations=eastus&locations=westus&time=2022-01-01&toTime=2022-05-17
 ```
 
 The response is list of EmissionsData objects that contains the location, time and the rating in Gms/KWH
