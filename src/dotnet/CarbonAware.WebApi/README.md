@@ -1,3 +1,5 @@
+The Carbon Aware SDk brings
+
 # Carbon Aware REST API
 
 
@@ -79,6 +81,79 @@ EG
 }
 ```
 
+### GET emissions/bylocation
+
+This endpoint calculates the observed emission data by location for a specified time period
+
+The payload object must include location. 
+If location is of type `CloudProvider`, the object should include the `providerName` and `regionName` attributes.
+If location if of type `Geoposition` then the object should include `latitude` and `longitude` attributes.
+If time period is not provided, it retrieves all the data until the current time.
+
+EG
+```
+{
+    "location": {
+        "locationType": "CloudProvider",
+        "providerName": "Azure",
+        "regionName": "useast"
+    },
+    "startTime": "2020-03-01T13:00:00Z",
+    "endTime": "2021-03-01T15:30:00Z"
+}
+```
+
+The response is EmissionsData object that contains the location, time and the rating in Gms/KWH
+EG
+```
+{
+  "location":"eastus",
+  "time":"2022-05-17T20:45:11.5092741+00:00",
+  "rating":70
+}
+
+```
+
+### GET emissions/bylocations
+
+This endpoint calculates the observed emission data by list of locations for a specified time period
+
+The payload object must include list of locations. 
+If location is of type `CloudProvider`, the object should include the `providerName` and `regionName` attributes.
+If location if of type `Geoposition` then the object should include `latitude` and `longitude` attributes.
+If time period is not provided, it retrieves all the data until the current time.
+
+EG
+```
+{
+    [
+      "location": {
+        "locationType": "CloudProvider",
+        "providerName": "Azure",
+        "regionName": "useast"
+      },
+      "location": {
+        "locationType": "CloudProvider",
+        "providerName": "Azure",
+        "regionName": "useast"
+      }
+    ]
+    "startTime": "2020-03-01T13:00:00Z",
+    "endTime": "2021-03-01T15:30:00Z"
+}
+```
+
+The response is list of EmissionsData objects that contains the location, time and the rating in Gms/KWH
+EG
+```
+[
+  {
+    "location":"eastus"
+    "time":"2022-05-17T20:45:11.5092741+00:00",
+    "rating":70
+  }
+]
+```
 
 ## Error Handling
 
