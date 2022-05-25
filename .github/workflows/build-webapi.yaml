@@ -39,20 +39,6 @@ jobs:
       - name: Codecov
         uses: codecov/codecov-action@v1
 
-  container-unit-test:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-    
-    - name: Docker Target Build
-      run: docker build --target=build . -f ${DOCKERFILE_PATH} -t ca-api-build
-      working-directory: ./src/dotnet
-
-    - name: Docker Unit Test
-      run: docker run -w //src/ ca-api-build dotnet test
-      working-directory: ./src/dotnet
-
   container-validation:
       runs-on: ubuntu-latest
       steps:
