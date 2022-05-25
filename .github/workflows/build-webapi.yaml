@@ -36,6 +36,13 @@ jobs:
       - name: Test
         run: dotnet test --no-restore --verbosity normal
         working-directory: ${{ env.DOTNET_SRC_DIR }}
+      - name: Run .NET Code Analysis
+        uses: dotnet/code-analysis@v1
+        id: code-analysis
+        with:
+          solution: ${{ env.DOTNET_SRC_DIR }}/CarbonAwareSDK.sln
+          build-breaking: false
+          all-categories: all
 
   container-unit-test:
     runs-on: ubuntu-latest
