@@ -40,9 +40,7 @@ jobs:
         uses: dotnet/code-analysis@v1
         id: code-analysis
         with:
-          solution: ${{ env.DOTNET_SRC_DIR }}/CarbonAwareSDK.sln
-          build-breaking: false
-          all-categories: all
+          build-breaking: true
 
   container-unit-test:
     runs-on: ubuntu-latest
