@@ -13,12 +13,11 @@ env:
   DOCKERFILE_PATH: "CarbonAware.WebApi/Dockerfile"
   HEALTH_ENDPOINT: "0.0.0.0:8080/health"
   DATA_ENDPOINT: "0.0.0.0:8080/emissions/bylocation?location=eastus"
+  DOTNET_SRC_DIR: "./src/dotnet"
 
 jobs:
   container-dotnet-build:
     runs-on: ubuntu-latest
-    env:
-      working-directory: ./src/dotnet
     container:
       image: mcr.microsoft.com/dotnet/sdk
     steps:
@@ -30,13 +29,13 @@ jobs:
           include-prerelease: false
       - name: Install dependencies
         run: dotnet restore
-        working-directory: ${{env:working-directory}}
+        working-directory: ${{env:DOTNET_SRC_DIR}}
       - name: Build
         run: dotnet build --configuration Release --no-restore
-        working-directory: ${{env:working-directory}}
+        working-directory: ${{env:DOTNET_SRC_DIR}}
       - name: Test
         run: dotnet test --no-restore --verbosity normal
-        working-directory: ${{env:working-directory}}
+        working-directory: ${{env:DOTNET_SRC_DIR}}
 
   container-unit-test:
     runs-on: ubuntu-latest
