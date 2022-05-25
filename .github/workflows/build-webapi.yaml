@@ -29,13 +29,13 @@ jobs:
           include-prerelease: false
       - name: Install dependencies
         run: dotnet restore
-        working-directory: ${DOTNET_SRC_DIR}
+        working-directory: ${{ env.DOTNET_SRC_DIR }}
       - name: Build
         run: dotnet build --configuration Release --no-restore
-        working-directory: ${DOTNET_SRC_DIR}
+        working-directory: ${{ env.DOTNET_SRC_DIR }}
       - name: Test
         run: dotnet test --no-restore --verbosity normal
-        working-directory: ${DOTNET_SRC_DIR}
+        working-directory: ${{ env.DOTNET_SRC_DIR }}
 
   container-unit-test:
     runs-on: ubuntu-latest
