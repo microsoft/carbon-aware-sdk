@@ -36,6 +36,16 @@ jobs:
       - name: Test
         run: dotnet test --no-restore --verbosity normal
         working-directory: ${{ env.DOTNET_SRC_DIR }}
+
+  dotnet-codeanalysis:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core SDK 6
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.0.x'
+          include-prerelease: false
       - name: Run .NET Code Analysis
         uses: dotnet/code-analysis@v1
         id: code-analysis
