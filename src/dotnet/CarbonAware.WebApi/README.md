@@ -129,6 +129,32 @@ EG
 ]
 ```
 
+### GET emissions/bylocations/best
+
+This endpoint calculates the best observed emission data by list of locations for a specified time period
+
+Location is a required parameter and is name of the data region for the configured Cloud provider.
+If time period is not provided, it retrieves all the data until the current time.
+
+EG
+```
+https://<server_name>/emissions/bylocations/best?locations=eastus&locations=westus&time=2022-01-01&toTime=2022-05-17
+```
+
+Currently, the response is an array of EmissionsData objects that contains the location, time and the rating in g/kWh.
+This response will be updated in the furture to contain a single EmissionsData object with location, time and the rating in g/kWh. 
+EG
+```
+[
+  {
+    "location":"eastus"
+    "time":"2022-05-17T20:45:11.5092741+00:00",
+    "rating":70
+  }
+]
+```
+
+
 ## Error Handling
 
 The WebAPI leveraged the [.Net controller filter pipeline](https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/filters?view=aspnetcore-6.0) to ensure that all requests respond with a consistent JSON schema.
