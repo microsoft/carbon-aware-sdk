@@ -6,7 +6,7 @@ COPY ./src/ ./
 COPY ./entrypoint.sh ./
 
 
-#WORKDIR /src/dotnet
+#WORKDIR /src/
 
 RUN dotnet publish  ./CarbonAware.CLI/CarbonAware.CLI.csproj -c Release -o out --no-self-contained
 RUN cp ./CarbonAware.CLI/carbon-aware.json out
