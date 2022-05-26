@@ -1,5 +1,5 @@
 # Python proxy
-This folder contains a simple python proxy server which can be used to manually test the proxy connection of the SDK. 
+This folder contains a simple python proxy server which can be used locally to manually test the proxy connection of the SDK. This is by no means a full proxy and only does the basic intercepting and forwarding of calls. For more complex proxy use cases, it is suggested to use production level proxies such as [Squid](https://ubuntu.com/server/docs/proxy-servers-squid) or [nginx](https://nginx.org/en/).
 
 ## Getting the server address if running in a dev container
 
