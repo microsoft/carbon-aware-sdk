@@ -13,7 +13,7 @@ using NUnit.Framework;
 /// </summary>
 [TestFixture]
 public class CarbonAwareControllerTests : TestsBase
-{   
+{
     /// <summary>
     /// Tests that successfull call to plugin with any data returned results in action with OK status.
     /// </summary>
@@ -30,8 +30,8 @@ public class CarbonAwareControllerTests : TestsBase
                 Time = DateTime.Now
             }
         };
-        var controller = new CarbonAwareController(this.MockLogger.Object, CreateAggregatorWithData(data).Object);
-        
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateAggregatorWithData(data).Object);
+
         IActionResult ar1 = await controller.GetEmissionsDataForLocationByTime(location);
         IActionResult ar2 = await controller.GetBestEmissionsDataForLocationsByTime(new string[] { location });
         IActionResult ar3 = await controller.GetEmissionsDataForLocationsByTime(new string[] { location });
@@ -47,35 +47,16 @@ public class CarbonAwareControllerTests : TestsBase
     [Test]
     public async Task EmptyResultRetunsNoContent()
     {
-        var controller = new CarbonAwareController(this.MockLogger.Object, CreateAggregatorWithData(new List<EmissionsData>()).Object);
-        
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateAggregatorWithData(new List<EmissionsData>()).Object);
+
         string location = "Sydney";
         IActionResult ar1 = await controller.GetEmissionsDataForLocationByTime(location);
-        IActionResult ar2 = await controller.GetBestEmissionsDataForLocationsByTime(new string[] {location});
+        IActionResult ar2 = await controller.GetBestEmissionsDataForLocationsByTime(new string[] { location });
         IActionResult ar3 = await controller.GetEmissionsDataForLocationsByTime(new string[] { location });
 
         //Assert
         TestHelpers.AssertStatusCode(ar1, HttpStatusCode.NoContent);
         TestHelpers.AssertStatusCode(ar2, HttpStatusCode.NoContent);
         TestHelpers.AssertStatusCode(ar3, HttpStatusCode.NoContent);
-    }
-
-    /// <summary>
-    /// Tests that exception thrown by plugin results in action with BadRequest status
-    /// </summary>
-    [Test]
-    public async Task ExceptionReturnsBadRequest()
-    {
-        var controller = new CarbonAwareController(this.MockLogger.Object, CreateAggregatorWithException().Object);
- 
-        string location = "Sydney";
-        IActionResult ar1 = await controller.GetEmissionsDataForLocationByTime(location);
-        IActionResult ar2 = await controller.GetBestEmissionsDataForLocationsByTime(new string[] { location });
-        IActionResult ar3 = await controller.GetEmissionsDataForLocationsByTime(new string[] { location });
-
-        // Assert
-        TestHelpers.AssertStatusCode(ar1, HttpStatusCode.BadRequest);
-        TestHelpers.AssertStatusCode(ar2, HttpStatusCode.BadRequest);
-        TestHelpers.AssertStatusCode(ar3, HttpStatusCode.BadRequest);
     }
 }

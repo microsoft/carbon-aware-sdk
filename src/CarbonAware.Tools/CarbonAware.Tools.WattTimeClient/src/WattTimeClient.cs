@@ -36,9 +36,9 @@ public class WattTimeClient : IWattTimeClient
 
     private ILogger<WattTimeClient> Log { get; }
 
-    public WattTimeClient(HttpClient httpClient, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log, ActivitySource source)
+    public WattTimeClient(IHttpClientFactory factory, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log, ActivitySource source)
     {
-        this.client = httpClient;
+        this.client = factory.CreateClient(IWattTimeClient.NamedClient);
         this.ConfigurationMonitor = configurationMonitor;
         this.ActivitySource = source;
         this.Log = log;
@@ -131,7 +131,7 @@ public class WattTimeClient : IWattTimeClient
     }
 
     /// <inheritdoc/>
-    public async Task<BalancingAuthority?> GetBalancingAuthorityAsync(string latitude, string longitude)
+    public async Task<BalancingAuthority> GetBalancingAuthorityAsync(string latitude, string longitude)
     {
         Log.LogInformation("Requesting balancing authority for lattitude {lattitude} and longitude {longitude}", latitude, longitude);
 
@@ -148,8 +148,13 @@ public class WattTimeClient : IWattTimeClient
         };
 
         var result = await this.MakeRequestAsync(Paths.BalancingAuthorityFromLocation, parameters, tags);
-
-        return JsonSerializer.Deserialize<BalancingAuthority>(result, options);
+        
+        var balancingAuthority = JsonSerializer.Deserialize<BalancingAuthority>(result, options);
+        if (balancingAuthority == null) 
+        {
+            throw new WattTimeClientHttpException($"Error getting Balancing Authority for latitude {latitude} and longitude {longitude}", new HttpResponseMessage(HttpStatusCode.InternalServerError));
+        }
+        return balancingAuthority;
     }
 
     /// <inheritdoc/>
@@ -206,7 +211,7 @@ public class WattTimeClient : IWattTimeClient
         {
             Log.LogError("Error getting data from WattTime.  StatusCode: {statusCode}. Response: {response}", response.StatusCode, response);
 
-            throw new WattTimeClientException($"Error getting data from WattTime: {response.StatusCode}", response);
+            throw new WattTimeClientHttpException($"Error requesting {uriPath}", response);
         }
 
         return response;
@@ -257,7 +262,7 @@ public class WattTimeClient : IWattTimeClient
             if (data == null)
             {
                 Log.LogError("Login failed for user {username}.  Response: {response}", this.Configuration.Username, response);
-                throw new WattTimeClientException("Login failed.", response);
+                throw new WattTimeClientHttpException($"Login failed for user: '{this.Configuration.Username}'", response);
             }
 
             this.SetBearerAuthenticationHeader(data.Token);

@@ -62,7 +62,7 @@ public class MyClass {
 To incorporate a new Plugin, create a new dotnet project with the following steps.
 
 ```sh
-cd src/dotnet
+cd src
 dotnet new classlib -o CarbonAware.Plugin.MyPlugin
 dotnet sln add CarbonAware.Plugin.MyPlugin/CarbonAware.Plugin.MyPlugin.csprj
 dotnet add CarbonAware.Plugin.MyPlugin/CarbonAware.Plugin.MyPlugin.csprj reference CarbonAware/CarbonAware.csproj
@@ -134,7 +134,7 @@ dotnet build
 Implement unit tests for the new Plugin to have coverage of the functionality. Below are the steps on how to add one
 
 ```sh
-cd src/dotnet
+cd src
 dotnet new nunit -o CarbonAware.Plugin.MyPlugin.Tests
 dotnet sln CarbonAwareSDK.sln add CarbonAware.Plugin.MyPlugin.Tests/CarbonAware.Plugin.MyPlugin.Tests.csproj
 dotnet add CarbonAware.Plugin.MyPlugin.Tests/CarbonAware.Plugin.MyPlugin.csproj  reference CarbonAware.Plugin.MyPlugin/CarbonAware.Plugin.MyPlugin.csproj
@@ -153,10 +153,50 @@ After these steps, the skeleton of the unit test is ready, then build and test t
 dotnet build
 dotnet test
 ...
- CarbonAware.Plugins.MyPlugin -> /<workspace>/src/dotnet/CarbonAware.Plugins.MyPlugin/bin/Debug/net6.0/CarbonAware.Plugins.MyPlugin.dll
+ CarbonAware.Plugins.MyPlugin -> /<workspace>/src/CarbonAware.Plugins.MyPlugin/bin/Debug/net6.0/CarbonAware.Plugins.MyPlugin.dll
  ...
  Starting test execution, please wait...
 A total of 1 test files matched the specified pattern.
 
 Passed!  - Failed:     0, Passed:    14, Skipped:     0, Total:    14, Duration: 413 ms
+```
+
+### Configuring LogLevels
+
+The default LogLevel settings for the application are found in the corresponding `appsettings.json`, which may contain the following section -- see here for additional details on [Logging in .NET](https://docs.microsoft.com/en-us/dotnet/core/extensions/logging) and on [Logging Providers in .NET](https://docs.microsoft.com/en-us/dotnet/core/extensions/logging-providers)
+
+```json
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  }
+```
+
+To permanently change the LogLevel, just update the `appsettings.json` for the app.
+To override a LogLevel at runtime, an environment variable can set the LogLevel value. 
+For example to set the Logging:LogLevel:Default LogLevel to Debug: `export Logging__LogLevel__Default="Debug"` 
+
+Example using the CLI:
+
+```sh
+cd src/CarbonAware.CLI
+export Logging__LogLevel__Default="Debug"
+dotnet run -l westus
+```
+
+Example using the WebApp:
+
+```sh
+cd src/CarbonAware.WebApi
+export Logging__LogLevel__Default="Debug"
+dotnet run
+```
+
+Or, to change the LogLevel for just one run of the app:
+
+```sh
+cd src/CarbonAware.WebApi
+Logging__LogLevel__Default="Debug" dotnet run
 ```

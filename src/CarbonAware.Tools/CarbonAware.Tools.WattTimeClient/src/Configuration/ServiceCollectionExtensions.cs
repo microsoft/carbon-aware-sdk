@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics;
+using System.Net;
 
 namespace CarbonAware.Tools.WattTimeClient.Configuration;
 
@@ -25,8 +26,24 @@ public static class ServiceCollectionExtensions
         {
             configuration.GetSection(WattTimeClientConfiguration.Key).Bind(c);
         });
-
-        services.AddHttpClient<WattTimeClient>();
+        var configVars = configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
+        if (configVars?.Proxy?.UseProxy == true)
+        {
+            if (String.IsNullOrEmpty(configVars.Proxy.Url))
+            {
+                throw new ConfigurationException("Url is missing.");
+            }
+            services.AddHttpClient<WattTimeClient>(IWattTimeClient.NamedClient)
+                .ConfigurePrimaryHttpMessageHandler(() => 
+                    new HttpClientHandler() {
+                        Proxy = new WebProxy(configVars.Proxy.Url, true),
+                        Credentials = new NetworkCredential(configVars.Proxy.Username, configVars.Proxy.Password)
+                    });
+        }
+        else
+        {
+            services.AddHttpClient<WattTimeClient>(IWattTimeClient.NamedClient);
+        }
 
         services.TryAddSingleton<IWattTimeClient, WattTimeClient>();
         services.TryAddSingleton<ActivitySource>(source);

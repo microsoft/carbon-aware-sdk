@@ -76,6 +76,6 @@ If WattTime responds with a 4XX or 5XX status code the client will wrap the resp
 One can run the tests using the `dotnet test` command.
 
 ```bash
-cd src\dotnet\CarbonAware.Tools.WattTimeClient.Tests
+cd src\CarbonAware.Tools.WattTimeClient.Tests
 dotnet test
 ```

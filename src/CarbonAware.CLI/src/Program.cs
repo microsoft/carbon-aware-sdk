@@ -4,33 +4,37 @@ using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.Aggregators.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 class Program
 {
     public static async Task Main(string[] args)
-    {   
-        ICarbonAwareAggregator aggregator =  GetRequiredService();
+    {
+        ServiceProvider serviceProvider = BootstrapServices();
 
-        await GetEmissionsAsync(args, aggregator);
+        await GetEmissionsAsync(args, serviceProvider.GetRequiredService<ICarbonAwareAggregator>(), serviceProvider.GetService<ILogger<CarbonAwareCLI>>());
     }
 
-    private static ICarbonAwareAggregator GetRequiredService() {
+    private static ServiceProvider BootstrapServices() {
              
         var configurationBuilder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables();
         var config = configurationBuilder.Build();
         var services = new ServiceCollection();
+        services.Configure<CarbonAwareVariablesConfiguration>(config.GetSection(CarbonAwareVariablesConfiguration.Key));
         services.AddSingleton<IConfiguration>(config);
-        services.AddCarbonAwareEmissionServices();
+        services.AddCarbonAwareEmissionServices(config);
 
-        services.AddLogging();
+        services.AddLogging(configure => configure.AddConsole());
+
         var serviceProvider = services.BuildServiceProvider();
 
-        return serviceProvider.GetRequiredService<ICarbonAwareAggregator>();
+        return serviceProvider;
     }
-    private static async Task GetEmissionsAsync(string[] args, ICarbonAwareAggregator aggregator) {
-        var cli = new CarbonAwareCLI(args, aggregator);
+
+    private static async Task GetEmissionsAsync(string[] args, ICarbonAwareAggregator aggregator, ILogger<CarbonAwareCLI> logger) {
+        var cli = new CarbonAwareCLI(args, aggregator, logger);
 
         if (cli.Parsed)
         {
