@@ -38,22 +38,22 @@ paths:
       example: eastus
     - name: windowSize
       in: query
-      description: 'The size/granularity (in minutes) of the time windows to report the forecasted average carbon intensity.'
+      description: 'The size/granularity (in minutes) of the rolling average window to report the forecasted average carbon intensity.'
       required: false
       schema:
         type: integer
       example: 60
-    - name: notBefore
+    - name: startTime
       in: query
-      description: 'Scopes the forecast data to not before the provided date time.'
+      description: 'Start the rolling window average at the specified start time or first datapoint thereafter.'
       required: false
       schema:
         type: string
         format: date-time
       example: '2022-05-23T00:00:00Z'
-    - name: notAfter
+    - name: endTime
       in: query
-      description: 'Scopes the forecast data to not after the provided date time.'
+      description: 'Stop the rolling window average when it reaches the specified end time or the last datapoint before that.'
       required: false
       schema:
         type: string
@@ -128,16 +128,18 @@ components:
         generatedAt:
           type: string
           format: date-time
-        optimalDataPoint:
-          '$ref': '#/components/schemas/EmissionsData'
         location:
           type: string
-        notBefore:
+        startTime:
           type: string
           format: date-time
-        notAfter:
+        endTime:
           type: string
           format: date-time
+        windowSize:
+          type: integer
+        optimalDataPoint:
+          '$ref': '#/components/schemas/EmissionsData'
         forecastData:
           type: array
           items:
@@ -148,12 +150,12 @@ components:
       properties:
         location:
           type: string
-        time:
+        timestamp:
           type: string
           format: date-time
         duration:
           type: integer
-        rating:
+        value:
           type: number
           format: float
 
