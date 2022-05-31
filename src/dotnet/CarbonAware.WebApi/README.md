@@ -141,8 +141,7 @@ EG
 https://<server_name>/emissions/bylocations/best?locations=eastus&locations=westus&time=2022-01-01&toTime=2022-05-17
 ```
 
-Currently, the response is an array of EmissionsData objects that contains the location, time and the rating in g/kWh.
-This response will be updated in the furture to contain a single EmissionsData object with location, time and the rating in g/kWh. 
+The response is an array of EmissionsData objects that contains the location, time and the rating in g/kWh.
 EG
 ```
 [
