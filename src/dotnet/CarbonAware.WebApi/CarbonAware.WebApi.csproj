@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>8d822819-8a1f-45e4-95fb-d4a9c3a9439f</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <AssemblyName>CarbonAware.WebApi</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,6 +32,10 @@
   </ItemGroup>
 
   <ItemGroup>
+      <Folder Include="api\v1" />
+  </ItemGroup>  
+
+  <ItemGroup>
     <Content Update="carbon-aware.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -52,4 +57,5 @@
 		<Copy SourceFiles="@(DataFiles)" DestinationFolder="$(PublishDir)\data-files\" SkipUnchangedFiles="true" />
 	</Target>
 
+ 
 </Project>

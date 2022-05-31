@@ -29,6 +29,9 @@ jobs:
       run: docker run -w //src/ ca-api-build dotnet test
       working-directory: ./src/dotnet
 
+    - name: Open API generation
+      run: dotnet swagger tofile --output ./api/v1/swagger.yaml --yaml $(OutputPath)CarbonAware.WebApi.dll v1" WorkingDirectory="$(ProjectDir)"
+
   container-validation:
       runs-on: ubuntu-latest
       steps:
