@@ -46,7 +46,7 @@ public class Location
             } else if (LocationType == LocationType.CloudProvider) {
                 return $"{RegionName}";
             } else {
-                return "NotProvided";
+                return "Not Provided";
             }
         }
     }

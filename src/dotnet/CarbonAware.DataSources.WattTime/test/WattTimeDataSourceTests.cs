@@ -126,6 +126,72 @@ public class WattTimeDataSourceTests
         Assert.ThrowsAsync<LocationConversionException>(async () => await this.DataSource.GetCarbonIntensityAsync(new List<Location>() { location }, startDate, endDate));
     }
 
+    [Test]
+    public async Task GetCurrentCarbonIntensityForecastAsync_ReturnsResultsWhenRecordsFound()
+    {
+        var location = new Location() { RegionName = "eastus", LocationType = LocationType.CloudProvider, CloudProvider = CloudProvider.Azure };
+        var balancingAuthority = new BalancingAuthority() { Abbreviation = "BA" };
+        var generatedAt = new DateTimeOffset(2022, 4, 18, 12, 30, 00, TimeSpan.FromHours(-6));
+        var startDate = new DateTimeOffset(2022, 4, 18, 12, 32, 42, TimeSpan.FromHours(-6));
+        var endDate = new DateTimeOffset(2022, 4, 18, 12, 33, 42, TimeSpan.FromHours(-6));
+        var lbsPerMwhEmissions = 10;
+        var gPerKwhEmissions = this.DataSource.ConvertMoerToGramsPerKilowattHour(lbsPerMwhEmissions);
+
+        var emissionData = new List<GridEmissionDataPoint>()
+        {
+            new GridEmissionDataPoint()
+            {
+                BalancingAuthorityAbbreviation = balancingAuthority.Abbreviation,
+                PointTime = startDate,
+                Value = lbsPerMwhEmissions,
+            }
+        };
+        var forecast = new Forecast(){
+            GeneratedAt = generatedAt,
+            ForecastData = emissionData
+        };
+
+        this.WattTimeClient.Setup(w => w.GetCurrentForecastAsync(balancingAuthority)
+            ).ReturnsAsync(() => forecast);
+
+        SetupBalancingAuthority(balancingAuthority, location);
+        var result = await this.DataSource.GetCurrentCarbonIntensityForecastAsync(location);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(generatedAt, result.GeneratedAt);
+        Assert.AreEqual(location, result.Location);
+
+        var dataPoint = result.ForecastData.First();
+        Assert.IsNotNull(dataPoint);
+        Assert.AreEqual(gPerKwhEmissions, dataPoint.Rating);
+        Assert.AreEqual(balancingAuthority.Abbreviation, dataPoint.Location);
+        Assert.AreEqual(startDate, dataPoint.Time);
+
+        this.LocationSource.Verify(r => r.ToGeopositionLocationAsync(location));
+    }
+    
+    [Test]
+    public void GetCurrentCarbonIntensityForecastAsync_ThrowsWhenRegionNotFound()
+    {
+        var location = new Location() { RegionName = "eastus", LocationType = LocationType.CloudProvider, CloudProvider = CloudProvider.Azure };
+
+        this.LocationSource.Setup(l => l.ToGeopositionLocationAsync(location)).Throws<LocationConversionException>();
+
+        Assert.ThrowsAsync<LocationConversionException>(async () => await this.DataSource.GetCurrentCarbonIntensityForecastAsync(location));
+    }
+
+    [Test]
+    public void GetCurrentCarbonIntensityForecastAsync_ThrowsWhenNoForecastFound()
+    {
+        var location = new Location() { RegionName = "eastus", LocationType = LocationType.CloudProvider, CloudProvider = CloudProvider.Azure };
+        var balancingAuthority = new BalancingAuthority() { Abbreviation = "BA" };
+        this.WattTimeClient.Setup(w => w.GetCurrentForecastAsync(balancingAuthority)).ThrowsAsync(new WattTimeClientException("No forecast"));
+
+        SetupBalancingAuthority(balancingAuthority, location);
+
+        Assert.ThrowsAsync<WattTimeClientException>(async () => await this.DataSource.GetCurrentCarbonIntensityForecastAsync(location));
+    }
+
     [DatapointSource]
     public float[] moerValues = new float[] { 0.0F, 10.0F, 100.0F, 1000.0F, 596.1367F};
 

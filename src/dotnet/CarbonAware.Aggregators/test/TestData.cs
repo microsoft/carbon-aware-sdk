@@ -44,6 +44,43 @@ public static class TestData
                 Rating = 60
             }
         };
-  }
+    }
+
+    public static EmissionsForecast GetForecast(int duration = 5)
+    {
+        var startTime = DateTimeOffset.Parse("2022-01-01T00:00:00Z");
+        var forecastData = new List<EmissionsData>()
+        {
+            new EmissionsData {
+                Location = "westus",
+                Time = startTime,
+                Rating = 10
+            },
+            new EmissionsData {
+                Location = "westus",
+                Time = startTime.AddMinutes(duration),
+                Rating = 20
+            },
+            new EmissionsData {
+                Location = "westus",
+                Time = startTime.AddMinutes(duration*2),
+                Rating = 30
+            },
+            new EmissionsData {
+                Location = "westus",
+                Time = startTime.AddMinutes(duration*3),
+                Rating = 40
+            }
+        };
+
+        return new EmissionsForecast(){
+            GeneratedAt = DateTimeOffset.Parse("2022-01-01T00:00:00Z"),
+            Location = new Location() {
+                RegionName = "westus",
+                CloudProvider = CloudProvider.Azure
+            },
+            ForecastData = forecastData
+        };
+    }
 
 }

@@ -88,7 +88,7 @@ public class HttpResponseExceptionFilterTests
     }
 
     [Test]
-    public void TestOnException_GenericException()
+    public void TestOnException_NotImplementedException()
     {
         // Arrange
         var ex = new NotImplementedException("My validation error");
@@ -107,9 +107,35 @@ public class HttpResponseExceptionFilterTests
         var content = result.Value as HttpValidationProblemDetails ?? throw new Exception();
 
         Assert.IsTrue(exceptionContext.ExceptionHandled);
+        Assert.AreEqual((int)HttpStatusCode.NotImplemented, result.StatusCode);
+        Assert.AreEqual((int)HttpStatusCode.NotImplemented, content.Status);
+        Assert.AreEqual("NotImplementedException", content.Title);
+        Assert.AreEqual("My validation error", content.Detail);
+    }
+
+    [Test]
+    public void TestOnException_GenericException()
+    {
+        // Arrange
+        var ex = new Exception("My validation error");
+        var exceptionContext = new ExceptionContext(this._actionContext, new List<IFilterMetadata>())
+        {
+            Exception = ex
+        };
+
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._activitySource);
+
+        // Act
+        filter.OnException(exceptionContext);
+
+        // Assert
+        var result = exceptionContext.Result as ObjectResult ?? throw new Exception();
+        var content = result.Value as HttpValidationProblemDetails ?? throw new Exception();
+
+        Assert.IsTrue(exceptionContext.ExceptionHandled);
         Assert.AreEqual((int)HttpStatusCode.InternalServerError, result.StatusCode);
         Assert.AreEqual((int)HttpStatusCode.InternalServerError, content.Status);
-        Assert.AreEqual("NotImplementedException", content.Title);
+        Assert.AreEqual("Exception", content.Title);
         Assert.AreEqual("My validation error", content.Detail);
     }
 }
