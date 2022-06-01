@@ -113,7 +113,7 @@ public class WattTimeClientTests
         Assert.AreEqual("dt", gridDataPoint.Datatype);
         Assert.AreEqual(300, gridDataPoint.Frequency);
         Assert.AreEqual("mkt", gridDataPoint.Market);
-        Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), gridDataPoint.PointTime);
+        Assert.AreEqual(new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero), gridDataPoint.PointTime);
         Assert.AreEqual("999.99", gridDataPoint.Value.ToString("0.00")); //Format float to avoid precision issues
         Assert.AreEqual("1.0", gridDataPoint.Version);
     }
@@ -189,10 +189,10 @@ public class WattTimeClientTests
         var forecast = await client.GetCurrentForecastAsync("balauth");
 
         Assert.IsNotNull(forecast);
-        Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast?.GeneratedAt);
+        Assert.AreEqual(new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero), forecast?.GeneratedAt);
         var forecastDataPoint = forecast?.ForecastData.First();
         Assert.AreEqual("ba", forecastDataPoint?.BalancingAuthorityAbbreviation);
-        Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecastDataPoint?.PointTime);
+        Assert.AreEqual(new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero), forecastDataPoint?.PointTime);
         Assert.AreEqual("999.99", forecastDataPoint?.Value.ToString("0.00")); //Format float to avoid precision issues
         Assert.AreEqual("1.0", forecastDataPoint?.Version);
     }
@@ -213,7 +213,7 @@ public class WattTimeClientTests
         var forecast = await client.GetCurrentForecastAsync("balauth");
 
         Assert.IsNotNull(forecast);
-        Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast?.GeneratedAt);
+        Assert.AreEqual(new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero), forecast?.GeneratedAt);
         var forecastDataPoint = forecast?.ForecastData.First();
         Assert.AreEqual("ba", forecastDataPoint?.BalancingAuthorityAbbreviation);
     }
@@ -235,7 +235,7 @@ public class WattTimeClientTests
         var forecast = await client.GetCurrentForecastAsync("balauth");
 
         Assert.IsNotNull(forecast);
-        Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast?.GeneratedAt);
+        Assert.AreEqual(new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero), forecast?.GeneratedAt);
         var forecastDataPoint = forecast?.ForecastData.First();
         Assert.AreEqual("ba", forecastDataPoint?.BalancingAuthorityAbbreviation);
     }
@@ -273,10 +273,10 @@ public class WattTimeClientTests
 
         Assert.IsTrue(forecasts.Count() > 0);
         var forecast = forecasts.ToList().First();
-        Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast.GeneratedAt);
+        Assert.AreEqual(new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero), forecast.GeneratedAt);
         var forecastDataPoint = forecast.ForecastData.ToList().First();
         Assert.AreEqual("ba", forecastDataPoint.BalancingAuthorityAbbreviation);
-        Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecastDataPoint.PointTime);
+        Assert.AreEqual(new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero), forecastDataPoint.PointTime);
         Assert.AreEqual("999.99", forecastDataPoint.Value.ToString("0.00")); //Format float to avoid precision issues
         Assert.AreEqual("1.0", forecastDataPoint.Version);
     }
@@ -298,7 +298,7 @@ public class WattTimeClientTests
 
         Assert.IsTrue(forecasts.Count() > 0);
         var forecast = forecasts.ToList().First();
-        Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast.GeneratedAt);
+        Assert.AreEqual(new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero), forecast.GeneratedAt);
     }
 
     [Test]
@@ -319,7 +319,7 @@ public class WattTimeClientTests
         
         Assert.IsTrue(forecasts.Count() > 0);
         var forecast = forecasts.ToList().First();
-        Assert.AreEqual(new DateTime(2099, 1, 1, 0, 0, 0, DateTimeKind.Utc), forecast.GeneratedAt);
+        Assert.AreEqual(new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero), forecast.GeneratedAt);
     }
 
     [Test]

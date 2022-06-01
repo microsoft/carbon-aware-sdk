@@ -66,7 +66,7 @@ public class WattTimeDataSourceTests
             new GridEmissionDataPoint()
             {
                 BalancingAuthorityAbbreviation = balancingAuthority.Abbreviation,
-                PointTime = startDate.DateTime,
+                PointTime = startDate,
                 Value = lbsPerMwhEmissions,
             }
         };
@@ -87,7 +87,7 @@ public class WattTimeDataSourceTests
         Assert.IsNotNull(first);
         Assert.AreEqual(gPerKwhEmissions, first.Rating);
         Assert.AreEqual(balancingAuthority.Abbreviation, first.Location);
-        Assert.AreEqual(startDate.DateTime, first.Time);
+        Assert.AreEqual(startDate, first.Time);
 
         this.LocationSource.Verify(r => r.ToGeopositionLocationAsync(location));
     }

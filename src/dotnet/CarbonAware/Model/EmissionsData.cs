@@ -4,11 +4,10 @@
 public record EmissionsData
 {
     public string Location { get; set; }
-    public DateTime Time { get; set; }
+    public DateTimeOffset Time { get; set; }
     public double Rating { get; set; }
 
-
-    public bool TimeBetween(DateTime fromNotInclusive, DateTime? endInclusive)
+    public bool TimeBetween(DateTimeOffset fromNotInclusive, DateTimeOffset? endInclusive)
     {
         if (endInclusive == null) return false;
 
