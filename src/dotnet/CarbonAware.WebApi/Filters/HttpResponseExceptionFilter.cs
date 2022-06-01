@@ -11,6 +11,12 @@ public class HttpResponseExceptionFilter : IExceptionFilter
     private ILogger<HttpResponseExceptionFilter> _logger;
     private ActivitySource _activitySource;
 
+    private static Dictionary<string, int> EXCEPTION_STATUS_CODE_MAP = new Dictionary<string, int>()
+    {
+        { "ArgumentException", (int)HttpStatusCode.BadRequest },
+        { "NotImplementedException", (int)HttpStatusCode.NotImplemented },
+    };
+
     public HttpResponseExceptionFilter(ILogger<HttpResponseExceptionFilter> logger, ActivitySource activitySource)
     {
         _logger = logger;
@@ -30,19 +36,21 @@ public class HttpResponseExceptionFilter : IExceptionFilter
                     Status = httpResponseException.Status,
                     Detail = httpResponseException.Detail
                 };
-            } else if (context.Exception is ArgumentException argumentException) {
-                response = new HttpValidationProblemDetails(){
-                    Title = argumentException.GetType().Name,
-                    Status = (int)HttpStatusCode.BadRequest,
-                    Detail = argumentException.Message
-                };
             } else {
-                response = new HttpValidationProblemDetails(){
-                    Title = context.Exception.GetType().Name,
-                    Status = (int)HttpStatusCode.InternalServerError,
+                var exceptionType = context.Exception.GetType().Name;
+                int statusCode;
+                if (!EXCEPTION_STATUS_CODE_MAP.TryGetValue(exceptionType, out statusCode))
+                {
+                    statusCode = (int)HttpStatusCode.InternalServerError;
+                    _logger.LogError(context.Exception, "500 Error: Unhandled exception");
+                }
+                
+                response = new HttpValidationProblemDetails()
+                {
+                    Title = exceptionType,
+                    Status = statusCode,
                     Detail = context.Exception.Message
                 };
-                _logger.LogError(context.Exception, "500 Error: Unhandled exception");
             }
 
             var traceId = Activity.Current?.Id;

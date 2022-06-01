@@ -76,7 +76,7 @@ public class WattTimeClient : IWattTimeClient
     }
 
     /// <inheritdoc/>
-    public async Task<Forecast?> GetCurrentForecastAsync(string balancingAuthorityAbbreviation)
+    public async Task<Forecast> GetCurrentForecastAsync(string balancingAuthorityAbbreviation)
     {
 
         Log.LogInformation("Requesting current forecast from balancing authority {balancingAuthority}", balancingAuthorityAbbreviation);
@@ -93,35 +93,48 @@ public class WattTimeClient : IWattTimeClient
 
         var result = await this.MakeRequestAsync(Paths.Forecast, parameters, tags);
 
-        return JsonSerializer.Deserialize<Forecast?>(result, options);
+        var forecast = JsonSerializer.Deserialize<Forecast?>(result, options);
+
+        if (forecast == null) 
+        {
+            throw new WattTimeClientException($"Error getting forecast for  {balancingAuthorityAbbreviation}");
+        }
+
+        return forecast;
     }
 
     /// <inheritdoc/>
-    public Task<Forecast?> GetCurrentForecastAsync(BalancingAuthority balancingAuthority)
+    public Task<Forecast> GetCurrentForecastAsync(BalancingAuthority balancingAuthority)
     {
         return this.GetCurrentForecastAsync(balancingAuthority.Abbreviation);
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<Forecast>> GetForecastByDateAsync(string balancingAuthority, DateTimeOffset startTime, DateTimeOffset endTime)
+    public async Task<IEnumerable<Forecast>> GetForecastByDateAsync(string balancingAuthorityAbbreviation, DateTimeOffset startTime, DateTimeOffset endTime)
     {
-        Log.LogInformation("Requesting forecast from balancingAuthority {balancingAuthority} using start time {startTime} and endTime {endTime}", balancingAuthority, startTime, endTime);
+        Log.LogInformation($"Requesting forecast from balancingAuthority {balancingAuthorityAbbreviation} using start time {startTime} and endTime {endTime}");
 
         var parameters = new Dictionary<string, string>()
         {
-            { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthority },
+            { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation },
             { QueryStrings.StartTime, startTime.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture) },
             { QueryStrings.EndTime, endTime.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture) }
         };
 
         var tags = new Dictionary<string, string>()
         {
-            { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthority }
+            { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
         };
 
         var result = await this.MakeRequestAsync(Paths.Forecast, parameters, tags);
 
-        return JsonSerializer.Deserialize<List<Forecast>>(result, options) ?? new List<Forecast>();
+        var forecasts = JsonSerializer.Deserialize<List<Forecast>>(result, options);
+        if (forecasts == null) 
+        {
+            throw new WattTimeClientException($"Error getting forecasts for  {balancingAuthorityAbbreviation}");
+        }
+
+        return forecasts;
     }
 
     /// <inheritdoc/>
@@ -152,7 +165,7 @@ public class WattTimeClient : IWattTimeClient
         var balancingAuthority = JsonSerializer.Deserialize<BalancingAuthority>(result, options);
         if (balancingAuthority == null) 
         {
-            throw new WattTimeClientHttpException($"Error getting Balancing Authority for latitude {latitude} and longitude {longitude}", new HttpResponseMessage(HttpStatusCode.InternalServerError));
+            throw new WattTimeClientException($"Error getting Balancing Authority for latitude {latitude} and longitude {longitude}");
         }
         return balancingAuthority;
     }
