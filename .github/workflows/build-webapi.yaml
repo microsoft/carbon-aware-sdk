@@ -44,9 +44,9 @@ jobs:
       #   uses: codecov/codecov-action@v1
   generate-open-api-spec:
     needs: container-dotnet-build
-    # runs-on: ubuntu-latest
-    # container:
-    #   image: mcr.microsoft.com/dotnet/sdk
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/dotnet/sdk
     steps:
       # - uses: actions/checkout@v3
       # - name: Install tools
