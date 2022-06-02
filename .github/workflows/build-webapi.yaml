@@ -48,7 +48,7 @@ jobs:
     container:
       image: mcr.microsoft.com/dotnet/sdk
     steps:
-      # - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       - name: Generate Open API
         run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
         working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
