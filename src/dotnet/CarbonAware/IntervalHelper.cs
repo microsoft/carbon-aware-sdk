@@ -34,30 +34,20 @@ public static class IntervalHelper
         if (!newData.Any()) return newData;
 
         int indexStart = Find_Nearest(newData, startDate);
-        int indexEnd = Find_Nearest(newData, endDate);
-        var filteredData = new EmissionsData[indexEnd - indexStart + 1];
-        Array.Copy(newData.ToArray(), indexStart, filteredData, 0, indexEnd - indexStart + 1);
+        var filteredData = new EmissionsData[newData.Count() - indexStart];
+        Array.Copy(newData.ToArray(), indexStart, filteredData, 0, newData.Count() - indexStart);
         return filteredData;
     }
 
     private static int Find_Nearest(IEnumerable<EmissionsData> data, DateTime findTime)
     {
-            var dummyValue = new EmissionsData {
-                Time = findTime
-            };
-            int index = Array.BinarySearch(data.ToArray(), dummyValue, new CompareEmissionDataTime());
-            if (index < 0)
-            {
-                var compl = ~index;
-                if (compl == data.Count())
-                {
-                    return data.Count() - 1;
-                }
-                var left_dist = Math.Abs(data.ElementAt(compl - 1).Time.Second - findTime.Second);
-                var right_dist = Math.Abs(data.ElementAt(compl).Time.Second - findTime.Second);
-                return  Math.Min(left_dist, right_dist) == left_dist ? (compl - 1) : compl;
-            }
-            return index;
+        var searchValue = new EmissionsData {
+            Time = findTime
+        };
+        int index = Array.BinarySearch(data.ToArray(), searchValue, new CompareEmissionDataTime());
+        if (index < 0) return index;
+        var complement = ~index;
+        return complement == data.Count() ? (data.Count() - 1) : (complement - 1);
     }
 }
 

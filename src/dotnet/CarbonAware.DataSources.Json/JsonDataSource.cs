@@ -52,7 +52,7 @@ public class JsonDataSource : ICarbonIntensityDataSource
         var endDate = periodEndTime.DateTime;
             
         emissionsData = FilterByLocation(emissionsData, stringLocations);
-        emissionsData = FilterByDateRange(emissionsData, startDate, endDate);
+        emissionsData = FilterByDateRange(emissionsData, periodStartTime, periodEndTime);
 
         if (_logger.IsEnabled(LogLevel.Debug))
         {
@@ -63,21 +63,19 @@ public class JsonDataSource : ICarbonIntensityDataSource
         
     }
 
-    private IEnumerable<EmissionsData> FilterByDateRange(IEnumerable<EmissionsData> data, DateTime startDate, object endDate)
+    private IEnumerable<EmissionsData> FilterByDateRange(IEnumerable<EmissionsData> data, DateTimeOffset startDate, object endDate)
     {
-        DateTime end;
-        DateTime.TryParse(endDate.ToString(), out end);
-        var intervalFilteredData = data.Where(ed => ed.TimeBetween(startDate, end));
-        if (!intervalFilteredData.Any())
+        DateTimeOffset end;
+        DateTimeOffset.TryParse(endDate.ToString(), out end);
+        var intervalFilteredData = data.Where(ed => ed.TimeBetween(startDate.DateTime, end.DateTime));
+        if (intervalFilteredData.Any()) return intervalFilteredData;
+        
+        IEnumerable<EmissionsData> minSamplingFiteredData = IntervalHelper.FilterToMinInterval(data, startDate.DateTime, end.DateTime, MinSamplingWindow);
+        if (!minSamplingFiteredData.Any())
         {
-            IEnumerable<EmissionsData> minSamplingFiteredData = IntervalHelper.FilterToMinInterval(data, startDate, end, MinSamplingWindow);
-            if (minSamplingFiteredData.Count() == 0)
-            {
-                _logger.LogInformation($"Not enought data with {MinSamplingWindow} window");
-            }
-            return minSamplingFiteredData;
+            _logger.LogInformation($"Not enought data with {MinSamplingWindow} window");
         }
-        return intervalFilteredData;
+        return minSamplingFiteredData;
     }
 
     private IEnumerable<EmissionsData> FilterByLocation(IEnumerable<EmissionsData> data, IEnumerable<string?> locations)

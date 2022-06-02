@@ -1,9 +1,6 @@
 using CarbonAware.Model;
 using CarbonAware.Aggregators.CarbonAware;
 using Microsoft.AspNetCore.Mvc;
-using CarbonAware.WebApi.Models;
-using System.Globalization;
-using System.Net.Mime;
 
 namespace CarbonAware.WebApi.Controllers;
 
@@ -91,70 +88,4 @@ public class CarbonAwareController : ControllerBase
         var response = await _aggregator.GetEmissionsDataAsync(props);
         return response.Any() ? Ok(response) : NoContent();
     }
-
-    [HttpPost("marginal-carbon-intensity")]
-    [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    /// <summary> Gets the marginal carbon intensity value </summary>
-    /// <param name="input"> input from JSON request converted to input object with location and time interval </param>
-    /// <returns>Result of the call to the aggregator to retrieve carbon intenstiy</returns>
-    public async Task<IActionResult> GetCarbonIntensityAsync(SciScoreInput input)
-    {
-    
-        _logger.LogDebug("calling to aggregator to calculate the average carbon intensity with input: {input}", input);
-        (var startTime, var endTime) = ParseTimeInterval(input.TimeInterval);
-        var props = new Dictionary<string, object>() {
-            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = input.Location.RegionName } }},
-            { CarbonAwareConstants.Start, startTime },
-            { CarbonAwareConstants.End, endTime }
-        };
-
-        var carbonIntensity = await _aggregator.CalcEmissionsAverageAsync(props);
-
-        SciScore score = new SciScore
-        {
-            MarginalCarbonIntensityValue = carbonIntensity,
-        };
-        _logger.LogDebug("calculated marginal carbon intensity: {score}", score);
-        return Ok(score);
-    }
-
-    // Validate and parse time interval string into a tuple of (start, end) DateTimeOffsets.
-    // Throws ArgumentException for invalid input.
-    private (DateTimeOffset start, DateTimeOffset end) ParseTimeInterval(string timeInterval)
-    {
-        DateTimeOffset start;
-        DateTimeOffset end;
-
-        var timeIntervals = timeInterval.Split('/');
-        // Check that the time interval was split into exactly 2 parts
-        if(timeIntervals.Length != 2)
-        {
-            throw new ArgumentException(
-                $"Invalid TimeInterval. Expected exactly 2 dates separated by '/', recieved: {timeInterval}"
-            );
-        }
-
-        var rawStart = timeIntervals[0];
-        var rawEnd = timeIntervals[1];
-
-        if(!DateTimeOffset.TryParse(rawStart, CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AdjustToUniversal, out start))
-        {
-            throw new ArgumentException($"Invalid TimeInterval. Could not parse start time: {rawStart}");
-        }
-
-        if(!DateTimeOffset.TryParse(rawEnd, CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AdjustToUniversal, out end))
-        {
-            throw new ArgumentException($"Invalid TimeInterval. Could not parse end time: {rawEnd}");
-        }
-
-        if(start > end)
-        {
-            throw new ArgumentException($"Invalid TimeInterval. Start time must come before end time: {timeInterval}");
-        }
-
-        return (start, end);
-    }
-
 }
