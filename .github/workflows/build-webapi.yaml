@@ -14,7 +14,7 @@ env:
   HEALTH_ENDPOINT: "0.0.0.0:8080/health"
   DATA_ENDPOINT: "0.0.0.0:8080/emissions/bylocation?location=eastus"
   DOTNET_SRC_DIR: "./src/dotnet"
-  DLL_FILE_PATH: "./src/dotnet/CarbonAware.WebApi/bin/Release/net6.0/CarbonAware.WebApi.dll"
+  DLL_FILE_PATH: "./CarbonAware.WebApi/bin/Release/net6.0/CarbonAware.WebApi.dll"
 
 jobs:
   container-dotnet-build:
