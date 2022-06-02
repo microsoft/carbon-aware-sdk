@@ -49,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: swagger.yaml
-          path: .src/dotnet/CarbonAware.WebApi/./api/v1/swagger.yaml   
+          path: ../workspaces/carbon-aware-sdk/src/dotnet/CarbonAware.WebApi/api/v1/swagger.yaml   
     
   # upload-artifact:
   #   runs-on: ubuntu-latest
