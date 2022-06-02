@@ -34,13 +34,15 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
-      - name: Test + Code Coverage
-        run: dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-        working-directory: ${{ env.DOTNET_SRC_DIR }}
-      - name: Codecov
-        uses: codecov/codecov-action@v1
+      # - name: Test + Code Coverage
+      #   run: dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+      #   working-directory: ${{ env.DOTNET_SRC_DIR }}
+      # - name: Codecov
+      #   uses: codecov/codecov-action@v1
+      # - name: Open API generation
+      #   run: dotnet swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1 WorkingDirectory = ${{ env.DOTNET_SRC_DIR }}   
       - name: Open API generation
-        run: dotnet swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1 WorkingDirectory = ${{ env.DOTNET_SRC_DIR }}   
+        run: dotnet swagger
 
   container-validation:
       runs-on: ubuntu-latest
