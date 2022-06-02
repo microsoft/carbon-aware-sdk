@@ -31,6 +31,8 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
+      - name: Install tools
+        run: dotnet tool install --configfile  ${{ env.DOTNET_SRC_DIR }}/.config/dotnet-tools.json
       - name: Build
         run: dotnet build --configuration Release --no-restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
@@ -41,6 +43,7 @@ jobs:
       #   uses: codecov/codecov-action@v1
       # - name: Open API generation
       #   run: dotnet swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1 WorkingDirectory = ${{ env.DOTNET_SRC_DIR }}   
+      
       - name: Open API generation
         run: swagger
 
