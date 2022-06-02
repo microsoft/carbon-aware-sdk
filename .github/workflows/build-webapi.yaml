@@ -32,7 +32,8 @@ jobs:
         run: dotnet restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
       - name: Install tools
-        run: dotnet tool restore --tool-manifest  ${{ env.DOTNET_SRC_DIR }}/.config/dotnet-tools.json
+        run: dotnet tool restore #--tool-manifest  .config/dotnet-tools.json
+        working-directory: ${{ env.DOTNET_SRC_DIR }}
       - name: Build
         run: dotnet build --configuration Release --no-restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
