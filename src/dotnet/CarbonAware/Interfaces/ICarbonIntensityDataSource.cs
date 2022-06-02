@@ -11,6 +11,11 @@ public interface ICarbonIntensityDataSource
     string Version { get; }
 
     /// <summary>
+    /// Minimum sampling window for data, in minutes
+    /// </summary>
+    double MinSamplingWindow { get; }
+
+    /// <summary>
     /// Gets the carbon intensity for a location and start and end time
     /// </summary>
     /// <param name="locations">The locations that should be used for getting emissions data.</param>
@@ -19,8 +24,4 @@ public interface ICarbonIntensityDataSource
     /// <returns>A list of emissions data for the given time period.</returns>
     public Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(IEnumerable<Location> locations, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime);
 
-    /// <summary>
-    /// Minimum sampling window for data, in minutes
-    /// </summary>
-    internal double MinSamplingWindow { get; }
 }
