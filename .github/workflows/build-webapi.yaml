@@ -42,9 +42,6 @@ jobs:
       #   working-directory: ${{ env.DOTNET_SRC_DIR }}
       # - name: Codecov
       #   uses: codecov/codecov-action@v1
-      - name: Generate Open API
-        run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
-        working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
   generate-open-api-spec:
     needs: container-dotnet-build
     runs-on: ubuntu-latest
@@ -52,6 +49,9 @@ jobs:
       image: mcr.microsoft.com/dotnet/sdk
     steps:
       - uses: actions/checkout@v3
+      - name: Install tools
+        run: dotnet tool restore 
+        working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
       - name: Generate Open API
         run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
         working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
