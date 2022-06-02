@@ -1,6 +1,7 @@
 using CarbonAware.Model;
 using CarbonAware.Aggregators.CarbonAware;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CarbonAware.WebApi.Controllers;
 
@@ -43,6 +44,29 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsData>))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [HttpGet("test/best")]
+    public async Task<IActionResult> Test([FromQuery(Name = "locations")] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
+    {
+        //The LocationType is hardcoded for now. Ideally this should be received from the request or configuration 
+        IEnumerable<Location> locationEnumerable = locations.Select(loc => new Location()
+                                                                            { RegionName = loc, 
+                                                                            LocationType=LocationType.CloudProvider});
+        var props = new Dictionary<string, object?>() {
+            { CarbonAwareConstants.Locations, locationEnumerable },
+            { CarbonAwareConstants.Start, time},
+            { CarbonAwareConstants.End, toTime },
+            { CarbonAwareConstants.Duration, durationMinutes },
+            { CarbonAwareConstants.Best, true }
+        };
+
+        return await GetEmissionsDataAsync(props);
+    }
+
+
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsData>))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpGet("bylocations")]
     public async Task<IActionResult> GetEmissionsDataForLocationsByTime([FromQuery(Name = "locations")] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
     {
@@ -62,8 +86,8 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpGet("bylocation")]
-    public async Task<IActionResult> GetEmissionsDataForLocationByTime(string location, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
-    {;
+    public async Task<IActionResult> GetEmissionsDataForLocationByTime([FromQuery, BindRequired] string location, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
+    {
         var locations = new List<Location>() { new Location() { RegionName = location, LocationType=LocationType.CloudProvider } };
         var props = new Dictionary<string, object?>() {
             { CarbonAwareConstants.Locations, locations },
