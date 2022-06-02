@@ -45,8 +45,8 @@ jobs:
       # - name: Open API generation
       #   run: dotnet swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1 WorkingDirectory = ${{ env.DOTNET_SRC_DIR }}   
       
-      - name: Open API generation
-        run: dotnet swagger #tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1 WorkingDirectory = ${{ env.DOTNET_SRC_DIR }} 
+      - name: Generate Open API
+        run: dotnet tool run swagger #tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1 WorkingDirectory = ${{ env.DOTNET_SRC_DIR }} 
 
   container-validation:
       runs-on: ubuntu-latest
