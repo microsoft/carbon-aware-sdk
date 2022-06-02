@@ -42,13 +42,20 @@ jobs:
       #   working-directory: ${{ env.DOTNET_SRC_DIR }}
       # - name: Codecov
       #   uses: codecov/codecov-action@v1
-      # - name: Open API generation
-      #   run: dotnet swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1 WorkingDirectory = ${{ env.DOTNET_SRC_DIR }}   
-      
       - name: Generate Open API
         run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
         working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
-
+        - run: mkdir -p path/to/artifact
+    
+  upload-artifact:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/dotnet/sdk
+    steps:
+      - uses: actions/upload-artifact@v1
+        with:
+          name: swagger.yaml
+          path: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi/./api/v1/swagger.yaml
   container-validation:
       runs-on: ubuntu-latest
       steps:
