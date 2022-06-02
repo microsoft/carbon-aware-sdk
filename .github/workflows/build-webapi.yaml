@@ -58,7 +58,7 @@ jobs:
     container:
       image: mcr.microsoft.com/dotnet/sdk
     steps:
-      name: Upload artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v1
         with:
           name: swagger.yaml
