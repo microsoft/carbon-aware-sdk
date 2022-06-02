@@ -2,7 +2,7 @@ name: Docker Web API Build
 
 on:
   push:
-    branches: [ dev, main ]
+    branches: [ dev, main, pritipathak/Auto_generate_Open_API ]
   pull_request:
     branches: [ dev, main ]
     paths:
@@ -38,6 +38,8 @@ jobs:
         working-directory: ${{ env.DOTNET_SRC_DIR }}
       - name: Codecov
         uses: codecov/codecov-action@v1
+      - name: Open API generation
+        run: dotnet swagger tofile --output ./api/v1/swagger.yaml --yaml CarbonAware.WebApi.dll v1" WorkingDirectory="${{ env.DOTNET_SRC_DIR }}   
 
   container-validation:
       runs-on: ubuntu-latest
