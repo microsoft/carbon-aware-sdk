@@ -32,6 +32,8 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
     const double MWH_TO_KWH_CONVERSION_FACTOR = 1000.0;
     const double LBS_TO_GRAMS_CONVERSION_FACTOR = 453.59237;
 
+    public double MinSamplingWindow => 120; // 2hrs of data
+
 
     /// <summary>
     /// Creates a new instance of the <see cref="WattTimeDataSource"/> class.

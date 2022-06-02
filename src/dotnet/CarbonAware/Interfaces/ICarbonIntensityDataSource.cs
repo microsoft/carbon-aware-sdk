@@ -18,4 +18,9 @@ public interface ICarbonIntensityDataSource
     /// <param name="periodEndTime">The end time of the period.</param>
     /// <returns>A list of emissions data for the given time period.</returns>
     public Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(IEnumerable<Location> locations, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime);
+
+    /// <summary>
+    /// Minimum sampling window for data, in minutes
+    /// </summary>
+    internal double MinSamplingWindow { get; }
 }
