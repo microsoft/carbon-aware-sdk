@@ -32,7 +32,7 @@ jobs:
         run: dotnet restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
       - name: Install tools
-        run: dotnet -d tool restore 
+        run: dotnet tool restore 
         working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
       - name: Build
         run: dotnet build --configuration Release --no-restore
