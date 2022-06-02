@@ -45,16 +45,21 @@ jobs:
       - name: Generate Open API
         run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
         working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
-    
-  upload-artifact:
-    runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/dotnet/sdk
-    steps:
-      - uses: actions/upload-artifact@v1
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1
         with:
           name: swagger.yaml
-          path: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi/./api/v1/swagger.yaml
+          path: .src/dotnet/CarbonAware.WebApi/./api/v1/swagger.yaml   
+    
+  # upload-artifact:
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: mcr.microsoft.com/dotnet/sdk
+  #   steps:
+  #     - uses: actions/upload-artifact@v1
+  #       with:
+  #         name: swagger.yaml
+  #         path: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi/./api/v1/swagger.yaml
   container-validation:
       runs-on: ubuntu-latest
       steps:
