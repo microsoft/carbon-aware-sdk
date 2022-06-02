@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Reflection;
+﻿using System.Reflection;
 using CarbonAware.Interfaces;
 using CarbonAware.Model;
 using Microsoft.Extensions.Logging;
