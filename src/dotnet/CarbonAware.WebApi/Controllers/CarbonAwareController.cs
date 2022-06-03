@@ -18,6 +18,10 @@ public class CarbonAwareController : ControllerBase
         _aggregator = aggregator ?? throw new ArgumentNullException(nameof(aggregator));
     }
 
+    /// <summary>
+    /// Calculate the best emission data by location for a specified time period.
+    /// </summary>
+    /// <returns>Array of EmissionsData objects that contains the location, time and the rating in g/kWh</returns>
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsData>))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -40,34 +44,15 @@ public class CarbonAwareController : ControllerBase
         return await GetEmissionsDataAsync(props);
     }
 
+    /// <summary>
+    /// Calculate the observed emission data by list of locations for a specified time period.
+    /// </summary>
+    /// <returns>Array of EmissionsData objects that contains the location, time and the rating in g/kWh</returns>
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsData>))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [HttpGet("test/best")]
-    public async Task<IActionResult> Test([FromQuery(Name = "locations")] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
-    {
-        //The LocationType is hardcoded for now. Ideally this should be received from the request or configuration 
-        IEnumerable<Location> locationEnumerable = locations.Select(loc => new Location()
-                                                                            { RegionName = loc, 
-                                                                            LocationType=LocationType.CloudProvider});
-        var props = new Dictionary<string, object?>() {
-            { CarbonAwareConstants.Locations, locationEnumerable },
-            { CarbonAwareConstants.Start, time},
-            { CarbonAwareConstants.End, toTime },
-            { CarbonAwareConstants.Duration, durationMinutes },
-            { CarbonAwareConstants.Best, true }
-        };
-
-        return await GetEmissionsDataAsync(props);
-    }
-
-
-    [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsData>))]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [HttpGet("bylocations")]
+    [HttpGet("bylocations", Name = "GetEmissionsDataForLocationsByTime") ]
     public async Task<IActionResult> GetEmissionsDataForLocationsByTime([FromQuery(Name = "locations")] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
     {
         IEnumerable<Location> locationEnumerable = locations.Select(loc => new Location(){ RegionName = loc, LocationType=LocationType.CloudProvider });
@@ -81,6 +66,10 @@ public class CarbonAwareController : ControllerBase
         return await GetEmissionsDataAsync(props);
     }
 
+    /// <summary>
+    /// Calculate the best emission data by location for a specified time period.
+    /// </summary>
+    /// <returns>Array of EmissionsData objects that contains the location, time and the rating in g/kWh</returns>
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsData>))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
