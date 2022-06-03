@@ -56,10 +56,10 @@ jobs:
     container:
       image: mcr.microsoft.com/dotnet/sdk
     steps:
-      - name: Checkout Dev Branch
-        uses: actions/checkout@v3
-        # with:
-        #   ref: dev
+      # - name: Checkout Dev Branch
+      - uses: actions/checkout@v3
+        with:
+          ref: dev
       - name: Setup .NET Core SDK 6
         uses: actions/setup-dotnet@v2
         with:
