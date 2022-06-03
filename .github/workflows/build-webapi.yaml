@@ -71,7 +71,7 @@ jobs:
       #     tree
       - name: Install dependencies
         run: dotnet restore
-        working-directory: /src/dotnet
+        working-directory: ${{ env.DOTNET_SRC_DIR }}
       # - name: Install tools
       #   run: dotnet tool restore 
       #   working-directory: src/dotnet/CarbonAware.WebApi
