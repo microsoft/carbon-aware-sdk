@@ -37,6 +37,9 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
+      - name: Generate Open API
+        run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
+        working-directory: ./src/dotnet/CarbonAware.WebApi 
       # - name: Test + Code Coverage
       #   run: dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
       #   working-directory: ${{ env.DOTNET_SRC_DIR }}
@@ -51,7 +54,7 @@ jobs:
       - uses: docker://mcr.microsoft.com/dotnet/sdk
       - name: Generate Open API
         run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
-        working-directory: ./src/dotnet/CarbonAware.WebApi
+        working-directory: src/dotnet/CarbonAware.WebApi
   upload-artifact:
     needs: generate-open-api-spec
     runs-on: ubuntu-latest
