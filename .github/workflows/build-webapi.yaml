@@ -56,8 +56,8 @@ jobs:
     container:
       image: mcr.microsoft.com/dotnet/sdk
     steps:
-      # - name: Checkout Dev Branch
-      - uses: actions/checkout@v3
+      - name: Checkout Dev Branch
+        uses: actions/checkout@v3
         with:
           ref: dev
       - name: Setup .NET Core SDK 6
@@ -65,16 +65,16 @@ jobs:
         with:
           dotnet-version: '6.0.x'
           include-prerelease: false
-      # - run: |
-      #     apt update
-      #     apt install -y tree
-      #     tree
+      - run: |
+          apt update
+          apt install -y tree
+          tree
       - name: Install dependencies
         run: dotnet restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
-      # - name: Install tools
-      #   run: dotnet tool restore 
-      #   working-directory: src/dotnet/CarbonAware.WebApi
+      - name: Install tools
+        run: dotnet tool restore 
+        working-directory: src/dotnet/CarbonAware.WebApi
       - name: Build
         run: dotnet build --configuration Release --no-restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
