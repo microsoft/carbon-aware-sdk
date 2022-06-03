@@ -51,7 +51,7 @@ jobs:
       - uses: docker://mcr.microsoft.com/dotnet/sdk
       - name: Generate Open API
         run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
-        working-directory: src/dotnet/CarbonAware.WebApi
+        working-directory: ./src/dotnet/CarbonAware.WebApi
   upload-artifact:
     needs: generate-open-api-spec
     runs-on: ubuntu-latest
