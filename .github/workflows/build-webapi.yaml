@@ -31,9 +31,6 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
-      - name: Install tools
-        run: dotnet tool restore 
-        working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
       - name: Build
         run: dotnet build --configuration Release --no-restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
@@ -52,6 +49,14 @@ jobs:
       image: mcr.microsoft.com/dotnet/sdk
     steps:
       - uses: actions/checkout@v3
+      - name: Setup .NET Core SDK 6
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.0.x'
+          include-prerelease: false
+      - name: Install tools
+        run: dotnet tool restore 
+        working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
       - name: Generate Open API
         run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
         working-directory: src/dotnet/CarbonAware.WebApi
