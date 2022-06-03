@@ -48,28 +48,63 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v1
         with:
-          name: swagger.yaml
-          path: src/dotnet/CarbonAware.WebApi/api/v1/swagger.yaml    
-  container-validation:
-      runs-on: ubuntu-latest
-      steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+          name: pr-swagger.yaml
+          path: src/dotnet/CarbonAware.WebApi/api/v1/swagger.yaml
+  api-comparison:
+    needs: container-dotnet-build
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/dotnet/sdk
+    steps:
+      - name: Checkout Dev Branch
+        uses: actions/checkout@v3
+        with:
+          path: dev
+      - name: Setup .NET Core SDK 6
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.0.x'
+          include-prerelease: false
+      - name: Install dependencies
+        run: dotnet restore
+        working-directory: ${{ env.DOTNET_SRC_DIR }}
+      - name: Install tools
+        run: dotnet tool restore 
+        working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+        working-directory: ${{ env.DOTNET_SRC_DIR }}
+      - name: Generate Open API
+        run: dotnet tool run swagger tofile --output ./api/dev/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
+        working-directory: ./src/dotnet/CarbonAware.WebApi 
+      - uses: actions/download-artifact@master
+        with:
+          name: pr-swagger.yaml
+          path: src/dotnet/CarbonAware.WebApi/api/v1/pr-swagger.yaml
+      - name: API Diff Comparison
+        run: git diff ./api/v1/pr-swagger.yaml ./api/dev/swagger.yaml
+        working-directory: ./src/dotnet/CarbonAware.WebApi 
 
-      - name: Docker Target Final
-        run: docker build . -f ${DOCKERFILE_PATH} -t ca-api
-        working-directory: ./src/dotnet
+#   container-validation:
+#       runs-on: ubuntu-latest
+#       steps:
+#       - name: Checkout Repository
+#         uses: actions/checkout@v2
+
+#       - name: Docker Target Final
+#         run: docker build . -f ${DOCKERFILE_PATH} -t ca-api
+#         working-directory: ./src/dotnet
         
-      - name: Docker Run Container
-        run: |
-          docker run -d --name runnable-container -p 8080:80 ca-api
-          docker container ls
+#       - name: Docker Run Container
+#         run: |
+#           docker run -d --name runnable-container -p 8080:80 ca-api
+#           docker container ls
 
-      - name: Docker WGET Health Endpoint
-        run: |
-          wget -t 5 --waitretry=5 ${HEALTH_ENDPOINT}
+#       - name: Docker WGET Health Endpoint
+#         run: |
+#           wget -t 5 --waitretry=5 ${HEALTH_ENDPOINT}
 
-      - name: Docker WGET Data Endpoint
-        run: |
-          wget -t 5 --waitretry=5 ${DATA_ENDPOINT}
+#       - name: Docker WGET Data Endpoint
+#         run: |
+#           wget -t 5 --waitretry=5 ${DATA_ENDPOINT}
 
