@@ -45,13 +45,10 @@ jobs:
   generate-open-api-spec:
     needs: container-dotnet-build
     runs-on: ubuntu-latest
-    # container:
-    #   image: mcr.microsoft.com/dotnet/sdk
+    container:
+      image: mcr.microsoft.com/dotnet/sdk
     steps:
       - uses: docker://mcr.microsoft.com/dotnet/sdk
-      # - name: Install tools
-      #   run: dotnet tool restore 
-      #   working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
       - name: Generate Open API
         run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
         working-directory: src/dotnet/CarbonAware.WebApi
