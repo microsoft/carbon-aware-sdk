@@ -58,8 +58,8 @@ jobs:
     steps:
       - name: Checkout Dev Branch
         uses: actions/checkout@v3
-        with:
-          ref: dev
+        # with:
+        #   ref: dev
       - name: Setup .NET Core SDK 6
         uses: actions/setup-dotnet@v2
         with:
