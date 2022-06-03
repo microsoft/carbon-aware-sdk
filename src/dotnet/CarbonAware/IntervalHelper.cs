@@ -20,32 +20,22 @@ public static class IntervalHelper
 
         if (!newData.Any()) return newData;
 
-        int indexStart = Find_Nearest_Index(newData, startDate.DateTime);
-        var filteredData = new EmissionsData[newData.Count() - indexStart];
-        Array.Copy(newData.ToArray(), indexStart, filteredData, 0, newData.Count() - indexStart);
+        var arrData = newData.ToArray();
+        // sort data since different sources might have populated the data differently.
+        Array.Sort(arrData, new CompareEmissionDataSort());
+        var filteredData = new EmissionsData[1];
+        // copy only the last element since it is sorted by time.
+        Array.Copy(arrData, arrData.Length - 1, filteredData, 0, 1);
         return filteredData;
     }
 
     public static DateTimeOffset GetShiftedDate(DateTimeOffset original, double minSamplingWindow)
     {
-        return original.AddMinutes(-minSamplingWindow);
-    }
-
-    private static int Find_Nearest_Index(IEnumerable<EmissionsData> data, DateTime findTime)
-    {
-        var searchValue = new EmissionsData {
-            Time = findTime
-        };
-        int index = Array.BinarySearch(data.ToArray(), searchValue, new CompareEmissionDataTime());
-        if (index >= 0) return index;
-
-        var complement = ~index;
-        // return last index or the one which time is less than the time provided.
-        return complement == data.Count() ? (data.Count() - 1) : (complement - 1);
+        return original.AddMinutes(minSamplingWindow);
     }
 }
 
-class CompareEmissionDataTime : IComparer<EmissionsData>
+class CompareEmissionDataSort : IComparer<EmissionsData>
 {
     public int Compare(EmissionsData x, EmissionsData y)
     {

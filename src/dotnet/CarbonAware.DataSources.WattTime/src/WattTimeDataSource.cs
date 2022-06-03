@@ -101,7 +101,8 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
             }
             else
             {
-                var newStartTime = IntervalHelper.GetShiftedDate(periodStartTime, MinSamplingWindow);
+                // find data by moving the start time then get the closest element.
+                var newStartTime = IntervalHelper.GetShiftedDate(periodStartTime, -MinSamplingWindow);
                 data = await this.WattTimeClient.GetDataAsync(balancingAuthority, newStartTime, periodEndTime);
                 var tmp = data.Select(e => new EmissionsData() 
                     { 
