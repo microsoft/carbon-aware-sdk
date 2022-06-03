@@ -16,9 +16,10 @@ public static class IntervalHelper
     public static IEnumerable<EmissionsData> GetFilteredData(IEnumerable<EmissionsData> newData, DateTimeOffset startDate, DateTimeOffset endDate, double minSamplingWindow)
     {
         TimeSpan ts = endDate - startDate;
-        if (ts.TotalMinutes >= minSamplingWindow) return newData;
-
-        if (!newData.Any()) return newData;
+        if ((ts.TotalMinutes >= minSamplingWindow) || !newData.Any())
+        {
+            return newData;
+        }
 
         var arrData = newData.ToArray();
         // sort data since different sources might have populated the data differently.
@@ -29,9 +30,16 @@ public static class IntervalHelper
         return filteredData;
     }
 
-    public static DateTimeOffset GetShiftedDate(DateTimeOffset original, double minSamplingWindow)
+    /// <summary>
+    /// Add or Substract minutes from date 
+    /// </summary>
+    /// <param name="date">Date to shift</param>
+    /// <param name="minutesValue">Minutes to add or substract</param>
+    /// <returns>Shifted date</returns>
+    /// <remarks>To substract minutes, minutesValue should be negative.</remarks>
+    public static DateTimeOffset ShiftDate(DateTimeOffset date, double minutesValue)
     {
-        return original.AddMinutes(minSamplingWindow);
+        return date.AddMinutes(minutesValue);
     }
 }
 

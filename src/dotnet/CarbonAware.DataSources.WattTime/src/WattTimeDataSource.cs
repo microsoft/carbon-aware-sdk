@@ -88,42 +88,32 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
             Logger.LogDebug("Converted location {location} to balancing authority {balancingAuthorityAbbreviation}", location, balancingAuthority.Abbreviation);
 
             var data = (await this.WattTimeClient.GetDataAsync(balancingAuthority, periodStartTime, periodEndTime));
-            IEnumerable<EmissionsData> result;
             if (data.Any())
             {
-            // Linq statement to convert WattTime forecast data into EmissionsData for the CarbonAware SDK.
-                result = data.Select(e => new EmissionsData()
-                {
-                    Location = e.BalancingAuthorityAbbreviation,
-                    Rating = ConvertMoerToGramsPerKilowattHour(e.Value),
-                    Time = e.PointTime
-                });
-            }
-            else
-            {
-                // find data by moving the start time then get the closest element.
-                var newStartTime = IntervalHelper.GetShiftedDate(periodStartTime, -MinSamplingWindow);
-                data = await this.WattTimeClient.GetDataAsync(balancingAuthority, newStartTime, periodEndTime);
-                var tmp = data.Select(e => new EmissionsData() 
-                    { 
-                        Location = e.BalancingAuthorityAbbreviation, 
-                        Rating = ConvertMoerToGramsPerKilowattHour(e.Value), 
-                        Time = e.PointTime 
-                    });
-                result = IntervalHelper.GetFilteredData(tmp, periodStartTime, periodEndTime, MinSamplingWindow);
+                return ConvertToEmissionData(data);
             }
 
-            if (Logger.IsEnabled(LogLevel.Debug))
-            {
-                Logger.LogDebug("Found {count} total emissions data records for location {location} for period {periodStartTime} to {periodEndTime}.", result.Count(), location, periodStartTime, periodEndTime);
-            }
-
-            return result;
+            // try to find data by moving the start time '-MinSamplingWindow' to get the nearest element to periodStartTime
+            var newStartTime = IntervalHelper.ShiftDate(periodStartTime, -MinSamplingWindow);
+            data = await this.WattTimeClient.GetDataAsync(balancingAuthority, newStartTime, periodEndTime);
+            var windowData = ConvertToEmissionData(data);
+            return IntervalHelper.GetFilteredData(windowData, periodStartTime, periodEndTime, MinSamplingWindow);
         }
     }
 
     internal double ConvertMoerToGramsPerKilowattHour(double value)
     {
         return value * LBS_TO_GRAMS_CONVERSION_FACTOR / MWH_TO_KWH_CONVERSION_FACTOR;
+    }
+
+    private IEnumerable<EmissionsData> ConvertToEmissionData(IEnumerable<GridEmissionDataPoint> data)
+    {
+        // Linq statement to convert WattTime forecast data into EmissionsData for the CarbonAware SDK.
+        return data.Select(e => new EmissionsData() 
+                    { 
+                        Location = e.BalancingAuthorityAbbreviation, 
+                        Rating = ConvertMoerToGramsPerKilowattHour(e.Value), 
+                        Time = e.PointTime 
+                    });
     }
 }

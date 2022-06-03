@@ -70,7 +70,7 @@ public class JsonDataSource : ICarbonIntensityDataSource
         if (intervalFilteredData.Any()) {
             return intervalFilteredData;
         }
-        var newStartTime = IntervalHelper.GetShiftedDate(startDate, MinSamplingWindow);
+        var newStartTime = IntervalHelper.ShiftDate(startDate, -MinSamplingWindow);
         intervalFilteredData = data.Where(ed => ed.TimeBetween(newStartTime.DateTime, end.DateTime));
         var minSamplingFiteredData = IntervalHelper.GetFilteredData(intervalFilteredData, startDate, end, MinSamplingWindow);
         
