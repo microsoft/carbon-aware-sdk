@@ -13,8 +13,8 @@ env:
   DOCKERFILE_PATH: "CarbonAware.WebApi/Dockerfile"
   HEALTH_ENDPOINT: "0.0.0.0:8080/health"
   DATA_ENDPOINT: "0.0.0.0:8080/emissions/bylocation?location=eastus"
-  DOTNET_SRC_DIR: "/src/dotnet"
-  DLL_FILE_PATH: "/bin/Release/net6.0/CarbonAware.WebApi.dll"
+  DOTNET_SRC_DIR: "./src/dotnet"
+  DLL_FILE_PATH: "./bin/Release/net6.0/CarbonAware.WebApi.dll"
 
 jobs:
   container-dotnet-build:
@@ -67,7 +67,7 @@ jobs:
           include-prerelease: false
       - name: Install dependencies
         run: dotnet restore
-        working-directory: ${{ env.DOTNET_SRC_DIR }}
+        working-directory: ./src/dotnet
       - name: Install tools
         run: dotnet tool restore 
         working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
