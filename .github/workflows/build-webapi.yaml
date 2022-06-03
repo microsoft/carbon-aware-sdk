@@ -31,6 +31,9 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
+      - name: Install tools
+        run: dotnet tool restore 
+        working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
       - name: Build
         run: dotnet build --configuration Release --no-restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
@@ -39,35 +42,14 @@ jobs:
       #   working-directory: ${{ env.DOTNET_SRC_DIR }}
       # - name: Codecov
       #   uses: codecov/codecov-action@v1
-  generate-open-api-spec:
-    needs: container-dotnet-build
-    runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/dotnet/sdk
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup .NET Core SDK 6
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: '6.0.x'
-          include-prerelease: false
-      - name: Install tools
-        run: dotnet tool restore 
-        working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
       - name: Generate Open API
         run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
-        working-directory: src/dotnet/CarbonAware.WebApi
-  upload-artifact:
-    needs: generate-open-api-spec
-    runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/dotnet/sdk
-    steps:
+        working-directory: ./src/dotnet/CarbonAware.WebApi 
       - name: Upload artifact
         uses: actions/upload-artifact@v1
         with:
           name: swagger.yaml
-          path: src/dotnet/CarbonAware.WebApi/api/v1/swagger.yaml  
+          path: src/dotnet/CarbonAware.WebApi/api/v1/swagger.yaml    
   container-validation:
       runs-on: ubuntu-latest
       steps:
