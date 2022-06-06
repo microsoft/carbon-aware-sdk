@@ -87,7 +87,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
             Logger.LogDebug("Converted location {location} to balancing authority {balancingAuthorityAbbreviation}", location, balancingAuthority.Abbreviation);
 
-            var data = (await this.WattTimeClient.GetDataAsync(balancingAuthority, periodStartTime, periodEndTime));
+            var data = await this.WattTimeClient.GetDataAsync(balancingAuthority, periodStartTime, periodEndTime);
             if (data.Any())
             {
                 return ConvertToEmissionData(data);
@@ -97,7 +97,12 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
             var newStartTime = IntervalHelper.ShiftDate(periodStartTime, -MinSamplingWindow);
             data = await this.WattTimeClient.GetDataAsync(balancingAuthority, newStartTime, periodEndTime);
             var windowData = ConvertToEmissionData(data);
-            return IntervalHelper.MinSamplingFiltering(windowData, periodStartTime, periodEndTime, MinSamplingWindow);
+            var filteredData = IntervalHelper.MinSamplingFiltering(windowData, periodStartTime, periodEndTime, MinSamplingWindow);
+            if (!filteredData.Any())
+            {
+                Logger.LogInformation($"Not enought data with {MinSamplingWindow} window");
+            }
+            return filteredData;
         }
     }
 
