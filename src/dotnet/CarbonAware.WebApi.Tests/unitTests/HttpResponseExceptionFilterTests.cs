@@ -20,7 +20,6 @@ public class HttpResponseExceptionFilterTests
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private ActionContext _actionContext;
     private Mock<ILogger<HttpResponseExceptionFilter>> _logger;
-    private ActivitySource _activitySource;
     #pragma warning restore CS8618
 
     [SetUp]
@@ -33,7 +32,6 @@ public class HttpResponseExceptionFilterTests
             ActionDescriptor = new ActionDescriptor()
         };
         this._logger = new Mock<ILogger<HttpResponseExceptionFilter>>();
-        this._activitySource = new ActivitySource("CarbonAware.WepApi.UnitTests.HttpResponseExceptionFilterTests");
     }
 
     [Test]
@@ -46,7 +44,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
 
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._activitySource);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object);
 
         // Act
         filter.OnException(exceptionContext);
@@ -71,7 +69,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
 
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._activitySource);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object);
 
         // Act
         filter.OnException(exceptionContext);
@@ -97,7 +95,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
 
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._activitySource);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object);
 
         // Act
         filter.OnException(exceptionContext);
@@ -123,7 +121,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
 
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._activitySource);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object);
 
         // Act
         filter.OnException(exceptionContext);

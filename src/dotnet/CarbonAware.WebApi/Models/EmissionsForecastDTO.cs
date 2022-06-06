@@ -4,7 +4,7 @@ using CarbonAware.Model;
 using System.Text.Json.Serialization;
 
 [Serializable]
-public record SerializableEmissionsForecast
+public record EmissionsForecastDTO
 {
     [JsonPropertyName("generatedAt")]
     public DateTimeOffset GeneratedAt { get; set; }
@@ -22,22 +22,22 @@ public record SerializableEmissionsForecast
     public int WindowSize { get; set; }
 
     [JsonPropertyName("optimalDataPoint")]
-    public SerializableEmissionsData? OptimalDataPoint { get; set; }
+    public EmissionsDataDTO? OptimalDataPoint { get; set; }
 
     [JsonPropertyName("forecastData")]
-    public IEnumerable<SerializableEmissionsData>? ForecastData { get; set; }
+    public IEnumerable<EmissionsDataDTO>? ForecastData { get; set; }
 
-    public static SerializableEmissionsForecast FromEmissionsForecast(EmissionsForecast emissionsForecast)
+    public static EmissionsForecastDTO FromEmissionsForecast(EmissionsForecast emissionsForecast)
     {
-        return new SerializableEmissionsForecast
+        return new EmissionsForecastDTO
         {
             GeneratedAt = emissionsForecast.GeneratedAt,
             Location = emissionsForecast.Location.DisplayName,
             StartTime = emissionsForecast.StartTime,
             EndTime = emissionsForecast.EndTime,
             WindowSize = (int)emissionsForecast.WindowSize.TotalMinutes,
-            OptimalDataPoint = SerializableEmissionsData.FromEmissionsData(emissionsForecast.OptimalDataPoint),
-            ForecastData = emissionsForecast.ForecastData.Select(d => SerializableEmissionsData.FromEmissionsData(d))
+            OptimalDataPoint = EmissionsDataDTO.FromEmissionsData(emissionsForecast.OptimalDataPoint),
+            ForecastData = emissionsForecast.ForecastData.Select(d => EmissionsDataDTO.FromEmissionsData(d))
         };
     }
 }

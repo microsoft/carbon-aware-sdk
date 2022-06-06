@@ -93,12 +93,7 @@ public class WattTimeClient : IWattTimeClient
 
         var result = await this.MakeRequestAsync(Paths.Forecast, parameters, tags);
 
-        var forecast = JsonSerializer.Deserialize<Forecast?>(result, options);
-
-        if (forecast == null) 
-        {
-            throw new WattTimeClientException($"Error getting forecast for  {balancingAuthorityAbbreviation}");
-        }
+        var forecast = JsonSerializer.Deserialize<Forecast?>(result, options) ?? throw new WattTimeClientException($"Error getting forecast for  {balancingAuthorityAbbreviation}");
 
         return forecast;
     }
@@ -128,11 +123,7 @@ public class WattTimeClient : IWattTimeClient
 
         var result = await this.MakeRequestAsync(Paths.Forecast, parameters, tags);
 
-        var forecasts = JsonSerializer.Deserialize<List<Forecast>>(result, options);
-        if (forecasts == null) 
-        {
-            throw new WattTimeClientException($"Error getting forecasts for  {balancingAuthorityAbbreviation}");
-        }
+        var forecasts = JsonSerializer.Deserialize<List<Forecast>>(result, options) ?? throw new WattTimeClientException($"Error getting forecasts for  {balancingAuthorityAbbreviation}");
 
         return forecasts;
     }
@@ -162,11 +153,8 @@ public class WattTimeClient : IWattTimeClient
 
         var result = await this.MakeRequestAsync(Paths.BalancingAuthorityFromLocation, parameters, tags);
         
-        var balancingAuthority = JsonSerializer.Deserialize<BalancingAuthority>(result, options);
-        if (balancingAuthority == null) 
-        {
-            throw new WattTimeClientException($"Error getting Balancing Authority for latitude {latitude} and longitude {longitude}");
-        }
+        var balancingAuthority = JsonSerializer.Deserialize<BalancingAuthority>(result, options) ?? throw new WattTimeClientException($"Error getting Balancing Authority for latitude {latitude} and longitude {longitude}");
+
         return balancingAuthority;
     }
 

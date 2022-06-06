@@ -9,7 +9,7 @@ namespace CarbonAware.WebApi.Filters;
 public class HttpResponseExceptionFilter : IExceptionFilter
 {
     private ILogger<HttpResponseExceptionFilter> _logger;
-    private ActivitySource _activitySource;
+    private static readonly ActivitySource _activitySource = new ActivitySource(nameof(HttpResponseExceptionFilter));
 
     private static Dictionary<string, int> EXCEPTION_STATUS_CODE_MAP = new Dictionary<string, int>()
     {
@@ -17,15 +17,14 @@ public class HttpResponseExceptionFilter : IExceptionFilter
         { "NotImplementedException", (int)HttpStatusCode.NotImplemented },
     };
 
-    public HttpResponseExceptionFilter(ILogger<HttpResponseExceptionFilter> logger, ActivitySource activitySource)
+    public HttpResponseExceptionFilter(ILogger<HttpResponseExceptionFilter> logger)
     {
         _logger = logger;
-        _activitySource = activitySource;
     }
 
     public void OnException(ExceptionContext context)
     {
-        using (var activity = _activitySource.StartActivity(nameof(HttpResponseExceptionFilter)))
+        using (var activity = _activitySource.StartActivity())
         {
 
             HttpValidationProblemDetails response;
@@ -42,6 +41,7 @@ public class HttpResponseExceptionFilter : IExceptionFilter
                 if (!EXCEPTION_STATUS_CODE_MAP.TryGetValue(exceptionType, out statusCode))
                 {
                     statusCode = (int)HttpStatusCode.InternalServerError;
+                    activity?.SetStatus(ActivityStatusCode.Error, context.Exception.Message);
                     _logger.LogError(context.Exception, "500 Error: Unhandled exception");
                 }
                 
@@ -53,7 +53,7 @@ public class HttpResponseExceptionFilter : IExceptionFilter
                 };
             }
 
-            var traceId = Activity.Current?.Id;
+            var traceId = activity?.Id;
             if (traceId != null)
             {
                 response.Extensions["traceId"] = traceId;

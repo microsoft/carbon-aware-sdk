@@ -85,7 +85,7 @@ public class CarbonAwareController : ControllerBase
     /// <param name="windowSize"> Size of rolling average window in minutes.</param>
     /// <returns>HTTP response containing the results of the data source current forecast call</returns>
     [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<SerializableEmissionsForecast>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsForecastDTO>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status501NotImplemented, Type = typeof(ValidationProblemDetails))]
@@ -102,7 +102,7 @@ public class CarbonAwareController : ControllerBase
         };
 
         var forecasts = await _aggregator.GetCurrentForecastDataAsync(props);
-        var results = forecasts.Select(f => SerializableEmissionsForecast.FromEmissionsForecast(f));
+        var results = forecasts.Select(f => EmissionsForecastDTO.FromEmissionsForecast(f));
         return Ok(results);
     }
 

@@ -5,7 +5,7 @@ using CarbonAware.WebApi.Models;
 using Moq;
 using NUnit.Framework;
 
-public class SerializableEmissionsForecastTests
+public class EmissionsForecastDTOTests
 {
     [Test]
     public void FromEmissionsForecast()
@@ -29,16 +29,16 @@ public class SerializableEmissionsForecastTests
             OptimalDataPoint = new EmissionsData(){ Rating = expectedOptimalValue }
         };
 
-        var serializableEmissionsForecast = SerializableEmissionsForecast.FromEmissionsForecast(emissionsForecast);
-        var serializedForecastData = serializableEmissionsForecast.ForecastData?.ToList();
+        var emissionsForecastDTO = EmissionsForecastDTO.FromEmissionsForecast(emissionsForecast);
+        var emissionsDataDTO = emissionsForecastDTO.ForecastData?.ToList();
 
-        Assert.AreEqual(expectedGeneratedAt, serializableEmissionsForecast.GeneratedAt);
-        Assert.AreEqual(expectedLocationName, serializableEmissionsForecast.Location);
-        Assert.AreEqual(expectedStartTime, serializableEmissionsForecast.StartTime);
-        Assert.AreEqual(expectedEndTime, serializableEmissionsForecast.EndTime);
-        Assert.AreEqual(expectedWindowSize, serializableEmissionsForecast.WindowSize);
-        Assert.AreEqual(expectedOptimalValue, serializableEmissionsForecast.OptimalDataPoint?.Value);
-        Assert.AreEqual(1, serializedForecastData?.Count());
-        Assert.AreEqual(expectedDataPointValue, serializedForecastData?.First().Value);
+        Assert.AreEqual(expectedGeneratedAt, emissionsForecastDTO.GeneratedAt);
+        Assert.AreEqual(expectedLocationName, emissionsForecastDTO.Location);
+        Assert.AreEqual(expectedStartTime, emissionsForecastDTO.StartTime);
+        Assert.AreEqual(expectedEndTime, emissionsForecastDTO.EndTime);
+        Assert.AreEqual(expectedWindowSize, emissionsForecastDTO.WindowSize);
+        Assert.AreEqual(expectedOptimalValue, emissionsForecastDTO.OptimalDataPoint?.Value);
+        Assert.AreEqual(1, emissionsDataDTO?.Count());
+        Assert.AreEqual(expectedDataPointValue, emissionsDataDTO?.First().Value);
     }
 }

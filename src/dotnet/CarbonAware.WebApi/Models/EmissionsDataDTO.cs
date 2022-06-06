@@ -4,7 +4,7 @@ using CarbonAware.Model;
 using System.Text.Json.Serialization;
 
 [Serializable]
-public record SerializableEmissionsData
+public record EmissionsDataDTO
 {
     [JsonPropertyName("location")]
     public string Location { get; set; } = string.Empty;
@@ -18,9 +18,9 @@ public record SerializableEmissionsData
     [JsonPropertyName("value")]
     public double Value { get; set; }
 
-    public static SerializableEmissionsData FromEmissionsData(EmissionsData emissionsData)
+    public static EmissionsDataDTO FromEmissionsData(EmissionsData emissionsData)
     {
-        return new SerializableEmissionsData
+        return new EmissionsDataDTO
         {
             Location = emissionsData.Location,
             Timestamp = emissionsData.Time,

@@ -4,7 +4,7 @@ using CarbonAware.Model;
 using CarbonAware.WebApi.Models;
 using NUnit.Framework;
 
-public class SerializableEmissionsDataTests
+public class EmissionsDataDTOTests
 {
     [Test]
     public void FromEmissionsData()
@@ -21,11 +21,11 @@ public class SerializableEmissionsDataTests
             Rating = expectedValue
         };
 
-        var serializableEmissionsData = SerializableEmissionsData.FromEmissionsData(emissionsData);
+        var emissionsDataDTO = EmissionsDataDTO.FromEmissionsData(emissionsData);
 
-        Assert.AreEqual(expectedLocationName, serializableEmissionsData.Location);
-        Assert.AreEqual(expectedTimestamp, serializableEmissionsData.Timestamp);
-        Assert.AreEqual(expectedDuration, serializableEmissionsData.Duration);
-        Assert.AreEqual(expectedValue, serializableEmissionsData.Value);
+        Assert.AreEqual(expectedLocationName, emissionsDataDTO.Location);
+        Assert.AreEqual(expectedTimestamp, emissionsDataDTO.Timestamp);
+        Assert.AreEqual(expectedDuration, emissionsDataDTO.Duration);
+        Assert.AreEqual(expectedValue, emissionsDataDTO.Value);
     }
 }
