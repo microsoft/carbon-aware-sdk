@@ -7,6 +7,13 @@ using CarbonAware.Model;
 using CarbonAware.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
+using Moq;
+
+
+public class APIWebApplicationFactory : WebApplicationFactory<Program>
+{
+
+}
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
@@ -15,22 +22,39 @@ using NUnit.Framework;
 [TestFixture]
 public class CarbonAwareControllerTests
 {
+    private APIWebApplicationFactory _factory;
+    private HttpClient _client;
 
-    // [Setup]
-    // public void Setup()
-    // {
-
-
-    // }
-
-    /// <summary>
-    /// Tests that successfull call to plugin with any data returned results in action with OK status.
-    /// </summary>
-    [Test]
-    public async Task SuccessfulCallReturnsOk()
+    [OneTimeSetUp]
+    public void GivenARequestToTheController()
     {
-        await using var application = new WebApplicationFactory<Program>();
-        var client = application.CreateClient(); // HttpClient
-        Assert.IsTrue(true);
+        _factory = new APIWebApplicationFactory();
+        _client = _factory.CreateClient();
     }
+
+    [Test]
+    public async Task HealthCheck_ReturnsOK()
+    {
+        var result = await _client.GetAsync("/health");
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+	}
+
+    public async Task FakeEndPoint_ReturnsNotFound()
+    {
+        var result = await _client.GetAsync("/fake-endpoint");
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+
+    }
+
+
+    [OneTimeTearDown]
+    public void TearDown()
+    {
+        _client.Dispose();
+        _factory.Dispose();
+    }
+
 }
