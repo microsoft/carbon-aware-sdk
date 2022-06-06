@@ -4,8 +4,8 @@ namespace CarbonAware.Tests;
 
 public class IntervalHelperTests
 {
-    private readonly DateTimeOffset startDateTimeOffset = new DateTimeOffset(DateTime.Parse("2021-09-01T09:30:00.0000000Z"));
-    private readonly DateTimeOffset endDateTimeOffset = new DateTimeOffset(DateTime.Parse("2021-09-01T10:15:00.0000000Z"));
+    private readonly DateTimeOffset startDateTimeOffset = new (2021, 9, 1, 9, 30, 0, TimeSpan.Zero);
+    private readonly DateTimeOffset endDateTimeOffset = new (2021, 9, 1, 10, 15, 0, TimeSpan.Zero);
     private readonly double minSamplingWindow = 60;
 
     /// <summary>
@@ -19,23 +19,23 @@ public class IntervalHelperTests
         {
             new EmissionsData {
                 Location = "eastus",
-                Time = DateTime.Parse("2021-09-01T08:30:00.0000000Z")
+                Time = new DateTime(2021,9,1,8,30,0)
             },
             new EmissionsData {
                 Location = "eastus",
-                Time = DateTime.Parse("2021-09-01T09:00:00.0000000Z")
+                Time = new DateTime(2021,9,1,9,0,0)
             },
             new EmissionsData {
                 Location = "eastus",
-                Time = DateTime.Parse("2021-09-01T09:30:00.0000000Z")
+                Time = new DateTime(2021,9,1,9,30,0)
             },
             new EmissionsData {
                 Location = "eastus",
-                Time = DateTime.Parse("2021-09-01T10:00:00.0000000Z")
+                Time = new DateTime(2021,9,1,10,0,0)
             },
             new EmissionsData {
                 Location = "eastus",
-                Time = DateTime.Parse("2021-09-01T10:30:00.0000000Z")
+                Time = new DateTime(2021,9,1,10,30,0)
             },
         };
 
@@ -59,19 +59,19 @@ public class IntervalHelperTests
         {
             new EmissionsData {
                 Location = "eastus",
-                Time = DateTime.Parse("2021-09-01T08:30:00.0000000Z")
+                Time = new DateTime(2021,9,1,8,30,0)
             },
             new EmissionsData {
                 Location = "eastus",
-                Time = DateTime.Parse("2021-09-01T09:00:00.0000000Z")
+                Time = new DateTime(2021,9,1,9,0,0)
             },
             new EmissionsData {
                 Location = "eastus",
-                Time = DateTime.Parse("2021-09-01T09:30:00.0000000Z")
+                Time = new DateTime(2021,9,1,9,30,0)
             },
             new EmissionsData {
                 Location = "eastus",
-                Time = DateTime.Parse("2021-09-01T10:00:00.0000000Z")
+                Time = new DateTime(2021,9,1,10,0,0)
             },
         };
         var minWindowFiltering = IntervalHelper.MinSamplingFiltering(input, startDateTimeOffset, endDateTimeOffset, minSamplingWindow);
@@ -92,15 +92,15 @@ public class IntervalHelperTests
         {
             new EmissionsData {
                 Location = "westus",
-                Time = DateTime.Parse("2021-12-01")
+                Time = new DateTime(2021,12,1)
             },
             new EmissionsData {
                 Location = "sydney",
-                Time = DateTime.Parse("2021-12-01")
+                Time = new DateTime(2021,12,1)
             },
             new EmissionsData {
                 Location = "eastus",
-                Time = DateTime.Parse("2021-09-01")
+                Time = new DateTime(2021,9,1)
             }
         };
 
@@ -108,11 +108,11 @@ public class IntervalHelperTests
         {
             new EmissionsData {
                 Location = "westus",
-                Time = DateTime.Parse("2021-12-01")
+                Time = new DateTime(2021,12,1)
             },
             new EmissionsData {
                 Location = "sydney",
-                Time = DateTime.Parse("2021-12-01")
+                Time = new DateTime(2021,12,1)
             }
         };
 
