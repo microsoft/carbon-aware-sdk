@@ -1,7 +1,9 @@
+using System.Reflection;
 using CarbonAware;
 using CarbonAware.Aggregators.Configuration;
 using CarbonAware.WebApi.Filters;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +19,11 @@ builder.Services.AddSwaggerGen(c =>
 {
      var filePath = Path.Combine(System.AppContext.BaseDirectory, "CarbonAware.WebApi.xml");
      c.IncludeXmlComments(filePath);
+     c.CustomOperationIds(apiDesc =>
+        {
+            return apiDesc.TryGetMethodInfo(out MethodInfo methodInfo) ? methodInfo.Name : null;
+        });
 });
-// builder.Services.AddSwaggerGen();
 builder.Services.Configure<CarbonAwareVariablesConfiguration>(builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key));
 builder.Services.AddCarbonAwareEmissionServices(builder.Configuration);
 CarbonAwareVariablesConfiguration config = new CarbonAwareVariablesConfiguration();
