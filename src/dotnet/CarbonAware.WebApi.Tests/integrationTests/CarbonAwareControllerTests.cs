@@ -7,8 +7,9 @@ using CarbonAware.Model;
 using CarbonAware.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
+using System.Net.Http.Json;
 using Moq;
-
+using System.Net.Http.Headers;
 
 public class APIWebApplicationFactory : WebApplicationFactory<Program>
 {
@@ -40,7 +41,6 @@ public class CarbonAwareControllerTests
         var result = await _client.GetAsync("/health");
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
 	}
 
     [Test]
@@ -49,9 +49,46 @@ public class CarbonAwareControllerTests
         var result = await _client.GetAsync("/fake-endpoint");
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-
     }
 
+    [Test]
+    public async Task BestLocations_ReturnsOK()
+    {
+        var result = await _client.GetAsync("/emissions/bylocations/best?locations=eastus&locations=westus&time=2022-01-01&toTime=2022-05-17");
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+
+    [Test]
+    public async Task Post_SCI()
+    {
+        var body = @"{
+                " + "\n" +
+                 @"    ""location"": {
+                " + "\n" +
+                 @"        ""locationType"": ""CloudProvider"",
+                " + "\n" +
+                 @"        ""cloudProvider"": ""Azure"",
+                " + "\n" +
+                 @"        ""regionName"": ""westeurope""
+                " + "\n" +
+                 @"    },
+                " + "\n" +
+                 @"    ""timeInterval"": ""2022-05-08T13:00:00Z/2022-05-08T15:30:00Z""
+                " + "\n" +
+                 @"}";
+
+        StringContent _content = new StringContent(body);
+        var mediaType = new MediaTypeHeaderValue("application/json");
+        _content.Headers.ContentType = mediaType;
+
+
+        var result = await _client.PostAsync("/sci-scores/marginal-carbon-intensity", _content);
+        
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+    }
 
     [OneTimeTearDown]
     public void TearDown()
