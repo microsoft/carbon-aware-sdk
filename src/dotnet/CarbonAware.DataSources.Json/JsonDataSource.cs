@@ -46,9 +46,6 @@ public class JsonDataSource : ICarbonIntensityDataSource
         }
         _logger.LogDebug($"Total emission records retrieved {emissionsData.Count()}");
         var stringLocations = locations.Select(loc => loc.RegionName);
-
-        var startDate = periodStartTime.DateTime;
-        var endDate = periodEndTime.DateTime;
             
         emissionsData = FilterByLocation(emissionsData, stringLocations);
         emissionsData = FilterByDateRange(emissionsData, periodStartTime, periodEndTime);
@@ -60,6 +57,11 @@ public class JsonDataSource : ICarbonIntensityDataSource
 
         return Task.FromResult(emissionsData);
         
+    }
+
+    public Task<EmissionsForecast> GetCurrentCarbonIntensityForecastAsync(Location location)
+    {
+        throw new NotImplementedException();
     }
 
     private IEnumerable<EmissionsData> FilterByDateRange(IEnumerable<EmissionsData> data, DateTimeOffset startDate, object endDate)

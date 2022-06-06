@@ -62,32 +62,45 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         }
         return result;
     }
-
-    private async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(Location location, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
+    
+    /// <inheritdoc />
+    public async Task<EmissionsForecast> GetCurrentCarbonIntensityForecastAsync(Location location)
     {
-        this.Logger.LogInformation("Getting carbon intensity for location {location} for period {periodStartTime} to {periodEndTime}.", location, periodStartTime, periodEndTime);
+        this.Logger.LogInformation($"Getting carbon intensity forecast for location {location}");
 
         using (var activity = ActivitySource.StartActivity())
         {
-            BalancingAuthority balancingAuthority;
-            try
+            BalancingAuthority balancingAuthority = await this.GetBalancingAuthority(location, activity);
+            var data = await this.WattTimeClient.GetCurrentForecastAsync(balancingAuthority);
+
+            // Linq statement to convert WattTime forecast data into EmissionsData for the CarbonAware SDK.
+            var forecastData = data.ForecastData.Select(e => new EmissionsData() 
+            { 
+                Location = e.BalancingAuthorityAbbreviation, 
+                Rating = ConvertMoerToGramsPerKilowattHour(e.Value), 
+                Time = e.PointTime 
+            });
+
+            return new EmissionsForecast()
             {
-                var geolocation = await this.LocationSource.ToGeopositionLocationAsync(location);
-                balancingAuthority = await WattTimeClient.GetBalancingAuthorityAsync(geolocation.Latitude.ToString() ?? "", geolocation.Longitude.ToString() ?? "");
-            }
-            catch(Exception ex) when (ex is LocationConversionException ||  ex is WattTimeClientHttpException)
-            {
-                activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-                Logger.LogError(ex, "Failed to convert the location {location} into a Balancying Authority.", location);
-                throw;
-            }
+                GeneratedAt = data.GeneratedAt,
+                Location = location,
+                ForecastData = forecastData,
+            };
+        }
+    }
+    private async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(Location location, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
+    {
+        Logger.LogInformation($"Getting carbon intensity for location {location} for period {periodStartTime} to {periodEndTime}.");
 
-            activity?.AddTag("location", location);
-            activity?.AddTag("balancingAuthorityAbbreviation", balancingAuthority.Abbreviation);
-
-            Logger.LogDebug("Converted location {location} to balancing authority {balancingAuthorityAbbreviation}", location, balancingAuthority.Abbreviation);
-
+        using (var activity = ActivitySource.StartActivity())
+        {
+            BalancingAuthority balancingAuthority = await this.GetBalancingAuthority(location, activity);
             var data = await this.WattTimeClient.GetDataAsync(balancingAuthority, periodStartTime, periodEndTime);
+            if (Logger.IsEnabled(LogLevel.Debug))
+            {
+                Logger.LogDebug($"Found {data.Count()} total forecasts for location {location} for period {periodStartTime} to {periodEndTime}.");
+            }
             if (data.Any())
             {
                 return ConvertToEmissionData(data);
@@ -118,7 +131,35 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
                     { 
                         Location = e.BalancingAuthorityAbbreviation, 
                         Rating = ConvertMoerToGramsPerKilowattHour(e.Value), 
-                        Time = e.PointTime 
+                        Time = e.PointTime,
+                        Duration = FrequencyToTimeSpan(e.Frequency)
                     });
+    }
+    private TimeSpan FrequencyToTimeSpan(int? frequency)
+    {
+        return (frequency != null) ? TimeSpan.FromSeconds((double)frequency) : TimeSpan.Zero;
+    }
+
+    private async Task<BalancingAuthority> GetBalancingAuthority(Location location, Activity? activity)
+    {
+        BalancingAuthority balancingAuthority;
+        try
+        {
+            var geolocation = await this.LocationSource.ToGeopositionLocationAsync(location);
+            balancingAuthority = await WattTimeClient.GetBalancingAuthorityAsync(geolocation.Latitude.ToString() ?? "", geolocation.Longitude.ToString() ?? "");
+        }
+        catch(Exception ex) when (ex is LocationConversionException ||  ex is WattTimeClientHttpException)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            Logger.LogError(ex, "Failed to convert the location {location} into a Balancying Authority.", location);
+            throw;
+        }
+
+        activity?.AddTag("location", location);
+        activity?.AddTag("balancingAuthorityAbbreviation", balancingAuthority.Abbreviation);
+
+        Logger.LogDebug("Converted location {location} to balancing authority {balancingAuthorityAbbreviation}", location, balancingAuthority.Abbreviation);
+
+        return balancingAuthority;
     }
 }
