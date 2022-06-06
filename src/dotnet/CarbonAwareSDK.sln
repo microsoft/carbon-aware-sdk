@@ -43,9 +43,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.LocationSources
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.LocationSources.Azure.Test", "CarbonAware.LocationSources.Azure\test\CarbonAware.LocationSources.Azure.Test.csproj", "{F4BD1233-447F-4245-AE7B-A877427EB2D7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CarbonAware.WebApi.Tests", "CarbonAware.WebApi.Tests", "{CBAD3CCF-A91E-4190-B028-D792B0CE1090}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarbonAware.WebApi.IntegrationTests", "CarbonAware.WebApi.Tests\integrationTests\CarbonAware.WebApi.IntegrationTests.csproj", "{188412C5-41EC-43C5-AA3F-C35CC0C927AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.WebApi.IntegrationTests", "CarbonAware.WebApi.Tests\integrationTests\CarbonAware.WebApi.IntegrationTests.csproj", "{188412C5-41EC-43C5-AA3F-C35CC0C927AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -143,8 +141,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B21A5E96-73BC-4BC1-86C7-4A4FE4634C34}
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{188412C5-41EC-43C5-AA3F-C35CC0C927AE} = {CBAD3CCF-A91E-4190-B028-D792B0CE1090}
 	EndGlobalSection
 EndGlobal

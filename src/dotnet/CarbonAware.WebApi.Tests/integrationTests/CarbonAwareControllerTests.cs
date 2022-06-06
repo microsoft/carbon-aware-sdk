@@ -22,8 +22,10 @@ public class APIWebApplicationFactory : WebApplicationFactory<Program>
 [TestFixture]
 public class CarbonAwareControllerTests
 {
-    private APIWebApplicationFactory _factory;
-    private HttpClient _client;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+	private APIWebApplicationFactory _factory;
+	private HttpClient _client;
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     [OneTimeSetUp]
     public void GivenARequestToTheController()
@@ -41,6 +43,7 @@ public class CarbonAwareControllerTests
 
 	}
 
+    [Test]
     public async Task FakeEndPoint_ReturnsNotFound()
     {
         var result = await _client.GetAsync("/fake-endpoint");
