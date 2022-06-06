@@ -53,7 +53,6 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
                 forecast.ForecastData = FilterByDate(forecast.ForecastData, start, end);
                 if(forecast.ForecastData.Any())
                 {
-                    TransformRollingWindow(forecast, props);
                     forecast.OptimalDataPoint = GetOptimalEmissions(forecast.ForecastData);
                 }
                 forecasts.Add(forecast);
@@ -67,58 +66,6 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
     {
         return data.Where(ed => ed.Time >= start && ed.Time < end);
     }
-
-    private void TransformRollingWindow(EmissionsForecast forecast, IDictionary props)
-    {
-
-        var data = forecast.ForecastData.ToList();
-        var current = data.First();
-        var location = current.Location;
-        var next = data.Skip(1).FirstOrDefault();
-        if(next == null)
-        {
-            return;
-        }
-        
-        var defaultWindowSize = next.Time - current.Time;
-        TimeSpan windowSize;
-        if(props.Contains(CarbonAwareConstants.Duration) && props[CarbonAwareConstants.Duration] is int duration)
-        {
-            windowSize = TimeSpan.FromMinutes(duration);
-            if( defaultWindowSize > windowSize )
-            {
-                windowSize = defaultWindowSize;
-            }
-        } else {
-            forecast.WindowSize = defaultWindowSize;
-            return;
-        }
-
-        var windowEndTime = current.Time + windowSize;
-        
-        var width = 1;
-        while(next != null && next.Time < windowEndTime)
-        {
-            width++;
-            current = next;
-            next = data.Skip(width).FirstOrDefault();
-        }
-        
-        windowSize = width * defaultWindowSize;
-        forecast.WindowSize = windowSize;
-        forecast.ForecastData = Enumerable.Range(0, 1 + data.Count - width).Select(i => 
-            {
-                _logger.LogInformation($"i={i} count={data.Skip(i).Take(width).ToList().Count}");
-                return new EmissionsData
-                {
-                    Location = data[i].Location,
-                    Time = data[i].Time,
-                    Duration = windowSize,
-                    Rating = data.Skip(i).Take(width).Select(d => d.Rating).Average()
-                };
-            });
-    }
-
     private EmissionsData GetOptimalEmissions(IEnumerable<EmissionsData> emissionsData)
     {
         return emissionsData.Aggregate((minData, nextData) => minData.Rating < nextData.Rating ? minData : nextData);
