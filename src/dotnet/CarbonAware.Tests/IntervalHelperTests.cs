@@ -4,48 +4,83 @@ namespace CarbonAware.Tests;
 
 public class IntervalHelperTests
 {
+    private readonly DateTimeOffset startDateTimeOffset = new DateTimeOffset(DateTime.Parse("2021-09-01T09:30:00.0000000Z"));
+    private readonly DateTimeOffset endDateTimeOffset = new DateTimeOffset(DateTime.Parse("2021-09-01T10:15:00.0000000Z"));
+    private readonly double minSamplingWindow = 60;
+
+    /// <summary>
+    /// Test exit cases of min sampling filtering
+    /// </summary>
+    [Test]
+    public void TestMinSamplingFilteringExitCases()
+    {
+        // Sample data from 8:30 to 10:30
+        var data = new EmissionsData[5]
+        {
+            new EmissionsData {
+                Location = "eastus",
+                Time = DateTime.Parse("2021-09-01T08:30:00.0000000Z")
+            },
+            new EmissionsData {
+                Location = "eastus",
+                Time = DateTime.Parse("2021-09-01T09:00:00.0000000Z")
+            },
+            new EmissionsData {
+                Location = "eastus",
+                Time = DateTime.Parse("2021-09-01T09:30:00.0000000Z")
+            },
+            new EmissionsData {
+                Location = "eastus",
+                Time = DateTime.Parse("2021-09-01T10:00:00.0000000Z")
+            },
+            new EmissionsData {
+                Location = "eastus",
+                Time = DateTime.Parse("2021-09-01T10:30:00.0000000Z")
+            },
+        };
+
+        // If pass in empty data, expect empty result
+        var emptyResult = IntervalHelper.MinSamplingFiltering(Enumerable.Empty<EmissionsData>(), startDateTimeOffset, endDateTimeOffset, minSamplingWindow);
+        Assert.False(emptyResult.Any());
+
+        // If pass in interval >= min sampling window, expect same data result
+        var minSamplingWindow30 = 30;
+        var minWindowValid = IntervalHelper.MinSamplingFiltering(data, startDateTimeOffset, endDateTimeOffset, minSamplingWindow30);
+        Assert.True(minWindowValid.Count() == 5);
+    }
+
     /// <summary>
     /// Test min sampling filtering
     /// </summary>
     [Test]
     public void TestMinSamplingFiltering()
     {
-        var startDateTimeOffset = DateTimeOffset.Now.AddMinutes(-120); // 2 hours ago
-        var endDateTimeOffset = startDateTimeOffset.AddMinutes(60); // 1 hour ago
-        var minSamplingWindow = 60;
-        
-        // If pass in empty data, expect empty result
-        var emptyResult1 = IntervalHelper.MinSamplingFiltering(Enumerable.Empty<EmissionsData>(), startDateTimeOffset, endDateTimeOffset, minSamplingWindow);
-        Assert.False(emptyResult1.Any());
-
-        // If pass in interval >= min sampling window, expect same data result
-        var data = new EmissionsData[2]
+        var input = new EmissionsData[4]
         {
             new EmissionsData {
-                Location = "westus",
-                Time = DateTime.Parse("2021-12-01")
+                Location = "eastus",
+                Time = DateTime.Parse("2021-09-01T08:30:00.0000000Z")
             },
             new EmissionsData {
-                Location = "sydney",
-                Time = DateTime.Parse("2021-12-01")
+                Location = "eastus",
+                Time = DateTime.Parse("2021-09-01T09:00:00.0000000Z")
+            },
+            new EmissionsData {
+                Location = "eastus",
+                Time = DateTime.Parse("2021-09-01T09:30:00.0000000Z")
+            },
+            new EmissionsData {
+                Location = "eastus",
+                Time = DateTime.Parse("2021-09-01T10:00:00.0000000Z")
             },
         };
-
-        IEnumerable<EmissionsData>? minWindowValid = IntervalHelper.MinSamplingFiltering(data, startDateTimeOffset, endDateTimeOffset, minSamplingWindow);
-        Assert.True(minWindowValid.Count() == 2);
-        Assert.True(minWindowValid.First().Location == "westus");
-        Assert.True(minWindowValid.Last().Location == "sydney");
+        var minWindowFiltering = IntervalHelper.MinSamplingFiltering(input, startDateTimeOffset, endDateTimeOffset, minSamplingWindow);
+        // We expect the 9, 9:30, and 10 data points
+        Assert.True(minWindowFiltering.Count() == 3);
+        Assert.IsTrue(minWindowFiltering.First().Time.Hour + 1 == minWindowFiltering.Last().Time.Hour);
+        Assert.IsTrue(minWindowFiltering.First().Time.Minute == 0);
+        Assert.IsTrue(minWindowFiltering.Last().Time.Minute == 0);
     }
-
-    /// <summary>
-    /// Test shift date helper
-    /// </summary>
-    [Test]
-    public void TestShiftDate()
-    {
-        Assert.True(true);
-    }
-
 
     /// <summary>
     /// Test to ensure that our manual comparator is working as we expect

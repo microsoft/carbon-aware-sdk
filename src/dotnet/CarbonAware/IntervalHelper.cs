@@ -24,21 +24,21 @@ public static class IntervalHelper
         }
 
         var arrData = expandedData.ToArray();
+        var startDateTime = startDate.DateTime;
+        var dataLength = arrData.Length;
+        var splitIndex = dataLength - 1;
+
         // sort data since different sources might have populated the data differently.
         Array.Sort(arrData, new CompareEmissionDataSort());
 
-        var startDateTime = startDate.DateTime;
-        var dataLength = arrData.Length;
-
-        var splitIndex = dataLength - 1;
+        // Find index of data point right before startDateTime
         while (!(arrData[splitIndex].Time < startDateTime)){
             if (splitIndex == 0) break;
             splitIndex --;
         }
 
-        var filteredData = new EmissionsData[dataLength-splitIndex];
-
         // copy from the split index on
+        var filteredData = new EmissionsData[dataLength - splitIndex];
         Array.Copy(arrData, splitIndex, filteredData, 0, filteredData.Length);
         return filteredData;
     }
