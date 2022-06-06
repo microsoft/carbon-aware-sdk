@@ -97,7 +97,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
             var newStartTime = IntervalHelper.ShiftDate(periodStartTime, -MinSamplingWindow);
             data = await this.WattTimeClient.GetDataAsync(balancingAuthority, newStartTime, periodEndTime);
             var windowData = ConvertToEmissionData(data);
-            return IntervalHelper.GetFilteredData(windowData, periodStartTime, periodEndTime, MinSamplingWindow);
+            return IntervalHelper.MinSamplingFiltering(windowData, periodStartTime, periodEndTime, MinSamplingWindow);
         }
     }
 

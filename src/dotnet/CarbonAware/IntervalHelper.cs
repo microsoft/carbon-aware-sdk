@@ -4,29 +4,42 @@ namespace CarbonAware;
 /// Helper for intervals within Carbon Aware.
 /// </summary>
 public static class IntervalHelper
-{ 
+{
 
     /// <summary>
-    /// Static helper that filters the data from the startDate.
+    /// Ensures the data is valid by using the min sampling window. Uses the expanded data to add an extra
+    /// data point before the startDate to ensure all expected data is included.
     /// </summary>
-    /// <param name="data">Data to filter</param>
+    /// <param name="data">Expanded data that includes the minimum sampling window</param>
     /// <param name="startDate">Original start date provided by user</param>
+    /// <param name="endDate">Original end date provided by user</param>
     /// <returns>Filtered emissions data.</returns>
-    /// <remarks> If the user provided interval is already >= minimum sampling window, we just return the passed data. </remarks>
-    public static IEnumerable<EmissionsData> GetFilteredData(IEnumerable<EmissionsData> newData, DateTimeOffset startDate, DateTimeOffset endDate, double minSamplingWindow)
+    /// <remarks> If the user provided interval is already >= minimum sampling window, or no expanded data, we just return the passed data. </remarks>
+    public static IEnumerable<EmissionsData> MinSamplingFiltering(IEnumerable<EmissionsData> expandedData, DateTimeOffset startDate, DateTimeOffset endDate, double minSamplingWindow)
     {
         TimeSpan ts = endDate - startDate;
-        if ((ts.TotalMinutes >= minSamplingWindow) || !newData.Any())
+        if ((ts.TotalMinutes >= minSamplingWindow) || !expandedData.Any())
         {
-            return newData;
+            return expandedData;
         }
 
-        var arrData = newData.ToArray();
+        var arrData = expandedData.ToArray();
         // sort data since different sources might have populated the data differently.
         Array.Sort(arrData, new CompareEmissionDataSort());
-        var filteredData = new EmissionsData[1];
-        // copy only the last element since it is sorted by time.
-        Array.Copy(arrData, arrData.Length - 1, filteredData, 0, 1);
+
+        var startDateTime = startDate.DateTime;
+        var dataLength = arrData.Length;
+
+        var splitIndex = dataLength - 1;
+        while (!(arrData[splitIndex].Time < startDateTime)){
+            if (splitIndex == 0) break;
+            splitIndex --;
+        }
+
+        var filteredData = new EmissionsData[dataLength-splitIndex];
+
+        // copy from the split index on
+        Array.Copy(arrData, splitIndex, filteredData, 0, filteredData.Length);
         return filteredData;
     }
 
@@ -43,7 +56,7 @@ public static class IntervalHelper
     }
 }
 
-class CompareEmissionDataSort : IComparer<EmissionsData>
+public class CompareEmissionDataSort : IComparer<EmissionsData>
 {
     public int Compare(EmissionsData x, EmissionsData y)
     {
