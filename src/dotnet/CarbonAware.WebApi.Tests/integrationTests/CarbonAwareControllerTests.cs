@@ -1,10 +1,11 @@
 namespace CarbonAware.WepApi.IntegrationTests;
 
+using System;
 using System.Collections.Generic;
 using System.Net;
 using CarbonAware.Model;
 using CarbonAware.WebApi.Controllers;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
 
 /// <summary>
@@ -15,13 +16,12 @@ using NUnit.Framework;
 public class CarbonAwareControllerTests
 {
 
-    [Setup]
-    public void Setup()
-    {
-        await using var application = new WebApplicationFactory<Program>();
-        var client = application.CreateClient(); // HttpClient
+    // [Setup]
+    // public void Setup()
+    // {
 
-    }
+
+    // }
 
     /// <summary>
     /// Tests that successfull call to plugin with any data returned results in action with OK status.
@@ -29,6 +29,8 @@ public class CarbonAwareControllerTests
     [Test]
     public async Task SuccessfulCallReturnsOk()
     {
+        await using var application = new WebApplicationFactory<Program>();
+        var client = application.CreateClient(); // HttpClient
         Assert.IsTrue(true);
     }
 }
