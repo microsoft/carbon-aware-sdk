@@ -9,7 +9,7 @@
       "type": "process",
       "args": [
           "build",
-          "${workspaceFolder}/src/CarbonAware.WebApi/CarbonAware.WebApi.csproj",
+          "${workspaceFolder}/src/CarbonAware.WebApi/src/CarbonAware.WebApi.csproj",
           "/property:GenerateFullPaths=true",
           "/consoleloggerparameters:NoSummary"
       ],

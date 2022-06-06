@@ -9,7 +9,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/CarbonAware.WebApi/bin/Debug/net6.0/CarbonAware.WebApi.dll",
+      "program": "${workspaceFolder}/src/CarbonAware.WebApi/src/bin/Debug/net6.0/CarbonAware.WebApi.dll",
       "args": [],
       "cwd": "${workspaceFolder}/src/CarbonAware.WebApi/",
       "stopAtEntry": false,
