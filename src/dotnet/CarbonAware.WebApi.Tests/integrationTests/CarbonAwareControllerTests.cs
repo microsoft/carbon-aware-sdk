@@ -29,7 +29,7 @@ public class CarbonAwareControllerTests
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     [OneTimeSetUp]
-    public void GivenARequestToTheController()
+    public void Setup()
     {
         _factory = new APIWebApplicationFactory();
         _client = _factory.CreateClient();
@@ -60,7 +60,7 @@ public class CarbonAwareControllerTests
     }
 
     [Test]
-    public async Task Post_SCI()
+    public async Task SCI_ReturnsNonNullContent()
     {
         var body = @"{
                 " + "\n" +
@@ -84,8 +84,10 @@ public class CarbonAwareControllerTests
 
 
         var result = await _client.PostAsync("/sci-scores/marginal-carbon-intensity", _content);
-        
-        Assert.That(result, Is.Not.Null);
+
+
+		Assert.That(result, Is.Not.Null);
+        Assert.That(result.Content, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
     }
