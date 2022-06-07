@@ -44,7 +44,7 @@ jobs:
         uses: codecov/codecov-action@v1
       - name: Generate Open API
         run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
-        working-directory: ./src/dotnet/CarbonAware.WebApi 
+        working-directory: ./src/CarbonAware.WebApi 
       - name: Upload artifact
         uses: actions/upload-artifact@v1
         with:
