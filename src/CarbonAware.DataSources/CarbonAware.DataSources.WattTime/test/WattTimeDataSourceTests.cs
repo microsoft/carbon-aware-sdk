@@ -73,8 +73,8 @@ public class WattTimeDataSourceTests
 
         this.WattTimeClient.Setup(w => w.GetDataAsync(
             balancingAuthority,
-            startDate,
-            endDate)
+            It.IsAny<DateTimeOffset>(),
+            It.IsAny<DateTimeOffset>())
         ).ReturnsAsync(() => emissionData);
 
         SetupBalancingAuthority(balancingAuthority, location);

@@ -23,7 +23,7 @@ public static class IntervalHelper
     }
 
     /// <summary>
-    /// If time between start and end times less than a window of minutes, extends start and end times by subtracting/adding window respectively
+    /// Extends start and end times by subtracting/adding window respectively
     /// </summary>
     /// <param name="origStartTime">Original start time</param>
     /// <param name="origEndTime">Original end time</param>
@@ -31,11 +31,6 @@ public static class IntervalHelper
     /// <returns>Shifted times</returns>
     public static (DateTimeOffset, DateTimeOffset) ExtendTimeByWindow(DateTimeOffset origStartTime, DateTimeOffset origEndTime, double minWindow)
     {
-        // If the di
-        if (origEndTime.Subtract(origStartTime) < TimeSpan.FromMinutes(minWindow))
-        {
-            return (origStartTime.AddMinutes(-minWindow), origEndTime.AddMinutes(minWindow));
-        }
-        return (origStartTime, origEndTime);
+        return (origStartTime.AddMinutes(-minWindow), origEndTime.AddMinutes(minWindow));
     }
 }

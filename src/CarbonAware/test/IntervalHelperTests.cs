@@ -6,7 +6,6 @@ public class IntervalHelperTests
 {
     private readonly DateTimeOffset startDateTimeOffset = new (2021, 9, 1, 9, 40, 0, TimeSpan.Zero);
     private readonly DateTimeOffset endDateTimeOffset = new (2021, 9, 1, 10, 20, 0, TimeSpan.Zero);
-    private readonly TimeSpan minSamplingWindow = TimeSpan.FromMinutes(30);
 
     /// <summary>
     /// Test exit cases of min sampling filtering
@@ -63,17 +62,9 @@ public class IntervalHelperTests
     [Test]
     public void TestShiftDate()
     {
-        // When time between start and end is greater than window, dates are not shifted
-        Double window30 = 30;
-        (DateTimeOffset, DateTimeOffset) notShifted = IntervalHelper.ExtendTimeByWindow(startDateTimeOffset, endDateTimeOffset, window30);
-        Assert.True(notShifted.Item1.Equals(startDateTimeOffset));
-        Assert.True(notShifted.Item2.Equals(endDateTimeOffset));
-
-
-        // When time between start and end is less than minimum window, dates are shifted
-        Double window60 = 60;
-        (DateTimeOffset, DateTimeOffset) shifted = IntervalHelper.ExtendTimeByWindow(startDateTimeOffset, endDateTimeOffset, window60);
-        Assert.True(shifted.Item1.AddMinutes(window60).Equals(startDateTimeOffset));
-        Assert.True(shifted.Item2.AddMinutes(-window60).Equals(endDateTimeOffset));
+        int minuteWindow = 30;
+        (DateTimeOffset, DateTimeOffset) shifted = IntervalHelper.ExtendTimeByWindow(startDateTimeOffset, endDateTimeOffset, minuteWindow);
+        Assert.True(shifted.Item1.AddMinutes(minuteWindow).Equals(startDateTimeOffset)); // start shifted back by minuteWindow
+        Assert.True(shifted.Item2.AddMinutes(-minuteWindow).Equals(endDateTimeOffset)); // end shifted forward by minuteWindow
     }
 }
