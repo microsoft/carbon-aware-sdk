@@ -64,13 +64,11 @@ public class JsonDataSource : ICarbonIntensityDataSource
         throw new NotImplementedException();
     }
 
-    private IEnumerable<EmissionsData> FilterByDateRange(IEnumerable<EmissionsData> data, DateTimeOffset startDate, object endDate)
+    private IEnumerable<EmissionsData> FilterByDateRange(IEnumerable<EmissionsData> data, DateTimeOffset startTime, DateTimeOffset endTime)
     {
-        DateTimeOffset end;
-        DateTimeOffset.TryParse(endDate.ToString(), out end);
-        var (newStartTime, newEndTime) = IntervalHelper.ShiftDate(startDate, end, MinSamplingWindow);
+        var (newStartTime, newEndTime) = IntervalHelper.ExtendTimeByWindow(startTime, endTime, MinSamplingWindow);
         var newWindowData = data.Where(ed => ed.TimeBetween(newStartTime.DateTime, newEndTime));
-        var filteredData = IntervalHelper.MinSamplingFiltering(newWindowData, startDate, end, TimeSpan.FromHours(8));
+        var filteredData = IntervalHelper.FilterByDuration(newWindowData, startTime, endTime, TimeSpan.FromHours(8));
         
         if (!filteredData.Any())
         {

@@ -10,31 +10,32 @@ public static class IntervalHelper
     /// Ensures the data is available between the range of time considering the duration of the data
     /// </summary>
     /// <param name="expandedData">Expanded data that includes the minimum sampling window</param>
-    /// <param name="startDate">Original start date provided by user</param>
-    /// <param name="endDate">Original end date provided by user</param>
+    /// <param name="startTime">Original start time provided by user</param>
+    /// <param name="endTime">Original end time provided by user</param>
     /// <returns>Filtered emissions data.</returns>
-    public static IEnumerable<EmissionsData> MinSamplingFiltering(IEnumerable<EmissionsData> expandedData, DateTimeOffset startDate, DateTimeOffset endDate, TimeSpan duration = default)
+    public static IEnumerable<EmissionsData> FilterByDuration(IEnumerable<EmissionsData> expandedData, DateTimeOffset startTime, DateTimeOffset endTime, TimeSpan duration = default)
     {
         if (duration != default)
         {   // constant duration
-            return expandedData.Where(d => (d.Time + duration) >= startDate && d.Time <= endDate);
+            return expandedData.Where(d => (d.Time + duration) >= startTime && d.Time <= endTime);
         }
-        return expandedData.Where(d => (d.Time + d.Duration) >= startDate && d.Time <= endDate);
+        return expandedData.Where(d => (d.Time + d.Duration) >= startTime && d.Time <= endTime);
     }
 
     /// <summary>
-    /// Substract and Add minutes to start and end dates
+    /// If time between start and end times less than a window of minutes, extends start and end times by subtracting/adding window respectively
     /// </summary>
-    /// <param name="orgStartDate">Original Start Date to shift</param>
-    /// <param name="orgEndDate">Original End Date to shift</param>
-    /// <param name="minutesValue">Minutes to add and substract</param>
-    /// <returns>Shifted dates</returns>
-    public static (DateTimeOffset, DateTimeOffset) ShiftDate(DateTimeOffset orgStartDate, DateTimeOffset orgEndDate, double minutesValue)
+    /// <param name="origStartTime">Original start time</param>
+    /// <param name="origEndTime">Original end time</param>
+    /// <param name="minWindow">Minute window to extend times by</param>
+    /// <returns>Shifted times</returns>
+    public static (DateTimeOffset, DateTimeOffset) ExtendTimeByWindow(DateTimeOffset origStartTime, DateTimeOffset origEndTime, double minWindow)
     {
-        if (orgEndDate.Subtract(orgStartDate) < TimeSpan.FromMinutes(minutesValue))
+        // If the di
+        if (origEndTime.Subtract(origStartTime) < TimeSpan.FromMinutes(minWindow))
         {
-            return (orgStartDate.AddMinutes(-minutesValue), orgEndDate.AddMinutes(minutesValue));
+            return (origStartTime.AddMinutes(-minWindow), origEndTime.AddMinutes(minWindow));
         }
-        return (orgStartDate, orgEndDate);
+        return (origStartTime, origEndTime);
     }
 }

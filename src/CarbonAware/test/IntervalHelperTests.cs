@@ -45,15 +45,15 @@ public class IntervalHelperTests
         };
 
         // If pass in empty data, will just return empty data
-        var emptyResult = IntervalHelper.MinSamplingFiltering(Enumerable.Empty<EmissionsData>(), startDateTimeOffset, endDateTimeOffset);
+        var emptyResult = IntervalHelper.FilterByDuration(Enumerable.Empty<EmissionsData>(), startDateTimeOffset, endDateTimeOffset);
         Assert.False(emptyResult.Any());
 
         // If pass in duration, will ignore data value. With 45 min duration, captures 3 data points
-        var constantDuration = IntervalHelper.MinSamplingFiltering(data, startDateTimeOffset, endDateTimeOffset, TimeSpan.FromMinutes(45));
+        var constantDuration = IntervalHelper.FilterByDuration(data, startDateTimeOffset, endDateTimeOffset, TimeSpan.FromMinutes(45));
         Assert.True(constantDuration.Count() == 3);
 
         // If don't pass in duration, will lookup value in data. WIth included 30 min duration, captures 2 data points
-        var minWindowValid = IntervalHelper.MinSamplingFiltering(data, startDateTimeOffset, endDateTimeOffset);
+        var minWindowValid = IntervalHelper.FilterByDuration(data, startDateTimeOffset, endDateTimeOffset);
         Assert.True(minWindowValid.Count() == 2);
     }
 
@@ -65,14 +65,14 @@ public class IntervalHelperTests
     {
         // When time between start and end is greater than window, dates are not shifted
         Double window30 = 30;
-        (DateTimeOffset, DateTimeOffset) notShifted = IntervalHelper.ShiftDate(startDateTimeOffset, endDateTimeOffset, window30);
+        (DateTimeOffset, DateTimeOffset) notShifted = IntervalHelper.ExtendTimeByWindow(startDateTimeOffset, endDateTimeOffset, window30);
         Assert.True(notShifted.Item1.Equals(startDateTimeOffset));
         Assert.True(notShifted.Item2.Equals(endDateTimeOffset));
 
 
         // When time between start and end is less than minimum window, dates are shifted
         Double window60 = 60;
-        (DateTimeOffset, DateTimeOffset) shifted = IntervalHelper.ShiftDate(startDateTimeOffset, endDateTimeOffset, window60);
+        (DateTimeOffset, DateTimeOffset) shifted = IntervalHelper.ExtendTimeByWindow(startDateTimeOffset, endDateTimeOffset, window60);
         Assert.True(shifted.Item1.AddMinutes(window60).Equals(startDateTimeOffset));
         Assert.True(shifted.Item2.AddMinutes(-window60).Equals(endDateTimeOffset));
     }
