@@ -33,7 +33,7 @@ jobs:
         working-directory: ${{ env.DOTNET_SRC_DIR }}
       - name: Install tools
         run: dotnet tool restore 
-        working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi
+        working-directory: ${{ env.DOTNET_SRC_DIR }}/CarbonAware.WebApi/src
       - name: Build
         run: dotnet build --configuration Release --no-restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
@@ -44,7 +44,7 @@ jobs:
         uses: codecov/codecov-action@v1
       - name: Generate Open API
         run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
-        working-directory: ./src/CarbonAware.WebApi 
+        working-directory: ./src/CarbonAware.WebApi/src 
       - name: Upload artifact
         uses: actions/upload-artifact@v1
         with:
