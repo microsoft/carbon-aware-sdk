@@ -7,6 +7,8 @@ using CarbonAware.Model;
 using CarbonAware.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Net.Http.Json;
 using Moq;
 using System.Net.Http.Headers;
@@ -38,6 +40,7 @@ public class CarbonAwareControllerTests
     [Test]
     public async Task HealthCheck_ReturnsOK()
     {
+        //Use client to get endpoint
         var result = await _client.GetAsync("/health");
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -54,42 +57,66 @@ public class CarbonAwareControllerTests
     [Test]
     public async Task BestLocations_ReturnsOK()
     {
-        var result = await _client.GetAsync("/emissions/bylocations/best?locations=eastus&locations=westus&time=2022-01-01&toTime=2022-05-17");
+        var stringUri = "/emissions/bylocations/best?locations=eastus&locations=westus&time=2022-01-01&toTime=2022-05-17";
+
+        var result = await _client.GetAsync(stringUri);
+        //Get actual response content
+        var resultContent = await result.Content.ReadAsStringAsync();
+
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(resultContent, Is.Not.Null);
     }
 
     [Test]
-    public async Task SCI_ReturnsNonNullContent()
+    public async Task SCI_WithValidData_ReturnsContent()
     {
-        var body = @"{
-                " + "\n" +
-                 @"    ""location"": {
-                " + "\n" +
-                 @"        ""locationType"": ""CloudProvider"",
-                " + "\n" +
-                 @"        ""cloudProvider"": ""Azure"",
-                " + "\n" +
-                 @"        ""regionName"": ""westeurope""
-                " + "\n" +
-                 @"    },
-                " + "\n" +
-                 @"    ""timeInterval"": ""2022-05-08T13:00:00Z/2022-05-08T15:30:00Z""
-                " + "\n" +
-                 @"}";
+        //Construct body object and then serialize it with JSONSerializer
+        object body = new
+        {
+            location = new
+            {
+                locationType = "CloudProvider",
+                providerName = "Azure",
+                regionName = "uswest"
+            },
+            timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z"
+        };
 
-        StringContent _content = new StringContent(body);
+        var jsonBody = JsonSerializer.Serialize(body);
+        StringContent _content = new StringContent(jsonBody);
+
         var mediaType = new MediaTypeHeaderValue("application/json");
         _content.Headers.ContentType = mediaType;
 
+        var result = await _client.PostAsync("/sci-scores/marginal-carbon-intensity", _content);
+        var resultContent = await result.Content.ReadAsStringAsync();
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(resultContent, Is.Not.Null);
+    }
+    
+    [Test]
+    public async Task SCI_WithInvalidData_ReturnsBadRequest()
+    {
+        object body = new
+        {
+            location = new {},
+            timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z"
+        };
+
+        var jsonBody = JsonSerializer.Serialize(body);
+        StringContent _content = new StringContent(jsonBody);
+
+        var mediaType = new MediaTypeHeaderValue("application/json");
+        _content.Headers.ContentType = mediaType;
 
         var result = await _client.PostAsync("/sci-scores/marginal-carbon-intensity", _content);
+        var resultContent = await result.Content.ReadAsStringAsync();
 
-
-		Assert.That(result, Is.Not.Null);
-        Assert.That(result.Content, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
     [OneTimeTearDown]
@@ -98,5 +125,4 @@ public class CarbonAwareControllerTests
         _client.Dispose();
         _factory.Dispose();
     }
-
 }
