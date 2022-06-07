@@ -5,6 +5,12 @@
     <IsPackable>false</IsPackable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="SciScoreIntegrationTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SciScoreIntegrationTests.cs" />
+  </ItemGroup>
 
   <ItemGroup>
 	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />

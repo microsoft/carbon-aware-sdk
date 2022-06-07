@@ -68,57 +68,6 @@ public class CarbonAwareControllerTests
         Assert.That(resultContent, Is.Not.Null);
     }
 
-    [Test]
-    public async Task SCI_WithValidData_ReturnsContent()
-    {
-        //Construct body object and then serialize it with JSONSerializer
-        object body = new
-        {
-            location = new
-            {
-                locationType = "CloudProvider",
-                providerName = "Azure",
-                regionName = "uswest"
-            },
-            timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z"
-        };
-
-        var jsonBody = JsonSerializer.Serialize(body);
-        StringContent _content = new StringContent(jsonBody);
-
-        var mediaType = new MediaTypeHeaderValue("application/json");
-        _content.Headers.ContentType = mediaType;
-
-        var result = await _client.PostAsync("/sci-scores/marginal-carbon-intensity", _content);
-        var resultContent = await result.Content.ReadAsStringAsync();
-
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(resultContent, Is.Not.Null);
-    }
-    
-    [Test]
-    public async Task SCI_WithInvalidData_ReturnsBadRequest()
-    {
-        object body = new
-        {
-            location = new {},
-            timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z"
-        };
-
-        var jsonBody = JsonSerializer.Serialize(body);
-        StringContent _content = new StringContent(jsonBody);
-
-        var mediaType = new MediaTypeHeaderValue("application/json");
-        _content.Headers.ContentType = mediaType;
-
-        var result = await _client.PostAsync("/sci-scores/marginal-carbon-intensity", _content);
-        var resultContent = await result.Content.ReadAsStringAsync();
-
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-    }
-
     [OneTimeTearDown]
     public void TearDown()
     {
