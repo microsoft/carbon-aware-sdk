@@ -3,7 +3,7 @@
 [Serializable]
 public record EmissionsData
 {
-    ///<example> ueast </example>
+    ///<example> eastus </example>
     public string Location { get; set; }
     ///<example> 01-01-2022 </example>   
     public DateTimeOffset Time { get; set; }
