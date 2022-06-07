@@ -49,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: pr-swagger.yaml
-          path: src/dotnet/CarbonAware.WebApi/api/v1/swagger.yaml
+          path: src/dotnet/CarbonAware.WebApi/src/api/v1/swagger.yaml
       # -name: api-comparison:
       #   needs: container-dotnet-build
       #   runs-on: ubuntu-latest
