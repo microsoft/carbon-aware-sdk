@@ -14,8 +14,8 @@ public class IntervalHelperTests
     [Test]
     public void TestMinSamplingFiltering()
     {
-        // Sample data from 8:30 to 11:30
-        var data = new EmissionsData[7]
+        // Sample data from 8:30 to 10:30
+        var data = new EmissionsData[5]
         {
             new EmissionsData {
                 Location = "eastus",
@@ -41,17 +41,7 @@ public class IntervalHelperTests
                 Location = "eastus",
                 Time = new DateTimeOffset(2021,9,1,10,30,0, TimeSpan.Zero),
                 Duration = TimeSpan.FromMinutes(30)
-            },
-            new EmissionsData {
-                Location = "eastus",
-                Time = new DateTimeOffset(2021,9,1,11,0,0, TimeSpan.Zero),
-                Duration = TimeSpan.FromMinutes(30)
-            },
-            new EmissionsData {
-                Location = "eastus",
-                Time = new DateTimeOffset(2021,9,1,11,30,0, TimeSpan.Zero),
-                Duration = TimeSpan.FromMinutes(30)
-            },
+            }
         };
 
         // If pass in empty data, will just return empty data
