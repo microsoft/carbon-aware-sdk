@@ -106,11 +106,4 @@ public class JsonDataSource : ICarbonIntensityDataSource
         }
         return emissionsData;
     }
-
-    IEnumerable<EmissionsData> Callback(IEnumerable<EmissionsData> data, DateTimeOffset start, DateTimeOffset end)
-    {
-        var duration = TimeSpan.FromHours(8);
-        return data.Where(d => 
-                (d.Time + duration) >= start && d.Time <= end);
-    }
 }
