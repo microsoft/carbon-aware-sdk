@@ -67,7 +67,7 @@ public class JsonDataSource : ICarbonIntensityDataSource
     private IEnumerable<EmissionsData> FilterByDateRange(IEnumerable<EmissionsData> data, DateTimeOffset startTime, DateTimeOffset endTime)
     {
         var (newStartTime, newEndTime) = IntervalHelper.ExtendTimeByWindow(startTime, endTime, MinSamplingWindow);
-        var newWindowData = data.Where(ed => ed.TimeBetween(newStartTime.DateTime, newEndTime));
+        var newWindowData = data.Where(ed => ed.TimeBetween(newStartTime, newEndTime));
         var filteredData = IntervalHelper.FilterByDuration(newWindowData, startTime, endTime, TimeSpan.FromHours(8));
         
         if (!filteredData.Any())
