@@ -1,8 +1,8 @@
-using CarbonAware.Model;
 using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using CarbonAware.Model;
 
 namespace CarbonAware.WebApi.Controllers;
 
@@ -52,13 +52,8 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsData>))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-<<<<<<< HEAD:src/dotnet/CarbonAware.WebApi/Controllers/CarbonAwareController.cs
-    [HttpGet("bylocations", Name = "GetEmissionsDataForLocationsByTime") ]
-    public async Task<IActionResult> GetEmissionsDataForLocationsByTime([FromQuery(Name = "locations")] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
-=======
     [HttpGet("bylocations")]
     public async Task<IActionResult> GetEmissionsDataForLocationsByTime(string locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
->>>>>>> a1c51dbdeaf12e6235e54343779bc053fc366675:src/CarbonAware.WebApi/src/Controllers/CarbonAwareController.cs
     {
         var locationNames = locations.Split(',');
         IEnumerable<Location> locationEnumerable = locationNames.Select(location => new Location(){ RegionName = location, LocationType=LocationType.CloudProvider});
