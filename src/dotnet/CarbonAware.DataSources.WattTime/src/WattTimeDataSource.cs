@@ -96,21 +96,15 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         using (var activity = ActivitySource.StartActivity())
         {
             BalancingAuthority balancingAuthority = await this.GetBalancingAuthority(location, activity);
-            var data = await this.WattTimeClient.GetDataAsync(balancingAuthority, periodStartTime, periodEndTime);
+            var (newStartTime, newEndTime) = IntervalHelper.ShiftDate(periodStartTime, periodEndTime, MinSamplingWindow);
+            var data = await this.WattTimeClient.GetDataAsync(balancingAuthority, newStartTime, newEndTime);
             if (Logger.IsEnabled(LogLevel.Debug))
             {
                 Logger.LogDebug($"Found {data.Count()} total forecasts for location {location} for period {periodStartTime} to {periodEndTime}.");
             }
-            if (data.Any())
-            {
-                return ConvertToEmissionData(data);
-            }
-
-            // try to find data by moving the start time '-MinSamplingWindow' to get the nearest element to periodStartTime
-            var newStartTime = IntervalHelper.ShiftDate(periodStartTime, -MinSamplingWindow);
-            data = await this.WattTimeClient.GetDataAsync(balancingAuthority, newStartTime, periodEndTime);
             var windowData = ConvertToEmissionData(data);
-            var filteredData = IntervalHelper.MinSamplingFiltering(windowData, periodStartTime, periodEndTime, MinSamplingWindow);
+            var filteredData = IntervalHelper.MinSamplingFiltering(windowData, periodStartTime, periodEndTime);
+
             if (!filteredData.Any())
             {
                 Logger.LogInformation($"Not enought data with {MinSamplingWindow} window");

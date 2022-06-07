@@ -68,19 +68,15 @@ public class JsonDataSource : ICarbonIntensityDataSource
     {
         DateTimeOffset end;
         DateTimeOffset.TryParse(endDate.ToString(), out end);
-        var intervalFilteredData = data.Where(ed => ed.TimeBetween(startDate.DateTime, end.DateTime));
-        if (intervalFilteredData.Any()) {
-            return intervalFilteredData;
-        }
-        var newStartTime = IntervalHelper.ShiftDate(startDate, -MinSamplingWindow);
-        intervalFilteredData = data.Where(ed => ed.TimeBetween(newStartTime.DateTime, end.DateTime));
-        var minSamplingFiteredData = IntervalHelper.MinSamplingFiltering(intervalFilteredData, startDate, end, MinSamplingWindow);
+        var (newStartTime, newEndTime) = IntervalHelper.ShiftDate(startDate, end, MinSamplingWindow);
+        var newWindowData = data.Where(ed => ed.TimeBetween(newStartTime.DateTime, newEndTime));
+        var filteredData = IntervalHelper.MinSamplingFiltering(newWindowData, startDate, end, TimeSpan.FromHours(8));
         
-        if (!minSamplingFiteredData.Any())
+        if (!filteredData.Any())
         {
             _logger.LogInformation($"Not enought data with {MinSamplingWindow} window");
         }
-        return minSamplingFiteredData;
+        return filteredData;
     }
 
     private IEnumerable<EmissionsData> FilterByLocation(IEnumerable<EmissionsData> data, IEnumerable<string?> locations)
@@ -109,5 +105,12 @@ public class JsonDataSource : ICarbonIntensityDataSource
            emissionsData = jsonObject.Emissions;
         }
         return emissionsData;
+    }
+
+    IEnumerable<EmissionsData> Callback(IEnumerable<EmissionsData> data, DateTimeOffset start, DateTimeOffset end)
+    {
+        var duration = TimeSpan.FromHours(8);
+        return data.Where(d => 
+                (d.Time + duration) >= start && d.Time <= end);
     }
 }

@@ -7,60 +7,34 @@ public static class IntervalHelper
 {
 
     /// <summary>
-    /// Ensures the data is valid by using the min sampling window. Uses the expanded data to add an extra
-    /// data point before the startDate to ensure all expected data is included.
+    /// Ensures the data is available between the range of time considering the duration of the data
     /// </summary>
-    /// <param name="data">Expanded data that includes the minimum sampling window</param>
+    /// <param name="expandedData">Expanded data that includes the minimum sampling window</param>
     /// <param name="startDate">Original start date provided by user</param>
     /// <param name="endDate">Original end date provided by user</param>
     /// <returns>Filtered emissions data.</returns>
-    /// <remarks> If the user provided interval is already >= minimum sampling window, or no expanded data, we just return the passed data. </remarks>
-    public static IEnumerable<EmissionsData> MinSamplingFiltering(IEnumerable<EmissionsData> expandedData, DateTimeOffset startDate, DateTimeOffset endDate, double minSamplingWindow)
+    public static IEnumerable<EmissionsData> MinSamplingFiltering(IEnumerable<EmissionsData> expandedData, DateTimeOffset startDate, DateTimeOffset endDate, TimeSpan duration = default)
     {
-        TimeSpan ts = endDate - startDate;
-        if ((ts.TotalMinutes >= minSamplingWindow) || !expandedData.Any())
-        {
-            return expandedData;
+        if (duration != default)
+        {   // constant duration
+            return expandedData.Where(d => (d.Time + duration) >= startDate && d.Time <= endDate);
         }
-
-        var arrData = expandedData.ToArray();
-        var startDateTime = startDate.DateTime;
-        var dataLength = arrData.Length;
-        var splitIndex = dataLength - 1;
-
-        // sort data since different sources might have populated the data differently.
-        Array.Sort(arrData, new CompareEmissionDataSort());
-
-        // Find index of data point right before startDateTime
-        while (!(arrData[splitIndex].Time < startDateTime)){
-            if (splitIndex == 0) break;
-            splitIndex --;
-        }
-
-        // copy from the split index on
-        var filteredData = new EmissionsData[dataLength - splitIndex];
-        Array.Copy(arrData, splitIndex, filteredData, 0, filteredData.Length);
-        return filteredData;
+        return expandedData.Where(d => (d.Time + d.Duration) >= startDate && d.Time <= endDate);
     }
 
     /// <summary>
-    /// Add or Substract minutes from date 
+    /// Substract and Add minutes to start and end dates
     /// </summary>
-    /// <param name="date">Date to shift</param>
-    /// <param name="minutesValue">Minutes to add or substract</param>
-    /// <returns>Shifted date</returns>
-    /// <remarks>To substract minutes, minutesValue should be negative.</remarks>
-    public static DateTimeOffset ShiftDate(DateTimeOffset date, double minutesValue)
+    /// <param name="orgStartDate">Original Start Date to shift</param>
+    /// <param name="orgEndDate">Original End Date to shift</param>
+    /// <param name="minutesValue">Minutes to add and substract</param>
+    /// <returns>Shifted dates</returns>
+    public static (DateTimeOffset, DateTimeOffset) ShiftDate(DateTimeOffset orgStartDate, DateTimeOffset orgEndDate, double minutesValue)
     {
-        return date.AddMinutes(minutesValue);
-    }
-}
-
-public class CompareEmissionDataSort : IComparer<EmissionsData>
-{
-    public int Compare(EmissionsData x, EmissionsData y)
-    {
-        if (x.Time == y.Time) return 0;
-        return x.Time < y.Time ? -1 : 1;
+        if (orgEndDate.Subtract(orgStartDate) < TimeSpan.FromMinutes(minutesValue))
+        {
+            return (orgStartDate.AddMinutes(-minutesValue), orgEndDate.AddMinutes(minutesValue));
+        }
+        return (orgStartDate, orgEndDate);
     }
 }
