@@ -26,7 +26,7 @@ public class CarbonAwareController : ControllerBase
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsData>))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [HttpGet("bylocations/best")]
     public async Task<IActionResult> GetBestEmissionsDataForLocationsByTime(string locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
     {
@@ -51,7 +51,7 @@ public class CarbonAwareController : ControllerBase
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsData>))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [HttpGet("bylocations")]
     public async Task<IActionResult> GetEmissionsDataForLocationsByTime(string locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
     {
@@ -74,7 +74,7 @@ public class CarbonAwareController : ControllerBase
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsData>))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [HttpGet("bylocation")]
     public async Task<IActionResult> GetEmissionsDataForLocationByTime([FromQuery, BindRequired] string location, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
     {

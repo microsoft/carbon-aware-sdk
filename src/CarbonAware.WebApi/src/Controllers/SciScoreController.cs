@@ -33,7 +33,7 @@ public class SciScoreController : ControllerBase
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(SciScore), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public Task<IActionResult> CreateAsync(SciScoreInput input)
     {
         _logger.LogDebug("calculate sciscore with input: {input}", input);
@@ -57,7 +57,7 @@ public class SciScoreController : ControllerBase
     [HttpPost("marginal-carbon-intensity")]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> GetCarbonIntensityAsync(SciScoreInput input)
     {
         using (var activity = _activitySource.StartActivity(nameof(SciScoreController)))
