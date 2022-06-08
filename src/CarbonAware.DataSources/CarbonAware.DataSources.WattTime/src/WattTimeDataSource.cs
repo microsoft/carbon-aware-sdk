@@ -31,7 +31,6 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
     const double MWH_TO_KWH_CONVERSION_FACTOR = 1000.0;
     const double LBS_TO_GRAMS_CONVERSION_FACTOR = 453.59237;
-
     public double MinSamplingWindow => 120; // 2hrs of data
 
 
@@ -95,19 +94,19 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
         using (var activity = ActivitySource.StartActivity())
         {
-            BalancingAuthority balancingAuthority = await this.GetBalancingAuthority(location, activity);
+            var balancingAuthority = await this.GetBalancingAuthority(location, activity);
             var (newStartTime, newEndTime) = IntervalHelper.ExtendTimeByWindow(periodStartTime, periodEndTime, MinSamplingWindow);
             var data = await this.WattTimeClient.GetDataAsync(balancingAuthority, newStartTime, newEndTime);
             if (Logger.IsEnabled(LogLevel.Debug))
             {
                 Logger.LogDebug($"Found {data.Count()} total forecasts for location {location} for period {periodStartTime} to {periodEndTime}.");
             }
-            var windowData = ConvertToEmissionData(data);
+            var windowData = ConvertToEmissionsData(data);
             var filteredData = IntervalHelper.FilterByDuration(windowData, periodStartTime, periodEndTime);
 
             if (!filteredData.Any())
             {
-                Logger.LogInformation($"Not enought data with {MinSamplingWindow} window");
+                Logger.LogInformation($"Not enough data with {MinSamplingWindow} window");
             }
             return filteredData;
         }
@@ -118,7 +117,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         return value * LBS_TO_GRAMS_CONVERSION_FACTOR / MWH_TO_KWH_CONVERSION_FACTOR;
     }
 
-    private IEnumerable<EmissionsData> ConvertToEmissionData(IEnumerable<GridEmissionDataPoint> data)
+    private IEnumerable<EmissionsData> ConvertToEmissionsData(IEnumerable<GridEmissionDataPoint> data)
     {
         // Linq statement to convert WattTime forecast data into EmissionsData for the CarbonAware SDK.
         return data.Select(e => new EmissionsData() 
@@ -129,6 +128,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
                         Duration = FrequencyToTimeSpan(e.Frequency)
                     });
     }
+
     private TimeSpan FrequencyToTimeSpan(int? frequency)
     {
         return (frequency != null) ? TimeSpan.FromSeconds((double)frequency) : TimeSpan.Zero;

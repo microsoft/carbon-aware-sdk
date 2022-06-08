@@ -19,11 +19,13 @@ public class JsonDataSource : ICarbonIntensityDataSource
 
     public string Version => "0.0.1";
 
-    public double MinSamplingWindow => 2880;  // 48hrs
+    public double MinSamplingWindow => 1440;  // 24 hrs
 
     private List<EmissionsData>? emissionsData;
 
     private readonly ILogger<JsonDataSource> _logger;
+
+    private const double DURATION = 8; // 8 hrs
 
 
     /// <summary>
@@ -67,12 +69,12 @@ public class JsonDataSource : ICarbonIntensityDataSource
     private IEnumerable<EmissionsData> FilterByDateRange(IEnumerable<EmissionsData> data, DateTimeOffset startTime, DateTimeOffset endTime)
     {
         var (newStartTime, newEndTime) = IntervalHelper.ExtendTimeByWindow(startTime, endTime, MinSamplingWindow);
-        var newWindowData = data.Where(ed => ed.TimeBetween(newStartTime, newEndTime));
-        var filteredData = IntervalHelper.FilterByDuration(newWindowData, startTime, endTime, TimeSpan.FromHours(8));
-        
+        var windowData = data.Where(ed => ed.TimeBetween(newStartTime, newEndTime));
+        var filteredData = IntervalHelper.FilterByDuration(windowData, startTime, endTime, TimeSpan.FromHours(DURATION));
+
         if (!filteredData.Any())
         {
-            _logger.LogInformation($"Not enought data with {MinSamplingWindow} window");
+            _logger.LogInformation($"Not enough data with {MinSamplingWindow} window");
         }
         return filteredData;
     }
