@@ -108,8 +108,8 @@ jobs:
             path: ./src/CarbonAware.WebApi/src/api/v1/pr-swagger.yaml
         - name: API Diff Comparison
           run: |
-            git diff --exit-code ./api/v1/pr-swagger.yaml ./api/v1/swagger.yaml
-            if [ $? -eq 1 ]
+            diff ./api/v1/pr-swagger.yaml ./api/v1/swagger.yaml
+            if [ $? -neq 0 ]
             then
               echo "::warning:: API Changed"
             fi
