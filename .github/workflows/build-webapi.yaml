@@ -98,7 +98,7 @@ jobs:
           working-directory: ${{ env.DOTNET_SRC_DIR }}
         - name: Install tools
           run: dotnet tool restore 
-          working-directory: src/CarbonAware.WebApi/src
+          working-directory: ./src/CarbonAware.WebApi/src
         - name: Build
           run: dotnet build --configuration Release --no-restore
           working-directory: ${{ env.DOTNET_SRC_DIR }}
