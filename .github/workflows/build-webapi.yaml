@@ -77,6 +77,9 @@ jobs:
   api-comparison:
       needs: container-dotnet-build
       runs-on: ubuntu-latest
+      defaults:
+        run:
+          working-directory: ./src/CarbonAware.WebApi/src
       container:
         image: mcr.microsoft.com/dotnet/sdk
       steps:
@@ -89,26 +92,23 @@ jobs:
           with:
             dotnet-version: '6.0.x'
             include-prerelease: false
-        - run: |
-            apt update
-            apt install -y tree
-            tree
         - name: Install dependencies
           run: dotnet restore
           working-directory: ${{ env.DOTNET_SRC_DIR }}
         - name: Install tools
           run: dotnet tool restore 
-          working-directory: ./src/CarbonAware.WebApi/src
         - name: Build
           run: dotnet build --configuration Release --no-restore
           working-directory: ${{ env.DOTNET_SRC_DIR }}
         - name: Generate Open API
           run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
-          working-directory: ./src/CarbonAware.WebApi/src 
         - uses: actions/download-artifact@master
           with:
             name: pr-swagger.yaml
             path: src/CarbonAware.WebApi/src/api/v1/pr-swagger.yaml
         - name: API Diff Comparison
-          run: git diff ./api/v1/pr-swagger.yaml ./api/v1/swagger.yaml
-          working-directory: ./src/CarbonAware.WebApi/src   
+          run: |
+            git diff --exit-code ./api/v1/pr-swagger.yaml ./api/v1/swagger.yaml
+            if [ $? -eq 0 ]
+              echo "::warning API Changed"
+            fi
