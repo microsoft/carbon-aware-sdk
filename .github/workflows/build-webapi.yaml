@@ -109,7 +109,7 @@ jobs:
         - name: API Diff Comparison
           run: |
             diff ./api/v1/pr-swagger.yaml ./api/v1/swagger.yaml
-            if [ $? -neq 0 ]
+            if [ $? -eq 1 ]
             then
               echo "::warning:: API Changed"
             fi
