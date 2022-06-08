@@ -111,4 +111,4 @@ jobs:
             path: src/CarbonAware.WebApi/src/api/v1/pr-swagger.yaml
         - name: API Diff Comparison
           run: git diff ./api/v1/pr-swagger.yaml ./api/v1/swagger.yaml
-          working-directory: /src/CarbonAware.WebApi/src     
+          working-directory: ./src/CarbonAware.WebApi/src   
