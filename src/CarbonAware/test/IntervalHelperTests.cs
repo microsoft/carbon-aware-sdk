@@ -11,7 +11,7 @@ public class IntervalHelperTests
     /// Test exit cases of min sampling filtering
     /// </summary>
     [Test]
-    public void TestMinSamplingFiltering()
+    public void TestFilterByDuration()
     {
         // Sample data from 8:30 to 10:30
         var data = new EmissionsData[5]
@@ -60,7 +60,7 @@ public class IntervalHelperTests
     /// Test shift date functionality
     /// </summary>
     [Test]
-    public void TestShiftDate()
+    public void TestExtendTimeByWindo()
     {
         int minuteWindow = 30;
         (DateTimeOffset, DateTimeOffset) shifted = IntervalHelper.ExtendTimeByWindow(startDateTimeOffset, endDateTimeOffset, minuteWindow);
