@@ -103,12 +103,12 @@ jobs:
           run: dotnet build --configuration Release --no-restore
           working-directory: ${{ env.DOTNET_SRC_DIR }}
         - name: Generate Open API
-          run: dotnet tool run swagger tofile --output ./api/dev/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
+          run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
           working-directory: ./src/CarbonAware.WebApi/src 
         - uses: actions/download-artifact@master
           with:
             name: pr-swagger.yaml
             path: src/CarbonAware.WebApi/src/api/v1/pr-swagger.yaml
         - name: API Diff Comparison
-          run: git diff ./api/v1/pr-swagger.yaml ./api/dev/swagger.yaml
+          run: git diff ./api/v1/pr-swagger.yaml ./api/v1/swagger.yaml
           working-directory: /src/CarbonAware.WebApi/src     
