@@ -111,5 +111,5 @@ jobs:
             git diff --exit-code ./api/v1/pr-swagger.yaml ./api/v1/swagger.yaml
             if [ $? -eq 0 ]
             then
-              echo "::warning API Changed"
+              echo "::warning:: API Changed"
             fi
