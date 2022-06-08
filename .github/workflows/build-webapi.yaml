@@ -107,6 +107,7 @@ jobs:
             name: pr-swagger.yaml
             path: ./src/CarbonAware.WebApi/src/api/v1/pr-swagger.yaml
         - name: API Diff Comparison
+          continue-on-error: true
           run: |
             diff ./api/v1/pr-swagger.yaml ./api/v1/swagger.yaml
             if [ $? -eq 1 ]
