@@ -2,7 +2,7 @@ name: Docker Web API Build
 
 on:
   push:
-    branches: [ dev, main ]
+    branches: [ dev, main, pritipathak/Auto_generate_Open_API ]
   pull_request:
     branches: [ dev, main ]
     paths:
@@ -37,11 +37,11 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
         working-directory: ${{ env.DOTNET_SRC_DIR }}
-      - name: Test + Code Coverage
-        run: dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-        working-directory: ${{ env.DOTNET_SRC_DIR }}
-      - name: Codecov
-        uses: codecov/codecov-action@v1
+      # - name: Test + Code Coverage
+      #   run: dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+      #   working-directory: ${{ env.DOTNET_SRC_DIR }}
+      # - name: Codecov
+      #   uses: codecov/codecov-action@v1
       - name: Generate Open API
         run: dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
         working-directory: ./src/CarbonAware.WebApi/src 
@@ -51,26 +51,64 @@ jobs:
           name: pr-swagger.yaml
           path: src/CarbonAware.WebApi/src/api/v1/swagger.yaml
       
-  container-validation:
-      runs-on: ubuntu-latest
-      steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+  # container-validation:
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v2
 
-      - name: Docker Target Final
-        run: docker build . -f ${DOCKERFILE_PATH} -t ca-api
-        working-directory: ./src
+  #     - name: Docker Target Final
+  #       run: docker build . -f ${DOCKERFILE_PATH} -t ca-api
+  #       working-directory: ./src
         
-      - name: Docker Run Container
-        run: |
-          docker run -d --name runnable-container -p 8080:80 ca-api
-          docker container ls
+  #     - name: Docker Run Container
+  #       run: |
+  #         docker run -d --name runnable-container -p 8080:80 ca-api
+  #         docker container ls
 
-      - name: Docker WGET Health Endpoint
-        run: |
-          wget -t 5 --waitretry=5 ${HEALTH_ENDPOINT}
+  #     - name: Docker WGET Health Endpoint
+  #       run: |
+  #         wget -t 5 --waitretry=5 ${HEALTH_ENDPOINT}
 
-      - name: Docker WGET Data Endpoint
-        run: |
-          wget -t 5 --waitretry=5 ${DATA_ENDPOINT}
+  #     - name: Docker WGET Data Endpoint
+  #       run: |
+  #         wget -t 5 --waitretry=5 ${DATA_ENDPOINT}
 
+  api-comparison:
+      needs: container-dotnet-build
+      runs-on: ubuntu-latest
+      container:
+        image: mcr.microsoft.com/dotnet/sdk
+      steps:
+        - name: Checkout Dev Branch
+          uses: actions/checkout@v3
+          with:
+            ref: dev
+        - name: Setup .NET Core SDK 6
+          uses: actions/setup-dotnet@v2
+          with:
+            dotnet-version: '6.0.x'
+            include-prerelease: false
+        - run: |
+            apt update
+            apt install -y tree
+            tree
+        - name: Install dependencies
+          run: dotnet restore
+          working-directory: ${{ env.DOTNET_SRC_DIR }}
+        - name: Install tools
+          run: dotnet tool restore 
+          working-directory: src/CarbonAware.WebApi/src
+        - name: Build
+          run: dotnet build --configuration Release --no-restore
+          working-directory: ${{ env.DOTNET_SRC_DIR }}
+        - name: Generate Open API
+          run: dotnet tool run swagger tofile --output ./api/dev/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
+          working-directory: /src/CarbonAware.WebApi/src 
+        - uses: actions/download-artifact@master
+          with:
+            name: pr-swagger.yaml
+            path: src/CarbonAware.WebApi/src/api/v1/pr-swagger.yaml
+        - name: API Diff Comparison
+          run: git diff ./api/v1/pr-swagger.yaml ./api/dev/swagger.yaml
+          working-directory: /src/CarbonAware.WebApi/src     
