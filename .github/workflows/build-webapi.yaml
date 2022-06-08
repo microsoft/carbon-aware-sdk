@@ -104,7 +104,7 @@ jobs:
           working-directory: ${{ env.DOTNET_SRC_DIR }}
         - name: Generate Open API
           run: dotnet tool run swagger tofile --output ./api/dev/swagger.yaml --yaml ${{ env.DLL_FILE_PATH }} v1  
-          working-directory: /src/CarbonAware.WebApi/src 
+          working-directory: ./src/CarbonAware.WebApi/src 
         - uses: actions/download-artifact@master
           with:
             name: pr-swagger.yaml
