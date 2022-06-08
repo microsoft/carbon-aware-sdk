@@ -109,7 +109,7 @@ jobs:
         - name: API Diff Comparison
           run: |
             git diff --exit-code ./api/v1/pr-swagger.yaml ./api/v1/swagger.yaml
-            if [ $? -eq 0 ]
+            if [ $? -eq 1 ]
             then
               echo "::warning:: API Changed"
             fi
