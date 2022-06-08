@@ -83,7 +83,7 @@ public class SciScoreController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
-    public async Task<IActionResult> DummyMethod(SciScoreInput input)
+    public IActionResult DummyMethod(SciScoreInput input)
     {
             SciScore score = new SciScore
             {
