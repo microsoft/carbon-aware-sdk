@@ -1,17 +1,11 @@
 namespace CarbonAware.WepApi.IntegrationTests;
 
-using System;
-using System.Collections.Generic;
 using System.Net;
-using CarbonAware.Model;
-using CarbonAware.WebApi.Controllers;
-using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Net.Http.Json;
-using Moq;
 using System.Net.Http.Headers;
+using WireMock.Server;
+using CarbonAware.Tools.WattTimeClient;
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
@@ -23,6 +17,7 @@ public class SciScoreControllerTests
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 	private APIWebApplicationFactory _factory;
 	private HttpClient _client;
+    private WireMockServer _server;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     [OneTimeSetUp]
@@ -30,8 +25,13 @@ public class SciScoreControllerTests
     {
         _factory = new APIWebApplicationFactory();
         _client = _factory.CreateClient();
-    }
 
+        _server = WireMockServer.Start();
+        _server.SetupWattTimeServerMocks();
+        string serverUrl = _server.Url!;
+        // set wattime base url to server url in config
+        Console.WriteLine(serverUrl);
+    }
 
     [Test]
     public async Task SCI_WithValidData_ReturnsContent()
@@ -84,11 +84,17 @@ public class SciScoreControllerTests
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
+    [TearDown]
+    public void ResetMockServer()
+    {
+        _server.Reset();
+    }
 
     [OneTimeTearDown]
     public void TearDown()
     {
         _client.Dispose();
         _factory.Dispose();
+        _server.Stop();
     }
 }

@@ -1,9 +1,10 @@
 namespace CarbonAware.WepApi.IntegrationTests;
 
 using System.Net;
+using CarbonAware.Tools.WattTimeClient;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
-
+using WireMock.Server;
 
 public class APIWebApplicationFactory : WebApplicationFactory<Program>
 {
@@ -20,6 +21,7 @@ public class CarbonAwareControllerTests
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 	private APIWebApplicationFactory _factory;
 	private HttpClient _client;
+    private WireMockServer _server;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     [OneTimeSetUp]
@@ -27,6 +29,10 @@ public class CarbonAwareControllerTests
     {
         _factory = new APIWebApplicationFactory();
         _client = _factory.CreateClient();
+
+        _server = WireMockServer.Start();
+        _server.SetupWattTimeServerMocks();
+
     }
 
     [Test]
@@ -60,10 +66,17 @@ public class CarbonAwareControllerTests
         Assert.That(resultContent, Is.Not.Null);
     }
 
+    [TearDown]
+    public void ResetMockServer()
+    {
+        _server.Reset();
+    }
+
     [OneTimeTearDown]
     public void TearDown()
     {
         _client.Dispose();
         _factory.Dispose();
+        _server.Stop();
     }
 }
