@@ -13,7 +13,7 @@ One sentence summary of PR
 - [ ] CICD and Pipeline Tests Passing?
 - [ ] Added any new Tests?
 - [ ] Documentation Updates Made?
-- [ ] Are there any API Changes? If yes, pelase describe below.
+- [ ] Are there any API Changes? If yes, please describe below.
 - [ ] This is not a breaking change. If it is, please describe it below.
 
 ## Are there API Changes?
