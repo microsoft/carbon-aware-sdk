@@ -52,7 +52,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
                 var forecast = await this._dataSource.GetCurrentCarbonIntensityForecastAsync(location);
                 forecast.StartTime = start;
                 forecast.EndTime = end;
-                forecast.ForecastData = FilterByDate(forecast.ForecastData, start, end);
+                forecast.ForecastData = IntervalHelper.FilterByDuration(forecast.ForecastData, start, end);
                 forecast.ForecastData = forecast.ForecastData.RollingAverage(windowSize);
                 if(forecast.ForecastData.Any())
                 {
@@ -66,10 +66,6 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         }
     }
 
-    private IEnumerable<EmissionsData> FilterByDate(IEnumerable<EmissionsData> data, DateTimeOffset start, DateTimeOffset end)
-    {
-        return data.Where(ed => ed.Time >= start && ed.Time < end);
-    }
     private EmissionsData GetOptimalEmissions(IEnumerable<EmissionsData> emissionsData)
     {
         return emissionsData.Aggregate((minData, nextData) => minData.Rating < nextData.Rating ? minData : nextData);
