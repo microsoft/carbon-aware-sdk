@@ -29,11 +29,11 @@ public class SciScoreControllerTests2
     //private WireMockServer _server;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-    public class WattTimeClient1 : WattTimeClient
+    public class WireWattTimeClient : WattTimeClient
     {
         public WireMockServer _server;
 
-        public WattTimeClient1(IHttpClientFactory factory, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log, ActivitySource source) : base(factory, configurationMonitor, log, source)
+        public WireWattTimeClient(IHttpClientFactory factory, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log, ActivitySource source) : base(factory, configurationMonitor, log, source)
             {
                 _server = WireMockServer.Start();
                 _server.SetupWattTimeServerMocks();
@@ -57,7 +57,7 @@ public class SciScoreControllerTests2
                         using (var scope = serviceProvider.CreateScope())
                             {
                             var scopedServices = scope.ServiceProvider;
-                            services.AddSingleton <IWattTimeClient, WattTimeClient1>();
+                            services.AddSingleton <IWattTimeClient, WireWattTimeClient>();
                             }
                     });
                 });
