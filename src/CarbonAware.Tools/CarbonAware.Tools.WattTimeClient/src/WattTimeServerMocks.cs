@@ -15,6 +15,9 @@ namespace CarbonAware.Tools.WattTimeClient
     /// </summary>
     public static class WattTimeServerMocks
     {
+        private static readonly DateTimeOffset testDataPointOffset = new (2099, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        private static readonly string testBA = "TEST_BA";
+
         /// <summary>
         /// Setup the mock server for watttime calls
         /// </summary>
@@ -26,6 +29,9 @@ namespace CarbonAware.Tools.WattTimeClient
             SetupLoginMock(server);
             SetupHistoricalMock(server);
         }
+
+        public static DateTimeOffset GetTestDataPointOffset() => testDataPointOffset;
+
         /// <summary>
         /// Setup data calls on mock server
         /// </summary>
@@ -34,11 +40,11 @@ namespace CarbonAware.Tools.WattTimeClient
             var json = new JsonArray(
               new JsonObject
               {
-                  ["ba"] = "ba",
+                  ["ba"] = testBA,
                   ["datatype"] = "dt",
                   ["frequency"] = 300,
                   ["market"] = "mkt",
-                  ["point_time"] = new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero),
+                  ["point_time"] = testDataPointOffset,
                   ["value"] = 999.99,
                   ["version"] = "1.0"
               }
@@ -62,13 +68,13 @@ namespace CarbonAware.Tools.WattTimeClient
             {
                 new JsonObject
                 {
-                    ["generated_at"] = new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero),
+                    ["generated_at"] = testDataPointOffset,
                     ["forecast"] = new JsonArray
                     {
                         new JsonObject
                         {
-                            ["ba"] = "ba",
-                            ["point_time"] = new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero),
+                            ["ba"] = testBA,
+                            ["point_time"] = testDataPointOffset,
                             ["value"] = 999.99,
                             ["version"] = "1.0"
                         }
@@ -93,7 +99,7 @@ namespace CarbonAware.Tools.WattTimeClient
             var json = new JsonObject
             {
                 ["id"] = "12345",
-                ["abbrev"] = "TEST_BA",
+                ["abbrev"] = testBA,
                 ["name"] = "Test Balancing Authority"
             };
             server
