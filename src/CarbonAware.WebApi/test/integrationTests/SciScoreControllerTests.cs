@@ -47,7 +47,7 @@ public class SciScoreControllerTests
             {
                 locationType = "CloudProvider",
                 providerName = "Azure",
-                regionName = "uswest"
+                regionName = "westus2"
             },
             timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z"
         };
