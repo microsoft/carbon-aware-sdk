@@ -19,23 +19,31 @@ public class SciScoreControllerTests
 	private HttpClient _client;
     private WireMockServer _server;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    private bool resetEnvironment = false;
 
     [OneTimeSetUp]
     public void Setup()
     {
-        _server = WireMockServer.Start();
-        _server.SetupWattTimeServerMocks();
-        string serverUrl = _server.Url!;
+        //Defaults to JSON Integration Testing
+        //WattTime can be tested by uncommenting the line below or setting an env variable
+        //Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "WattTime");
 
-        Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "WattTime");
-        Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", serverUrl);
+        if (Environment.GetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource") == "WattTime")
+        {
+            //Start WireMock server and point the integration tests to it for mocking outbound calls
+            //Only for WattTime Integration Testing
+            _server = WireMockServer.Start();
+            _server.SetupWattTimeServerMocks();
+            string serverUrl = _server.Url!;
+
+            Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", serverUrl);
+            resetEnvironment = true;
+        }
 
         _factory = new APIWebApplicationFactory();
         _client = _factory.CreateClient();
 
-        // set wattime base url to server url in config
-        Console.WriteLine(serverUrl);
-    }
+        }
 
     [Test]
     public async Task SCI_WithValidData_ReturnsContent()
@@ -88,20 +96,17 @@ public class SciScoreControllerTests
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    [TearDown]
-    public void ResetMockServer()
-    {
-        _server.Reset();
-    }
-
     [OneTimeTearDown]
     public void TearDown()
     {
-        Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", "");
-        Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "");
+        if(resetEnvironment)
+        {
+            Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", "");
+            Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "");
+            _server.Stop();
+        }
 
         _client.Dispose();
         _factory.Dispose();
-        _server.Stop();
     }
 }

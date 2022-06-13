@@ -1,10 +1,9 @@
 namespace CarbonAware.WepApi.IntegrationTests;
 
-using System.Net;
 using CarbonAware.Tools.WattTimeClient;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Hosting;
 using NUnit.Framework;
+using System.Net;
 using WireMock.Server;
 
 public class APIWebApplicationFactory : WebApplicationFactory<Program> {
@@ -23,16 +22,26 @@ public class CarbonAwareControllerTests
 	private HttpClient _client;
     private WireMockServer _server;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    private bool resetEnvironment = false;
 
     [OneTimeSetUp]
     public void Setup()
     {
-        _server = WireMockServer.Start();
-        _server.SetupWattTimeServerMocks();
-        string serverUrl = _server.Url!;
+		//Defaults to JSON Integration Testing
+		//WattTime can be tested by uncommenting the line below or setting an env variable
+		//Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "WattTime");
 
-        Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "WattTime");
-        Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", serverUrl);
+		if (Environment.GetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource") == "WattTime")
+        {
+            //Start WireMock server and point the integration tests to it for mocking outbound calls
+            //Only for WattTime Integration Testing
+            _server = WireMockServer.Start();
+            _server.SetupWattTimeServerMocks();
+            string serverUrl = _server.Url!;
+
+            Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", serverUrl);
+            resetEnvironment = true;
+        }
 
         _factory = new APIWebApplicationFactory();
         _client = _factory.CreateClient();
@@ -59,11 +68,13 @@ public class CarbonAwareControllerTests
     [Test]
     public async Task BestLocations_ReturnsOK()
     {
+        //Getting static test data, does not need server initialization
         var start = WattTimeServerMocks.GetTestDataPointOffset().DateTime;
         var end = WattTimeServerMocks.GetTestDataPointOffset().DateTime.AddDays(1);
-        var stringUri = $"/emissions/bylocations/best?locations=eastus&time={start:yyyy-MM-dd}&toTime={end:yyyy-MM-dd}";
+		var stringUri = $"/emissions/bylocations/best?locations=eastus&time={start:yyyy-MM-dd}&toTime={end:yyyy-MM-dd}";
 
-        var result = await _client.GetAsync(stringUri);
+		var result = await _client.GetAsync(stringUri);
+
         //Get actual response content
         var resultContent = await result.Content.ReadAsStringAsync();
 
@@ -72,20 +83,17 @@ public class CarbonAwareControllerTests
         Assert.That(resultContent, Is.Not.Null);
     }
 
-    [TearDown]
-    public void ResetMockServer()
-    {
-        _server.Reset();
-    }
-
     [OneTimeTearDown]
     public void TearDown()
     {
-        Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "");
-        Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", "");
+        if (resetEnvironment)
+        {
+            Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", "");
+            Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "");
+            _server.Stop();
+        }
 
         _client.Dispose();
         _factory.Dispose();
-        _server.Stop();
     }
 }

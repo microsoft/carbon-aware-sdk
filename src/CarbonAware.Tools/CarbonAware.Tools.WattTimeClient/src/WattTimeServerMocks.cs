@@ -15,7 +15,7 @@ namespace CarbonAware.Tools.WattTimeClient
     /// </summary>
     public static class WattTimeServerMocks
     {
-        private static readonly DateTimeOffset testDataPointOffset = new (2099, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        private static readonly DateTimeOffset testDataPointOffset = new (2022, 1, 1, 0, 0, 0, TimeSpan.Zero);
         private static readonly string testBA = "TEST_BA";
 
         /// <summary>
