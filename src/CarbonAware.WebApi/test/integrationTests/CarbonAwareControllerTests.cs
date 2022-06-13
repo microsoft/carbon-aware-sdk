@@ -7,27 +7,7 @@ using Microsoft.Extensions.Hosting;
 using NUnit.Framework;
 using WireMock.Server;
 
-public class APIWebApplicationFactory : WebApplicationFactory<Program>
-{
-    //private readonly string _environment;
-
-    //public APIWebApplicationFactory(string environment = "Development")
-    //{
-    //    _environment = environment;
-    //}
-
-    //protected override IHost CreateHost(IHostBuilder builder)
-    //{
-    //    builder.UseEnvironment(_environment);
-
-    //    builder.ConfigureServices(services =>
-    //    {
-    //        services.
-
-    //    })
-
-
-    //}
+public class APIWebApplicationFactory : WebApplicationFactory<Program> {
 
 }
 
@@ -47,13 +27,17 @@ public class CarbonAwareControllerTests
     [OneTimeSetUp]
     public void Setup()
     {
+        _server = WireMockServer.Start();
+        _server.SetupWattTimeServerMocks();
+        string serverUrl = _server.Url!;
+
+        Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "WattTime");
+        Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", serverUrl);
+
         _factory = new APIWebApplicationFactory();
         _client = _factory.CreateClient();
 
-        _server = WireMockServer.Start();
-        _server.SetupWattTimeServerMocks();
-
-    }
+        }
 
     [Test]
     public async Task HealthCheck_ReturnsOK()
@@ -97,6 +81,9 @@ public class CarbonAwareControllerTests
     [OneTimeTearDown]
     public void TearDown()
     {
+        Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "");
+        Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", "");
+
         _client.Dispose();
         _factory.Dispose();
         _server.Stop();

@@ -23,12 +23,16 @@ public class SciScoreControllerTests
     [OneTimeSetUp]
     public void Setup()
     {
-        _factory = new APIWebApplicationFactory();
-        _client = _factory.CreateClient();
-
         _server = WireMockServer.Start();
         _server.SetupWattTimeServerMocks();
         string serverUrl = _server.Url!;
+
+        Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "WattTime");
+        Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", serverUrl);
+
+        _factory = new APIWebApplicationFactory();
+        _client = _factory.CreateClient();
+
         // set wattime base url to server url in config
         Console.WriteLine(serverUrl);
     }
@@ -93,6 +97,9 @@ public class SciScoreControllerTests
     [OneTimeTearDown]
     public void TearDown()
     {
+        Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", "");
+        Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "");
+
         _client.Dispose();
         _factory.Dispose();
         _server.Stop();
