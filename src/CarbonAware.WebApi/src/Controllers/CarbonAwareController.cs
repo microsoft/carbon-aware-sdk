@@ -90,6 +90,52 @@ public class CarbonAwareController : ControllerBase
     }
 
     /// <summary>
+    /// Maps user input query parameters to props dictionary for use with the data sources forecast method.
+    /// </summary>
+    /// <param name="locations"> Comma-separated string of named locations.</param>
+    /// <param name="generatedAtStart">Request forecasts generated on or after this time.</param>
+    /// <param name="generatedAtEnd">Request forecasts generated between the generatedAtStart time and this time, inclusive.</param>
+    /// <param name="startTime"> Start time of forecast period.</param>
+    /// <param name="endTime"> End time of forecast period.</param>
+    /// <param name="windowSize"> Size of rolling average window in minutes.</param>
+    /// <returns>HTTP response containing the results of the data source forecast call</returns>
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsForecastDTO>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status501NotImplemented, Type = typeof(ValidationProblemDetails))]
+    [HttpGet("forecasts")]
+    public async Task<IActionResult> GetForecastData(string locations, DateTimeOffset? generatedAtStart = null, DateTimeOffset? generatedAtEnd = null, DateTimeOffset? startTime = null, DateTimeOffset? endTime = null, int? windowSize = null)
+    {
+        var locationNames = locations.Split(',');
+        IEnumerable<Location> locationEnumerable = locationNames.Select(location => new Location(){ RegionName = location, LocationType=LocationType.CloudProvider});
+        var props = new Dictionary<string, object?>() {
+            { CarbonAwareConstants.Locations, locationEnumerable },
+            { CarbonAwareConstants.Start, startTime },
+            { CarbonAwareConstants.End, endTime },
+            { CarbonAwareConstants.Duration, windowSize },
+            // TODO - add support for generatedAtStart and generatedAtEnd
+        };
+
+        // TODO - remove this once the data source supports the generatedAtStart and generatedAtEnd parameters
+        DateTimeOffset d = generatedAtStart ?? DateTimeOffset.Now;
+        DateTimeOffset fakeGeneratedAt = new DateTimeOffset(d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, TimeSpan.Zero);
+        // Round the generatedAtStart time down to the nearest 5 minute increment to be used as the generatedAt value.
+        double minutes = fakeGeneratedAt.TimeOfDay.TotalMinutes % 5;
+        fakeGeneratedAt = fakeGeneratedAt.AddMinutes(-minutes);
+
+        var forecasts = await _aggregator.GetCurrentForecastDataAsync(props);
+        var results = forecasts.Select(f => 
+            {
+                var efDTO = EmissionsForecastDTO.FromEmissionsForecast(f);
+                // TODO - remove this once the data source supports the generatedAtStart and generatedAtEnd parameters
+                efDTO.GeneratedAt = fakeGeneratedAt;
+                return efDTO;
+            });
+        return Ok(results);
+    }
+
+    /// <summary>
     /// Maps user input query parameters to props dictionary for use with the data sources current forecast method.
     /// </summary>
     /// <param name="locations"> Comma-separated string of named locations.</param>
