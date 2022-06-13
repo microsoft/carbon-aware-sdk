@@ -18,7 +18,7 @@ public class EmissionsDataExtensionsTests
     private string dataLocation;
     #pragma warning restore CS8618
 
-    [SetUp]
+    [OneTimeSetUp]
     public void Setup()
     {
         this.dataDuration =  TimeSpan.FromMinutes(5);
