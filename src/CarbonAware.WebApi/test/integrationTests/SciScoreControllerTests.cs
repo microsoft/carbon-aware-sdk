@@ -46,7 +46,7 @@ public class SciScoreControllerTests : IntegrationTestingBase
     [Test]
     public async Task SCI_WithValidData_ReturnsContent()
     {
-        _server.SetupForecastMock();
+        _server.SetupDataMock();
         //Construct body object and then serialize it with JSONSerializer
         object body = new
         {
