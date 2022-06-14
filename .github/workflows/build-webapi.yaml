@@ -49,6 +49,8 @@ jobs:
       - name: JSON Integration Test + Code Coverage
         run: dotnet test --filter TestCategory=Integration --no-restore --verbosity normal /p:CollectCoverage=true /p:MergeWith=\"./coverage.json\" /p:CoverletOutputFormat=json     
         working-directory: ${{ env.DOTNET_SRC_DIR }}
+        env:
+          CarbonAwareVars__CarbonIntensityDataSource: "Json"
 
       - name: WattTime Integration Test + Code Coverage
         run: dotnet test --filter TestCategory=Integration --no-restore --verbosity normal /p:CollectCoverage=true /p:MergeWith=\"./coverage.json\" /p:CoverletOutputFormat=\"json,opencover\"     
