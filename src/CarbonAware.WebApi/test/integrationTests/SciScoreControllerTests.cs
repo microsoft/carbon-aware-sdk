@@ -21,6 +21,8 @@ public class SciScoreControllerTests
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private bool resetEnvironment = false;
 
+    private string marginalCarbonIntensityURI = "/sci-scores/marginal-carbon-intensity";
+
     [OneTimeSetUp]
     public void Setup()
     {
@@ -66,7 +68,7 @@ public class SciScoreControllerTests
         var mediaType = new MediaTypeHeaderValue("application/json");
         _content.Headers.ContentType = mediaType;
 
-        var result = await _client.PostAsync("/sci-scores/marginal-carbon-intensity", _content);
+        var result = await _client.PostAsync(marginalCarbonIntensityURI, _content);
         var resultContent = await result.Content.ReadAsStringAsync();
 
         Assert.That(result, Is.Not.Null);
@@ -89,7 +91,7 @@ public class SciScoreControllerTests
         var mediaType = new MediaTypeHeaderValue("application/json");
         _content.Headers.ContentType = mediaType;
 
-        var result = await _client.PostAsync("/sci-scores/marginal-carbon-intensity", _content);
+        var result = await _client.PostAsync(marginalCarbonIntensityURI, _content);
         var resultContent = await result.Content.ReadAsStringAsync();
 
         Assert.That(result, Is.Not.Null);
