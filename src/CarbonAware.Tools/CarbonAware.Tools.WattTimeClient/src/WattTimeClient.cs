@@ -26,7 +26,7 @@ public class WattTimeClient : IWattTimeClient
         HttpStatusCode.Forbidden
     };
 
-    public HttpClient client;
+    private HttpClient client;
 
     private IOptionsMonitor<WattTimeClientConfiguration> ConfigurationMonitor { get; }
 

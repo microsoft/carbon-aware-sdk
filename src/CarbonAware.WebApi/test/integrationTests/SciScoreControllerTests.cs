@@ -102,7 +102,6 @@ public class SciScoreControllerTests
         if(resetEnvironment)
         {
             Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", "");
-            Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "");
             _server.Stop();
         }
 
