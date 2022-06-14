@@ -7,8 +7,6 @@ using CarbonAware.LocationSources.Azure;
 
 namespace CarbonAware.DataSources.WattTime.Configuration;
 
-
-
 public static class ServiceCollectionExtensions
 {
     public static void AddWattTimeDataSourceService(this IServiceCollection services, IConfiguration? configuration)
