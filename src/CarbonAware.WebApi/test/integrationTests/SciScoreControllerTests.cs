@@ -6,19 +6,15 @@ using System.Text.Json;
 using System.Net.Http.Headers;
 using WireMock.Server;
 using CarbonAware.Tools.WattTimeClient;
+using CarbonAware.WebApi.IntegrationTests;
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
 /// including empty responses and exceptions.
 /// </summary>
 [TestFixture]
-public class SciScoreControllerTests
+public class SciScoreControllerTests : IntegrationTestingBase
 {
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-	private APIWebApplicationFactory _factory;
-	private HttpClient _client;
-    private WireMockServer _server;
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private bool resetEnvironment = false;
 
     private string marginalCarbonIntensityURI = "/sci-scores/marginal-carbon-intensity";
@@ -42,7 +38,7 @@ public class SciScoreControllerTests
             resetEnvironment = true;
         }
 
-        _factory = new APIWebApplicationFactory();
+        _factory = new CarbonAwareWebAppFactory();
         _client = _factory.CreateClient();
 
         }
