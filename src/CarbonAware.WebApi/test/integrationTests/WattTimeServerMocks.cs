@@ -14,57 +14,22 @@ namespace CarbonAware.Tools.WattTimeClient
     /// </summary>
     public static class WattTimeServerMocks
     {
-        private static readonly DateTimeOffset testDataPointOffset = new (2022, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        private static readonly DateTimeOffset testDataPointOffset = new(2022, 1, 1, 0, 0, 0, TimeSpan.Zero);
         private static readonly string testBA = "TEST_BA";
-
-        /// <summary>
-        /// Setup the mock server for watttime calls
-        /// </summary>
-        public static void SetupWattTimeServerMocks(this WireMockServer server, List<GridEmissionDataPoint>? dataMock = null, List<Forecast>? forecastMock = null, BalancingAuthority? baMock = null, LoginResult? loginMock = null)
+        private static readonly GridEmissionDataPoint defaultDataPoint = new()
         {
-            SetupDataMock(server, dataMock);
-            SetupForecastMock(server, forecastMock);
-            SetupBaMock(server, baMock);
-            SetupLoginMock(server, loginMock);
-        }
+            BalancingAuthorityAbbreviation = testBA,
+            Datatype = "dt",
+            Frequency = 300,
+            Market = "mkt",
+            PointTime = testDataPointOffset,
+            Value = 999.99F,
+            Version = "1.0"
+        };
 
-        public static DateTimeOffset GetTestDataPointOffset() => testDataPointOffset;
+        private static readonly List<GridEmissionDataPoint> defaultDataList = new() { defaultDataPoint };
 
-        public static void SetupResponseGivenGetRequest(this WireMockServer server, string path, HttpStatusCode statusCode, string contentType, string body) =>
-            server
-                .Given(Request.Create().WithPath("/" + path).UsingGet())
-                .RespondWith(
-                    Response.Create()
-                        .WithStatusCode(statusCode)
-                        .WithHeader("Content-Type", contentType)
-                        .WithBody(body)
-            );
-
-        /// <summary>
-        /// Setup data calls on mock server
-        /// </summary>
-        public static void SetupDataMock(WireMockServer server, List<GridEmissionDataPoint>? content = null)
-        {
-            var data = content ?? new List<GridEmissionDataPoint>() {
-                new GridEmissionDataPoint(){
-                  BalancingAuthorityAbbreviation= testBA,
-                  Datatype = "dt",
-                  Frequency = 300,
-                  Market = "mkt",
-                  PointTime = testDataPointOffset,
-                  Value = 999.99F,
-                  Version = "1.0"
-                }
-            };
-            server.SetupResponseGivenGetRequest(Paths.Data, HttpStatusCode.OK, MediaTypeNames.Application.Json, JsonSerializer.Serialize(data));
-        }
-
-        /// <summary>
-        /// Setup forecast calls on mock server
-        /// </summary>
-        private static void SetupForecastMock(WireMockServer server, List<Forecast>? content = null)
-        {
-            var forecastList = content ?? new List<Forecast>()
+        private static readonly List<Forecast> defaultForecastList = new()
             {
                 new Forecast()
                 {
@@ -81,29 +46,100 @@ namespace CarbonAware.Tools.WattTimeClient
                     }
                 }
             };
-            server.SetupResponseGivenGetRequest(Paths.Forecast, HttpStatusCode.OK, MediaTypeNames.Application.Json, JsonSerializer.Serialize(forecastList));
+
+        private static readonly BalancingAuthority defaultBalancingAuthority = new()
+        {
+            Id = 12345,
+            Abbreviation = testBA,
+            Name = "Test Balancing Authority"
+        };
+
+        private static readonly LoginResult defaultLoginResult = new() { Token = "myDefaultToken123" };
+
+        /// <summary>
+        /// Getter for the test data point offset used in default mock data
+        /// </summary>
+        public static DateTimeOffset GetTestDataPointOffset() => testDataPointOffset;
+
+        /// <summary>
+        /// Getter for the default data point used in the 
+        /// </summary>
+        public static GridEmissionDataPoint GetDefaultEmissionsDataPoint() => new()
+        {
+            BalancingAuthorityAbbreviation = defaultDataPoint.BalancingAuthorityAbbreviation,
+            Datatype = defaultDataPoint.Datatype,
+            Frequency = defaultDataPoint.Frequency,
+            Market = defaultDataPoint.Market,
+            PointTime = defaultDataPoint.PointTime,
+            Value = defaultDataPoint.Value,
+            Version = defaultDataPoint.Version
+        };
+
+        /// <summary>
+        /// Setup the mock server for watttime calls
+        /// </summary>
+        public static void WattTimeServerSetupMocks(this WireMockServer server, List<GridEmissionDataPoint>? dataMock = null, List<Forecast>? forecastMock = null, BalancingAuthority? baMock = null, LoginResult? loginMock = null)
+        {
+            SetupBaMock(server, baMock);
+            SetupLoginMock(server, loginMock);
         }
+
+
+        /// <summary>
+        /// Helper function for setting up server response given a get request.
+        /// </summary>
+        /// <param name="server">Wire mock server to add mock to.</param>
+        /// <param name="path">String path server should respond to.</param>
+        /// <param name="statusCode">Status code server should respond with.</param>
+        /// <param name="contentType">Content type server should return.</param>
+        /// <param name="body">Response body from the request.</param>
+        public static void SetupResponseGivenGetRequest(this WireMockServer server, string path, HttpStatusCode statusCode, string contentType, string body)
+        {
+            server
+                .Given(Request.Create().WithPath("/" + path).UsingGet())
+                .RespondWith(
+                    Response.Create()
+                        .WithStatusCode(statusCode)
+                        .WithHeader("Content-Type", contentType)
+                        .WithBody(body)
+            );
+        }
+
+        /// <summary>
+        /// Setup data calls on mock server
+        /// </summary>
+        /// <param name="server">Wire mock server to setup for data path. </param>
+        /// <param name="content"> [Optional] List of grid emissions data points to return in the mock. </param>
+        /// <remarks> If no content is passed, server mocks a static datapoint. </remarks>
+        public static void SetupDataMock(this WireMockServer server, List<GridEmissionDataPoint>? content = null) {
+            server.SetupResponseGivenGetRequest(Paths.Data, HttpStatusCode.OK, MediaTypeNames.Application.Json, JsonSerializer.Serialize(content ?? defaultDataList));
+
+            }
+        /// <summary>
+        /// Setup forecast calls on mock server
+        /// </summary>
+        /// <param name="server">Wire mock server to setup for forecast path. </param>
+        /// <param name="content"> [Optional] List of forecasts to return in the mock. </param>
+        /// <remarks> If no content is passed, server mocks a static forecast list with a single forecast. </remarks>
+        public static void SetupForecastMock(this WireMockServer server, List<Forecast>? content = null) =>
+            server.SetupResponseGivenGetRequest(Paths.Forecast, HttpStatusCode.OK, MediaTypeNames.Application.Json, JsonSerializer.Serialize(content ?? defaultForecastList));
+
         /// <summary>
         /// Setup balancing authority calls on mock server
         /// </summary>
-        private static void SetupBaMock(WireMockServer server, BalancingAuthority? content = null)
-        {
-            var ba = content ?? new BalancingAuthority()
-            {
-                Id = 12345,
-                Abbreviation = testBA,
-                Name = "Test Balancing Authority"
-            };
-            server.SetupResponseGivenGetRequest(Paths.BalancingAuthorityFromLocation, HttpStatusCode.OK, MediaTypeNames.Application.Json, JsonSerializer.Serialize(ba));
-        }
+        /// <param name="server">Wire mock server to setup for ba path. </param>
+        /// <param name="content"> [Optional] List of forecasts to return in the mock. </param>
+        /// <remarks> If no content is passed, server mocks a static balancing authority. </remarks>
+        public static void SetupBaMock(this WireMockServer server, BalancingAuthority? content = null) =>
+            server.SetupResponseGivenGetRequest(Paths.BalancingAuthorityFromLocation, HttpStatusCode.OK, MediaTypeNames.Application.Json, JsonSerializer.Serialize(content ?? defaultBalancingAuthority));
 
         /// <summary>
         /// Setup logins calls on mock server
         /// </summary>
-        private static void SetupLoginMock(WireMockServer server, LoginResult? content = null)
-        {
-            var login = content ?? new LoginResult { Token = "myDefaultToken123" };
-            server.SetupResponseGivenGetRequest(Paths.Login, HttpStatusCode.OK, MediaTypeNames.Application.Json, JsonSerializer.Serialize(login));
-        }
+        /// <param name="server">Wire mock server to setup for login path. </param>
+        /// <param name="content"> [Optional] List of forecasts to return in the mock. </param>
+        /// <remarks> If no content is passed, server mocks a static login result. </remarks>
+        public static void SetupLoginMock(this WireMockServer server, LoginResult? content = null) =>
+            server.SetupResponseGivenGetRequest(Paths.Login, HttpStatusCode.OK, MediaTypeNames.Application.Json, JsonSerializer.Serialize(content ?? defaultLoginResult));
     }
 }
