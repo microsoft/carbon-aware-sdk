@@ -1,6 +1,7 @@
 namespace CarbonAware.WepApi.IntegrationTests;
 
 using CarbonAware.Tools.WattTimeClient;
+using CarbonAware.Tools.WattTimeClient.Model;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
 using System.Net;
@@ -36,16 +37,15 @@ public class CarbonAwareControllerTests
             //Start WireMock server and point the integration tests to it for mocking outbound calls
             //Only for WattTime Integration Testing
             _server = WireMockServer.Start();
-            _server.SetupWattTimeServerMocks();
+            _server.WattTimeServerSetupMocks();
             string serverUrl = _server.Url!;
 
             Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", serverUrl);
             resetEnvironment = true;
-        }
+       }
 
         _factory = new APIWebApplicationFactory();
         _client = _factory.CreateClient();
-
         }
 
     [Test]
@@ -68,7 +68,8 @@ public class CarbonAwareControllerTests
     [Test]
     public async Task BestLocations_ReturnsOK()
     {
-        //Getting static test data, does not need server initialization
+        // Setup with default data
+        WattTimeServerMocks.SetupDataMock(_server);
         var start = WattTimeServerMocks.GetTestDataPointOffset().DateTime;
         var end = WattTimeServerMocks.GetTestDataPointOffset().DateTime.AddDays(1);
 		var stringUri = $"/emissions/bylocations/best?locations=eastus&time={start:yyyy-MM-dd}&toTime={end:yyyy-MM-dd}";
@@ -81,6 +82,20 @@ public class CarbonAwareControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(resultContent, Is.Not.Null);
+
+        // Setup with specific data point
+        GridEmissionDataPoint christmasDataPoint = WattTimeServerMocks.GetDefaultEmissionsDataPoint();
+        DateTimeOffset christmasTime = new(2021, 12, 25, 0, 0, 0, TimeSpan.Zero);
+        christmasDataPoint.PointTime = christmasTime;
+
+        WattTimeServerMocks.SetupDataMock(_server, new List<GridEmissionDataPoint> { christmasDataPoint });
+        var uri2 = $"/emissions/bylocations/best?locations=eastus&time={christmasTime.DateTime:yyyy-MM-dd}&toTime={christmasTime.DateTime.AddDays(1):yyyy-MM-dd}";
+        var result2 = await _client.GetAsync(uri2);
+        var content2 = await result2.Content.ReadAsStringAsync();
+
+        Assert.That(result2, Is.Not.Null);
+        Assert.That(result2.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(content2, Is.Not.Null);
     }
 
     [OneTimeTearDown]

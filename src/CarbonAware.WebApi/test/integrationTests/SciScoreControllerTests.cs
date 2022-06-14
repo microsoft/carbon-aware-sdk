@@ -33,7 +33,7 @@ public class SciScoreControllerTests
             //Start WireMock server and point the integration tests to it for mocking outbound calls
             //Only for WattTime Integration Testing
             _server = WireMockServer.Start();
-            _server.SetupWattTimeServerMocks();
+            _server.WattTimeServerSetupMocks();
             string serverUrl = _server.Url!;
 
             Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", serverUrl);
@@ -48,6 +48,7 @@ public class SciScoreControllerTests
     [Test]
     public async Task SCI_WithValidData_ReturnsContent()
     {
+        _server.SetupForecastMock();
         //Construct body object and then serialize it with JSONSerializer
         object body = new
         {
