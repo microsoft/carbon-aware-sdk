@@ -11,6 +11,7 @@ namespace CarbonAware.WebApi.IntegrationTests;
 public abstract class IntegrationTestingBase
 {
     internal DataSourceType _dataSource;
+    internal string? _dataSourceEnv;
     internal WebApplicationFactory<Program> _factory;
     protected HttpClient _client;
     protected IDataSourceMocker _dataSourceMocker;
@@ -20,6 +21,7 @@ public abstract class IntegrationTestingBase
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
         _dataSource = dataSource;
+        _dataSourceEnv = null;
         _factory = new WebApplicationFactory<Program>();
     }
 
@@ -27,17 +29,21 @@ public abstract class IntegrationTestingBase
     [OneTimeSetUp]
     public void Setup()
     {
+        _dataSourceEnv = Environment.GetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource");
+
         //Switch between different data sources as needed
         //Each datasource should have an accompanying DataSourceMocker that will perform setup activities
         switch (_dataSource)
         {
             case DataSourceType.JSON:
                 {
+                    Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "JSON");
                     _dataSourceMocker = new JsonDataSourceMocker();
                     break;
                 }
             case DataSourceType.WattTime:
                 {
+                    Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "WattTime");
                     _dataSourceMocker = new WattTimeDataSourceMocker();
                     break;
                 }
@@ -59,5 +65,6 @@ public abstract class IntegrationTestingBase
         _client.Dispose();
         _factory.Dispose();
         _dataSourceMocker.Dispose();
+        Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", _dataSourceEnv);
     }
 }
