@@ -46,17 +46,9 @@ jobs:
         run: dotnet test --filter TestCategory=Unit --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=json        
         working-directory: ${{ env.DOTNET_SRC_DIR }}
       
-      - name: JSON Integration Test + Code Coverage
-        run: dotnet test --filter TestCategory=Integration --no-restore --verbosity normal /p:CollectCoverage=true /p:MergeWith=\"./coverage.json\" /p:CoverletOutputFormat=json     
-        working-directory: ${{ env.DOTNET_SRC_DIR }}
-        env:
-          CarbonAwareVars__CarbonIntensityDataSource: "JSON"
-
       - name: WattTime Integration Test + Code Coverage
         run: dotnet test --filter TestCategory=Integration --no-restore --verbosity normal /p:CollectCoverage=true /p:MergeWith=\"./coverage.json\" /p:CoverletOutputFormat=\"json,opencover\"     
         working-directory: ${{ env.DOTNET_SRC_DIR }}
-        env:
-          CarbonAwareVars__CarbonIntensityDataSource: "WattTime"
       
       - name: Codecov
         uses: codecov/codecov-action@v2
