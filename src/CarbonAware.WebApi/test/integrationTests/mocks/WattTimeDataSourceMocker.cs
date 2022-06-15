@@ -15,14 +15,6 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
     protected WireMockServer _server;
     private readonly object _dataSource = DataSourceType.WattTime;
 
-    public class WireMockWattTimeClient : WattTimeClient
-    {
-        public WireMockWattTimeClient(IHttpClientFactory factory, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log, ActivitySource source, string address) : base(factory, configurationMonitor, log, source)
-        {
-            this.client.BaseAddress = new Uri(address);
-        }
-    }
-
     internal WattTimeDataSourceMocker()
     {
         _server = WireMockServer.Start();
@@ -49,20 +41,10 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
                     configOpt.CarbonIntensityDataSource = _dataSource.ToString();
                 });
 
-                var serviceProvider = services.BuildServiceProvider();
-                using (var scope = serviceProvider.CreateScope())
+                services.Configure<WattTimeClientConfiguration>(configOpt =>
                 {
-                    var scopedServices = scope.ServiceProvider;
-                    services.AddSingleton<IWattTimeClient>(clientServices =>
-                    {
-                        return new WireMockWattTimeClient(
-                            clientServices.GetRequiredService<IHttpClientFactory>(),
-                            clientServices.GetRequiredService<IOptionsMonitor<WattTimeClientConfiguration>>(),
-                            clientServices.GetRequiredService<ILogger<WattTimeClient>>(),
-                            clientServices.GetRequiredService<ActivitySource>(),
-                            _server.Url);
-                    });
-                }
+                    configOpt.BaseUrl = _server.Url;
+                });
             });
         });
     }
