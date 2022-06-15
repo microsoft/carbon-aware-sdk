@@ -31,6 +31,7 @@ public static class EmissionsDataExtensions
     /// <param name="windowSize">The duration of the window to be averaged.</param>
     /// <param name="tickSize">The duration the windows slides forward before calculating the next average.</param>
     /// <returns>An enumerable of emissions data objects, each representing a single average window.</returns>
+    /// <exception cref="InvalidOperationException">Can be thrown if the emissions data is not a continuous, chronological time-series.</exception>
     public static IEnumerable<EmissionsData> RollingAverage(this IEnumerable<EmissionsData> data, TimeSpan windowSize = default, TimeSpan tickSize = default)
     {
         if (data.Count() == 0){ yield break; }
@@ -122,6 +123,7 @@ public static class EmissionsDataExtensions
     /// <param name="startTime">The start time of the data to be averaged.</param>
     /// <param name="endTime">The end time of the data to be averaged.</param>
     /// <returns>The average rating of the data for the specified time period</returns>
+    /// <exception cref="InvalidOperationException">Can be thrown if the emissions data is not a continuous, chronological time-series.</exception>
     public static double AverageOverPeriod(this IEnumerable<EmissionsData> data, DateTimeOffset startTime, DateTimeOffset endTime)
     {
         double rating = 0.0;
