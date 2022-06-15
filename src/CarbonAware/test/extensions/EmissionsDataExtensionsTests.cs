@@ -170,7 +170,8 @@ public class EmissionsDataExtensionsTests
         var expectedErrorMessage = $"Previous point covered through {firstTime+duration}; Current point starts at {secondTime}.";
         
         // Act & Assert
-        InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => discontinuousData.AverageOverPeriod(startPeriod, endPeriod));
-        StringAssert.Contains(expectedErrorMessage, ex.Message);
+        InvalidOperationException? ex = Assert.Throws<InvalidOperationException>(() => discontinuousData.AverageOverPeriod(startPeriod, endPeriod));
+        var message = ex?.Message;
+        StringAssert.Contains(expectedErrorMessage, message);
     }
 }
