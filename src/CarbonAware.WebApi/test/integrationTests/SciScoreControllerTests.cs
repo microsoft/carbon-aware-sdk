@@ -1,14 +1,12 @@
 namespace CarbonAware.WepApi.IntegrationTests;
 
-using System.Net;
-using NUnit.Framework;
-using System.Text.Json;
-using System.Net.Http.Headers;
-using WireMock.Server;
-using CarbonAware.Tools.WattTimeClient;
-using CarbonAware.WebApi.IntegrationTests;
-using System.Net.Mime;
 using CarbonAware.DataSources.Configuration;
+using CarbonAware.WebApi.IntegrationTests;
+using NUnit.Framework;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Mime;
+using System.Text.Json;
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
@@ -19,17 +17,13 @@ using CarbonAware.DataSources.Configuration;
 public class SciScoreControllerTests : IntegrationTestingBase
 {
     private string marginalCarbonIntensityURI = "/sci-scores/marginal-carbon-intensity";
-
 	public SciScoreControllerTests(DataSourceType dataSource) : base(dataSource) {}
 
     [TestCase("2022-1-1", 1, "eastus")]
     public async Task SCI_WithValidData_ReturnsContent(DateTime start, int offset, string location)
     {
         var end = start.AddDays(offset);
-
-
         _dataSourceMocker.SetupDataMock(start, end, location);
-
         string timeInterval = start.ToUniversalTime().ToString("O") + "/" + end.ToUniversalTime().ToString("O");
 
         //Construct body object and then serialize it with JSONSerializer

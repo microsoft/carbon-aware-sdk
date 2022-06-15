@@ -44,7 +44,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     public async Task BestLocations_ReturnsOK(DateTime start, int offset, string location)
         {
         var end = start.AddDays(offset);
-
+        
+        //Sets up any data endpoints needed for mocking purposes
         _dataSourceMocker.SetupDataMock(start, end, location);
 
         //Call the private method to construct with parameters
@@ -57,20 +58,6 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(resultContent, Is.Not.Null);
-
-        //// Setup with specific data point
-        //GridEmissionDataPoint christmasDataPoint = WattTimeServerMocks.GetDefaultEmissionsDataPoint();
-        //DateTimeOffset christmasTime = new(2021, 12, 25, 0, 0, 0, TimeSpan.Zero);
-        //christmasDataPoint.PointTime = christmasTime;
-
-        //WattTimeServerMocks.SetupDataMock(_server, new List<GridEmissionDataPoint> { christmasDataPoint });
-        //var uri2 = $"/emissions/bylocations/best?locations=eastus&time={christmasTime.DateTime:yyyy-MM-dd}&toTime={christmasTime.DateTime.AddDays(1):yyyy-MM-dd}";
-        //var result2 = await _client.GetAsync(uri2);
-        //var content2 = await result2.Content.ReadAsStringAsync();
-
-        //Assert.That(result2, Is.Not.Null);
-        //Assert.That(result2.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        //Assert.That(content2, Is.Not.Null);
         }
 
     private string ConstructBestLocationsURI(string location, DateTime start, DateTime end)

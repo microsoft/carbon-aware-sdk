@@ -26,12 +26,7 @@ namespace CarbonAware.WebApi.IntegrationTests;
         internal WattTimeDataSourceMocker()
 		{
 		    _server = WireMockServer.Start();
-        }
-
-        public void InitializeMocks()
-        {
-        WattTimeServerMocks.WattTimeServerSetupMocks(_server);
-
+            WattTimeServerMocks.WattTimeServerSetupMocks(_server);
         }
 
 		public void SetupDataMock(DateTime start, DateTime end, string location)
@@ -72,4 +67,8 @@ namespace CarbonAware.WebApi.IntegrationTests;
         });
         }
 
+        public void Dispose()
+        {
+            _server.Dispose();
+		}
     }

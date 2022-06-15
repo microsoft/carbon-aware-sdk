@@ -13,7 +13,24 @@ namespace CarbonAware.WebApi.IntegrationTests;
 /// </summary>
 public interface IDataSourceMocker
 {
-	public abstract void InitializeMocks();
+	/// <summary>
+	/// This method overrides configuration, service and builder settings in a web app factory
+	/// Used to add singletons or change config settings as needed for the datasource
+	/// </summary>
+	/// <param name="factory">The WebAppFactory passed in that will be overriden/changed</param>
+	/// <returns></returns>
 	public WebApplicationFactory<Program> overrideWebAppFactory(WebApplicationFactory<Program> factory);  
+	
+	/// <summary>
+	/// This sets up a data endpoint with certain parameters so that it can be pinged.
+	/// </summary>
+	/// <param name="start">The Start of the time interval</param>
+	/// <param name="end">The end of the time interval</param>
+	/// <param name="location">Which location the server is looking at.</param>
 	public abstract void SetupDataMock(DateTime start, DateTime end, string location);
-};
+
+	/// <summary>
+	/// Disposal method
+	/// </summary>
+	void Dispose();
+	}

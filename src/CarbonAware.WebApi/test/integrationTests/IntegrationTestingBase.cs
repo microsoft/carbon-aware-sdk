@@ -4,6 +4,10 @@ using NUnit.Framework;
 
 namespace CarbonAware.WebApi.IntegrationTests;
 
+/// <summary>
+/// A base class that does all the common setup for the Integration Testing
+/// Overrides WebAPI factory by switching out different configurations via _datasource
+/// </summary>
 public abstract class IntegrationTestingBase
 {
     internal DataSourceType _dataSource;
@@ -23,10 +27,12 @@ public abstract class IntegrationTestingBase
     [OneTimeSetUp]
     public void Setup()
     {
+        //Switch between different data sources as needed
+        //Each datasource should have an accompanying DataSourceMocker that will perform setup activities
         switch (_dataSource)
         {
             case DataSourceType.JSON:
-            {
+            { 
                 _dataSourceMocker = new JsonDataSourceMocker();
                 break;
             }
@@ -41,6 +47,8 @@ public abstract class IntegrationTestingBase
             }
         }
 
+        //Setup the WebAppFactory with custom settings as required by the datasource
+        //For instance, overriding specific clients with new URLs.
         _factory = _dataSourceMocker.overrideWebAppFactory(_factory);
         _client = _factory.CreateClient();
     }
@@ -50,5 +58,6 @@ public abstract class IntegrationTestingBase
     {
         _client.Dispose();
         _factory.Dispose();
+        _dataSourceMocker.Dispose();
     }
 }
