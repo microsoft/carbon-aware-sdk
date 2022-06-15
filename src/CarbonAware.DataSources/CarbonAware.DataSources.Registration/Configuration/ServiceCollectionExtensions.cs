@@ -16,19 +16,19 @@ public static class ServiceCollectionExtensions
         switch (dataSourceType)
         {
             case DataSourceType.JSON:
-            {
+                {
                     services.AddJsonDataSourceService();
                     break;
-            }
+                }
             case DataSourceType.WattTime:
-            {
+                {
                     services.AddWattTimeDataSourceService(configuration);
                     break;
-            }
+                }
             case DataSourceType.None:
-            {
-                throw new NotSupportedException($"DataSourceType {dataSourceType.ToString()} not supported");
-            }
+                {
+                    throw new NotSupportedException($"DataSourceType {dataSourceType.ToString()} not supported");
+                }
         }
     }
     private static DataSourceType GetDataSourceTypeFromValue(string? srcVal)

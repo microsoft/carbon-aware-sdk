@@ -2,15 +2,15 @@
 
 namespace CarbonAware.WebApi.IntegrationTests;
 public class JsonDataSourceMocker : IDataSourceMocker
-	{
-	internal JsonDataSourceMocker() { }
+{
+    internal JsonDataSourceMocker() { }
 
-	public void SetupDataMock(DateTime start, DateTime end, string location) { }
+    public void SetupDataMock(DateTime start, DateTime end, string location) { }
 
-	public WebApplicationFactory<Program> overrideWebAppFactory(WebApplicationFactory<Program> factory)
-		{
-		return factory;
-		}
+    public WebApplicationFactory<Program> overrideWebAppFactory(WebApplicationFactory<Program> factory)
+    {
+        return factory;
+    }
 
-	public void Dispose() { }
-	}
+    public void Dispose() { }
+}

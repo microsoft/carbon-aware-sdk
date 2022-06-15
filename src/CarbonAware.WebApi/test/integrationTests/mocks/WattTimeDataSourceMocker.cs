@@ -11,64 +11,64 @@ using WireMock.Server;
 
 namespace CarbonAware.WebApi.IntegrationTests;
 public class WattTimeDataSourceMocker : IDataSourceMocker
-	{
-	protected WireMockServer _server;
-	private readonly object _dataSource = DataSourceType.WattTime;
+{
+    protected WireMockServer _server;
+    private readonly object _dataSource = DataSourceType.WattTime;
 
-	public class WireMockWattTimeClient : WattTimeClient
-		{
-		public WireMockWattTimeClient(IHttpClientFactory factory, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log, ActivitySource source, string address) : base(factory, configurationMonitor, log, source)
-			{
-			this.client.BaseAddress = new Uri(address);
-			}
-		}
+    public class WireMockWattTimeClient : WattTimeClient
+    {
+        public WireMockWattTimeClient(IHttpClientFactory factory, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log, ActivitySource source, string address) : base(factory, configurationMonitor, log, source)
+        {
+            this.client.BaseAddress = new Uri(address);
+        }
+    }
 
-	internal WattTimeDataSourceMocker()
-		{
-		_server = WireMockServer.Start();
-		WattTimeServerMocks.WattTimeServerSetupMocks(_server);
-		}
+    internal WattTimeDataSourceMocker()
+    {
+        _server = WireMockServer.Start();
+        WattTimeServerMocks.WattTimeServerSetupMocks(_server);
+    }
 
-	public void SetupDataMock(DateTime start, DateTime end, string location)
-		{
-		GridEmissionDataPoint newDataPoint = WattTimeServerMocks.GetDefaultEmissionsDataPoint();
-		DateTimeOffset newTime = new(start);
-		newDataPoint.PointTime = newTime;
+    public void SetupDataMock(DateTime start, DateTime end, string location)
+    {
+        GridEmissionDataPoint newDataPoint = WattTimeServerMocks.GetDefaultEmissionsDataPoint();
+        DateTimeOffset newTime = new(start);
+        newDataPoint.PointTime = newTime;
 
-		WattTimeServerMocks.SetupDataMock(_server, new List<GridEmissionDataPoint> { newDataPoint });
-		}
+        WattTimeServerMocks.SetupDataMock(_server, new List<GridEmissionDataPoint> { newDataPoint });
+    }
 
-	public WebApplicationFactory<Program> overrideWebAppFactory(WebApplicationFactory<Program> factory)
-		{
-		return factory.WithWebHostBuilder(builder =>
-		{
-			builder.ConfigureServices(services =>
-			{
-				services.Configure<CarbonAwareVariablesConfiguration>(configOpt =>
-				{
-					configOpt.CarbonIntensityDataSource = _dataSource.ToString();
-				});
+    public WebApplicationFactory<Program> overrideWebAppFactory(WebApplicationFactory<Program> factory)
+    {
+        return factory.WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureServices(services =>
+            {
+                services.Configure<CarbonAwareVariablesConfiguration>(configOpt =>
+                {
+                    configOpt.CarbonIntensityDataSource = _dataSource.ToString();
+                });
 
-				var serviceProvider = services.BuildServiceProvider();
-				using (var scope = serviceProvider.CreateScope())
-					{
-					var scopedServices = scope.ServiceProvider;
-					services.AddSingleton<IWattTimeClient>(clientServices =>
-					{
-						return new WireMockWattTimeClient(
-							clientServices.GetRequiredService<IHttpClientFactory>(),
-							clientServices.GetRequiredService<IOptionsMonitor<WattTimeClientConfiguration>>(),
-							clientServices.GetRequiredService<ILogger<WattTimeClient>>(),
-							clientServices.GetRequiredService<ActivitySource>(),
-							_server.Url);
-					});
-					}
-			});
-		});
-		}
+                var serviceProvider = services.BuildServiceProvider();
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    var scopedServices = scope.ServiceProvider;
+                    services.AddSingleton<IWattTimeClient>(clientServices =>
+                    {
+                        return new WireMockWattTimeClient(
+                            clientServices.GetRequiredService<IHttpClientFactory>(),
+                            clientServices.GetRequiredService<IOptionsMonitor<WattTimeClientConfiguration>>(),
+                            clientServices.GetRequiredService<ILogger<WattTimeClient>>(),
+                            clientServices.GetRequiredService<ActivitySource>(),
+                            _server.Url);
+                    });
+                }
+            });
+        });
+    }
 
-	public void Dispose()
-		{
-		_server.Dispose();
-		}
-	}
+    public void Dispose()
+    {
+        _server.Dispose();
+    }
+}
