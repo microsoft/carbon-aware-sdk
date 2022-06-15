@@ -27,6 +27,7 @@ public class SciScoreControllerTests : IntegrationTestingBase
     {
         var end = start.AddDays(offset);
 
+
         _dataSourceMocker.SetupDataMock(start, end, location);
 
         string timeInterval = start.ToUniversalTime().ToString("O") + "/" + end.ToUniversalTime().ToString("O");
