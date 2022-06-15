@@ -4,9 +4,6 @@ using CarbonAware.Tools.WattTimeClient.Configuration;
 using CarbonAware.Tools.WattTimeClient.Model;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System.Diagnostics;
 using WireMock.Server;
 
 namespace CarbonAware.WebApi.IntegrationTests;
