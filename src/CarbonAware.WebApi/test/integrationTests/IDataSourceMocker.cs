@@ -12,15 +12,15 @@ namespace CarbonAware.WebApi.IntegrationTests;
 /// Each method corresponds to the dataset needed by a different integration test
 /// </summary>
 public interface IDataSourceMocker
-{
+	{
 	/// <summary>
 	/// This method overrides configuration, service and builder settings in a web app factory
 	/// Used to add singletons or change config settings as needed for the datasource
 	/// </summary>
 	/// <param name="factory">The WebAppFactory passed in that will be overriden/changed</param>
 	/// <returns></returns>
-	public WebApplicationFactory<Program> overrideWebAppFactory(WebApplicationFactory<Program> factory);  
-	
+	public WebApplicationFactory<Program> overrideWebAppFactory(WebApplicationFactory<Program> factory);
+
 	/// <summary>
 	/// This sets up a data endpoint with certain parameters so that it can be pinged.
 	/// </summary>
