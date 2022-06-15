@@ -7,46 +7,30 @@ using System.Net.Http.Headers;
 using WireMock.Server;
 using CarbonAware.Tools.WattTimeClient;
 using CarbonAware.WebApi.IntegrationTests;
+using System.Net.Mime;
+using CarbonAware.DataSources.Configuration;
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
 /// including empty responses and exceptions.
 /// </summary>
-[TestFixture]
+[TestFixture(DataSourceType.JSON)]
+[TestFixture(DataSourceType.WattTime)]
 public class SciScoreControllerTests : IntegrationTestingBase
 {
-    private bool resetEnvironment = false;
-
     private string marginalCarbonIntensityURI = "/sci-scores/marginal-carbon-intensity";
 
-    [OneTimeSetUp]
-    public void Setup()
+	public SciScoreControllerTests(DataSourceType dataSource) : base(dataSource) {}
+
+    [TestCase("2022-1-1", 1, "eastus")]
+    public async Task SCI_WithValidData_ReturnsContent(DateTime start, int offset, string location)
     {
-        //Defaults to JSON Integration Testing
-        //WattTime can be tested by uncommenting the line below or setting an env variable
-        //Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "WattTime");
+        var end = start.AddDays(offset);
 
-        if (Environment.GetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource") == "WattTime")
-        {
-            //Start WireMock server and point the integration tests to it for mocking outbound calls
-            //Only for WattTime Integration Testing
-            _server = WireMockServer.Start();
-            _server.WattTimeServerSetupMocks();
-            string serverUrl = _server.Url!;
+        _dataSourceMocker.SetupDataMock(start, end, location);
 
-            Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", serverUrl);
-            resetEnvironment = true;
-        }
+        string timeInterval = start.ToUniversalTime().ToString("O") + "/" + end.ToUniversalTime().ToString("O");
 
-        _factory = new CarbonAwareWebAppFactory();
-        _client = _factory.CreateClient();
-
-        }
-
-    [Test]
-    public async Task SCI_WithValidData_ReturnsContent()
-    {
-        _server.SetupForecastMock();
         //Construct body object and then serialize it with JSONSerializer
         object body = new
         {
@@ -54,15 +38,15 @@ public class SciScoreControllerTests : IntegrationTestingBase
             {
                 locationType = "CloudProvider",
                 providerName = "Azure",
-                regionName = "westus2"
+                regionName = location
             },
-            timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z"
+            timeInterval = timeInterval
         };
 
         var jsonBody = JsonSerializer.Serialize(body);
         StringContent _content = new StringContent(jsonBody);
 
-        var mediaType = new MediaTypeHeaderValue("application/json");
+        var mediaType = new MediaTypeHeaderValue(MediaTypeNames.Application.Json);
         _content.Headers.ContentType = mediaType;
 
         var result = await _client.PostAsync(marginalCarbonIntensityURI, _content);
@@ -93,18 +77,5 @@ public class SciScoreControllerTests : IntegrationTestingBase
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-    }
-
-    [OneTimeTearDown]
-    public void TearDown()
-    {
-        if(resetEnvironment)
-        {
-            Environment.SetEnvironmentVariable("WattTimeClient__baseUrl", "");
-            _server.Stop();
-        }
-
-        _client.Dispose();
-        _factory.Dispose();
     }
 }
