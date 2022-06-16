@@ -59,6 +59,18 @@ public abstract class IntegrationTestingBase
         _client = _factory.CreateClient();
     }
 
+    [SetUp]
+    public void SetupTests()
+    {
+        _dataSourceMocker.Initialize();
+    }
+
+    [TearDown]
+    public void ResetTests()
+    {
+        _dataSourceMocker.Reset();
+    }
+
     [OneTimeTearDown]
     public void TearDown()
     {

@@ -15,7 +15,7 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
     internal WattTimeDataSourceMocker()
     {
         _server = WireMockServer.Start();
-        WattTimeServerMocks.WattTimeServerSetupMocks(_server);
+        Initialize();
     }
 
     public void SetupDataMock(DateTime start, DateTime end, string location)
@@ -44,6 +44,16 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
                 });
             });
         });
+    }
+
+    public void Initialize()
+    {
+        WattTimeServerMocks.WattTimeServerSetupMocks(_server);
+    }
+
+    public void Reset()
+    {
+        _server.Reset();
     }
 
     public void Dispose()

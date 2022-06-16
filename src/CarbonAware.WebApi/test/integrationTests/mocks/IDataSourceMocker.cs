@@ -30,6 +30,16 @@ public interface IDataSourceMocker
     public abstract void SetupDataMock(DateTime start, DateTime end, string location);
 
     /// <summary>
+    /// Initializes the DataSourceMocker with clean setup
+    /// </summary>
+    public abstract void Reset();
+
+    /// <summary>
+    /// Resets the DataSourceMocker and removes all stubs
+    /// </summary>
+    public abstract void Initialize();
+
+    /// <summary>
     /// Disposal method
     /// </summary>
     void Dispose();
