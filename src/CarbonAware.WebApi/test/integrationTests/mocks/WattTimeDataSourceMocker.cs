@@ -32,11 +32,6 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
         {
             builder.ConfigureServices(services =>
             {
-                services.Configure<CarbonAwareVariablesConfiguration>(configOpt =>
-                {
-                    configOpt.CarbonIntensityDataSource = _dataSource.ToString();
-                });
-
                 services.Configure<WattTimeClientConfiguration>(configOpt =>
                 {
                     configOpt.BaseUrl = _server.Url;
