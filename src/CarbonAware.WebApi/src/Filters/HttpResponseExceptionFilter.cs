@@ -45,7 +45,13 @@ public class HttpResponseExceptionFilter : IExceptionFilter
                     _logger.LogError(context.Exception, "500 Error: Unhandled exception");
                 }
                 
-                response = new HttpValidationProblemDetails()
+                string[] data = new string[1];
+                data[0] = context.Exception.Message;
+                var dic = new Dictionary<string, string[]>() {
+                    { "messsage", data }
+                };
+
+                response = new HttpValidationProblemDetails(dic)
                 {
                     Title = exceptionType,
                     Status = statusCode,

@@ -18,7 +18,10 @@
         "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
       },
       "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "CarbonAwareVars__CarbonIntensityDataSource": "WattTime",
+        "WattTimeClient__Username": "zakimdevuser",
+        "WattTimeClient__Password": "dcVdIGgYljp%26Qa%23&"
       },
       "sourceFileMap": {
         "/Views": "${workspaceFolder}/Views"
