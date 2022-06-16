@@ -53,7 +53,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
     public async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(IEnumerable<Location> locations, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
     {
         this.Logger.LogInformation("Getting carbon intensity for locations {locations} for period {periodStartTime} to {periodEndTime}.", locations, periodStartTime, periodEndTime);
-        List<EmissionsData> result = new();
+        List<EmissionsData> result = new ();
         foreach (var location in locations)
         {
             IEnumerable<EmissionsData> interimResult = await GetCarbonIntensityAsync(location, periodStartTime, periodEndTime);
@@ -61,7 +61,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         }
         return result;
     }
-
+    
     /// <inheritdoc />
     public async Task<EmissionsForecast> GetCurrentCarbonIntensityForecastAsync(Location location)
     {
@@ -123,13 +123,13 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
     private IEnumerable<EmissionsData> ConvertToEmissionsData(IEnumerable<GridEmissionDataPoint> data)
     {
         // Linq statement to convert WattTime forecast data into EmissionsData for the CarbonAware SDK.
-        return data.Select(e => new EmissionsData()
-        {
-            Location = e.BalancingAuthorityAbbreviation,
-            Rating = ConvertMoerToGramsPerKilowattHour(e.Value),
-            Time = e.PointTime,
-            Duration = FrequencyToTimeSpan(e.Frequency)
-        });
+        return data.Select(e => new EmissionsData() 
+                    { 
+                        Location = e.BalancingAuthorityAbbreviation, 
+                        Rating = ConvertMoerToGramsPerKilowattHour(e.Value), 
+                        Time = e.PointTime,
+                        Duration = FrequencyToTimeSpan(e.Frequency)
+                    });
     }
 
     private TimeSpan GetDurationFromGridEmissionDataPoints(GridEmissionDataPoint? firstPoint, GridEmissionDataPoint? secondPoint)
@@ -153,7 +153,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
             var geolocation = await this.LocationSource.ToGeopositionLocationAsync(location);
             balancingAuthority = await WattTimeClient.GetBalancingAuthorityAsync(geolocation.Latitude.ToString() ?? "", geolocation.Longitude.ToString() ?? "");
         }
-        catch (Exception ex) when (ex is LocationConversionException || ex is WattTimeClientHttpException)
+        catch(Exception ex) when (ex is LocationConversionException ||  ex is WattTimeClientHttpException)
         {
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             Logger.LogError(ex, "Failed to convert the location {location} into a Balancying Authority.", location);

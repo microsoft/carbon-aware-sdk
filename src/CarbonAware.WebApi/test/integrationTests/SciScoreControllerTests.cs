@@ -2,10 +2,9 @@ namespace CarbonAware.WepApi.IntegrationTests;
 
 using CarbonAware.DataSources.Configuration;
 using CarbonAware.WebApi.IntegrationTests;
+using CarbonAware.WebApi.Models;
 using NUnit.Framework;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Mime;
 using System.Text.Json;
 
 /// <summary>
@@ -19,14 +18,14 @@ public class SciScoreControllerTests : IntegrationTestingBase
     private string marginalCarbonIntensityURI = "/sci-scores/marginal-carbon-intensity";
     public SciScoreControllerTests(DataSourceType dataSource) : base(dataSource) { }
 
-    [TestCase("2022-1-1", 1, "eastus")]
-    public async Task SCI_WithValidData_ReturnsContent(DateTime start, int offset, string location)
+
+    [TestCase("2022-1-1", "2022-1-2", "eastus", HttpStatusCode.OK)]
+    [TestCase("2021-1-1", "2022-1-2", "westus", HttpStatusCode.OK)]
+    public async Task SCI_AcceptsValidData_ReturnsContent(DateTimeOffset start, DateTimeOffset end, string location, HttpStatusCode expectedCode)
     {
-        var end = start.AddDays(offset);
         _dataSourceMocker.SetupDataMock(start, end, location);
         string timeInterval = start.ToUniversalTime().ToString("O") + "/" + end.ToUniversalTime().ToString("O");
 
-        //Construct body object and then serialize it with JSONSerializer
         object body = new
         {
             location = new
@@ -38,39 +37,38 @@ public class SciScoreControllerTests : IntegrationTestingBase
             timeInterval = timeInterval
         };
 
-        var jsonBody = JsonSerializer.Serialize(body);
-        StringContent _content = new StringContent(jsonBody);
-
-        var mediaType = new MediaTypeHeaderValue(MediaTypeNames.Application.Json);
-        _content.Headers.ContentType = mediaType;
-
-        var result = await _client.PostAsync(marginalCarbonIntensityURI, _content);
-        var resultContent = await result.Content.ReadAsStringAsync();
+        var result = await PostJSONBodyToURI(body, marginalCarbonIntensityURI);
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.StatusCode, Is.EqualTo(expectedCode));
+
+        var resultContent = JsonSerializer.Deserialize<SciScore>(await result.Content.ReadAsStringAsync());
         Assert.That(resultContent, Is.Not.Null);
+        Assert.That(resultContent.MarginalCarbonIntensityValue, Is.Not.Null);
+        Assert.That(resultContent.MarginalCarbonIntensityValue, Is.GreaterThanOrEqualTo(0));
     }
 
-    [Test]
-    public async Task SCI_WithInvalidData_ReturnsBadRequest()
+    [TestCase("2022-1-1", "2022-1-2", "eastus", HttpStatusCode.BadRequest)]
+    [TestCase("2021-1-1", "2022-1-2", "westus", HttpStatusCode.BadRequest)]
+    public async Task SCI_RejectsInvalidData_ReturnsNotFound(DateTimeOffset start, DateTimeOffset end, string location, HttpStatusCode expectedCode)
     {
+        _dataSourceMocker.SetupDataMock(start, end, location);
+        string timeInterval = start.ToUniversalTime().ToString("O") + "/" + end.ToUniversalTime().ToString("O");
+
         object body = new
         {
-            location = new { },
-            timeInterval = "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z"
+            location = new {},
+            timeInterval = timeInterval
         };
 
-        var jsonBody = JsonSerializer.Serialize(body);
-        StringContent _content = new StringContent(jsonBody);
-
-        var mediaType = new MediaTypeHeaderValue("application/json");
-        _content.Headers.ContentType = mediaType;
-
-        var result = await _client.PostAsync(marginalCarbonIntensityURI, _content);
-        var resultContent = await result.Content.ReadAsStringAsync();
-
+        var result = await PostJSONBodyToURI(body, marginalCarbonIntensityURI);
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        Assert.That(result.StatusCode, Is.EqualTo(expectedCode));
+
+        var resultContent = JsonSerializer.Deserialize<SciScore>(await result.Content.ReadAsStringAsync());
+        Assert.That(resultContent, Is.Not.Null);
+        Assert.That(resultContent.MarginalCarbonIntensityValue, Is.Null);
     }
+
+    
 }

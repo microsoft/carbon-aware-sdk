@@ -4,7 +4,6 @@ using CarbonAware.DataSources.Configuration;
 using CarbonAware.WebApi.IntegrationTests;
 using NUnit.Framework;
 using System.Net;
-using System.Web;
 
 
 /// <summary>
@@ -39,17 +38,15 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     }
 
     //ISO8601: YYYY-MM-DD
-    [TestCase("2022-1-1", 1, "eastus")]
-    [TestCase("2021-12-25", 1, "westus")]
-    public async Task BestLocations_ReturnsOK(DateTime start, int offset, string location)
+    [TestCase("2022-1-1", "2022-1-2", "eastus")]
+    [TestCase("2021-12-25", "2021-12-26", "westus")]
+    public async Task BestLocations_ReturnsOK(DateTimeOffset start, DateTimeOffset end, string location)
     {
-        var end = start.AddDays(offset);
-
         //Sets up any data endpoints needed for mocking purposes
         _dataSourceMocker.SetupDataMock(start, end, location);
 
         //Call the private method to construct with parameters
-        var endpointURI = ConstructBestLocationsURI(location, start, end);
+        var endpointURI = ConstructDateQueryURI(bestLocationsURI, location, start, end);
 
         //Get response and response content
         var result = await _client.GetAsync(endpointURI);
@@ -58,28 +55,5 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(resultContent, Is.Not.Null);
-    }
-
-    private string ConstructBestLocationsURI(string location, DateTime start, DateTime end)
-    {
-        // Use HTTP Query builder
-        var builder = new UriBuilder();
-
-        //Add all query parameters
-        var query = HttpUtility.ParseQueryString(builder.Query);
-        query["locations"] = location;
-        query["time"] = $"{start:yyyy-MM-dd}";
-        query["toTime"] = $"{end:yyyy-MM-dd}";
-
-        //Generate final query string
-        builder.Query = query.ToString();
-        builder.Path = bestLocationsURI;
-
-        //These values are blank as they are set by the SDK
-        builder.Scheme = "";
-        builder.Port = -1;
-        builder.Host = "";
-
-        return builder.ToString();
     }
 }

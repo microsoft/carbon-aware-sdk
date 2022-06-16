@@ -18,16 +18,15 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
         Initialize();
     }
 
-    public void SetupDataMock(DateTime start, DateTime end, string location)
+    public void SetupDataMock(DateTimeOffset start, DateTimeOffset end, string location)
     {
         GridEmissionDataPoint newDataPoint = WattTimeServerMocks.GetDefaultEmissionsDataPoint();
-        DateTimeOffset newTime = new(start);
-        newDataPoint.PointTime = newTime;
+        newDataPoint.PointTime = start;
 
         WattTimeServerMocks.SetupDataMock(_server, new List<GridEmissionDataPoint> { newDataPoint });
     }
 
-    public WebApplicationFactory<Program> overrideWebAppFactory(WebApplicationFactory<Program> factory)
+    public WebApplicationFactory<Program> OverrideWebAppFactory(WebApplicationFactory<Program> factory)
     {
         return factory.WithWebHostBuilder(builder =>
         {

@@ -87,7 +87,7 @@ namespace CarbonAware.Tools.WattTimeClient
         /// <param name="statusCode">Status code server should respond with.</param>
         /// <param name="contentType">Content type server should return.</param>
         /// <param name="body">Response body from the request.</param>
-        private static void SetupResponseGivenGetRequest(this WireMockServer server, string path, HttpStatusCode statusCode, string contentType, string body)
+        private static void SetupResponseGivenGetRequest(this WireMockServer server, string path, string body, HttpStatusCode statusCode = HttpStatusCode.OK, string contentType = MediaTypeNames.Application.Json)
         {
             server
                 .Given(Request.Create().WithPath("/" + path).UsingGet())
@@ -107,7 +107,7 @@ namespace CarbonAware.Tools.WattTimeClient
         /// <remarks> If no content is passed, server mocks a static datapoint. </remarks>
         public static void SetupDataMock(this WireMockServer server, List<GridEmissionDataPoint>? content = null)
         {
-            server.SetupResponseGivenGetRequest(Paths.Data, HttpStatusCode.OK, MediaTypeNames.Application.Json, JsonSerializer.Serialize(content ?? defaultDataList));
+            server.SetupResponseGivenGetRequest(Paths.Data, JsonSerializer.Serialize(content ?? defaultDataList));
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace CarbonAware.Tools.WattTimeClient
         /// <param name="content"> [Optional] List of forecasts to return in the mock. </param>
         /// <remarks> If no content is passed, server mocks a static forecast list with a single forecast. </remarks>
         public static void SetupForecastMock(this WireMockServer server, List<Forecast>? content = null) =>
-            server.SetupResponseGivenGetRequest(Paths.Forecast, HttpStatusCode.OK, MediaTypeNames.Application.Json, JsonSerializer.Serialize(content ?? defaultForecastList));
+            server.SetupResponseGivenGetRequest(Paths.Forecast, JsonSerializer.Serialize(content ?? defaultForecastList));
 
         /// <summary>
         /// Setup balancing authority calls on mock server
@@ -126,7 +126,7 @@ namespace CarbonAware.Tools.WattTimeClient
         /// <param name="content"> [Optional] List of forecasts to return in the mock. </param>
         /// <remarks> If no content is passed, server mocks a static balancing authority. </remarks>
         private static void SetupBaMock(this WireMockServer server, BalancingAuthority? content = null) =>
-            server.SetupResponseGivenGetRequest(Paths.BalancingAuthorityFromLocation, HttpStatusCode.OK, MediaTypeNames.Application.Json, JsonSerializer.Serialize(content ?? defaultBalancingAuthority));
+            server.SetupResponseGivenGetRequest(Paths.BalancingAuthorityFromLocation, JsonSerializer.Serialize(content ?? defaultBalancingAuthority));
 
         /// <summary>
         /// Setup logins calls on mock server
@@ -135,6 +135,6 @@ namespace CarbonAware.Tools.WattTimeClient
         /// <param name="content"> [Optional] List of forecasts to return in the mock. </param>
         /// <remarks> If no content is passed, server mocks a static login result. </remarks>
         private static void SetupLoginMock(this WireMockServer server, LoginResult? content = null) =>
-            server.SetupResponseGivenGetRequest(Paths.Login, HttpStatusCode.OK, MediaTypeNames.Application.Json, JsonSerializer.Serialize(content ?? defaultLoginResult));
+            server.SetupResponseGivenGetRequest(Paths.Login, JsonSerializer.Serialize(content ?? defaultLoginResult));
     }
 }

@@ -5,9 +5,9 @@ public class JsonDataSourceMocker : IDataSourceMocker
 {
     internal JsonDataSourceMocker() { }
 
-    public void SetupDataMock(DateTime start, DateTime end, string location) { }
+    public void SetupDataMock(DateTimeOffset start, DateTimeOffset end, string location) { }
 
-    public WebApplicationFactory<Program> overrideWebAppFactory(WebApplicationFactory<Program> factory)
+    public WebApplicationFactory<Program> OverrideWebAppFactory(WebApplicationFactory<Program> factory)
     {
         return factory;
     }

@@ -1,6 +1,10 @@
 ﻿using CarbonAware.DataSources.Configuration;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
+using System.Net.Http.Headers;
+using System.Net.Mime;
+using System.Text.Json;
+using System.Web;
 
 namespace CarbonAware.WebApi.IntegrationTests;
 
@@ -25,6 +29,40 @@ public abstract class IntegrationTestingBase
         _factory = new WebApplicationFactory<Program>();
     }
 
+
+    public string ConstructDateQueryURI(string Url, string location, DateTimeOffset start, DateTimeOffset end)
+    {
+        // Use HTTP Query builder
+        var builder = new UriBuilder();
+
+        //Add all query parameters
+        var query = HttpUtility.ParseQueryString(builder.Query);
+        query["locations"] = location;
+        query["time"] = $"{start:yyyy-MM-dd}";
+        query["toTime"] = $"{end:yyyy-MM-dd}";
+
+        //Generate final query string
+        builder.Query = query.ToString();
+        builder.Path = Url;
+
+        //These values are blank as they are set by the SDK
+        builder.Scheme = "";
+        builder.Port = -1;
+        builder.Host = "";
+
+        return builder.ToString();
+    }
+
+    public async Task<HttpResponseMessage?> PostJSONBodyToURI(object body, string URI)
+    {
+        var jsonBody = JsonSerializer.Serialize(body);
+        StringContent _content = new StringContent(jsonBody);
+
+        var mediaType = new MediaTypeHeaderValue(MediaTypeNames.Application.Json);
+        _content.Headers.ContentType = mediaType;
+
+        return await _client.PostAsync(URI, _content);
+    }
 
     [OneTimeSetUp]
     public void Setup()
@@ -55,7 +93,7 @@ public abstract class IntegrationTestingBase
 
         //Setup the WebAppFactory with custom settings as required by the datasource
         //For instance, overriding specific clients with new URLs.
-        _factory = _dataSourceMocker.overrideWebAppFactory(_factory);
+        _factory = _dataSourceMocker.OverrideWebAppFactory(_factory);
         _client = _factory.CreateClient();
     }
 
