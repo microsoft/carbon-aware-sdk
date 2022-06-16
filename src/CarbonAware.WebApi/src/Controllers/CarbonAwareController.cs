@@ -119,7 +119,6 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-
             var locationNames = locations.Split(',');
             IEnumerable<Location> locationEnumerable = locationNames.Select(location => new Location(){ RegionName = location, LocationType=LocationType.CloudProvider});
             var props = new Dictionary<string, object?>() {
