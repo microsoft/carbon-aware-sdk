@@ -22,6 +22,7 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
     {
         GridEmissionDataPoint newDataPoint = WattTimeServerMocks.GetDefaultEmissionsDataPoint();
         newDataPoint.PointTime = start;
+        newDataPoint.BalancingAuthorityAbbreviation = location;
 
         WattTimeServerMocks.SetupDataMock(_server, new List<GridEmissionDataPoint> { newDataPoint });
     }

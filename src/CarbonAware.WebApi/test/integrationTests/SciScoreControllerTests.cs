@@ -16,6 +16,8 @@ using System.Text.Json;
 public class SciScoreControllerTests : IntegrationTestingBase
 {
     private string marginalCarbonIntensityURI = "/sci-scores/marginal-carbon-intensity";
+    private JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+
     public SciScoreControllerTests(DataSourceType dataSource) : base(dataSource) { }
 
 
@@ -42,7 +44,7 @@ public class SciScoreControllerTests : IntegrationTestingBase
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(expectedCode));
 
-        var resultContent = JsonSerializer.Deserialize<SciScore>(await result.Content.ReadAsStringAsync());
+        var resultContent = JsonSerializer.Deserialize<SciScore>(await result.Content.ReadAsStringAsync(), options);
         Assert.That(resultContent, Is.Not.Null);
         Assert.That(resultContent.MarginalCarbonIntensityValue, Is.Not.Null);
         Assert.That(resultContent.MarginalCarbonIntensityValue, Is.GreaterThanOrEqualTo(0));
@@ -65,7 +67,7 @@ public class SciScoreControllerTests : IntegrationTestingBase
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(expectedCode));
 
-        var resultContent = JsonSerializer.Deserialize<SciScore>(await result.Content.ReadAsStringAsync());
+        var resultContent = JsonSerializer.Deserialize<SciScore>(await result.Content.ReadAsStringAsync(), options);
         Assert.That(resultContent, Is.Not.Null);
         Assert.That(resultContent.MarginalCarbonIntensityValue, Is.Null);
     }

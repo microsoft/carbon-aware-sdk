@@ -2,9 +2,10 @@ namespace CarbonAware.WepApi.IntegrationTests;
 
 using CarbonAware.DataSources.Configuration;
 using CarbonAware.WebApi.IntegrationTests;
+using CarbonAware.Model;
 using NUnit.Framework;
 using System.Net;
-
+using System.Text.Json;
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
@@ -17,6 +18,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     private string healthURI = "/health";
     private string fakeURI = "/fake-endpoint";
     private string bestLocationsURI = "/emissions/bylocations/best";
+    private JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
     public CarbonAwareControllerTests(DataSourceType dataSource) : base(dataSource) { }
 
@@ -50,10 +52,13 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
 
         //Get response and response content
         var result = await _client.GetAsync(endpointURI);
-        var resultContent = await result.Content.ReadAsStringAsync();
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var resultContent = JsonSerializer.Deserialize<IList<EmissionsData>>(await result.Content.ReadAsStringAsync(), options);
         Assert.That(resultContent, Is.Not.Null);
-    }
+        Assert.That(resultContent.Count, Is.GreaterThanOrEqualTo(1)); 
+        Assert.That(resultContent[0].Location, Is.EqualTo(location));
+;    }
 }
