@@ -38,7 +38,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     }
 
     //ISO8601: YYYY-MM-DD
-    [TestCase("2022-1-1", "2022-1-2", "eastus")]
+    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus")]
     [TestCase("2021-12-25", "2021-12-26", "westus")]
     public async Task BestLocations_ReturnsOK(DateTimeOffset start, DateTimeOffset end, string location)
     {

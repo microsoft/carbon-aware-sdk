@@ -38,8 +38,8 @@ public abstract class IntegrationTestingBase
         //Add all query parameters
         var query = HttpUtility.ParseQueryString(builder.Query);
         query["locations"] = location;
-        query["time"] = $"{start:yyyy-MM-dd}";
-        query["toTime"] = $"{end:yyyy-MM-dd}";
+        query["time"] = $"{start:O}";
+        query["toTime"] = $"{end:O}";
 
         //Generate final query string
         builder.Query = query.ToString();

@@ -19,7 +19,7 @@ public class SciScoreControllerTests : IntegrationTestingBase
     public SciScoreControllerTests(DataSourceType dataSource) : base(dataSource) { }
 
 
-    [TestCase("2022-1-1", "2022-1-2", "eastus", HttpStatusCode.OK)]
+    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", HttpStatusCode.OK)]
     [TestCase("2021-1-1", "2022-1-2", "westus", HttpStatusCode.OK)]
     public async Task SCI_AcceptsValidData_ReturnsContent(DateTimeOffset start, DateTimeOffset end, string location, HttpStatusCode expectedCode)
     {
@@ -48,7 +48,7 @@ public class SciScoreControllerTests : IntegrationTestingBase
         Assert.That(resultContent.MarginalCarbonIntensityValue, Is.GreaterThanOrEqualTo(0));
     }
 
-    [TestCase("2022-1-1", "2022-1-2", "eastus", HttpStatusCode.BadRequest)]
+    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", HttpStatusCode.BadRequest)]
     [TestCase("2021-1-1", "2022-1-2", "westus", HttpStatusCode.BadRequest)]
     public async Task SCI_RejectsInvalidData_ReturnsNotFound(DateTimeOffset start, DateTimeOffset end, string location, HttpStatusCode expectedCode)
     {
