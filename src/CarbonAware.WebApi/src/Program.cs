@@ -31,6 +31,7 @@ CarbonAwareVariablesConfiguration config = new CarbonAwareVariablesConfiguration
 builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Bind(config);
 
 builder.Services.AddHealthChecks();
+builder.Services.AddApplicationInsightsTelemetry();
 
 var app = builder.Build();
 
