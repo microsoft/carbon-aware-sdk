@@ -31,6 +31,8 @@ CarbonAwareVariablesConfiguration config = new CarbonAwareVariablesConfiguration
 builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Bind(config);
 
 builder.Services.AddHealthChecks();
+
+// AppInsights connection string should be specified as an environment variable for this to work
 builder.Services.AddApplicationInsightsTelemetry();
 
 var app = builder.Build();
