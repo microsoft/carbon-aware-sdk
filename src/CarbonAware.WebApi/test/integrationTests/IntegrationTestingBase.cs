@@ -19,8 +19,7 @@ public abstract class IntegrationTestingBase
     internal WebApplicationFactory<Program> _factory;
     protected HttpClient _client;
     protected IDataSourceMocker _dataSourceMocker;
-    private MediaTypeHeaderValue _mediaType = new MediaTypeHeaderValue(MediaTypeNames.Application.Json);
-
+    private readonly MediaTypeHeaderValue _mediaType = new MediaTypeHeaderValue(MediaTypeNames.Application.Json);
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public IntegrationTestingBase(DataSourceType dataSource)
