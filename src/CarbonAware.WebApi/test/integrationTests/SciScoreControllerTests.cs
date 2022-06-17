@@ -42,9 +42,9 @@ public class SciScoreControllerTests : IntegrationTestingBase
         var result = await PostJSONBodyToURI(body, marginalCarbonIntensityURI);
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(expectedCode));
+        Assert.That(result!.StatusCode, Is.EqualTo(expectedCode));
 
-        var resultContent = JsonSerializer.Deserialize<SciScore>(await result.Content.ReadAsStringAsync(), options);
+        var resultContent = JsonSerializer.Deserialize<SciScore>(await result.Content.ReadAsStringAsync(), options)!;
         Assert.That(resultContent, Is.Not.Null);
         Assert.That(resultContent.MarginalCarbonIntensityValue, Is.Not.Null);
         Assert.That(resultContent.MarginalCarbonIntensityValue, Is.GreaterThanOrEqualTo(0));
@@ -65,9 +65,9 @@ public class SciScoreControllerTests : IntegrationTestingBase
 
         var result = await PostJSONBodyToURI(body, marginalCarbonIntensityURI);
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(expectedCode));
+        Assert.That(result!.StatusCode, Is.EqualTo(expectedCode));
 
-        var resultContent = JsonSerializer.Deserialize<SciScore>(await result.Content.ReadAsStringAsync(), options);
+        var resultContent = JsonSerializer.Deserialize<SciScore>(await result.Content.ReadAsStringAsync(), options)!;
         Assert.That(resultContent, Is.Not.Null);
         Assert.That(resultContent.MarginalCarbonIntensityValue, Is.Null);
     }

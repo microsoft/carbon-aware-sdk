@@ -35,7 +35,7 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
             {
                 services.Configure<WattTimeClientConfiguration>(configOpt =>
                 {
-                    configOpt.BaseUrl = _server.Url;
+                    configOpt.BaseUrl = _server.Url!;
                 });
             });
         });
