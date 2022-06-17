@@ -22,7 +22,7 @@ public interface ICarbonIntensityDataSource
     /// <param name="periodStartTime">The start time of the period.</param>
     /// <param name="periodEndTime">The end time of the period.</param>
     /// <returns>A list of emissions data for the given time period.</returns>
-    public Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(IEnumerable<Location> locations, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime);
+    public Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(IEnumerable<Location> locations, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime, bool bestValue = false);
 
     /// <summary>
     /// Gets the forecasted carbon intensity for a location

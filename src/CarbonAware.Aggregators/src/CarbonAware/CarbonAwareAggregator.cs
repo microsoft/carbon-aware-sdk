@@ -32,8 +32,17 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         {
             DateTimeOffset end = GetOffsetOrDefault(props, CarbonAwareConstants.End, DateTimeOffset.Now.ToUniversalTime());
             DateTimeOffset start = GetOffsetOrDefault(props, CarbonAwareConstants.Start, end.AddDays(-7));
+            bool best = GetBestOrFalse(props, CarbonAwareConstants.Best);
             _logger.LogInformation("Aggregator getting carbon intensity from data source");
-            return await this._dataSource.GetCarbonIntensityAsync(GetLocationOrThrow(props), start, end);
+
+            var result = await this._dataSource.GetCarbonIntensityAsync(GetLocationOrThrow(props), start, end);
+
+            if (best)
+            {
+                var bestResult = GetOptimalEmissions(result);
+                return new EmissionsData[] { bestResult };
+            }
+            return result;
         }
     }
 
@@ -93,6 +102,14 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
 
         return defaultValue;
     }
+
+    private bool GetBestOrFalse(IDictionary props, string field)
+    {
+        // Default if null
+        var bestValue = props[field] ?? false;
+        return (bool) bestValue;
+    }
+
 
     private IEnumerable<Location> GetLocationOrThrow(IDictionary props) {
         if (props[CarbonAwareConstants.Locations] is IEnumerable<Location> locations)
