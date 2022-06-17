@@ -133,7 +133,7 @@ public static class EmissionsDataExtensions
         {
             lastEndTime = (lastEndTime == null || current.Time == lastEndTime) ? current.Time + current.Duration : throw new InvalidOperationException($"AverageOverPeriod requires continuous chronological data. Previous point covered through {lastEndTime}; Current point starts at {current.Time}."); ;
 
-            if (current.Time + current.Duration > startTime && current.Time < endTime)
+            if (lastEndTime > startTime && current.Time < endTime)
             {
                 var lowerBound = (startTime >= current.Time) ? startTime : current.Time;
                 var upperBound = (endTime < current.Time + current.Duration) ? endTime : current.Time + current.Duration;
