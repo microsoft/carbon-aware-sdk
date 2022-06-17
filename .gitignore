@@ -18,4 +18,3 @@ TestResults
 !.vscode/launch.json
 !.vscode/tasks.json
 .DS_Store
-src/CarbonAware.WebApi/src/CarbonAware.WebApi.xml

@@ -2,7 +2,6 @@ using System.Reflection;
 using CarbonAware;
 using CarbonAware.Aggregators.Configuration;
 using CarbonAware.WebApi.Filters;
-using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
