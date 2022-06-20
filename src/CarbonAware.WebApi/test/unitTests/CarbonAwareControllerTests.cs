@@ -1,13 +1,12 @@
 namespace CarbonAware.WepApi.UnitTests;
 
-using System.Collections.Generic;
-using System.Net;
-using System.Text.Json;
 using CarbonAware.Model;
 using CarbonAware.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Net;
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
@@ -58,7 +57,7 @@ public class CarbonAwareControllerTests : TestsBase
 
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateAggregatorWithBestEmissionsData(data).Object);
 
-        IActionResult ar = await controller.GetBestEmissionsDataForLocationsByTime(location);
+        var ar = await controller.GetBestEmissionsDataForLocationsByTime(location);
 
         TestHelpers.AssertStatusCode(ar, HttpStatusCode.OK);
     }

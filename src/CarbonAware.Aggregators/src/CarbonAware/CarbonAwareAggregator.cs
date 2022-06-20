@@ -32,9 +32,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         {
             DateTimeOffset end = GetOffsetOrDefault(props, CarbonAwareConstants.End, DateTimeOffset.Now.ToUniversalTime());
             DateTimeOffset start = GetOffsetOrDefault(props, CarbonAwareConstants.Start, end.AddDays(-7));
-
             _logger.LogInformation("Aggregator getting carbon intensity from data source");
-
             return await this._dataSource.GetCarbonIntensityAsync(GetLocationOrThrow(props), start, end);
         }
     }
