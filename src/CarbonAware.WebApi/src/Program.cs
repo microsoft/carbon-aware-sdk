@@ -32,7 +32,7 @@ builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Bind(con
 builder.Services.AddHealthChecks();
 
 // AppInsights connection string should be specified as an environment variable for this to work
-if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING")))
+if (!String.IsNullOrEmpty(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]))
 {
     builder.Services.AddApplicationInsightsTelemetry();
 }
