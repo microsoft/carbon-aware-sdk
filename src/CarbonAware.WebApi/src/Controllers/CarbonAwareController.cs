@@ -41,7 +41,10 @@ public class CarbonAwareController : ControllerBase
             { CarbonAwareConstants.Best, true }
         };
 
-        return await GetEmissionsDataAsync(props);
+        _logger.LogInformation("Calling plugin GetBestEmissionsDataAsync with payload {@props}", props);
+
+        var response = await _aggregator.GetBestEmissionsDataAsync(props);
+        return Ok(response);
     }
 
     /// <summary>
@@ -127,7 +130,7 @@ public class CarbonAwareController : ControllerBase
     private async Task<IActionResult> GetEmissionsDataAsync(Dictionary<string, object?> props)
     {
         // NOTE: Any auth information would need to be redacted from logging
-        _logger.LogInformation("Calling plugin GetEmissionsDataAsync with paylod {@props}", props);
+        _logger.LogInformation("Calling plugin GetEmissionsDataAsync with payload {@props}", props);
 
         var response = await _aggregator.GetEmissionsDataAsync(props);
         return response.Any() ? Ok(response) : NoContent();

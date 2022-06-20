@@ -51,14 +51,14 @@ public class SciScoreAggregatorTests
         DateTimeOffset.TryParse(endString, out end);
 
         this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityAsync(It.IsAny<IEnumerable<Location>>(), 
-            It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), false))
+            It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
             .ReturnsAsync(TestData.GetFilteredEmissionDataList(location.RegionName, startString, endString));
 
         // Act
         var result = await this.Aggregator.CalculateAverageCarbonIntensityAsync(location, timeInterval);
 
         // Assert
-        this.CarbonIntensityDataSource.Verify(r => r.GetCarbonIntensityAsync(locations, start, end, false), Times.Once);
+        this.CarbonIntensityDataSource.Verify(r => r.GetCarbonIntensityAsync(locations, start, end), Times.Once);
         return result;        
     }
 
@@ -85,7 +85,7 @@ public class SciScoreAggregatorTests
         await this.Aggregator.CalculateAverageCarbonIntensityAsync(location, timeInterval);
 
         // Assert
-        this.CarbonIntensityDataSource.Verify(r => r.GetCarbonIntensityAsync(locations, start, end, false), Times.Once);
+        this.CarbonIntensityDataSource.Verify(r => r.GetCarbonIntensityAsync(locations, start, end), Times.Once);
     }
 
     [Test]
