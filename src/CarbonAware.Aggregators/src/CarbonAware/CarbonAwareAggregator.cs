@@ -35,7 +35,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
             bool best = GetBestOrFalse(props, CarbonAwareConstants.Best);
             _logger.LogInformation("Aggregator getting carbon intensity from data source");
 
-            var result = await this._dataSource.GetCarbonIntensityAsync(GetLocationOrThrow(props), start, end);
+            var result = await this._dataSource.GetCarbonIntensityAsync(GetLocationOrThrow(props), start, end, best);
 
             if (best)
             {
