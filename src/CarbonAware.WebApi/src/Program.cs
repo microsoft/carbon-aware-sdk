@@ -31,10 +31,17 @@ builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Bind(con
 
 builder.Services.AddHealthChecks();
 
-// AppInsights connection string should be specified as an environment variable for this to work
-if (!String.IsNullOrEmpty(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]))
-{
-    builder.Services.AddApplicationInsightsTelemetry();
+var telemetryProvider = builder.Configuration["TELEMETRY_PROVIDER"];
+switch (telemetryProvider) {
+    case "ApplicationInsights" :
+    {
+        if (!String.IsNullOrEmpty(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]))
+        {
+            builder.Services.AddApplicationInsightsTelemetry();
+        }
+        break;   
+    }
+    // Can be extended in the future to support a different provider like Zipkin, Prometheus etc 
 }
 
 var app = builder.Build();
