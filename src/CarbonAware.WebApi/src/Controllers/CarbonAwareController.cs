@@ -41,7 +41,7 @@ public class CarbonAwareController : ControllerBase
             { CarbonAwareConstants.Best, true }
         };
 
-        _logger.LogInformation("Calling plugin GetBestEmissionsDataAsync with payload {@props}", props);
+        _logger.LogInformation("Calling aggregator GetBestEmissionsDataAsync with payload {@props}", props);
 
         var response = await _aggregator.GetBestEmissionsDataAsync(props);
         return Ok(response);
