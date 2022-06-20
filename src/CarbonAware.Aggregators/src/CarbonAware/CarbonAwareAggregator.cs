@@ -35,9 +35,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
 
             _logger.LogInformation("Aggregator getting carbon intensity from data source");
 
-            var result = await this._dataSource.GetCarbonIntensityAsync(GetLocationOrThrow(props), start, end);
-
-            return result;
+            return await this._dataSource.GetCarbonIntensityAsync(GetLocationOrThrow(props), start, end);
         }
     }
 

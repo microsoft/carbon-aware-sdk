@@ -27,6 +27,7 @@ public class CarbonAwareController : ControllerBase
     /// <returns>Array of EmissionsData objects that contains the location, time and the rating in g/kWh</returns>
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(EmissionsData))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [HttpGet("bylocations/best")]
     public async Task<IActionResult> GetBestEmissionsDataForLocationsByTime(string locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
@@ -47,7 +48,7 @@ public class CarbonAwareController : ControllerBase
             _logger.LogInformation("Calling aggregator GetBestEmissionsDataAsync with payload {@props}", props);
 
             var response = await _aggregator.GetBestEmissionsDataAsync(props);
-            return Ok(response);
+            return response != null ? Ok(response) : NoContent();
         }
     }
 
