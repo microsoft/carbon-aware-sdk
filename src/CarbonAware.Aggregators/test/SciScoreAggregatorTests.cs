@@ -28,8 +28,7 @@ public class SciScoreAggregatorTests
         this.Aggregator = new SciScoreAggregator(this.Logger.Object, this.CarbonIntensityDataSource.Object);
     }
 
-    [TestCase("westus", "2021-11-17T00:00:00Z", "2021-11-20T00:00:00Z", ExpectedResult = 25)]
-    [TestCase("eastus", "2021-11-17T00:00:00Z", "2021-12-20T00:00:00Z", ExpectedResult = 60)]
+    [TestCase("eastus", "2021-11-18T00:00:00Z", "2021-11-18T08:00:00Z", ExpectedResult = 60)]
     [TestCase("westus", "2021-11-17T00:00:00Z", "2021-11-18T00:00:00Z", ExpectedResult = 20)]
     [TestCase("eastus", "2021-11-19T00:00:00Z", "2021-12-30T00:00:00Z", ExpectedResult = 0)]
     [TestCase("fakelocation", "2021-11-18T00:00:00Z", "2021-12-30T00:00:00Z", ExpectedResult = 0)]
@@ -52,14 +51,14 @@ public class SciScoreAggregatorTests
         DateTimeOffset.TryParse(endString, out end);
 
         this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityAsync(It.IsAny<IEnumerable<Location>>(), 
-            It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+            It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), false))
             .ReturnsAsync(TestData.GetFilteredEmissionDataList(location.RegionName, startString, endString));
 
         // Act
         var result = await this.Aggregator.CalculateAverageCarbonIntensityAsync(location, timeInterval);
 
         // Assert
-        this.CarbonIntensityDataSource.Verify(r => r.GetCarbonIntensityAsync(locations, start, end), Times.Once);
+        this.CarbonIntensityDataSource.Verify(r => r.GetCarbonIntensityAsync(locations, start, end, false), Times.Once);
         return result;        
     }
 
@@ -86,7 +85,7 @@ public class SciScoreAggregatorTests
         await this.Aggregator.CalculateAverageCarbonIntensityAsync(location, timeInterval);
 
         // Assert
-        this.CarbonIntensityDataSource.Verify(r => r.GetCarbonIntensityAsync(locations, start, end), Times.Once);
+        this.CarbonIntensityDataSource.Verify(r => r.GetCarbonIntensityAsync(locations, start, end, false), Times.Once);
     }
 
     [Test]

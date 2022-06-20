@@ -41,7 +41,7 @@ public class CarbonAwareAggregatorTests
     public async Task<double> Test_Emissions_Average_FakeData(string location, string startTime, string endTime)
     {
         this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityAsync(It.IsAny<IEnumerable<Location>>(), 
-            It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+            It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), false))
             .ReturnsAsync(TestData.GetFilteredEmissionDataList(location, startTime, endTime));
         
         var props = new Dictionary<string, object>() {
@@ -82,7 +82,7 @@ public class CarbonAwareAggregatorTests
     public void Test_Emissions_Average_Missing_Properties(string location, string startTime, string endTime)
     {
         this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityAsync(It.IsAny<IEnumerable<Location>>(), 
-            It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+            It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), false))
             .ReturnsAsync(It.IsAny<IEnumerable<EmissionsData>>);
         
         var props = new Dictionary<string, object>();
