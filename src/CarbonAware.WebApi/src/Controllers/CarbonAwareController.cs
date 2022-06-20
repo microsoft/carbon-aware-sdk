@@ -130,7 +130,7 @@ public class CarbonAwareController : ControllerBase
     private async Task<IActionResult> GetEmissionsDataAsync(Dictionary<string, object?> props)
     {
         // NOTE: Any auth information would need to be redacted from logging
-        _logger.LogInformation("Calling plugin GetEmissionsDataAsync with payload {@props}", props);
+        _logger.LogInformation("Calling aggregator GetEmissionsDataAsync with payload {@props}", props);
 
         var response = await _aggregator.GetEmissionsDataAsync(props);
         return response.Any() ? Ok(response) : NoContent();
