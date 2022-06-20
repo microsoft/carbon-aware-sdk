@@ -3,6 +3,7 @@ using CarbonAware;
 using CarbonAware.Aggregators.Configuration;
 using CarbonAware.WebApi.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using CarbonAware.WebApi.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,18 +32,7 @@ builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Bind(con
 
 builder.Services.AddHealthChecks();
 
-var telemetryProvider = builder.Configuration["TELEMETRY_PROVIDER"];
-switch (telemetryProvider) {
-    case "ApplicationInsights" :
-    {
-        if (!String.IsNullOrEmpty(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]))
-        {
-            builder.Services.AddApplicationInsightsTelemetry();
-        }
-        break;   
-    }
-    // Can be extended in the future to support a different provider like Zipkin, Prometheus etc 
-}
+builder.Services.AddMonitoringAndTelemetry(builder.Configuration);
 
 var app = builder.Build();
 
