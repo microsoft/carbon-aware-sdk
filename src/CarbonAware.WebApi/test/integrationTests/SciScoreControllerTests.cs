@@ -23,9 +23,9 @@ public class SciScoreControllerTests : IntegrationTestingBase
 
     [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", HttpStatusCode.OK)]
     [TestCase("2021-1-1", "2022-1-2", "westus", HttpStatusCode.OK)]
-    public async Task SCI_AcceptsValidData_ReturnsContent(DateTimeOffset start, DateTimeOffset end, string location, HttpStatusCode expectedCode)
+    public async Task SCI_AcceptsValidData_ReturnsContent(DateTimeOffset start, DateTimeOffset end, string region, HttpStatusCode expectedCode)
     {
-        _dataSourceMocker.SetupDataMock(start, end, location);
+        _dataSourceMocker.SetupDataMock(start, end, region);
         string timeInterval = start.ToUniversalTime().ToString("O") + "/" + end.ToUniversalTime().ToString("O");
 
         object body = new
@@ -33,8 +33,8 @@ public class SciScoreControllerTests : IntegrationTestingBase
             location = new
             {
                 locationType = "CloudProvider",
-                providerName = "Azure",
-                regionName = location
+                cloudProvider = "Azure",
+                regionName = region
             },
             timeInterval = timeInterval
         };

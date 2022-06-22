@@ -45,7 +45,7 @@ public class CarbonAwareController : ControllerBase
                 { CarbonAwareConstants.Best, true }
             };
 
-            _logger.LogInformation("Calling aggregator GetBestEmissionsDataAsync with payload {@props}", props);
+            _logger.LogDebug("GetBestEmissionsDataForLocationsByTime calling aggregator with payload {@props}", props);
 
             var response = await _aggregator.GetBestEmissionsDataAsync(props);
             return response != null ? Ok(response) : NoContent();
@@ -74,7 +74,7 @@ public class CarbonAwareController : ControllerBase
                 { CarbonAwareConstants.End, toTime},
                 { CarbonAwareConstants.Duration, durationMinutes },
             };
-            
+            _logger.LogDebug("GetEmissionsDataForLocationsByTime calling aggregator with payload {@props}", props);
             return await GetEmissionsDataAsync(props);
         }
     }
@@ -99,7 +99,7 @@ public class CarbonAwareController : ControllerBase
                 { CarbonAwareConstants.End, toTime },
                 { CarbonAwareConstants.Duration, durationMinutes },
             };
-            
+            _logger.LogDebug("GetEmissionsDataForLocationByTime calling aggregator with payload {@props}", props);
             return await GetEmissionsDataAsync(props);
         }
     }
@@ -130,7 +130,7 @@ public class CarbonAwareController : ControllerBase
                 { CarbonAwareConstants.End, endTime },
                 { CarbonAwareConstants.Duration, windowSize },
             };
-
+            _logger.LogDebug("GetCurrentForecastData calling aggregator with payload {@props}", props);
             var forecasts = await _aggregator.GetCurrentForecastDataAsync(props);
             var results = forecasts.Select(f => EmissionsForecastDTO.FromEmissionsForecast(f));
             return Ok(results);
@@ -144,9 +144,6 @@ public class CarbonAwareController : ControllerBase
     /// <returns>Result of the plugin call or resulting status response</returns>
     private async Task<IActionResult> GetEmissionsDataAsync(Dictionary<string, object?> props)
     {
-        // NOTE: Any auth information would need to be redacted from logging
-        _logger.LogInformation("Calling aggregator GetEmissionsDataAsync with payload {@props}", props);
-
         var response = await _aggregator.GetEmissionsDataAsync(props);
         return response.Any() ? Ok(response) : NoContent();
     }
