@@ -48,7 +48,12 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         _dataSourceMocker.SetupDataMock(start, end, location);
 
         //Call the private method to construct with parameters
-        var endpointURI = ConstructDateQueryURI(bestLocationsURI, location, start, end);
+        var queryStrings = new Dictionary<string, string>();
+        queryStrings["location"] = location;
+        queryStrings["time"] = $"{start:O}";
+        queryStrings["toTime"] = $"{end:O}";
+
+        var endpointURI = ConstructUriWithQueryString(bestLocationsURI,queryStrings);
 
         //Get response and response content
         var result = await _client.GetAsync(endpointURI);
