@@ -10,6 +10,7 @@ using Moq;
 using NUnit.Framework;
 using System.Diagnostics;
 using System.Net;
+using Microsoft.Extensions.Configuration;
 
 namespace CarbonAware.WepApi.UnitTests;
 
@@ -20,6 +21,9 @@ public class HttpResponseExceptionFilterTests
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private ActionContext _actionContext;
     private Mock<ILogger<HttpResponseExceptionFilter>> _logger;
+
+    private Mock<IConfiguration> config;
+
     #pragma warning restore CS8618
 
     [SetUp]
@@ -32,6 +36,7 @@ public class HttpResponseExceptionFilterTests
             ActionDescriptor = new ActionDescriptor()
         };
         this._logger = new Mock<ILogger<HttpResponseExceptionFilter>>();
+        this.config = new Mock<IConfiguration>();
     }
 
     [Test]
@@ -44,7 +49,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
 
-        var filter = new HttpResponseExceptionFilter(this._logger.Object);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config.Object);
 
         // Act
         filter.OnException(exceptionContext);
@@ -69,7 +74,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
 
-        var filter = new HttpResponseExceptionFilter(this._logger.Object);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config.Object);
 
         // Act
         filter.OnException(exceptionContext);
@@ -95,7 +100,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
 
-        var filter = new HttpResponseExceptionFilter(this._logger.Object);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config.Object);
 
         // Act
         filter.OnException(exceptionContext);
@@ -120,8 +125,8 @@ public class HttpResponseExceptionFilterTests
         {
             Exception = ex
         };
-
-        var filter = new HttpResponseExceptionFilter(this._logger.Object);
+        
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config.Object);
 
         // Act
         filter.OnException(exceptionContext);
