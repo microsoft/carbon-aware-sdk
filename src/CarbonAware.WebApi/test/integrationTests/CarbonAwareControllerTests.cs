@@ -73,7 +73,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         }
 
         var queryStrings = new Dictionary<string, string>();
-        queryStrings["locations"] = "fakeLocation";
+        queryStrings["location"] = "fakeLocation";
 
         var endpointURI = ConstructUriWithQueryString(currentForecastURI, queryStrings);
 
@@ -94,12 +94,32 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         _dataSourceMocker.SetupForecastMock();
 
         var queryStrings = new Dictionary<string, string>();
-        queryStrings["locations"] = location;
+        queryStrings["location"] = location;
 
         var endpointURI = ConstructUriWithQueryString(currentForecastURI, queryStrings);
 
         var result = await _client.GetAsync(endpointURI);
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+
+    [Test]
+    public async Task EmissionsForecastsCurrent_ReturnsBadResult()
+    {
+
+        var ignoredDataSources = new List<DataSourceType>() { DataSourceType.JSON };
+        if (ignoredDataSources.Contains(_dataSource))
+        {
+            Assert.Ignore("Ignore test for data sources that don't implement '/emissions/forecasts/current'.");
+        }
+        _dataSourceMocker.SetupForecastMock();
+
+        var queryStrings = new Dictionary<string, string>();
+
+        var endpointURI = ConstructUriWithQueryString(currentForecastURI, queryStrings);
+
+        var result = await _client.GetAsync(endpointURI);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 }
