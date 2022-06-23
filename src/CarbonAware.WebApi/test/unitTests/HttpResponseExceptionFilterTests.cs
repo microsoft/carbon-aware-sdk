@@ -22,7 +22,7 @@ public class HttpResponseExceptionFilterTests
     private ActionContext _actionContext;
     private Mock<ILogger<HttpResponseExceptionFilter>> _logger;
 
-    private Mock<IConfiguration> config;
+    private IConfiguration config;
 
     #pragma warning restore CS8618
 
@@ -36,7 +36,12 @@ public class HttpResponseExceptionFilterTests
             ActionDescriptor = new ActionDescriptor()
         };
         this._logger = new Mock<ILogger<HttpResponseExceptionFilter>>();
-        this.config = new Mock<IConfiguration>();
+        var inMemorySettings = new Dictionary<string, string> {
+            {$"{CarbonAwareVariablesConfiguration.Key}:VerboseApi", "true"}
+        };
+        this.config = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
     }
 
     [Test]
@@ -48,8 +53,7 @@ public class HttpResponseExceptionFilterTests
         {
             Exception = ex
         };
-
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config.Object);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config);
 
         // Act
         filter.OnException(exceptionContext);
@@ -73,8 +77,8 @@ public class HttpResponseExceptionFilterTests
         {
             Exception = ex
         };
-
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config.Object);
+        // this.config.SetupGet(x => x[It.Is<string>(s => s == CarbonAwareVariablesConfiguration.Key)]).Returns(CarbonAwareVariablesConfiguration.Key);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config);
 
         // Act
         filter.OnException(exceptionContext);
@@ -100,7 +104,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
 
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config.Object);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config);
 
         // Act
         filter.OnException(exceptionContext);
@@ -126,7 +130,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
         
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config.Object);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config);
 
         // Act
         filter.OnException(exceptionContext);

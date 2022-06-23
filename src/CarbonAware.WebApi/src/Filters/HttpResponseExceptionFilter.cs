@@ -9,7 +9,7 @@ namespace CarbonAware.WebApi.Filters;
 public class HttpResponseExceptionFilter : IExceptionFilter
 {
     private ILogger<HttpResponseExceptionFilter> _logger;
-    private IConfiguration config;
+    private IConfiguration _config;
 
     private static Dictionary<string, int> EXCEPTION_STATUS_CODE_MAP = new Dictionary<string, int>()
     {
@@ -20,7 +20,7 @@ public class HttpResponseExceptionFilter : IExceptionFilter
     public HttpResponseExceptionFilter(ILogger<HttpResponseExceptionFilter> logger, IConfiguration configuration)
     {
         _logger = logger;
-        config = configuration;
+        _config = configuration;
     }
 
     public void OnException(ExceptionContext context)
@@ -42,47 +42,41 @@ public class HttpResponseExceptionFilter : IExceptionFilter
             {
                 statusCode = (int)HttpStatusCode.InternalServerError;
                 activity?.SetStatus(ActivityStatusCode.Error, context.Exception.Message);
-                _logger.LogError(context.Exception, "500 Error: Unhandled exception");
             }
-            var envVars = config?.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
-            var isVerboseApi = Convert.ToBoolean(envVars?.VerboseApi);
-           
-            if (isVerboseApi)
+            var envVars = _config?.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
+            if (statusCode == (int)HttpStatusCode.InternalServerError &&
+                envVars?.VerboseApi == false)
             {
-                response =  CreateValidationProblemDetails(exceptionType, statusCode, context.Exception.Message);
-                response.Errors["trace"] = new string[1] { context.Exception.StackTrace! };
+                 response = new HttpValidationProblemDetails() {
+                                Title = "Exception",
+                                Status = statusCode,
+                                Detail = context.Exception.Message
+                    };
             }
-            else 
+            else
             {
-                response =  CreateValidationProblemDetails("InternalServerError", statusCode, "");
+                response = new HttpValidationProblemDetails() {
+                            Title = exceptionType,
+                            Status = statusCode,
+                            Detail = context.Exception.Message
+                };
+                if (envVars?.VerboseApi == true) {
+                    response.Errors["stacktrace"] = new string[] { context.Exception.StackTrace! };
+                }
             }
-            
         }
 
         var traceId = activity?.Id;
         if (traceId != null)
         {
             response.Extensions["traceId"] = traceId;
-            response.Errors["trace"] = new string[1] {context.Exception.StackTrace!};
-
         }
 
         context.Result = new ObjectResult(response)
         {
             StatusCode = response.Status
         };
-
+        _logger.LogError(context.Exception, "Error OnException");
         context.ExceptionHandled = true;
-    }
-
-    private HttpValidationProblemDetails CreateValidationProblemDetails(string exceptionType, int statusCode, string message)
-    {
-        var response = new HttpValidationProblemDetails()
-            {
-                Title = exceptionType,
-                Status = statusCode,
-                Detail = message
-            };
-        return response;    
     }
 }
