@@ -11,8 +11,9 @@ public class JsonDataSourceMocker : IDataSourceMocker
     {
         return factory;
     }
-
+    public void SetupForecastMock() { }
     public void Initialize() { }
     public void Reset() { }
     public void Dispose() { }
+
 }
