@@ -61,15 +61,15 @@ public class SciScoreController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            _logger.LogDebug("GetCarbonIntensityAsync calling to aggregator to calculate the average carbon intensity with input: {input}", input);
-
+            _logger.LogDebug("calling to aggregator to calculate the average carbon intensity with input: {input}", input);         
+            
             var carbonIntensity = await _aggregator.CalculateAverageCarbonIntensityAsync(GetLocation(input.Location), input.TimeInterval);
 
             SciScore score = new SciScore
             {
                 MarginalCarbonIntensityValue = carbonIntensity,
             };
-            _logger.LogDebug("GetCarbonIntensityAsync calculated marginal carbon intensity: {score}", score);
+            _logger.LogDebug("calculated marginal carbon intensity: {score}", score);
             return Ok(score);
         }
     }
@@ -83,7 +83,8 @@ public class SciScoreController : ControllerBase
 
         if (!Enum.TryParse<LocationType>(locationInput.LocationType, true, out locationType))
         {
-            throw new ArgumentException($"LocationType {locationInput.LocationType} is invalid", nameof(locationInput));
+            _logger.LogError("Can't parse location type with location input: ", locationInput);
+            throw new ArgumentException($"locationType '{locationInput.LocationType}' is invalid", nameof(locationInput));
         }
 
         if (!Enum.TryParse<CloudProvider>(locationInput.CloudProvider, true, out cloudProvider))
