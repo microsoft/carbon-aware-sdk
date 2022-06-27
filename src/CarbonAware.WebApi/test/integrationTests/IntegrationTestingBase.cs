@@ -31,16 +31,16 @@ public abstract class IntegrationTestingBase
     }
 
 
-    public string ConstructDateQueryURI(string Url, string location, DateTimeOffset start, DateTimeOffset end)
+    public string ConstructDateQueryURI(string Url, string? location, DateTimeOffset? start, DateTimeOffset? end)
     {
         // Use HTTP Query builder
         var builder = new UriBuilder();
 
         //Add all query parameters
         var query = HttpUtility.ParseQueryString(builder.Query);
-        query["location"] = location;
-        query["time"] = $"{start:O}";
-        query["toTime"] = $"{end:O}";
+        if (location != null) query["location"] = location;
+        if (start != null) query["time"] = $"{start:O}";
+        if (end != null) query["toTime"] = $"{end:O}";
 
         //Generate final query string
         builder.Query = query.ToString();

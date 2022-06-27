@@ -60,4 +60,22 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(resultContent, Is.Not.Null);
         Assert.That(resultContent.Location, Is.EqualTo(location));
 ;    }
+
+
+    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", null)]
+    public async Task MissingLocationInQuery_ReturnsBadRequest(DateTimeOffset start, DateTimeOffset end, string? location)
+    {
+        //Sets up any data endpoints needed for mocking purposes
+        _dataSourceMocker.SetupDataMock(start, end, location ?? "eastus");
+
+        //Call the private method to construct with parameters
+        var endpointURI = ConstructDateQueryURI(bestLocationsURI, location, start, end);
+
+        //Get response and response content
+        var result = await _client.GetAsync(endpointURI);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        
+    }
 }
