@@ -70,7 +70,6 @@ public class HttpResponseExceptionFilterTests
         {
             Exception = ex
         };
-        // this.config.SetupGet(x => x[It.Is<string>(s => s == CarbonAwareVariablesConfiguration.Key)]).Returns(CarbonAwareVariablesConfiguration.Key);
         var filter = new HttpResponseExceptionFilter(this._logger.Object, this._config);
 
         // Act
@@ -122,7 +121,7 @@ public class HttpResponseExceptionFilterTests
         {
             Exception = ex
         };
-        
+
         var filter = new HttpResponseExceptionFilter(this._logger.Object, this._config);
 
         // Act
