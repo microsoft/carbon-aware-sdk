@@ -49,7 +49,7 @@ public class CarbonAwareController : ControllerBase
             };
 
             _logger.LogInformation("Calling aggregator GetBestEmissionsDataAsync with payload {@props}", props);
-            
+
             var response = await _aggregator.GetBestEmissionsDataAsync(props);
             return response != null ? Ok(response) : NoContent();
         }
@@ -80,6 +80,7 @@ public class CarbonAwareController : ControllerBase
                 { CarbonAwareConstants.End, toTime},
                 { CarbonAwareConstants.Duration, durationMinutes },
             };
+            
             return await GetEmissionsDataAsync(props);
         }
     }
@@ -108,6 +109,7 @@ public class CarbonAwareController : ControllerBase
                 { CarbonAwareConstants.End, toTime },
                 { CarbonAwareConstants.Duration, durationMinutes },
             };
+            
             return await GetEmissionsDataAsync(props);
         }
     }
@@ -137,6 +139,7 @@ public class CarbonAwareController : ControllerBase
                 { CarbonAwareConstants.End, endTime },
                 { CarbonAwareConstants.Duration, windowSize },
             };
+
             var forecasts = await _aggregator.GetCurrentForecastDataAsync(props);
             var results = forecasts.Select(f => EmissionsForecastDTO.FromEmissionsForecast(f));
             return Ok(results);
