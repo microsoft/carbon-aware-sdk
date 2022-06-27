@@ -50,13 +50,13 @@ public class HttpResponseExceptionFilterTests
 
         // Act
         filter.OnException(exceptionContext);
-        var result = exceptionContext.Result as ObjectResult ?? throw new Exception();
-        var content = result.Value as HttpValidationProblemDetails ?? throw new Exception();
+
+        (var result, var content) = GetExceptionContextDetails(exceptionContext);
 
         // Assert
         Assert.IsTrue(exceptionContext.ExceptionHandled);
-        Assert.AreEqual(ex.Status, result.StatusCode);
-        Assert.AreEqual(ex.Status, content.Status);
+        Assert.AreEqual(ex.Status, result!.StatusCode);
+        Assert.AreEqual(ex.Status, content!.Status);
         Assert.AreEqual(ex.Title, content.Title);
         Assert.AreEqual(ex.Detail, content.Detail);
     }
@@ -76,12 +76,11 @@ public class HttpResponseExceptionFilterTests
         filter.OnException(exceptionContext);
 
         // Assert
-        var result = exceptionContext.Result as ObjectResult ?? throw new Exception();
-        var content = result.Value as HttpValidationProblemDetails ?? throw new Exception();
+        (var result, var content) = GetExceptionContextDetails(exceptionContext);
 
         Assert.IsTrue(exceptionContext.ExceptionHandled);
-        Assert.AreEqual((int)HttpStatusCode.BadRequest, result.StatusCode);
-        Assert.AreEqual((int)HttpStatusCode.BadRequest, content.Status);
+        Assert.AreEqual((int)HttpStatusCode.BadRequest, result!.StatusCode);
+        Assert.AreEqual((int)HttpStatusCode.BadRequest, content!.Status);
         Assert.AreEqual("ArgumentException", content.Title);
         Assert.AreEqual("My validation error", content.Detail);
     }
@@ -102,12 +101,11 @@ public class HttpResponseExceptionFilterTests
         filter.OnException(exceptionContext);
 
         // Assert
-        var result = exceptionContext.Result as ObjectResult ?? throw new Exception();
-        var content = result.Value as HttpValidationProblemDetails ?? throw new Exception();
+        (var result, var content) = GetExceptionContextDetails(exceptionContext);
 
         Assert.IsTrue(exceptionContext.ExceptionHandled);
-        Assert.AreEqual((int)HttpStatusCode.NotImplemented, result.StatusCode);
-        Assert.AreEqual((int)HttpStatusCode.NotImplemented, content.Status);
+        Assert.AreEqual((int)HttpStatusCode.NotImplemented, result!.StatusCode);
+        Assert.AreEqual((int)HttpStatusCode.NotImplemented, content!.Status);
         Assert.AreEqual("NotImplementedException", content.Title);
         Assert.AreEqual("My validation error", content.Detail);
     }
@@ -128,12 +126,11 @@ public class HttpResponseExceptionFilterTests
         filter.OnException(exceptionContext);
 
         // Assert
-        var result = exceptionContext.Result as ObjectResult ?? throw new Exception();
-        var content = result.Value as HttpValidationProblemDetails ?? throw new Exception();
+        (var result, var content) = GetExceptionContextDetails(exceptionContext);
 
         Assert.IsTrue(exceptionContext.ExceptionHandled);
-        Assert.AreEqual((int)HttpStatusCode.InternalServerError, result.StatusCode);
-        Assert.AreEqual((int)HttpStatusCode.InternalServerError, content.Status);
+        Assert.AreEqual((int)HttpStatusCode.InternalServerError, result!.StatusCode);
+        Assert.AreEqual((int)HttpStatusCode.InternalServerError, content!.Status);
         Assert.AreEqual("Exception", content.Title);
         Assert.AreEqual("My validation error", content.Detail);
     }
@@ -160,13 +157,12 @@ public class HttpResponseExceptionFilterTests
         // Act
         filter.OnException(exceptionContext);
 
-        var result = exceptionContext.Result as ObjectResult ?? throw new Exception();
-        var content = result.Value as HttpValidationProblemDetails ?? throw new Exception();
+        (var result, var content) = GetExceptionContextDetails(exceptionContext);
 
         // Assert
         Assert.IsTrue(exceptionContext.ExceptionHandled);
-        Assert.AreEqual((int)HttpStatusCode.InternalServerError, result.StatusCode);
-        Assert.AreEqual("Exception", content.Title);
+        Assert.AreEqual((int)HttpStatusCode.InternalServerError, result!.StatusCode);
+        Assert.AreEqual("Exception", content!.Title);
         Assert.AreEqual("My validation error", content.Detail);
         Assert.IsNotEmpty(content.Errors);
 
@@ -194,15 +190,23 @@ public class HttpResponseExceptionFilterTests
         // Act
         filter.OnException(exceptionContext);
 
-        var result = exceptionContext.Result as ObjectResult ?? throw new Exception();
-        var content = result.Value as HttpValidationProblemDetails ?? throw new Exception();
+        (var result, var content) = GetExceptionContextDetails(exceptionContext);
 
         // Assert
         Assert.IsTrue(exceptionContext.ExceptionHandled);
-        Assert.AreEqual((int)HttpStatusCode.InternalServerError, result.StatusCode);
-        Assert.AreEqual(HttpStatusCode.InternalServerError.ToString(), content.Title);
+        Assert.AreEqual((int)HttpStatusCode.InternalServerError, result!.StatusCode);
+        Assert.AreEqual(HttpStatusCode.InternalServerError.ToString(), content!.Title);
         Assert.AreEqual("My validation error", content.Detail);
         Assert.IsEmpty(content.Errors);
+    }
+
+    private (ObjectResult?, HttpValidationProblemDetails?) GetExceptionContextDetails(ExceptionContext context)
+    {
+        var result = context.Result as ObjectResult;
+        Assert.IsNotNull(result);
+        var content = result!.Value as HttpValidationProblemDetails;
+        Assert.IsNotNull(content);
+        return (result, content);
     }
 }
 
