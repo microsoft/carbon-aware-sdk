@@ -39,7 +39,7 @@ public class CarbonAwareController : ControllerBase
         using (var activity = Activity.StartActivity())
         {
             //The LocationType is hardcoded for now. Ideally this should be received from the request or configuration 
-            IEnumerable<Location> locationEnumerable = locations.Select(location => new Location() { RegionName = location, LocationType = LocationType.CloudProvider });
+            IEnumerable<Location> locationEnumerable = CreateLocationsFromQueryString(locations);
             var props = new Dictionary<string, object?>() {
                 { CarbonAwareConstants.Locations, locationEnumerable },
                 { CarbonAwareConstants.Start, time},
@@ -73,7 +73,7 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            IEnumerable<Location> locationEnumerable = locations.Select(location => new Location(){ RegionName = location, LocationType=LocationType.CloudProvider});
+            IEnumerable<Location> locationEnumerable = CreateLocationsFromQueryString(locations);
             var props = new Dictionary<string, object?>() {
                 { CarbonAwareConstants.Locations, locationEnumerable },
                 { CarbonAwareConstants.Start, time },
@@ -132,7 +132,7 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            IEnumerable<Location> locationEnumerable = locations.Select(location => new Location(){ RegionName = location, LocationType=LocationType.CloudProvider});
+            IEnumerable<Location> locationEnumerable = CreateLocationsFromQueryString(locations);
             var props = new Dictionary<string, object?>() {
                 { CarbonAwareConstants.Locations, locationEnumerable },
                 { CarbonAwareConstants.Start, startTime },
@@ -159,4 +159,12 @@ public class CarbonAwareController : ControllerBase
         var response = await _aggregator.GetEmissionsDataAsync(props);
         return response.Any() ? Ok(response) : NoContent();
     }
+
+    ///
+
+    private IEnumerable<Location> CreateLocationsFromQueryString(string[] locations)
+    {
+        return locations.Where(location => !String.IsNullOrEmpty(location)).Select(location => new Location() { RegionName = location, LocationType = LocationType.CloudProvider }); 
+    }
+
 }
