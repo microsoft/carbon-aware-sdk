@@ -100,5 +100,5 @@ public class SciScoreController : ControllerBase
         return location;
     }
 
-    
+
 }
