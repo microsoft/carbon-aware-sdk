@@ -184,7 +184,7 @@ public class HttpResponseExceptionFilterTests
 
         // Arrange
         var ex = new Exception("My validation error");
-        var exceptionContext = new ExceptionContext(this._actionContext, Array.Empty<IFilterMetadata>())
+        var exceptionContext = new ExceptionContext(this._actionContext, new List<IFilterMetadata>())
         {
             Exception = ex
         };
