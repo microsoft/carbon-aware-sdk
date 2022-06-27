@@ -61,8 +61,8 @@ public class SciScoreController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            _logger.LogDebug("calling to aggregator to calculate the average carbon intensity with input: {input}", input);         
-            
+            _logger.LogDebug("calling to aggregator to calculate the average carbon intensity with input: {input}", input);
+
             var carbonIntensity = await _aggregator.CalculateAverageCarbonIntensityAsync(GetLocation(input.Location), input.TimeInterval);
 
             SciScore score = new SciScore
