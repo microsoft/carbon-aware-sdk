@@ -36,12 +36,6 @@ public class HttpResponseExceptionFilterTests
             ActionDescriptor = new ActionDescriptor()
         };
         this._logger = new Mock<ILogger<HttpResponseExceptionFilter>>();
-        var inMemorySettings = new Dictionary<string, string> {
-            {$"{CarbonAwareVariablesConfiguration.Key}:VerboseApi", "true"}
-        };
-        this.config = new ConfigurationBuilder()
-            .AddInMemoryCollection(inMemorySettings)
-            .Build();
     }
 
     [Test]
@@ -144,6 +138,73 @@ public class HttpResponseExceptionFilterTests
         Assert.AreEqual((int)HttpStatusCode.InternalServerError, content.Status);
         Assert.AreEqual("Exception", content.Title);
         Assert.AreEqual("My validation error", content.Detail);
+    }
+
+    [Test]
+    public void TestOnException_GenericException_WithVerboseTrue()
+    {
+        var inMemorySettings = new Dictionary<string, string> {
+            {$"{CarbonAwareVariablesConfiguration.Key}:VerboseApi", "true"}
+        };
+        this.config = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
+
+        // Arrange
+        var ex = new Exception("My validation error");
+        var exceptionContext = new ExceptionContext(this._actionContext, new List<IFilterMetadata>())
+        {
+            Exception = ex
+        };
+        
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config);
+
+        // Act
+        filter.OnException(exceptionContext);
+
+        var result = exceptionContext.Result as ObjectResult ?? throw new Exception();
+        var content = result.Value as HttpValidationProblemDetails ?? throw new Exception();
+
+        // Assert
+        Assert.IsTrue(exceptionContext.ExceptionHandled);
+        Assert.AreEqual((int)HttpStatusCode.InternalServerError, result.StatusCode);
+        Assert.AreEqual("Exception", content.Title);
+        Assert.AreEqual("My validation error", content.Detail);
+        Assert.IsNotEmpty(content.Errors);
+
+    }
+
+    [Test]
+    public void TestOnException_GenericException_WithVerboseFalse()
+    {
+        var inMemorySettings = new Dictionary<string, string> {
+            {$"{CarbonAwareVariablesConfiguration.Key}:VerboseApi", "false"}
+        };
+        this.config = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
+
+        // Arrange
+        var ex = new Exception("My validation error");
+        var exceptionContext = new ExceptionContext(this._actionContext, new List<IFilterMetadata>())
+        {
+            Exception = ex
+        };
+        
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config);
+
+        // Act
+        filter.OnException(exceptionContext);
+
+        var result = exceptionContext.Result as ObjectResult ?? throw new Exception();
+        var content = result.Value as HttpValidationProblemDetails ?? throw new Exception();
+
+        // Assert
+        Assert.IsTrue(exceptionContext.ExceptionHandled);
+        Assert.AreEqual((int)HttpStatusCode.InternalServerError, result.StatusCode);
+        Assert.AreEqual("InternalServerError", content.Title);
+        Assert.AreEqual("My validation error", content.Detail);
+        Assert.IsEmpty(content.Errors);
     }
 }
 

@@ -44,11 +44,12 @@ public class HttpResponseExceptionFilter : IExceptionFilter
                 activity?.SetStatus(ActivityStatusCode.Error, context.Exception.Message);
             }
             var envVars = _config?.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
+       
             if (statusCode == (int)HttpStatusCode.InternalServerError &&
                 envVars?.VerboseApi == false)
             {
                  response = new HttpValidationProblemDetails() {
-                                Title = "Exception",
+                                Title = "InternalServerError",
                                 Status = statusCode,
                                 Detail = context.Exception.Message
                     };
