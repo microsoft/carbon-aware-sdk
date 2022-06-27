@@ -84,13 +84,10 @@ public class SciScoreController : ControllerBase
         if (!Enum.TryParse<LocationType>(locationInput.LocationType, true, out locationType))
         {
             _logger.LogError("Can't parse location type with location input: ", locationInput);
-            throw new ArgumentException($"LocationType '{locationInput.LocationType}' is invalid", nameof(locationInput));
+            throw new ArgumentException($"locationType '{locationInput.LocationType}' is invalid");
         }
 
-        if (!Enum.TryParse<CloudProvider>(locationInput.CloudProvider, true, out cloudProvider))
-        {
-            throw new ArgumentException($"CloudProvider {locationInput.CloudProvider} is invalid", nameof(locationInput));
-        }
+        Enum.TryParse<CloudProvider>(locationInput.CloudProvider, true, out cloudProvider);
         var location = new Location
         {
             LocationType = locationType,
@@ -102,4 +99,6 @@ public class SciScoreController : ControllerBase
 
         return location;
     }
+
+    
 }
