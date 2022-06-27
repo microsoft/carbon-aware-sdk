@@ -109,7 +109,7 @@ public class CarbonAwareController : ControllerBase
                 { CarbonAwareConstants.End, toTime },
                 { CarbonAwareConstants.Duration, durationMinutes },
             };
-
+            
             return await GetEmissionsDataAsync(props);
         }
     }
