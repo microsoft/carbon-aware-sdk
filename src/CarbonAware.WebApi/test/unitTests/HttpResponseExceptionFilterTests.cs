@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using System.Diagnostics;
 using System.Net;
 using Microsoft.Extensions.Configuration;
 
@@ -22,7 +21,7 @@ public class HttpResponseExceptionFilterTests
     private ActionContext _actionContext;
     private Mock<ILogger<HttpResponseExceptionFilter>> _logger;
 
-    private IConfiguration config;
+    private IConfiguration _config;
 
     #pragma warning restore CS8618
 
@@ -42,12 +41,12 @@ public class HttpResponseExceptionFilterTests
     public void TestOnException_IHttpResponseException()
     {
         // Arrange
-        var ex = new dummyHttpResponseException();
+        var ex = new DummyHttpResponseException();
         var exceptionContext = new ExceptionContext(this._actionContext, new List<IFilterMetadata>())
         {
             Exception = ex
         };
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._config);
 
         // Act
         filter.OnException(exceptionContext);
@@ -72,7 +71,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
         // this.config.SetupGet(x => x[It.Is<string>(s => s == CarbonAwareVariablesConfiguration.Key)]).Returns(CarbonAwareVariablesConfiguration.Key);
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._config);
 
         // Act
         filter.OnException(exceptionContext);
@@ -98,7 +97,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
 
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._config);
 
         // Act
         filter.OnException(exceptionContext);
@@ -124,7 +123,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
         
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._config);
 
         // Act
         filter.OnException(exceptionContext);
@@ -144,9 +143,9 @@ public class HttpResponseExceptionFilterTests
     public void TestOnException_GenericException_WithVerboseTrue()
     {
         var inMemorySettings = new Dictionary<string, string> {
-            {$"{CarbonAwareVariablesConfiguration.Key}:VerboseApi", "true"}
+            { $"{CarbonAwareVariablesConfiguration.Key}:VerboseApi", "true" }
         };
-        this.config = new ConfigurationBuilder()
+        this._config = new ConfigurationBuilder()
             .AddInMemoryCollection(inMemorySettings)
             .Build();
 
@@ -157,7 +156,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
         
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._config);
 
         // Act
         filter.OnException(exceptionContext);
@@ -178,20 +177,20 @@ public class HttpResponseExceptionFilterTests
     public void TestOnException_GenericException_WithVerboseFalse()
     {
         var inMemorySettings = new Dictionary<string, string> {
-            {$"{CarbonAwareVariablesConfiguration.Key}:VerboseApi", "false"}
+            { $"{CarbonAwareVariablesConfiguration.Key}:VerboseApi", "false" }
         };
-        this.config = new ConfigurationBuilder()
+        this._config = new ConfigurationBuilder()
             .AddInMemoryCollection(inMemorySettings)
             .Build();
 
         // Arrange
         var ex = new Exception("My validation error");
-        var exceptionContext = new ExceptionContext(this._actionContext, new List<IFilterMetadata>())
+        var exceptionContext = new ExceptionContext(this._actionContext, Array.Empty<IFilterMetadata>())
         {
             Exception = ex
         };
         
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this.config);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._config);
 
         // Act
         filter.OnException(exceptionContext);
@@ -202,13 +201,13 @@ public class HttpResponseExceptionFilterTests
         // Assert
         Assert.IsTrue(exceptionContext.ExceptionHandled);
         Assert.AreEqual((int)HttpStatusCode.InternalServerError, result.StatusCode);
-        Assert.AreEqual("InternalServerError", content.Title);
+        Assert.AreEqual(HttpStatusCode.InternalServerError.ToString(), content.Title);
         Assert.AreEqual("My validation error", content.Detail);
         Assert.IsEmpty(content.Errors);
     }
 }
 
-public class dummyHttpResponseException : Exception, IHttpResponseException
+public class DummyHttpResponseException : Exception, IHttpResponseException
 {
     public string? Title => "Dummy Title";
     public string? Detail => "Dummy Details";

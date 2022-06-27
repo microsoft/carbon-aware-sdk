@@ -49,7 +49,7 @@ public class HttpResponseExceptionFilter : IExceptionFilter
                 envVars?.VerboseApi == false)
             {
                  response = new HttpValidationProblemDetails() {
-                                Title = "InternalServerError",
+                                Title = HttpStatusCode.InternalServerError.ToString(),
                                 Status = statusCode,
                                 Detail = context.Exception.Message
                     };
@@ -62,7 +62,7 @@ public class HttpResponseExceptionFilter : IExceptionFilter
                             Detail = context.Exception.Message
                 };
                 if (envVars?.VerboseApi == true) {
-                    response.Errors["stacktrace"] = new string[] { context.Exception.StackTrace! };
+                    response.Errors["stackTrace"] = new string[] { context.Exception.StackTrace! };
                 }
             }
         }
