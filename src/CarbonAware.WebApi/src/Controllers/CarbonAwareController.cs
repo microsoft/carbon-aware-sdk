@@ -34,7 +34,7 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [HttpGet("bylocations/best")]
-    public async Task<IActionResult> GetBestEmissionsDataForLocationsByTime([FromQuery(Name = "location")] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
+    public async Task<IActionResult> GetBestEmissionsDataForLocationsByTime([FromQuery(Name = "location"), BindRequired] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
     {
         using (var activity = Activity.StartActivity())
         {
@@ -69,7 +69,7 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [HttpGet("bylocations")]
-    public async Task<IActionResult> GetEmissionsDataForLocationsByTime([FromQuery(Name = "location")] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
+    public async Task<IActionResult> GetEmissionsDataForLocationsByTime([FromQuery(Name = "location"), BindRequired] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
     {
         using (var activity = Activity.StartActivity())
         {
@@ -128,7 +128,7 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status501NotImplemented, Type = typeof(ValidationProblemDetails))]
     [HttpGet("forecasts/current")]
-    public async Task<IActionResult> GetCurrentForecastData([FromQuery(Name = "location")] string[] locations, DateTimeOffset? startTime = null, DateTimeOffset? endTime = null, int? windowSize = null)
+    public async Task<IActionResult> GetCurrentForecastData([FromQuery(Name = "location"), BindRequired] string[] locations, DateTimeOffset? startTime = null, DateTimeOffset? endTime = null, int? windowSize = null)
     {
         using (var activity = Activity.StartActivity())
         {
