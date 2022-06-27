@@ -18,7 +18,7 @@ public record EmissionsDataDTO
     [JsonPropertyName("value")]
     public double Value { get; set; }
 
-    public static EmissionsDataDTO FromEmissionsData(EmissionsData emissionsData)
+    public static EmissionsDataDTO? FromEmissionsData(EmissionsData emissionsData)
     {
         if (emissionsData == null)
         {

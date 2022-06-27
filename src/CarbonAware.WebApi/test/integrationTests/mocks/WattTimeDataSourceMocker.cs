@@ -1,18 +1,15 @@
 ﻿using CarbonAware.DataSources.Configuration;
-using CarbonAware.Tools.WattTimeClient;
 using CarbonAware.Tools.WattTimeClient.Configuration;
+using CarbonAware.Tools.WattTimeClient.Constants;
 using CarbonAware.Tools.WattTimeClient.Model;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using WireMock.Server;
 using System.Net;
+using System.Net.Mime;
 using System.Text.Json;
 using WireMock.Server;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
-using System.Net.Mime;
-using CarbonAware.Tools.WattTimeClient.Model;
-using CarbonAware.Tools.WattTimeClient.Constants;
 
 namespace CarbonAware.WebApi.IntegrationTests;
 public class WattTimeDataSourceMocker : IDataSourceMocker
@@ -100,13 +97,12 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
         var pointTime = start;
         var ForecastData = new List<GridEmissionDataPoint>();
         var currValue = 200.0F;
-        var newForecastPoint =
-            new GridEmissionDataPoint();
+
         while (pointTime < end)
         {
-            newForecastPoint = new GridEmissionDataPoint()
+            var newForecastPoint = new GridEmissionDataPoint()
             {
-                BalancingAuthorityAbbreviation = "testBA",
+                BalancingAuthorityAbbreviation = testBA,
                 Datatype = "dt",
                 Frequency = 300,
                 Market = "mkt",
@@ -172,10 +168,9 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
     }
 
     private void SetupBaMock(BalancingAuthority? content = null) =>
-    SetupResponseGivenGetRequest(Paths.BalancingAuthorityFromLocation, JsonSerializer.Serialize(content ?? defaultBalancingAuthority));
+        SetupResponseGivenGetRequest(Paths.BalancingAuthorityFromLocation, JsonSerializer.Serialize(content ?? defaultBalancingAuthority));
 
     private void SetupLoginMock(LoginResult? content = null) =>
         SetupResponseGivenGetRequest(Paths.Login, JsonSerializer.Serialize(content ?? defaultLoginResult));
-
 
 }

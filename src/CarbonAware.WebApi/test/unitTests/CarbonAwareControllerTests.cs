@@ -121,22 +121,18 @@ public class CarbonAwareControllerTests : TestsBase
         TestHelpers.AssertStatusCode(ar, HttpStatusCode.NoContent);
     }
 
-    [TestCase(new object[] { null, null }, TestName = "array of nulls: simulates 'location=&location=' empty value input")]
-    [TestCase(new object[] { null, }, TestName = "array of nulls: simulates 'location=' empty value input")]
-    [TestCase(new object[] { }, TestName = "empty array: simulates no 'location' query string")]
+    /// <summary>
+    /// Tests empty or null location arrays throw ArgumentException.
+    /// </summary>
+    [TestCase(new object?[] { null, null }, TestName = "array of nulls: simulates 'location=&location=' empty value input")]
+    [TestCase(new object?[] { null, }, TestName = "array of nulls: simulates 'location=' empty value input")]
+    [TestCase(new object?[] { }, TestName = "empty array: simulates no 'location' query string")]
     public void GetEmissions_NoLocations_ThrowsException(params string[] locations)
     {
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateAggregatorWithEmissionsData(new List<EmissionsData>()).Object);
-
-        //string[] locations = new string[]
-        //{
-        //    null
-        //};
 
         Assert.ThrowsAsync<ArgumentException>(async () => await controller.GetBestEmissionsDataForLocationsByTime(locations));
         Assert.ThrowsAsync<ArgumentException>(async () => await controller.GetEmissionsDataForLocationsByTime(locations));
         Assert.ThrowsAsync<ArgumentException>(async () => await controller.GetCurrentForecastData(locations));
     }
-
-
 }
