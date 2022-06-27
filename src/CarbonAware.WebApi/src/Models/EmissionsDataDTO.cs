@@ -20,6 +20,10 @@ public record EmissionsDataDTO
 
     public static EmissionsDataDTO FromEmissionsData(EmissionsData emissionsData)
     {
+        if (emissionsData == null)
+        {
+            return null;
+        }
         return new EmissionsDataDTO
         {
             Location = emissionsData.Location,

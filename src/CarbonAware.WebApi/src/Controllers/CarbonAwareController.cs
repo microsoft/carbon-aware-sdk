@@ -34,7 +34,7 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [HttpGet("bylocations/best")]
-    public async Task<IActionResult> GetBestEmissionsDataForLocationsByTime([FromQuery(Name = "location")] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
+    public async Task<IActionResult> GetBestEmissionsDataForLocationsByTime([FromQuery(Name = "location"), BindRequired] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
     {
         using (var activity = Activity.StartActivity())
         {
@@ -69,7 +69,7 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [HttpGet("bylocations")]
-    public async Task<IActionResult> GetEmissionsDataForLocationsByTime([FromQuery(Name = "location")] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
+    public async Task<IActionResult> GetEmissionsDataForLocationsByTime([FromQuery(Name = "location"), BindRequired] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
     {
         using (var activity = Activity.StartActivity())
         {
@@ -162,9 +162,13 @@ public class CarbonAwareController : ControllerBase
 
     ///
 
-    private IEnumerable<Location> CreateLocationsFromQueryString(string[] locations)
+    private IEnumerable<Location> CreateLocationsFromQueryString(string[] queryStringLocations)
     {
-        return locations.Where(location => !String.IsNullOrEmpty(location)).Select(location => new Location() { RegionName = location, LocationType = LocationType.CloudProvider }); 
+        var locations = queryStringLocations
+            .Where(location => !String.IsNullOrEmpty(location))
+            .Select(location => new Location() { RegionName = location, LocationType = LocationType.CloudProvider });
+
+        return locations.Any() ? locations : throw new ArgumentException("Required field: A value for 'location' must be provided.");
     }
 
 }

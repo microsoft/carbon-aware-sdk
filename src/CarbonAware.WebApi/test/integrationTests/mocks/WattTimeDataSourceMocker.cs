@@ -95,8 +95,8 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
 
     public void SetupForecastMock()
     {
-        var start = new DateTimeOffset(2022, 6, 23, 0, 0, 0, TimeSpan.Zero);
-        var end = new DateTimeOffset(2022, 6, 24, 0, 0, 0, TimeSpan.Zero);
+        var start = DateTimeOffset.Now.ToUniversalTime();
+        var end = start + TimeSpan.FromDays(1.0);
         var pointTime = start;
         var ForecastData = new List<GridEmissionDataPoint>();
         var currValue = 200.0F;

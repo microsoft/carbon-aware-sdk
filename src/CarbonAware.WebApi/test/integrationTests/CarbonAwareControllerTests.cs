@@ -63,8 +63,29 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
 
+    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "")]
+    public async Task BestLocations_EmptyLocationQueryString_ReturnsBadRequest(DateTimeOffset start, DateTimeOffset end, string location)
+    {
+        //Sets up any data endpoints needed for mocking purposes
+        _dataSourceMocker.SetupDataMock(start, end, location);
+
+        //Call the private method to construct with parameters
+        var queryStrings = new Dictionary<string, string>();
+        queryStrings["location"] = location;
+        queryStrings["time"] = $"{start:O}";
+        queryStrings["toTime"] = $"{end:O}";
+
+        var endpointURI = ConstructUriWithQueryString(bestLocationsURI, queryStrings);
+
+        //Get response and response content
+        var result = await _client.GetAsync(endpointURI);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    }
+
     [Test]
-    public async Task EmissionsForecastsCurrent_ReturnsNotImplemented()
+    public async Task EmissionsForecastsCurrent_JSON_ReturnsNotImplemented()
     {
         var ignoredDataSources = new List<DataSourceType>() { DataSourceType.WattTime };
         if (ignoredDataSources.Contains(_dataSource))
@@ -82,10 +103,9 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotImplemented));
     }
 
-    [TestCase("westus")]
-    public async Task EmissionsForecastsCurrent_ReturnsOk(string location)
+    [Test]
+    public async Task EmissionsForecastsCurrent_WattTime_ReturnsOk()
     {
-        
         var ignoredDataSources = new List<DataSourceType>() { DataSourceType.JSON };
         if (ignoredDataSources.Contains(_dataSource))
         {
@@ -94,7 +114,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         _dataSourceMocker.SetupForecastMock();
 
         var queryStrings = new Dictionary<string, string>();
-        queryStrings["location"] = location;
+        queryStrings["location"] = "westus";
 
         var endpointURI = ConstructUriWithQueryString(currentForecastURI, queryStrings);
 
@@ -102,8 +122,34 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
+
     [Test]
-    public async Task EmissionsForecastsCurrent_ReturnsOkWithNullLocation()
+    public async Task EmissionsForecastsCurrent_StartAndEndOutsideWindow_ReturnsEmptyForecast()
+    {
+
+        var ignoredDataSources = new List<DataSourceType>() { DataSourceType.JSON };
+        if (ignoredDataSources.Contains(_dataSource))
+        {
+            Assert.Ignore("Ignore test for data sources that don't implement '/emissions/forecasts/current'.");
+        }
+        _dataSourceMocker.SetupForecastMock();
+
+        var queryStrings = new Dictionary<string, string>();
+        queryStrings["location"] = "westus";
+        // TODO(bderusha): LocationSource should throw 400 for unknown region name.
+        queryStrings["startTime"] = "1999-01-01T00:00:00Z";
+        queryStrings["endTime"] = "1999-01-02T00:00:00Z";
+
+        var endpointURI = ConstructUriWithQueryString(currentForecastURI, queryStrings);
+
+        var result = await _client.GetAsync(endpointURI);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
+
+
+    [Test]
+    public async Task EmissionsForecastsCurrent_EmptyLocationQueryString_ReturnsBadRequest()
     {
 
         var ignoredDataSources = new List<DataSourceType>() { DataSourceType.JSON };
@@ -120,13 +166,11 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
 
         var result = await _client.GetAsync(endpointURI);
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-
-
     [Test]
-    public async Task EmissionsForecastsCurrent_ReturnsBadResult()
+    public async Task EmissionsForecastsCurrent_NoLocationParam_ReturnsBadResult()
     {
 
         var ignoredDataSources = new List<DataSourceType>() { DataSourceType.JSON };
