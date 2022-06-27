@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net;
+using WireMock.Models;
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
@@ -118,6 +119,23 @@ public class CarbonAwareControllerTests : TestsBase
 
         //Assert
         TestHelpers.AssertStatusCode(ar, HttpStatusCode.NoContent);
+    }
+
+    [TestCase(new object[] { null, null }, TestName = "array of nulls: simulates 'location=&location=' empty value input")]
+    [TestCase(new object[] { null, }, TestName = "array of nulls: simulates 'location=' empty value input")]
+    [TestCase(new object[] { }, TestName = "empty array: simulates no 'location' query string")]
+    public void GetEmissions_NoLocations_ThrowsException(params string[] locations)
+    {
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateAggregatorWithEmissionsData(new List<EmissionsData>()).Object);
+
+        //string[] locations = new string[]
+        //{
+        //    null
+        //};
+
+        Assert.ThrowsAsync<ArgumentException>(async () => await controller.GetBestEmissionsDataForLocationsByTime(locations));
+        Assert.ThrowsAsync<ArgumentException>(async () => await controller.GetEmissionsDataForLocationsByTime(locations));
+        Assert.ThrowsAsync<ArgumentException>(async () => await controller.GetCurrentForecastData(locations));
     }
 
 

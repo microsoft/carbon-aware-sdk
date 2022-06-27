@@ -62,7 +62,7 @@ public class AzureLocationSource : ILocationSource
         var regionName = location.RegionName ?? string.Empty;
         if (! namedGeopositions!.ContainsKey(regionName))
         {
-            throw new ArgumentException($"Unknown region: Region name '{regionName}' found");
+            throw new ArgumentException($"Unknown region: Region name '{regionName}' not found");
         }
 
         NamedGeoposition geopositionLocation = namedGeopositions![regionName];    

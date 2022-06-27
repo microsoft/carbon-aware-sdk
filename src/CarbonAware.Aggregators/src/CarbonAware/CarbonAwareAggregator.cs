@@ -75,7 +75,6 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
 
     private EmissionsData GetOptimalEmissions(IEnumerable<EmissionsData> emissionsData)
     {
-        // TODO(bderusha): Does this matter for performance?
         if (!emissionsData.Any())
         {
             return null;

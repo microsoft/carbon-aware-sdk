@@ -160,8 +160,6 @@ public class CarbonAwareController : ControllerBase
         return response.Any() ? Ok(response) : NoContent();
     }
 
-    ///
-
     private IEnumerable<Location> CreateLocationsFromQueryString(string[] queryStringLocations)
     {
         var locations = queryStringLocations
