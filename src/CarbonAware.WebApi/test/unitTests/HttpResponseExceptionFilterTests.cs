@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System.Net;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace CarbonAware.WepApi.UnitTests;
@@ -149,7 +148,7 @@ public class HttpResponseExceptionFilterTests
         Assert.IsTrue(exceptionContext.ExceptionHandled);
         Assert.AreEqual((int)HttpStatusCode.InternalServerError, result!.StatusCode);
         Assert.AreEqual((int)HttpStatusCode.InternalServerError, content!.Status);
-        Assert.AreEqual("InternalServerError", content.Title);
+        Assert.AreEqual(HttpStatusCode.InternalServerError.ToString(), content.Title);
         Assert.AreEqual("My validation error", content.Detail);
     }
 
@@ -180,9 +179,10 @@ public class HttpResponseExceptionFilterTests
         // Assert
         Assert.IsTrue(exceptionContext.ExceptionHandled);
         Assert.AreEqual((int)HttpStatusCode.InternalServerError, result!.StatusCode);
-        Assert.AreEqual("InternalServerError", content!.Title);
+        Assert.AreEqual(ex.GetType().Name, content!.Title);
         Assert.AreEqual("My validation error", content.Detail);
-        Assert.IsNotEmpty(content.Errors);
+        Assert.IsTrue(content.Errors.ContainsKey("stackTrace"));
+        Assert.IsNotEmpty(content.Errors["stackTrace"]);
 
     }
 

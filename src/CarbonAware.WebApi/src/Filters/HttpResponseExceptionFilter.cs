@@ -77,7 +77,7 @@ public class HttpResponseExceptionFilter : IExceptionFilter
         {
             StatusCode = response.Status
         };
-        _logger.LogError(context.Exception, "Error OnException");
+        _logger.LogError(context.Exception, "Exception: {exception}", context.Exception.Message);
         context.ExceptionHandled = true;
     }
 }
