@@ -183,7 +183,6 @@ public class HttpResponseExceptionFilterTests
         Assert.AreEqual("My validation error", content.Detail);
         Assert.IsTrue(content.Errors.ContainsKey("stackTrace"));
         Assert.IsNotEmpty(content.Errors["stackTrace"]);
-
     }
 
     [Test]
@@ -215,7 +214,6 @@ public class HttpResponseExceptionFilterTests
         Assert.AreEqual((int)HttpStatusCode.InternalServerError, result!.StatusCode);
         Assert.AreEqual(HttpStatusCode.InternalServerError.ToString(), content!.Title);
         Assert.AreEqual("My validation error", content.Detail);
-        Assert.IsEmpty(content.Errors);
     }
 
     private (ObjectResult?, HttpValidationProblemDetails?) GetExceptionContextDetails(ExceptionContext context)
