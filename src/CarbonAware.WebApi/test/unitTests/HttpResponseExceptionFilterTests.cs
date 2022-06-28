@@ -10,6 +10,7 @@ using Moq;
 using NUnit.Framework;
 using System.Net;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace CarbonAware.WepApi.UnitTests;
 
@@ -20,8 +21,6 @@ public class HttpResponseExceptionFilterTests
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private ActionContext _actionContext;
     private Mock<ILogger<HttpResponseExceptionFilter>> _logger;
-
-    private IConfiguration _config;
 
     #pragma warning restore CS8618
 
@@ -46,7 +45,8 @@ public class HttpResponseExceptionFilterTests
         {
             Exception = ex
         };
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._config);
+        var mockIOption = new Mock<IOptionsMonitor<CarbonAwareVariablesConfiguration>>();
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, mockIOption.Object);
 
         // Act
         filter.OnException(exceptionContext);
@@ -70,7 +70,14 @@ public class HttpResponseExceptionFilterTests
         {
             Exception = ex
         };
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._config);
+        CarbonAwareVariablesConfiguration config = new CarbonAwareVariablesConfiguration()
+        {
+            VerboseApi = false
+        };
+        var mockIOption = new Mock<IOptionsMonitor<CarbonAwareVariablesConfiguration>>();
+        mockIOption.Setup(ap => ap.CurrentValue).Returns(config);
+
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, mockIOption.Object);
 
         // Act
         filter.OnException(exceptionContext);
@@ -94,8 +101,13 @@ public class HttpResponseExceptionFilterTests
         {
             Exception = ex
         };
-
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._config);
+        CarbonAwareVariablesConfiguration config = new CarbonAwareVariablesConfiguration()
+        {
+            VerboseApi = false
+        };
+        var mockIOption = new Mock<IOptionsMonitor<CarbonAwareVariablesConfiguration>>();
+        mockIOption.Setup(ap => ap.CurrentValue).Returns(config);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, mockIOption.Object);
 
         // Act
         filter.OnException(exceptionContext);
@@ -119,8 +131,14 @@ public class HttpResponseExceptionFilterTests
         {
             Exception = ex
         };
+         CarbonAwareVariablesConfiguration config = new CarbonAwareVariablesConfiguration()
+        {
+            VerboseApi = false
+        };
+        var mockIOption = new Mock<IOptionsMonitor<CarbonAwareVariablesConfiguration>>();
+        mockIOption.Setup(ap => ap.CurrentValue).Returns(config);
 
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._config);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, mockIOption.Object);
 
         // Act
         filter.OnException(exceptionContext);
@@ -131,19 +149,19 @@ public class HttpResponseExceptionFilterTests
         Assert.IsTrue(exceptionContext.ExceptionHandled);
         Assert.AreEqual((int)HttpStatusCode.InternalServerError, result!.StatusCode);
         Assert.AreEqual((int)HttpStatusCode.InternalServerError, content!.Status);
-        Assert.AreEqual("Exception", content.Title);
+        Assert.AreEqual("InternalServerError", content.Title);
         Assert.AreEqual("My validation error", content.Detail);
     }
 
     [Test]
     public void TestOnException_GenericException_WithVerboseTrue()
     {
-        var inMemorySettings = new Dictionary<string, string> {
-            { $"{CarbonAwareVariablesConfiguration.Key}:VerboseApi", "true" }
+        CarbonAwareVariablesConfiguration config = new CarbonAwareVariablesConfiguration()
+        {
+            VerboseApi = true
         };
-        this._config = new ConfigurationBuilder()
-            .AddInMemoryCollection(inMemorySettings)
-            .Build();
+        var mockIOption = new Mock<IOptionsMonitor<CarbonAwareVariablesConfiguration>>();
+        mockIOption.Setup(ap => ap.CurrentValue).Returns(config);
 
         // Arrange
         var ex = new Exception("My validation error");
@@ -152,7 +170,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
         
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._config);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, mockIOption.Object);
 
         // Act
         filter.OnException(exceptionContext);
@@ -162,7 +180,7 @@ public class HttpResponseExceptionFilterTests
         // Assert
         Assert.IsTrue(exceptionContext.ExceptionHandled);
         Assert.AreEqual((int)HttpStatusCode.InternalServerError, result!.StatusCode);
-        Assert.AreEqual("Exception", content!.Title);
+        Assert.AreEqual("InternalServerError", content!.Title);
         Assert.AreEqual("My validation error", content.Detail);
         Assert.IsNotEmpty(content.Errors);
 
@@ -171,12 +189,12 @@ public class HttpResponseExceptionFilterTests
     [Test]
     public void TestOnException_GenericException_WithVerboseFalse()
     {
-        var inMemorySettings = new Dictionary<string, string> {
-            { $"{CarbonAwareVariablesConfiguration.Key}:VerboseApi", "false" }
+        CarbonAwareVariablesConfiguration config = new CarbonAwareVariablesConfiguration()
+        {
+            VerboseApi = false
         };
-        this._config = new ConfigurationBuilder()
-            .AddInMemoryCollection(inMemorySettings)
-            .Build();
+        var mockIOption = new Mock<IOptionsMonitor<CarbonAwareVariablesConfiguration>>();
+        mockIOption.Setup(ap => ap.CurrentValue).Returns(config);
 
         // Arrange
         var ex = new Exception("My validation error");
@@ -185,7 +203,7 @@ public class HttpResponseExceptionFilterTests
             Exception = ex
         };
         
-        var filter = new HttpResponseExceptionFilter(this._logger.Object, this._config);
+        var filter = new HttpResponseExceptionFilter(this._logger.Object, mockIOption.Object);
 
         // Act
         filter.OnException(exceptionContext);

@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
 using System.Diagnostics;
+using Microsoft.Extensions.Options;
 
 namespace CarbonAware.WebApi.Filters;
 
 public class HttpResponseExceptionFilter : IExceptionFilter
 {
     private ILogger<HttpResponseExceptionFilter> _logger;
-    private IConfiguration _config;
+    private IOptionsMonitor<CarbonAwareVariablesConfiguration> config;
 
     private static Dictionary<string, int> EXCEPTION_STATUS_CODE_MAP = new Dictionary<string, int>()
     {
@@ -17,10 +18,10 @@ public class HttpResponseExceptionFilter : IExceptionFilter
         { "NotImplementedException", (int)HttpStatusCode.NotImplemented },
     };
 
-    public HttpResponseExceptionFilter(ILogger<HttpResponseExceptionFilter> logger, IConfiguration configuration)
+    public HttpResponseExceptionFilter(ILogger<HttpResponseExceptionFilter> logger, IOptionsMonitor<CarbonAwareVariablesConfiguration> configuration)
     {
         _logger = logger;
-        _config = configuration;
+        config = configuration;
     }
 
     public void OnException(ExceptionContext context)
@@ -43,10 +44,9 @@ public class HttpResponseExceptionFilter : IExceptionFilter
                 statusCode = (int)HttpStatusCode.InternalServerError;
                 activity?.SetStatus(ActivityStatusCode.Error, context.Exception.Message);
             }
-            var envVars = _config?.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
+            var isVerboseApi = config?.CurrentValue.VerboseApi;
        
-            if (statusCode == (int)HttpStatusCode.InternalServerError &&
-                envVars?.VerboseApi == false)
+            if (statusCode == (int)HttpStatusCode.InternalServerError && isVerboseApi == false)
             {
                  response = new HttpValidationProblemDetails() {
                                 Title = HttpStatusCode.InternalServerError.ToString(),
@@ -61,7 +61,7 @@ public class HttpResponseExceptionFilter : IExceptionFilter
                             Status = statusCode,
                             Detail = context.Exception.Message
                 };
-                if (envVars?.VerboseApi == true) {
+                if (isVerboseApi == true) {
                     response.Errors["stackTrace"] = new string[] { context.Exception.StackTrace! };
                 }
             }
