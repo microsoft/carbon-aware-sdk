@@ -44,7 +44,7 @@ public class HttpResponseExceptionFilter : IExceptionFilter
                 statusCode = (int)HttpStatusCode.InternalServerError;
                 activity?.SetStatus(ActivityStatusCode.Error, context.Exception.Message);
             }
-            var isVerboseApi = _options?.CurrentValue.VerboseApi;
+            var isVerboseApi = _options.CurrentValue.VerboseApi;
        
             if (statusCode == (int)HttpStatusCode.InternalServerError && isVerboseApi == false)
             {
