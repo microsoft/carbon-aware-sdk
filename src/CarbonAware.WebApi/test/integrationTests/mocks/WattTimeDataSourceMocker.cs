@@ -16,43 +16,11 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
 {
     protected WireMockServer _server;
     private readonly object _dataSource = DataSourceType.WattTime;
-    private static readonly DateTimeOffset testDataPointOffset = new(2022, 1, 1, 0, 0, 0, TimeSpan.Zero);
-    private static readonly string testBA = "TEST_BA";
-    private static readonly GridEmissionDataPoint defaultDataPoint = new()
-    {
-        BalancingAuthorityAbbreviation = testBA,
-        Datatype = "dt",
-        Frequency = 300,
-        Market = "mkt",
-        PointTime = testDataPointOffset,
-        Value = 999.99F,
-        Version = "1.0"
-    };
-
-    private static readonly List<GridEmissionDataPoint> defaultDataList = new() { defaultDataPoint };
-
-    private static readonly List<Forecast> defaultForecastList = new()
-    {
-        new Forecast()
-        {
-            GeneratedAt = testDataPointOffset,
-            ForecastData = new List<GridEmissionDataPoint>()
-                    {
-                        new GridEmissionDataPoint()
-                        {
-                            BalancingAuthorityAbbreviation = testBA,
-                            PointTime = testDataPointOffset,
-                            Value = 999.99F,
-                            Version = "1.0"
-                        }
-                    }
-        }
-    };
 
     private static readonly BalancingAuthority defaultBalancingAuthority = new()
     {
         Id = 12345,
-        Abbreviation = testBA,
+        Abbreviation = "TEST_BA",
         Name = "Test Balancing Authority"
     };
 
@@ -74,7 +42,7 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
         {
             var newDataPoint = new GridEmissionDataPoint()
             {
-                BalancingAuthorityAbbreviation = testBA,
+                BalancingAuthorityAbbreviation = defaultBalancingAuthority.Abbreviation,
                 PointTime = pointTime,
                 Value = 999.99F,
                 Version = "1.0",
@@ -102,7 +70,7 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
         {
             var newForecastPoint = new GridEmissionDataPoint()
             {
-                BalancingAuthorityAbbreviation = testBA,
+                BalancingAuthorityAbbreviation = defaultBalancingAuthority.Abbreviation,
                 Datatype = "dt",
                 Frequency = 300,
                 Market = "mkt",
@@ -120,7 +88,7 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
         var forecast = new Forecast()
         {
             ForecastData = ForecastData,
-            GeneratedAt = testDataPointOffset
+            GeneratedAt = new DateTimeOffset(2022, 1, 1, 0, 0, 0, TimeSpan.Zero)
         };
         SetupResponseGivenGetRequest(Paths.Forecast, JsonSerializer.Serialize(forecast));
     }
@@ -155,14 +123,14 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
         _server.Dispose();
     }
 
-    private void SetupResponseGivenGetRequest(string path, string body, HttpStatusCode statusCode = HttpStatusCode.OK, string contentType = MediaTypeNames.Application.Json)
+    private void SetupResponseGivenGetRequest(string path, string body, HttpStatusCode statusCode = HttpStatusCode.OK)
     {
         _server
             .Given(Request.Create().WithPath("/" + path).UsingGet())
             .RespondWith(
                 Response.Create()
                     .WithStatusCode(statusCode)
-                    .WithHeader("Content-Type", contentType)
+                    .WithHeader("Content-Type", MediaTypeNames.Application.Json)
                     .WithBody(body)
         );
     }

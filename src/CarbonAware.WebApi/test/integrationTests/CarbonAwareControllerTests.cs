@@ -81,13 +81,9 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     }
 
     [Test]
-    public async Task EmissionsForecastsCurrent_JSON_ReturnsNotImplemented()
+    public async Task EmissionsForecastsCurrent_UnsupportedDataSources_ReturnsNotImplemented()
     {
-        var ignoredDataSources = new List<DataSourceType>() { DataSourceType.WattTime };
-        if (ignoredDataSources.Contains(_dataSource))
-        {
-            Assert.Ignore("Ignore test for data sources that implement '/emissions/forecasts/current'.");
-        }
+        IgnoreTestForDataSource("data source does implement '/emissions/forecasts/current'.", DataSourceType.WattTime);
 
         var queryStrings = new Dictionary<string, string>();
         queryStrings["location"] = "fakeLocation";
@@ -100,13 +96,10 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     }
 
     [Test]
-    public async Task EmissionsForecastsCurrent_WattTime_ReturnsOk()
+    public async Task EmissionsForecastsCurrent_SupportedDataSources_ReturnsOk()
     {
-        var ignoredDataSources = new List<DataSourceType>() { DataSourceType.JSON };
-        if (ignoredDataSources.Contains(_dataSource))
-        {
-            Assert.Ignore("Ignore test for data sources that don't implement '/emissions/forecasts/current'.");
-        }
+        IgnoreTestForDataSource("data source does not implement '/emissions/forecasts/current'", DataSourceType.JSON);
+
         _dataSourceMocker.SetupForecastMock();
 
         var queryStrings = new Dictionary<string, string>();
@@ -123,11 +116,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     [Test]
     public async Task EmissionsForecastsCurrent_StartAndEndOutsideWindow_ReturnsEmptyForecast()
     {
-        var ignoredDataSources = new List<DataSourceType>() { DataSourceType.JSON };
-        if (ignoredDataSources.Contains(_dataSource))
-        {
-            Assert.Ignore("Ignore test for data sources that don't implement '/emissions/forecasts/current'.");
-        }
+        IgnoreTestForDataSource("data source does not implement '/emissions/forecasts/current'", DataSourceType.JSON);
+
         _dataSourceMocker.SetupForecastMock();
 
         var queryStrings = new Dictionary<string, string>();
@@ -149,11 +139,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     public async Task EmissionsForecastsCurrent_InvalidLocationQueryString_ReturnsBadRequest(string queryString, string value)
     {
 
-        var ignoredDataSources = new List<DataSourceType>() { DataSourceType.JSON };
-        if (ignoredDataSources.Contains(_dataSource))
-        {
-            Assert.Ignore("Ignore test for data sources that don't implement '/emissions/forecasts/current'.");
-        }
+        IgnoreTestForDataSource("data source does not implement '/emissions/forecasts/current'", DataSourceType.JSON);
+
         _dataSourceMocker.SetupForecastMock();
 
         var queryStrings = new Dictionary<string, string>();
@@ -164,5 +151,13 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         var result = await _client.GetAsync(endpointURI);
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    }
+
+    private void IgnoreTestForDataSource(string reasonMessage, params DataSourceType[] ignoredDataSources)
+    {
+        if (ignoredDataSources.Contains(_dataSource))
+        {
+            Assert.Ignore($"Ignoring test: {reasonMessage}");
+        }
     }
 }

@@ -44,7 +44,7 @@ public class AzureLocationSourceTest
         var mockLocationSource = SetupMockLocationSource().Object;
         Location invalidLocation = new Location()
         {
-            RegionName = "invalid location"
+            RegionName = "eastus"
         };
         Assert.ThrowsAsync<LocationConversionException>(async() =>
         {
@@ -52,6 +52,9 @@ public class AzureLocationSourceTest
         });
     }
 
+    // <summary>
+    // If an Azure Location with invalid region name is passed, should fail.
+    // </summary>
     [Test]
     public void TestToGeopositionLocation_InvalidRegionName_ThrowsException()
     {
