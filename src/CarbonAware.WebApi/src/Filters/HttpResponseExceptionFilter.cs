@@ -10,7 +10,7 @@ namespace CarbonAware.WebApi.Filters;
 public class HttpResponseExceptionFilter : IExceptionFilter
 {
     private ILogger<HttpResponseExceptionFilter> _logger;
-    private IOptionsMonitor<CarbonAwareVariablesConfiguration> config;
+    private IOptionsMonitor<CarbonAwareVariablesConfiguration> _options;
 
     private static Dictionary<string, int> EXCEPTION_STATUS_CODE_MAP = new Dictionary<string, int>()
     {
@@ -18,10 +18,10 @@ public class HttpResponseExceptionFilter : IExceptionFilter
         { "NotImplementedException", (int)HttpStatusCode.NotImplemented },
     };
 
-    public HttpResponseExceptionFilter(ILogger<HttpResponseExceptionFilter> logger, IOptionsMonitor<CarbonAwareVariablesConfiguration> configuration)
+    public HttpResponseExceptionFilter(ILogger<HttpResponseExceptionFilter> logger, IOptionsMonitor<CarbonAwareVariablesConfiguration> options)
     {
         _logger = logger;
-        config = configuration;
+        _options = options;
     }
 
     public void OnException(ExceptionContext context)
@@ -44,7 +44,7 @@ public class HttpResponseExceptionFilter : IExceptionFilter
                 statusCode = (int)HttpStatusCode.InternalServerError;
                 activity?.SetStatus(ActivityStatusCode.Error, context.Exception.Message);
             }
-            var isVerboseApi = config?.CurrentValue.VerboseApi;
+            var isVerboseApi = _options?.CurrentValue.VerboseApi;
        
             if (statusCode == (int)HttpStatusCode.InternalServerError && isVerboseApi == false)
             {
