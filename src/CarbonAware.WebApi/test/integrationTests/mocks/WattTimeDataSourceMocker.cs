@@ -123,13 +123,13 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
         _server.Dispose();
     }
 
-    private void SetupResponseGivenGetRequest(string path, string body, HttpStatusCode statusCode = HttpStatusCode.OK)
+    private void SetupResponseGivenGetRequest(string path, string body)
     {
         _server
             .Given(Request.Create().WithPath("/" + path).UsingGet())
             .RespondWith(
                 Response.Create()
-                    .WithStatusCode(statusCode)
+                    .WithStatusCode(HttpStatusCode.OK)
                     .WithHeader("Content-Type", MediaTypeNames.Application.Json)
                     .WithBody(body)
         );
