@@ -170,11 +170,11 @@ The .Net framework will automatically respond to validation errors with a [Valid
 
 Using the following steps, it is possible to get the CarbonAware WebApi OpenAPI specification
 
-1. Make sure the current directory is `CarbonAware.WebApi/src`
+1. Make sure the current directory is `<workspace>/carbon-aware-sdk/src/`
 
     ```sh
-    cd src/CarbonAware.WebApi/src
     dotnet restore
+    cd CarbonAware.WebApi/src
     dotnet tool restore
     dotnet build --configuration Release --no-restore
     dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml bin/Release/net6.0/CarbonAware.WebApi.dll v1
