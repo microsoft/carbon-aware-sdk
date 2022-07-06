@@ -174,6 +174,7 @@ Using the following steps, it is possible to get the CarbonAware WebApi OpenAPI 
 
     ```sh
     cd src/CarbonAware.WebApi/src
+    dotnet restore
     dotnet tool restore
     dotnet build --configuration Release --no-restore
     dotnet tool run swagger tofile --output ./api/v1/swagger.yaml --yaml bin/Release/net6.0/CarbonAware.WebApi.dll v1
