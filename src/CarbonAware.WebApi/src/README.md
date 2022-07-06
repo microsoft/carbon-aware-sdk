@@ -170,7 +170,7 @@ The .Net framework will automatically respond to validation errors with a [Valid
 
 Using the following steps, it is possible to get the CarbonAware WebApi OpenAPI specification
 
-1. Make sure the current directory is `<workspace>/carbon-aware-sdk/src/`
+1. Make sure the current directory is `<path to project root>/src/`
 
     ```sh
     dotnet restore
