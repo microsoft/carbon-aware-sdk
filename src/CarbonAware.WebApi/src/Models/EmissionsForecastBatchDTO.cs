@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 [Serializable]
 public record EmissionsForecastBatchDTO : EmissionsForecastBaseDTO
 {
-  /// <summary>Most recent forecast as of this historical request time</summary>
+  /// <summary>The historical time used to fetch the most recent forecast as of that time.</summary>
   /// <example>2022-06-01T00:00:00Z</example>
   [JsonPropertyName("requestedAt")]
   [Required()]
