@@ -31,7 +31,7 @@ public record EmissionsForecastDTO : EmissionsForecastBaseDTO
     /// <summary>
     /// The forecasted data points transformed and filtered to reflect the specified time and window parameters.
     /// Points are ordered chronologically; Empty array if all data points were filtered out.
-    /// E.G. startTime & endTime outside the forecast period; windowSize greater than total duration of forecast data;
+    /// E.G. startTime and endTime outside the forecast period; windowSize greater than total duration of forecast data;
     /// </summary>
     /// <example>
     /// [
