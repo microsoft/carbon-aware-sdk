@@ -1,9 +1,11 @@
 using CarbonAware.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Net;
-using System.Diagnostics;
 using Microsoft.Extensions.Options;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
 
 namespace CarbonAware.WebApi.Filters;
 
@@ -70,6 +72,15 @@ public class HttpResponseExceptionFilter : IExceptionFilter
         if (traceId != null)
         {
             response.Extensions["traceId"] = traceId;
+        }
+
+        foreach (DictionaryEntry entry in context.Exception.Data)
+        {
+            var k = entry.Key.ToString();
+            var v = entry.Value?.ToString();
+            var errorList = response.Errors.ContainsKey(k) ? response.Errors[k].ToList() : new List<string>();
+            errorList.Add(v);
+            response.Errors[k] = errorList.ToArray();
         }
 
         context.Result = new ObjectResult(response)

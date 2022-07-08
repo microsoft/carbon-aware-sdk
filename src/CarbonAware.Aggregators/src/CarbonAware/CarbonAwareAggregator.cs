@@ -59,18 +59,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
                 var lastDataPoint = forecast.ForecastData.Last();
                 forecast.StartTime = GetOffsetOrDefault(props, CarbonAwareConstants.Start, firstDataPoint.Time);
                 forecast.EndTime = GetOffsetOrDefault(props, CarbonAwareConstants.End, lastDataPoint.Time + lastDataPoint.Duration);
-                if (forecast.StartTime < firstDataPoint.Time)
-                {
-                    throw new ArgumentException();
-                }
-                if (forecast.EndTime > lastDataPoint.Time + lastDataPoint.Duration)
-                {
-                    throw new ArgumentException();
-                }
-                if (forecast.StartTime >= forecast.EndTime)
-                {
-                    throw new ArgumentException();
-                }
+                forecast.Validate();
                 forecast.ForecastData = IntervalHelper.FilterByDuration(forecast.ForecastData, forecast.StartTime, forecast.EndTime);
                 forecast.ForecastData = forecast.ForecastData.RollingAverage(windowSize);
                 forecast.OptimalDataPoint = GetOptimalEmissions(forecast.ForecastData);
