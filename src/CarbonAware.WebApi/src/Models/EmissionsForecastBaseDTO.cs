@@ -13,7 +13,7 @@ public record EmissionsForecastBaseDTO
     public string Location { get; set; } = string.Empty;
 
     /// <summary>
-    /// Scoped start time of forecast period.
+    /// Start time boundary of forecasted data points. Ignores forecast data points before this time.
     /// Defaults to the earliest time in the forecast data.
     /// </summary>
     /// <example>2022-06-01T12:00:00Z</example>
@@ -21,7 +21,7 @@ public record EmissionsForecastBaseDTO
     public DateTimeOffset StartTime { get; set; }
 
     /// <summary>
-    /// Scoped end time of forecast period.
+    /// End time boundary of forecasted data points. Ignores forecast data points after this time.
     /// Defaults to the latest time in the forecast data.
     /// </summary>
     /// <example>2022-06-01T18:00:00Z</example>
@@ -29,7 +29,7 @@ public record EmissionsForecastBaseDTO
     public DateTimeOffset EndTime { get; set; }
 
     /// <summary>
-    /// Size of rolling average window in minutes.
+    /// The estimated duration (in minutes) of the workload.
     /// Defaults to the duration of a single forecast data point.
     /// </summary>
     /// <example>30</example>
