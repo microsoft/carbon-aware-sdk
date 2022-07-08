@@ -66,6 +66,11 @@ public record EmissionsForecast
         if (errors.Keys.Count > 0)
         {
             ArgumentException error = new ArgumentException("Invalid EmissionsForecast");
+            foreach (KeyValuePair<string, List<string>> message in errors)
+            {
+                Console.WriteLine($"Pair here: {message.Key}, {message.Value}");
+                error.Data[message.Key] = message.Value.ToArray();
+            }
             throw error;
         }
     }

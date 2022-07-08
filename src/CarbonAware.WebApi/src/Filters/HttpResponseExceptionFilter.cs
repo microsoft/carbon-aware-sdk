@@ -76,11 +76,9 @@ public class HttpResponseExceptionFilter : IExceptionFilter
 
         foreach (DictionaryEntry entry in context.Exception.Data)
         {
-            var k = entry.Key.ToString();
-            var v = entry.Value?.ToString();
-            var errorList = response.Errors.ContainsKey(k) ? response.Errors[k].ToList() : new List<string>();
-            errorList.Add(v);
-            response.Errors[k] = errorList.ToArray();
+            if (entry.Value is string[] messages && entry.Key.ToString() is string key){
+                response.Errors[key] = messages;
+            }
         }
 
         context.Result = new ObjectResult(response)
