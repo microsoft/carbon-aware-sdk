@@ -52,9 +52,9 @@ public class CarbonAwareAggregatorTests
         var props = new Dictionary<string, object>()
         {
             { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" } } },
+            { CarbonAwareConstants.Start, start },
+            { CarbonAwareConstants.End, end },
         };
-        if (start != null) { props.Add(CarbonAwareConstants.Start, start); }
-        if (end != null) { props.Add(CarbonAwareConstants.End, end); }
 
         // Act
         var results = await this.Aggregator.GetCurrentForecastDataAsync(props);
@@ -79,8 +79,8 @@ public class CarbonAwareAggregatorTests
         Assert.IsEmpty(results);
     }
 
-    [TestCase("2022-01-01T00:00:00Z", "2022-01-01T00:20:00Z", ExpectedResult = 4)] // Start and end time match
-    [TestCase("2022-01-01T00:02:00Z", "2022-01-01T00:12:00Z", ExpectedResult = 3)] // Start time match and end midway through a datapoint
+    [TestCase("2022-01-01T00:00:00Z", "2022-01-01T00:20:00Z", ExpectedResult = 4, TestName = "Start and end time match")]
+    [TestCase("2022-01-01T00:02:00Z", "2022-01-01T00:12:00Z", ExpectedResult = 3, TestName = "Start and end match midway through a datapoint")]
     public async Task<int> TestGetCurrentForecastDataAsync_FiltersDate(string start, string end)
     {
         this.CarbonIntensityDataSource.Setup(x => x.GetCurrentCarbonIntensityForecastAsync(It.IsAny<Location>()))
@@ -98,8 +98,8 @@ public class CarbonAwareAggregatorTests
         return forecastData.Count();
     }
 
-    [TestCase("2022-01-01T00:00:00Z", "2022-01-01T00:20:00Z")] // full data set
-    [TestCase("2022-01-01T00:05:00Z", "2022-01-01T00:20:00Z")] // data set minus first lowest datapoint
+    [TestCase("2022-01-01T00:00:00Z", "2022-01-01T00:20:00Z", TestName = "Full data set")]
+    [TestCase("2022-01-01T00:05:00Z", "2022-01-01T00:20:00Z", TestName = "Data set minus first lowest datapoint")]
     public async Task TestGetCurrentForecastDataAsync_OptimalDataPoint(string start, string end)
     {
         this.CarbonIntensityDataSource.Setup(x => x.GetCurrentCarbonIntensityForecastAsync(It.IsAny<Location>()))
