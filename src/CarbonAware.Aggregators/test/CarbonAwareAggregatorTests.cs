@@ -49,7 +49,7 @@ public class CarbonAwareAggregatorTests
         this.CarbonIntensityDataSource.Setup(x => x.GetCurrentCarbonIntensityForecastAsync(It.IsAny<Location>()))
             .ReturnsAsync(forecast);
 
-        var props = new Dictionary<string, object>()
+        var props = new Dictionary<string, object?>()
         {
             { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" } } },
             { CarbonAwareConstants.Start, start },
@@ -194,7 +194,7 @@ public class CarbonAwareAggregatorTests
     {
         this.CarbonIntensityDataSource.Setup(x => x.GetCurrentCarbonIntensityForecastAsync(It.IsAny<Location>()))
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
-        var props = new Dictionary<string, object>()
+        var props = new Dictionary<string, object?>()
         {
             { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" } } },
             { CarbonAwareConstants.Start, start },
