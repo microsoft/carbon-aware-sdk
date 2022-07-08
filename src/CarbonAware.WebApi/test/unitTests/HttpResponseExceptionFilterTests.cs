@@ -107,9 +107,12 @@ public class HttpResponseExceptionFilterTests
     {
         // Arrange
         var ex = new ArgumentException("My validation error");
-        ex.Data["objectValue"] = new Object();
-        ex.Data["stringValue"] = "myString";
-        ex.Data["listValue"] = new List<string>() { "myListString" };
+        ex.Data["objectValue"]      = new Object();
+        ex.Data["stringValue"]      = "myString";
+        ex.Data["listValue"]        = new List<string>() { "myListString" };
+        ex.Data[1]                  = new string[] { "validValue, invalidKey" };
+        ex.Data[new Object()]       = new string[] { "validValue, invalidKey" };
+        ex.Data[new List<string>()] = new string[] { "validValue, invalidKey" };
 
         var exceptionContext = new ExceptionContext(this._actionContext, new List<IFilterMetadata>())
         {

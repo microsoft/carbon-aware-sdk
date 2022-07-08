@@ -76,7 +76,7 @@ public class HttpResponseExceptionFilter : IExceptionFilter
 
         foreach (DictionaryEntry entry in context.Exception.Data)
         {
-            if (entry.Value is string[] messages && entry.Key.ToString() is string key){
+            if (entry.Value is string[] messages && entry.Key is string key){
                 response.Errors[key] = messages;
             }
         }
