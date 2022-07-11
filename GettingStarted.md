@@ -134,11 +134,7 @@ CarbonAwareVars__TelemetryProvider="ApplicationInsights"
 This application is integrated with Application Insights for monitoring purposes. The telemetry collected in the app is pushed to AppInsights and can be tracked for logs, exceptions, traces and more. To connect to your Application Insights instance, configure the `ApplicationInsights_Connection_String` variable
 
 ```bash
-<<<<<<< HEAD
 ApplicationInsights_Connection_String="AppInsightsConnectionString"
-=======
-APPLICATIONINSIGHTS_CONNECTION_STRING="AppInsightsConnectionString"
->>>>>>> a2d937df94e2f25e46c122018dc41a308be077c7
 ```
 
 ### Verbosity 
