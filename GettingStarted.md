@@ -22,7 +22,7 @@ The WebAPI project uses standard configuration sources provided by [ASPNetCore](
 
 Please note that configuration is heirarchical.  The last configuration source loaded that contains a configuration value will be the value that's used.  This means that if the same configuration value is found in both appsettings.json and as an environment variable, the value from the environment variable will be the value that's applied.
 
-When adding values via environment variables, we recommend that you use the double underscore form, rather than the colon form.  Colons won't work in non-windows environment.  For example:
+When adding values via environment variables, we recommend that you use the double underscore form, rather than the colon form.  Colons won't work in non-windows environment.   For example:
 
 ```bash
   CarbonAwareVars__CarbonIntensityDataSource="WattTime"
@@ -126,10 +126,10 @@ In normal use, you shouldn't need to set this value, but this value can be used 
 This project is using standard [Microsoft.Extensions.Logging](https://docs.microsoft.com/en-us/dotnet/core/extensions/logging?tabs=command-line).  To configure different log levels, please see the documentation at this link.
 
 ### Tracing and Monitoring Configuration
-Application monitoring and tracing can be configured using the `TELEMETRY_PROVIDER` variable in the application configuration
+Application monitoring and tracing can be configured using the `TelemetryProvider` environment variable.  
 
 ```bash
-TELEMETRY_PROVIDER= "ApplicationInsights"
+carbonAwareVars__TelemetryProvider= "ApplicationInsights"
 ```
 This application is integrated with Application Insights for monitoring purposes. The telemetry collected in the app is pushed to AppInsights and can be tracked for logs, exceptions, traces and more. To connect to your Application Insights instance, configure the `APPLICATIONINSIGHTS_CONNECTION_STRING` variable
 
@@ -137,6 +137,11 @@ This application is integrated with Application Insights for monitoring purposes
 APPLICATIONINSIGHTS_CONNECTION_STRING= "AppInsightsConnectionString"
 ```
 
+### Verbosity 
+You can configure the verbosity of the application error messages by setting the 'VerboseApi' enviroment variable. Typically, you would set this value to 'true' in the development or staging regions. When set to 'true', a detailed stack trace would be presented for any errors in the request. 
+```bash
+carbonAwareVars__VerboseApi= "true"
+```
 
 ### Sample Environment Variable Configuration Using WattTime
 
