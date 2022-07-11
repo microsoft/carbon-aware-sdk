@@ -151,7 +151,7 @@ CarbonAwareVars__WebApiRoutePrefix="/microsoft/cse/fsi"
 CarbonAwareVars__Proxy__UseProxy=true
 CarbonAwareVars__Proxy__Url="http://10.10.10.1"
 CarbonAwareVars__Proxy__Username="proxyUsername"
-CarbonAwareVars__Proxy__Uassword="proxyPassword"
+CarbonAwareVars__Proxy__Password="proxyPassword"
 WattTimeClient__Username="wattTimeUsername"
 WattTimeClient__Password="wattTimePassword"
 ```
