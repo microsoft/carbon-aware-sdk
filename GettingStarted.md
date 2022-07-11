@@ -152,8 +152,8 @@ CarbonAwareVars__Proxy__UseProxy=true
 CarbonAwareVars__Proxy__Url="http://10.10.10.1"
 CarbonAwareVars__Proxy__Username="proxyUsername"
 CarbonAwareVars__Proxy__Uassword="proxyPassword"
-wattTimeClient__Username="wattTimeUsername"
-wattTimeClient__Password="wattTimePassword"
+WattTimeClient__Username="wattTimeUsername"
+WattTimeClient__Password="wattTimePassword"
 ```
 
 ### Sample Json Configuration Using WattTime
