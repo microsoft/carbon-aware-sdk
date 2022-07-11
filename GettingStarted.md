@@ -22,7 +22,7 @@ The WebAPI project uses standard configuration sources provided by [ASPNetCore](
 
 Please note that configuration is heirarchical.  The last configuration source loaded that contains a configuration value will be the value that's used.  This means that if the same configuration value is found in both appsettings.json and as an environment variable, the value from the environment variable will be the value that's applied.
 
-When adding values via environment variables, we recommend that you use the double underscore form, rather than the colon form.  Colons won't work in non-windows environment.   For example:
+When adding values via environment variables, we recommend that you use the double underscore form, rather than the colon form.  Colons won't work in non-windows environment.  For example:
 
 ```bash
   CarbonAwareVars__CarbonIntensityDataSource="WattTime"
@@ -126,7 +126,7 @@ In normal use, you shouldn't need to set this value, but this value can be used 
 This project is using standard [Microsoft.Extensions.Logging](https://docs.microsoft.com/en-us/dotnet/core/extensions/logging?tabs=command-line).  To configure different log levels, please see the documentation at this link.
 
 ### Tracing and Monitoring Configuration
-Application monitoring and tracing can be configured using the `TelemetryProvider` environment variable.  
+Application monitoring and tracing can be configured using the `TelemetryProvider` variable in the application configuration.  
 
 ```bash
 carbonAwareVars__TelemetryProvider= "ApplicationInsights"
