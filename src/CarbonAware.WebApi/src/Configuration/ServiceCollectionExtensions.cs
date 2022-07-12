@@ -7,14 +7,24 @@ public static class ServiceCollectionExtensions
         
         var envVars = configuration?.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
         var telemetryProvider = GetTelemetryProviderFromValue(envVars?.TelemetryProvider);
-
+        var logger = CreateConsoleLogger(configuration);
         switch (telemetryProvider) {
             case TelemetryProviderType.ApplicationInsights:
             {
-                if (!String.IsNullOrEmpty(configuration?["ApplicationInsights_Connection_String"]) ||
-                        !String.IsNullOrEmpty(configuration?["ApplicationInsights_Instrumentation_Key"]))
+                
+                if (!String.IsNullOrEmpty(configuration?["ApplicationInsights_Connection_String"])) 
                 {
+                    logger.LogInformation("Application Insights connection string found");
                     services.AddApplicationInsightsTelemetry();
+                } 
+                else if (!String.IsNullOrEmpty(configuration?["ApplicationInsights_Instrumentation_Key"])) 
+                {
+                    logger.LogInformation("Application Insights instrumentation key found");
+                    services.AddApplicationInsightsTelemetry(configuration?["ApplicationInsights_Instrumentation_Key"]);
+                } 
+                else 
+                {
+                    logger.LogWarning("Application Insights configuration not provided or incorrect.");
                 }
                 break;   
             }
@@ -27,6 +37,14 @@ public static class ServiceCollectionExtensions
 
     }
 
+    private static ILogger CreateConsoleLogger(IConfiguration? config)
+    {
+        var factory = LoggerFactory.Create(b => {
+            b.AddConfiguration(config?.GetSection("Logging"));
+            b.AddConsole();
+        });
+        return factory.CreateLogger<IServiceCollection>();
+    }
     private static TelemetryProviderType GetTelemetryProviderFromValue(string? srcVal)
     {
         TelemetryProviderType result;
