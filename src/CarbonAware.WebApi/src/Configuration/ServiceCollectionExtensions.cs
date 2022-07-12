@@ -11,7 +11,8 @@ public static class ServiceCollectionExtensions
         switch (telemetryProvider) {
             case TelemetryProviderType.ApplicationInsights:
             {
-                if (!String.IsNullOrEmpty(configuration?["ApplicationInsights_Connection_String"]))
+                if (!String.IsNullOrEmpty(configuration?["ApplicationInsights_Connection_String"]) ||
+                        !String.IsNullOrEmpty(configuration?["ApplicationInsights_Instrumentation_Key"]))
                 {
                     services.AddApplicationInsightsTelemetry();
                 }
