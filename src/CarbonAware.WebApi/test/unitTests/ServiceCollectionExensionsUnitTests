@@ -20,20 +20,52 @@ public class ServiceCollectionExtensionsUnitTests : TestsBase
     public async Task TestAppInsightsInstrumentationKey()
     {
         // Arrange
-    //    IConfiguration config = new CarbonAwareVariablesConfiguration()
-    //     {
-    //         VerboseApi = false
-    //     }; Mock.
-        CarbonAwareVariablesConfiguration carbonAwareVariables = new CarbonAwareVariablesConfiguration()
-        {
-            TelemetryProvider = "ApplicationInsights"
+        
+       var inMemorySettings = new Dictionary<string, string> {
+            {"CarbonAwareVars:TelemetryProvider", "AppIn"}
+            //...populate as needed for the test
         };
-        Mock<IConfiguration> config = new Mock<IConfiguration>();
-        config.Setup(c => c.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>()).Returns(carbonAwareVariables);
-        Mock<IConfigurationSection> mockSection = new Mock<IConfigurationSection>();
-        mockSection.Setup(x=>x.Key).Returns(CarbonAwareVariablesConfiguration.Key);
-        mockSection.Setup(x=>x.Get<CarbonAwareVariablesConfiguration>()).Returns(carbonAwareVariables);
-        config.Setup(c => c.GetSection(CarbonAwareVariablesConfiguration.Key)).Returns(mockSection.Object);
+
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
+        // Mock<IConfiguration> config = new Mock<IConfiguration>();
+        // config.Setup(a => a.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>()).Returns(carbonAwareVariables);
+        ServiceCollectionExtensions.AddMonitoringAndTelemetry(new Mock<IServiceCollection>().Object, configuration);
+
+
+
+        // Mock<IConfigurationSection> mockSection = new Mock<IConfigurationSection>();
+        // mockSection.Setup(x=>x.Key).Returns("CarbonAwareVars");
+
+        // mockSection.SetupGet(x => x[It.Is<string>(s => s == "TelemetryProvider")]).Returns("ApplicationInsights");
+        // config.Setup(c => c.GetSection("CarbonAwareVars")).Returns(mockSection.Object);
+        // ServiceCollectionExtensions.AddMonitoringAndTelemetry(new Mock<IServiceCollection>().Object, config.Object);
+
+
+
+
+
+        // var _configuration = new Mock<IConfiguration>();
+        // var _configurationSection = new Mock<IConfigurationSection>();
+        // // _configurationSection.Setup(a => a.Value).Returns("AppInsights");
+        //  _configurationSection.SetupGet(x => x[It.Is<string>(s => s == "TelemetryProvider")]).Returns("ApplicationInsights");
+
+        // // _configuration.Setup(c => c.GetSection(It.IsAny<String>())).Returns(new Mock<IConfigurationSection>().Object);
+        // // _configuration.Setup(a => a.GetSection("CarbonAwareVars")).Returns(_configurationSection.Object);
+        // // _configuration.Setup(a => a.GetSection("CarbonAwareVars").Get<CarbonAwareVariablesConfiguration>()).Returns(carbonAwareVariables);
+
+        // var oneSectionMock = new Mock<IConfigurationSection>();
+        // // oneSectionMock. = carbonAwareVariables;
+        //  oneSectionMock.SetupGet(x => x[It.Is<string>(s => s == "TelemetryProvider")]).Returns(carbonAwareVariables.TelemetryProvider);
+        // var twoSectionMock = new Mock<IConfigurationSection>();
+        // twoSectionMock.Setup(s => s.Value).Returns("2");
+        // var fooBarSectionMock = new Mock<IConfigurationSection>();
+        // fooBarSectionMock.Setup(s => s.GetChildren()).Returns(new List<IConfigurationSection> { oneSectionMock.Object, twoSectionMock.Object });
+        // _configuration.Setup(c => c.GetSection(CarbonAwareVariablesConfiguration.Key)).Returns(oneSectionMock.Object);
+
+        // // mockSection.Setup(x=>x.Get<CarbonAwareVariablesConfiguration>()).Returns(carbonAwareVariables);
+        // config.Setup(c => c.GetSection(CarbonAwareVariablesConfiguration.Key)).Returns(mockSection.Object);
         
         
         // mockSection.SetupGet(x => x[It.Is<string>(s => s == "TelemetryProvider")]).Returns("ApplicationInsights");
@@ -43,7 +75,7 @@ public class ServiceCollectionExtensionsUnitTests : TestsBase
         // config.SetupGet(x => x[It.Is<string>(s => s == "CarbonAwareVars__TelemetryProvider")]).Returns("ApplicationInsights");
         // config.SetupGet(x => x[It.Is<string>(s => s == "Connection_String")]).Returns("On");
         // Act
-        ServiceCollectionExtensions.AddMonitoringAndTelemetry(new Mock<IServiceCollection>().Object, config.Object);
+
         // Assert
         
     }
