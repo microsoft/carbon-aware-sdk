@@ -117,7 +117,7 @@ public class CarbonAwareController : ControllerBase
     /// <summary>
     ///   Retrieves the most recent forecasted data and calculates the optimal marginal carbon intensity window.
     /// </summary>
-    /// <param name="location"> String array of named locations.</param>
+    /// <param name="locations"> String array of named locations.</param>
     /// <param name="startTime">
     ///   Start time boundary of forecasted data points. Ignores current forecast data points before this time.
     ///   Defaults to the earliest time in the forecast data.
@@ -151,11 +151,11 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status501NotImplemented, Type = typeof(ValidationProblemDetails))]
     [HttpGet("forecasts/current")]
-    public async Task<IActionResult> GetCurrentForecastData([FromQuery(Name = "location"), BindRequired] string[] location, DateTimeOffset? startTime = null, DateTimeOffset? endTime = null, int? windowSize = null)
+    public async Task<IActionResult> GetCurrentForecastData([FromQuery(Name = "location"), BindRequired] string[] locations, DateTimeOffset? startTime = null, DateTimeOffset? endTime = null, int? windowSize = null)
     {
         using (var activity = Activity.StartActivity())
         {
-            IEnumerable<Location> locationEnumerable = CreateLocationsFromQueryString(location);
+            IEnumerable<Location> locationEnumerable = CreateLocationsFromQueryString(locations);
             var props = new Dictionary<string, object?>() {
                 { CarbonAwareConstants.Locations, locationEnumerable },
                 { CarbonAwareConstants.Start, startTime },
