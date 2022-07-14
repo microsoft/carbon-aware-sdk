@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Options;
+
 namespace CarbonAware.WebApi.Configuration;
 
 public static class ServiceCollectionExtensions
@@ -11,7 +13,6 @@ public static class ServiceCollectionExtensions
         switch (telemetryProvider) {
             case TelemetryProviderType.ApplicationInsights:
             {
-                
                 if (!String.IsNullOrEmpty(configuration?["ApplicationInsights_Connection_String"])) 
                 {
                     logger.LogInformation("Application Insights connection string found");
@@ -37,7 +38,7 @@ public static class ServiceCollectionExtensions
 
     }
 
-    private static ILogger CreateConsoleLogger(IConfiguration? config)
+    public static ILogger CreateConsoleLogger(IConfiguration? config)
     {
         var factory = LoggerFactory.Create(b => {
             b.AddConfiguration(config?.GetSection("Logging"));
