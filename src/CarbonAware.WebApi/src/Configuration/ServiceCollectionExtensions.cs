@@ -13,15 +13,17 @@ public static class ServiceCollectionExtensions
         switch (telemetryProvider) {
             case TelemetryProviderType.ApplicationInsights:
             {
+                string? instrumentationKey = configuration?["AppInsights_InstrumentationKey"];
+
                 if (!String.IsNullOrEmpty(configuration?["ApplicationInsights_Connection_String"])) 
                 {
                     logger.LogInformation("Application Insights connection string found");
                     services.AddApplicationInsightsTelemetry();
                 } 
-                else if (!String.IsNullOrEmpty(configuration?["ApplicationInsights_Instrumentation_Key"])) 
+                else if (!String.IsNullOrEmpty(instrumentationKey)) 
                 {
-                    logger.LogInformation("Application Insights instrumentation key found");
-                    services.AddApplicationInsightsTelemetry(configuration?["ApplicationInsights_Instrumentation_Key"]);
+                    logger.LogInformation("Application Insights Instrumentation Key found");
+                    services.AddApplicationInsightsTelemetry(instrumentationKey);
                 } 
                 else 
                 {
