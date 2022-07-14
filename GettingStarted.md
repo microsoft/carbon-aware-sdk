@@ -137,7 +137,8 @@ This application is integrated with Application Insights for monitoring purposes
 ApplicationInsights_Connection_String="AppInsightsConnectionString"
 ```
 
-You can alternatively configure using Instrumentation Key by setting the `ApplicationInsights_Instrumentation_Key` variable. However, Microsoft is ending technical support for instrumentation key–based configuration of the Application Insights feature soon. ConnectionString-based configuration should be used over InstrumentationKey.  
+You can alternatively configure using Instrumentation Key by setting the `ApplicationInsights_Instrumentation_Key` variable. However, Microsoft is ending technical support for instrumentation key–based configuration of the Application Insights feature soon. ConnectionString-based configuration should be used over InstrumentationKey. For more details, please refer to https://docs.microsoft.com/en-us/azure/azure-monitor/app/sdk-connection-string?tabs=net. 
+
 ```bash
 ApplicationInsights_Instrumentation_Key="AppInsightsInstrumentationKey"
 ```
