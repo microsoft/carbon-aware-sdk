@@ -204,6 +204,39 @@ public class CarbonAwareController : ControllerBase
         return Ok(result);
     }
 
+    ///TODO finish summary
+    /// <summary>
+    /// Given an array of date and duration requests, retrieve the actual carbon intensity that would have occurred 
+    /// if the job was run at that time
+    /// </summary>
+    /// <remarks>
+    /// This endpoint takes a batch of requests for actual carbon emissions data, fetches them, and calculates the optimal 
+    /// marginal carbon intensity values for the given start time and end time and location to see the carbon intensity used during that time
+    /// The marginal carbon intensities output represent 
+    ///
+    /// This endpoint is useful for figuring out how much carbon usage there would have been if the job was run at a specific date and time
+    /// </remarks>
+    /// <param name="requestedForecasts"> Array of requested forecasts.</param>
+    /// <returns>An array of forecasts with their optimal marginal carbon intensity window.</returns>
+    /// <response code="200">Returns an array of responses which each contain a start and end time as well as an object which contains all the calculated carbon intensity values </response>
+    /// <response code="400">Returned if any of the requested items are invalid</response>
+    /// <response code="500">Internal server error</response>
+    /// <response code="501">Returned if the underlying data source does not support getting the data needed to calculate sci-scores</response>
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MarginalCarbonIntensityDTO>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status501NotImplemented, Type = typeof(ValidationProblemDetails))]
+    [HttpPost("forecasts/batch")]
+    public IActionResult BatchCarbonIntensityData(IEnumerable<MarginalCarbonIntensityDTO> requestedActual)
+    {
+        // Dummy result.
+        // TODO: implement this controller method after spec is approved.
+        var result = new List<EmissionsForecastDTO>();
+        return Ok(result);
+    }
+
+
 
     /// <summary>
     /// Given a dictionary of properties, handles call to GetEmissionsDataAsync including logging and response handling.
