@@ -13,18 +13,10 @@ public static class ServiceCollectionExtensions
         switch (telemetryProvider) {
             case TelemetryProviderType.ApplicationInsights:
             {
-                string? instrumentationKey = configuration?["AppInsights_InstrumentationKey"];
-
-                if (!String.IsNullOrEmpty(configuration?["ApplicationInsights_Connection_String"])) 
+                if (isAppInsightsConfigured(configuration, logger)) 
                 {
-                    logger.LogInformation("Application Insights connection string found");
                     services.AddApplicationInsightsTelemetry();
-                } 
-                else if (!String.IsNullOrEmpty(instrumentationKey)) 
-                {
-                    logger.LogInformation("Application Insights Instrumentation Key found");
-                    services.AddApplicationInsightsTelemetry(instrumentationKey);
-                } 
+                }
                 else 
                 {
                     logger.LogWarning("Application Insights configuration not provided or incorrect.");
@@ -37,6 +29,29 @@ public static class ServiceCollectionExtensions
             }
           // Can be extended in the future to support a different provider like Zipkin, Prometheus etc 
         }
+
+    }
+
+    private static bool isAppInsightsConfigured(IConfiguration? configuration, ILogger logger)
+    {
+        string? instrumentationKey = configuration?["AppInsights_InstrumentationKey"];
+        string? connectionStr = configuration?["ApplicationInsights_Connection_String"];
+
+        bool isAppInsightsConfigured = true;              
+        if (!String.IsNullOrEmpty(connectionStr)) 
+        {
+            logger.LogInformation("Application Insights connection string found");
+        } 
+        else if (!String.IsNullOrEmpty(instrumentationKey)) 
+        {
+            logger.LogInformation("Application Insights Instrumentation Key found");
+        }
+        else 
+        {
+            isAppInsightsConfigured = false;   
+        } 
+
+        return isAppInsightsConfigured;
 
     }
 
