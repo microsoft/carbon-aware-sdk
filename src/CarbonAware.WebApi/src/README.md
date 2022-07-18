@@ -167,7 +167,7 @@ Parameters:
 2. startTime: Start time boundary of forecasted data points. Ignores current forecast data points before this time. It defaults to the earliest time in the forecast data.
 3. endTime: End time boundary of forecasted data points. Ignores current forecast data points after this time. Defaults to the latest time in the forecast data.
 If time period is not provided, it retrieves all the data until the current time.
-4. windowSize -The estimated duration (in minutes) of the workload. Defaults to the duration of a single forecast data point.
+4. windowSize: The estimated duration (in minutes) of the workload. Defaults to the duration of a single forecast data point.
 
 EG
 ```
