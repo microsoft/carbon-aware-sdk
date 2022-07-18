@@ -211,8 +211,7 @@ public class CarbonAwareController : ControllerBase
     /// </summary>
     /// <remarks>
     /// This endpoint takes a batch of requests for actual carbon emissions data, fetches them, and calculates the optimal 
-    /// marginal carbon intensity values for the given start time and end time and location to see the carbon intensity used during that time
-    /// The marginal carbon intensities output represent 
+    /// marginal carbon intensity values for the given start time and end time and location to see the carbon intensity used during that tim
     ///
     /// This endpoint is useful for figuring out how much carbon usage there would have been if the job was run at a specific date and time
     /// </remarks>
@@ -223,12 +222,12 @@ public class CarbonAwareController : ControllerBase
     /// <response code="500">Internal server error</response>
     /// <response code="501">Returned if the underlying data source does not support getting the data needed to calculate sci-scores</response>
     [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MarginalCarbonIntensityDTO>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<SciScoreInput>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status501NotImplemented, Type = typeof(ValidationProblemDetails))]
-    [HttpPost("forecasts/batch")]
-    public IActionResult BatchCarbonIntensityData(IEnumerable<MarginalCarbonIntensityDTO> requestedActual)
+    [HttpPost("actual/batch")]
+    public IActionResult BatchCarbonIntensityData(IEnumerable<SciScoreInput> forecast)
     {
         // Dummy result.
         // TODO: implement this controller method after spec is approved.
