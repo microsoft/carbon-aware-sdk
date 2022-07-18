@@ -2,11 +2,16 @@ The Carbon Aware SDK provides an API to get the marginal carbon intensity for a 
 
 # Carbon Aware REST API
 
-
 - [Carbon Aware REST API](#carbon-aware-rest-api)
   - [Endpoints](#endpoints)
     - [POST /sci-scores](#post-sci-scores)
     - [POST /sci-scores/marginal-carbon-intensity](#post-sci-scoresmarginal-carbon-intensity)
+    - [GET emissions/bylocation](#get-emissionsbylocation)
+    - [GET emissions/bylocations](#get-emissionsbylocations)
+    - [GET emissions/bylocations/best](#get-emissionsbylocationsbest)
+    - [GET forecasts/current](#get-forecastscurrent)
+  - [Error Handling](#error-handling)
+  - [Autogenerate WebAPI](#autogenerate-webapi)
   
 ## Endpoints
 
