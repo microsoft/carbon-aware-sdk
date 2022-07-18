@@ -52,7 +52,7 @@ public class SciScoreController : ControllerBase
     /// <summary> Gets the marginal carbon intensity value </summary>
     /// <param name="input"> input from JSON request converted to input object with location and time interval </param>
     /// <returns>Result of the call to the aggregator to retrieve carbon intenstiy</returns>
-    
+
     [HttpPost("marginal-carbon-intensity")]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -73,6 +73,37 @@ public class SciScoreController : ControllerBase
             return Ok(score);
         }
     }
+
+    /// <summary>
+    /// Given an array of time intervals (with one given location), retrieve the actual carbon intensity that would have occurred 
+    /// if the job was run at that time
+    /// </summary>
+    /// <remarks>
+    /// This endpoint takes a batch of time intervals for actual carbon emissions data (for one given location), fetches them, and calculates the actual
+    /// marginal carbon intensity values for the given list of time intervals to return the carbon intensity used during each interval.
+    ///
+    /// This endpoint is useful for figuring out how much carbon usage there would have been if the job was run at a specific date and time
+    /// </remarks>
+    /// <param name="requestActuals"> Array of requested actual values.</param>
+    /// <returns>An array of actual carbon intensity values during the given time interval.</returns>
+    /// <response code="200">Returns an array of responses which each contain a time interval and calculated carbon intensity values </response>
+    /// <response code="400">Returned if any of the requested items are invalid</response>
+    /// <response code="500">Internal server error</response>
+    /// <response code="501">Returned if the underlying data source does not support getting the data needed to calculate sci-scores</response>
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<SciScore>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status501NotImplemented, Type = typeof(ValidationProblemDetails))]
+    [HttpPost("marginal-carbon-intensity/batch")]
+    public IActionResult BatchCarbonIntensityData(BatchSciScoreInput requestActuals)
+    {
+        // Dummy result.
+        // TODO: implement this controller method after spec is approved.
+        var result = new List<SciScore>();
+        return Ok(result);
+    }
+
 
     /// Validate the user input location and convert it to the internal Location object.
     //  Throws ArgumentException if input is invalid.
