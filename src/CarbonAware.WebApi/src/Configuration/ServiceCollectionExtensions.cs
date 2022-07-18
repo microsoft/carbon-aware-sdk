@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
         switch (telemetryProvider) {
             case TelemetryProviderType.ApplicationInsights:
             {
-                if (isAppInsightsConfigured(configuration, logger)) 
+                if (IsAppInsightsConfigured(configuration, logger)) 
                 {
                     services.AddApplicationInsightsTelemetry();
                 }
@@ -32,7 +32,7 @@ public static class ServiceCollectionExtensions
 
     }
 
-    private static bool isAppInsightsConfigured(IConfiguration? configuration, ILogger logger)
+    private static bool IsAppInsightsConfigured(IConfiguration? configuration, ILogger logger)
     {
         string? instrumentationKey = configuration?["AppInsights_InstrumentationKey"];
         string? connectionStr = configuration?["ApplicationInsights_Connection_String"];
