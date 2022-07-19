@@ -176,7 +176,7 @@ If time period is not provided, it retrieves all the data until the current time
 
 EG
 ```
-https://<server_name>/forecasts/current?location=northeurope&startTime=2022-07-19 14:00&endTime=2022-07-20&windowSize=10
+https://<server_name>/emissions/forecasts/current?location=northeurope&startTime=2022-07-19 14:00&endTime=2022-07-20&windowSize=10
 ```
 The response is an array of forecasts (one per requested location) with their optimal marginal carbon intensity windows.
 EG
