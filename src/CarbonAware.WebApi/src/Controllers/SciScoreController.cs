@@ -75,17 +75,17 @@ public class SciScoreController : ControllerBase
     }
 
     /// <summary>
-    /// Given an array of time intervals (with one given location), retrieve the actual carbon intensity that would have occurred 
+    /// Given a JSON request payload with a single location object and an array of time intervals, retrieve the actual measured carbon intensity for each interval.
     /// if the job was run at that time
     /// </summary>
     /// <remarks>
     /// This endpoint takes a batch of time intervals for actual carbon emissions data (for one given location), fetches them, and calculates the actual
     /// marginal carbon intensity values for the given list of time intervals to return the carbon intensity used during each interval.
     ///
-    /// This endpoint is useful for figuring out how much carbon usage there would have been if the job was run at a specific date and time
+    /// This endpoint is useful for reporting the measured carbon intensity for a specific time period in a specific location.
     /// </remarks>
     /// <param name="requestActuals"> Array of requested actual values.</param>
-    /// <returns>An array of actual carbon intensity values during the given time interval.</returns>
+    /// <returns>An array of SCI score objects with actual carbon intensity values for each requested time interval.</returns>
     /// <response code="200">Returns an array of responses which each contain a time interval and calculated carbon intensity values </response>
     /// <response code="400">Returned if any of the requested items are invalid</response>
     /// <response code="500">Internal server error</response>
