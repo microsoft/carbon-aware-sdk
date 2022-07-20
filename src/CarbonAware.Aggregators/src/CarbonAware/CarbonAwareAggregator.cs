@@ -74,6 +74,11 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         }
     }
 
+    public Task<EmissionsForecast> GetForecastsDataAsync(IDictionary props)
+    {
+        throw new NotImplementedException();
+    }
+
     private EmissionsData? GetOptimalEmissions(IEnumerable<EmissionsData> emissionsData)
     {
         if (!emissionsData.Any())

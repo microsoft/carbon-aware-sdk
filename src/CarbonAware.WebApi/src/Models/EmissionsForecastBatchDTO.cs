@@ -15,9 +15,9 @@ public record EmissionsForecastBatchDTO
 
   /// <summary>The historical time used to fetch the most recent forecast as of that time.</summary>
   /// <example>2022-06-01T00:00:00Z</example>
-  [JsonPropertyName("createdAt")]
+  [JsonPropertyName("requestedAt")]
   [Required()]
-  public DateTimeOffset CreatedAt { get; set; }
+  public DateTimeOffset RequestedAt { get; set; }
 
   /// <summary>
   /// Filter start time boundary of forecasted data points. Ignores forecast data points before this time.

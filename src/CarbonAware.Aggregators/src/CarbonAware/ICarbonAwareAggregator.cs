@@ -27,4 +27,6 @@ public interface ICarbonAwareAggregator : IAggregator
     /// <see cref="CarbonAwareConstants"/>
     /// <returns>List of current emissions forecasts by location.</returns>
     Task<IEnumerable<EmissionsForecast>> GetCurrentForecastDataAsync(IDictionary props);
+
+    Task<EmissionsForecast> GetForecastsDataAsync(IDictionary props);
 }
