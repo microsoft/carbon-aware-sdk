@@ -61,8 +61,8 @@ public class CarbonAwareAggregatorTests
 
         // Assert
         var forecastResult = results.First();
-        Assert.AreEqual(expectedStart, forecastResult.StartTime);
-        Assert.AreEqual(expectedEnd, forecastResult.EndTime);
+        Assert.AreEqual(expectedStart, forecastResult.DataStartAt);
+        Assert.AreEqual(expectedEnd, forecastResult.DataEndAt);
     }
 
     [Test]
