@@ -161,10 +161,14 @@ EG
 
 ### GET emissions/forecasts/current
 
-This endpoint fetches the most recent forecast for all provided locations and calculates the optimal marginal carbon intensity windows (per the specified windowSize) for each, within the start and end time boundaries. 
-If no start or end time boundaries are provided, all forecasted data points are used. 
+This endpoint fetches only the most recently generated forecast for all provided locations.  It filters down the full set  
+of forecasted data points using the "dataStartAt" and "dataEndAt" parameters. If no start or end time boundaries are 
+provided, all forecasted data points are used.  The data points are then used to calculate average marginal carbon 
+intensities of the specified "windowSize" and the optimal marginal carbon intensity window is identified.  
 
-The forecast data represents what the data source predicts future marginal carbon intesity values to be, not actual measured emissions data (as future values cannot be known).
+The forecast data represents what the data source predicts future marginal carbon intesity values to be, 
+not actual measured emissions data (as future values cannot be known).
+
 This endpoint is useful for determining if there is a more carbon-optimal time to use electicity predicted in the future.
 
 Parameters:
