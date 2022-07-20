@@ -209,10 +209,6 @@ public class CarbonAwareController : ControllerBase
                 };
 
                 var forecast = await _aggregator.GetForecastDataAsync(props);
-                if (forecast is null)
-                {
-                    continue;
-                }
                 yield return EmissionsForecastDTO.FromEmissionsForecast(forecast);
             }
         }

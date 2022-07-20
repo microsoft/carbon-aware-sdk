@@ -76,8 +76,8 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
             var forecastRequestedAt = GetOffsetOrDefault(props, CarbonAwareConstants.ForecastRequestedAt, default);
             if (forecastRequestedAt.Equals(default)) 
             {
-                Exception ex = new ArgumentException(CarbonAwareConstants.ForecastRequestedAt + "field is required and was not provided.");
-                _logger.LogError("argument exception", ex);
+                var ex = new ArgumentException(CarbonAwareConstants.ForecastRequestedAt + " field is required and was not provided.");
+                _logger.LogError("Argument exception", ex);
                 throw ex;
             }
 

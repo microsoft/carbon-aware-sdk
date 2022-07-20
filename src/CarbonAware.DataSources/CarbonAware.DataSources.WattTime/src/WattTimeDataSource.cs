@@ -67,7 +67,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
         using (var activity = Activity.StartActivity())
         {
-            BalancingAuthority balancingAuthority = await this.GetBalancingAuthority(location, activity);
+            var balancingAuthority = await this.GetBalancingAuthority(location, activity);
             var data = await this.WattTimeClient.GetCurrentForecastAsync(balancingAuthority);
             return ForecastToEmissionsForecast(data, location);
         }
@@ -80,7 +80,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
         using (var activity = Activity.StartActivity())
         {
-            BalancingAuthority balancingAuthority = await this.GetBalancingAuthority(location, activity);
+            var balancingAuthority = await this.GetBalancingAuthority(location, activity);
             var forecast = await this.WattTimeClient.GetForecastOnDateAsync(balancingAuthority, generatedAt);
             return ForecastToEmissionsForecast(forecast, location);
         }

@@ -120,7 +120,7 @@ public class WattTimeClient : IWattTimeClient
 
         var result = await this.MakeRequestAsync(Paths.Forecast, parameters, tags);
 
-        var forecasts = JsonSerializer.Deserialize<List<Forecast>>(result, options) ?? throw new WattTimeClientException($"Error getting forecasts for  {balancingAuthorityAbbreviation}");
+        var forecasts = JsonSerializer.Deserialize<List<Forecast>>(result, options) ?? throw new WattTimeClientException($"Error getting forecasts for {balancingAuthorityAbbreviation}");
 
         if (!forecasts.Any())
         {
