@@ -170,21 +170,18 @@ public class CarbonAwareController : ControllerBase
     }
 
     /// <summary>
-    /// Given an array of requested historical forecasts, retrieve the forecasted data and calculate the optimal
-    /// marginal carbon intensity window. 
+    /// Given an array of dates that each represents historical generated forecasts, retrieves the data that contains
+    /// forecasts metadata, the optimal forecast and a range of forecasts filtered by the attributes [forecastStart..forecastEnd] if provided.
     /// </summary>
     /// <remarks>
     /// This endpoint takes a batch of requests for historical forecast data, fetches them, and calculates the optimal 
     /// marginal carbon intensity windows for each using the same parameters available to the '/emissions/forecasts/current'
     /// endpoint.
     ///
-    /// The forecast data represents what the data source predicted future marginal carbon intesity values to be at that 
-    /// time, not the measured emissions data that actually occured.
-    ///
     /// This endpoint is useful for back-testing what one might have done in the past, if they had access to the 
     /// current forecast at the time.
     /// </remarks>
-    /// <param name="requestedForecasts"> Array of requested forecasts.</param>
+    /// <param name="requestedForecasts"> Array of generated forecasts.</param>
     /// <returns>An array of forecasts with their optimal marginal carbon intensity window.</returns>
     /// <response code="200">Returns the requested forecast objects</response>
     /// <response code="400">Returned if any of the requested items are invalid</response>
