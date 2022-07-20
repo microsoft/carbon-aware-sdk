@@ -204,8 +204,58 @@ public class CarbonAwareController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Retrieves the actual data that occurred between the time boundaries and calculates the carbon intensity that occurred during that window. 
+    /// </summary>
+    /// <remarks>
+    ///  This endpoint is useful for reporting the measured carbon intensity for a specific time period in a specific location.
+    /// </remarks>
+    /// <param name="location"> the location in </param>
+    /// <param name="jobStartTime"> the time at which the job and thus carbon usage starts </param>
+    /// <param name="jobEndTIme"> the time at which the job and thus carbon usage ends </param>
+    /// <returns> a single object that contains the location, time boundaries and carbon intensity value </returns>
+    /// <response code="200">Returns the a single object that contains the info about the request and the marginal carbon intensity </response>
+    /// <response code="400">Returned if any of the requested items are invalid</response>
+    /// <response code="500">Internal server error</response>
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
+    [HttpGet("actual-carbon-intensity")]
+    private IActionResult GetActualCarbonIntensity(string location, DateTimeOffset jobStartTime, DateTimeOffset jobEndTime)
+    {
+        // Dummy result.
+        // TODO: implement this controller method after spec is approved.
+        var result = new CarbonIntensityOutputDTO();
+        return Ok(result);
+    }
 
 
+    /// <summary>
+    /// Given a list of requests, each with their own location and time boundaries, calculate the carbon intensity for the actual data that occurred during that window 
+    ///and return a list of carbon intensities
+    /// </summary>
+    /// <remarks>
+    /// we validate that the user is only inputting a single location with different time boundaries. If they input multiple locations, we return an error.
+    /// for each of the inputs, we return the location, the time boundaries, and the carbon intensity. 
+    /// </remarks>
+    /// <param name="requestedCarbonIntensities"> list of inputs where each contains a location and jobStartDate and jobEndState for which to calculate marginal carbon intensity </param>
+    /// <returns></returns>
+    /// <response code="200">Returns a list of outputs where each contains location, time boundaries and the marginal carbon intensity from the input </response>
+    /// <response code="400">Returned if any of the requested items are invalid</response>
+    /// <response code="500">Internal server error</response>
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CarbonIntensityBaseDTO>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
+    [HttpGet("actual-carbon-intensity/batch")]
+    private IActionResult GetActualCarbonIntensityBatch(IEnumerable<CarbonIntensityBaseDTO> requestedCarbonIntensities)
+    {
+        // Dummy result.
+        // TODO: implement this controller method after spec is approved.
+        var result = new List<CarbonIntensityOutputDTO>();
+        return Ok(result);
+    }
 
     /// <summary>
     /// Given a dictionary of properties, handles call to GetEmissionsDataAsync including logging and response handling.

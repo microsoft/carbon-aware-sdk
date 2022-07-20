@@ -9,8 +9,6 @@ public record SciScoreInput
     /// <example> 
     /// {
     ///     "locationType": "CloudProvider",
-    ///     "latitude": 0,
-    ///     "longitude": 0,
     ///     "cloudProvider": "Azure",
     ///     "regionName": "eastus"
     /// }
@@ -23,28 +21,6 @@ public record SciScoreInput
     [JsonPropertyName("timeInterval")]
     [Required()]
     public string TimeInterval { get; set; } = string.Empty;
-}
-
-[Serializable]
-public record BatchSciScoreInput
-{
-    /// <example> 
-    /// {
-    ///     "locationType": "CloudProvider",
-    ///     "latitude": 0,
-    ///     "longitude": 0,
-    ///     "cloudProvider": "Azure",
-    ///     "regionName": "eastus"
-    /// }
-    /// </example>
-    [JsonPropertyName("location")]
-    [Required()]
-    public LocationInput Location { get; set; } = new LocationInput();
-
-    /// <example> ["2007-03-01T13:00:00Z/2007-03-01T15:30:00Z", "2007-03-01T16:00:00Z/2007-03-01T19:30:00Z" ] </example>
-    [JsonPropertyName("timeIntervals")]
-    [Required()]
-    public string[] TimeIntervals { get; set; } = new string[0];
 }
 
 [Serializable]
