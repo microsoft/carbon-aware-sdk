@@ -169,8 +169,8 @@ This endpoint is useful for determining if there is a more carbon-optimal time t
 
 Parameters:
 1. `location`: This is a required parameter and is an array of the names of the data region for the configured Cloud provider.
-2. `dataStartAt`: Start time boundary of the current forecast data points. Ignores current forecast data points before this time. It defaults to the earliest time in the forecast data.
-3. `dataEndAt`: End time boundary of the current forecast data points. Ignores current forecast data points after this time. Defaults to the latest time in the forecast data.
+2. `dataStartAt`: Start time boundary of the current forecast data points. Ignores current forecast data points before this time. Must be within the forecast data point timestamps. Defaults to the earliest time in the forecast data.
+3. `dataEndAt`: End time boundary of the current forecast data points. Ignores current forecast data points after this time. Must be within the forecast data point timestamps.Defaults to the latest time in the forecast data.
 If neither `dataStartAt` nor `dataEndAt` are provided, all forecasted data points are used in calculating the optimal marginal carbon intensity window.
 4. `windowSize`: The estimated duration (in minutes) of the workload. Defaults to the duration of a single forecast data point.
 
