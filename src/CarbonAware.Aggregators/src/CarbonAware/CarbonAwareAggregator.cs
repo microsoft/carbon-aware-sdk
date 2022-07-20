@@ -85,7 +85,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         {
             return null;
         }
-        return emissionsData.Aggregate((minData, nextData) => minData.Rating < nextData.Rating ? minData : nextData);
+        return emissionsData.MinBy(x => x.Rating);
     }
 
     /// <summary>
