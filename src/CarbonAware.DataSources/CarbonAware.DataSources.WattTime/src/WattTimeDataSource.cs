@@ -69,26 +69,42 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         {
             BalancingAuthority balancingAuthority = await this.GetBalancingAuthority(location, activity);
             var data = await this.WattTimeClient.GetCurrentForecastAsync(balancingAuthority);
-
-            var duration = GetDurationFromGridEmissionDataPoints(data.ForecastData.FirstOrDefault(), data.ForecastData.Skip(1)?.FirstOrDefault());
-            
-            // Linq statement to convert WattTime forecast data into EmissionsData for the CarbonAware SDK.
-            var forecastData = data.ForecastData.Select(e => new EmissionsData() 
-            { 
-                Location = e.BalancingAuthorityAbbreviation, 
-                Rating = ConvertMoerToGramsPerKilowattHour(e.Value), 
-                Time = e.PointTime,
-                Duration = duration
-            });
-
-            return new EmissionsForecast()
-            {
-                GeneratedAt = data.GeneratedAt,
-                Location = location,
-                ForecastData = forecastData,
-            };
+            return ForecastToEmissionsForecast(data, location);
         }
     }
+
+    /// <inheritdoc />
+    public async Task<EmissionsForecast> GetCarbonIntensityForecastAsync(Location location, DateTimeOffset generatedAt)
+    {
+        this.Logger.LogInformation($"Getting carbon intensity forecast for location {location} requested at {generatedAt}");
+
+        using (var activity = Activity.StartActivity())
+        {
+            BalancingAuthority balancingAuthority = await this.GetBalancingAuthority(location, activity);
+            var forecast = await this.WattTimeClient.GetForecastOnDateAsync(balancingAuthority, generatedAt);
+            return ForecastToEmissionsForecast(forecast, location);
+        }
+    }
+
+    private EmissionsForecast ForecastToEmissionsForecast(Forecast forecast, Location location) 
+    {
+        var duration = GetDurationFromGridEmissionDataPoints(forecast.ForecastData.FirstOrDefault(), forecast.ForecastData.Skip(1)?.FirstOrDefault());
+        var forecastData = forecast.ForecastData.Select(e => new EmissionsData()
+        {
+            Location = e.BalancingAuthorityAbbreviation,
+            Rating = ConvertMoerToGramsPerKilowattHour(e.Value),
+            Time = e.PointTime,
+            Duration = duration
+        });
+        var emForecast = new EmissionsForecast()
+        {
+            GeneratedAt = forecast.GeneratedAt,
+            Location = location,
+            ForecastData = forecastData
+        };
+        return emForecast;
+    }
+
     private async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(Location location, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
     {
         Logger.LogInformation($"Getting carbon intensity for location {location} for period {periodStartTime} to {periodEndTime}.");
