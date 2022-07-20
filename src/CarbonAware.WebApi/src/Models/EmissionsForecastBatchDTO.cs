@@ -24,16 +24,16 @@ public record EmissionsForecastBatchDTO
   /// Defaults to the earliest time in the forecast data.
   /// </summary>
   /// <example>2022-06-01T14:40:00Z</example>
-  [JsonPropertyName("forecastStart")]
-  public DateTimeOffset ForecastStart { get; set; }
+  [JsonPropertyName("dataStartAt")]
+  public DateTimeOffset DataStartAt { get; set; }
 
   /// <summary>
   /// Filter end time boundary of forecasted data points. Ignores forecast data points after this time.
   /// Defaults to the latest time in the forecast data.
   /// </summary>
   /// <example>2022-06-01T14:50:00Z</example>
-  [JsonPropertyName("forecastEnd")]
-  public DateTimeOffset ForecastEnd { get; set; }
+  [JsonPropertyName("dataEndAt")]
+  public DateTimeOffset DataEndAt { get; set; }
 
   /// <summary>
   /// The estimated duration (in minutes) of the workload.
