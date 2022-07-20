@@ -73,20 +73,20 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         using (var activity = Activity.StartActivity())
         {
             var location = GetLocationOrThrow(props).First(); // Should only be one location
-            var requestedAt = GetOffsetOrDefault(props, CarbonAwareConstants.RequestedAt, default);
-            if (requestedAt.Equals(default)) 
+            var forecastRequestedAt = GetOffsetOrDefault(props, CarbonAwareConstants.ForecastRequestedAt, default);
+            if (forecastRequestedAt.Equals(default)) 
             {
-                Exception ex = new ArgumentException(CarbonAwareConstants.RequestedAt + "field is required and was not provided.");
+                Exception ex = new ArgumentException(CarbonAwareConstants.ForecastRequestedAt + "field is required and was not provided.");
                 _logger.LogError("argument exception", ex);
                 throw ex;
             }
 
             _logger.LogInformation("Aggregator getting carbon intensity forecast from data source");
 
-            var forecast = await this._dataSource.GetCarbonIntensityForecastAsync(location, requestedAt);
+            var forecast = await this._dataSource.GetCarbonIntensityForecastAsync(location, forecastRequestedAt);
             var lastDataPoint = forecast.ForecastData.Last();
-            forecast.StartTime = GetOffsetOrDefault(props, CarbonAwareConstants.Start, forecast.ForecastData.First().Time);
-            forecast.EndTime = GetOffsetOrDefault(props, CarbonAwareConstants.End, lastDataPoint.Time + lastDataPoint.Duration);
+            forecast.StartTime = GetOffsetOrDefault(props, CarbonAwareConstants.ForecastStart, forecast.ForecastData.First().Time);
+            forecast.EndTime = GetOffsetOrDefault(props, CarbonAwareConstants.ForecastEnd, lastDataPoint.Time + lastDataPoint.Duration);
 
             return ValidateAndProcessEmissionsForecast(forecast, GetDurationOrDefault(props));
         }

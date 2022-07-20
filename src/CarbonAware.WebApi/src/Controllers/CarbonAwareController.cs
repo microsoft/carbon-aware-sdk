@@ -202,13 +202,17 @@ public class CarbonAwareController : ControllerBase
                 IEnumerable<Location> locationEnumerable = CreateLocationsFromQueryString(new string[] { forecastBatchDTO.Location });
                 var props = new Dictionary<string, object?>() {
                     { CarbonAwareConstants.Locations, locationEnumerable },
-                    { CarbonAwareConstants.Start, forecastBatchDTO.ForecastStart },
-                    { CarbonAwareConstants.End, forecastBatchDTO.ForecastEnd },
+                    { CarbonAwareConstants.ForecastStart, forecastBatchDTO.ForecastStart },
+                    { CarbonAwareConstants.ForecastEnd, forecastBatchDTO.ForecastEnd },
                     { CarbonAwareConstants.Duration, forecastBatchDTO.WindowSize },
-                    { CarbonAwareConstants.RequestedAt, forecastBatchDTO.CreatedAt },
+                    { CarbonAwareConstants.ForecastRequestedAt, forecastBatchDTO.RequestedAt},
                 };
 
                 var forecast = await _aggregator.GetForecastDataAsync(props);
+                if (forecast is null)
+                {
+                    continue;
+                }
                 yield return EmissionsForecastDTO.FromEmissionsForecast(forecast);
             }
         }

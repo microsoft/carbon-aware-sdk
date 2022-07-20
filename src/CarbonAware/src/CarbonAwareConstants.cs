@@ -10,5 +10,7 @@ public class CarbonAwareConstants
     public const string End = "end";
     public const string Duration = "duration";
     public const string Best = "best";
-    public const string RequestedAt = "requestedAt";
+    public const string ForecastRequestedAt = "forecastRequestedAt";
+    public const string ForecastStart ="forecastStart";
+    public const string ForecastEnd ="forecastEnd";
 }
