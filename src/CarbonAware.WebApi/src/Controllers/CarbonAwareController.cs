@@ -208,7 +208,7 @@ public class CarbonAwareController : ControllerBase
                     { CarbonAwareConstants.ForeCastRequestedAt, forecastBatchDTO.RequestedAt},
                 };
 
-                var forecast = await _aggregator.GetForecastsDataAsync(props);
+                var forecast = await _aggregator.GetForecastDataAsync(props);
                 if (forecast is null)
                 {
                     continue;

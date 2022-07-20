@@ -74,7 +74,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         }
     }
 
-    public Task<EmissionsForecast> GetForecastsDataAsync(IDictionary props)
+    public Task<EmissionsForecast> GetForecastDataAsync(IDictionary props)
     {
         throw new NotImplementedException();
     }
