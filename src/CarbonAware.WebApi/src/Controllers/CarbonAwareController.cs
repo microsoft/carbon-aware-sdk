@@ -184,14 +184,11 @@ public class CarbonAwareController : ControllerBase
     /// <param name="requestedForecasts"> Array of generated forecasts.</param>
     /// <returns>An array of forecasts with their optimal marginal carbon intensity window.</returns>
     /// <response code="200">Returns the requested forecast objects</response>
-    /// <response code="400">Returned if any of the requested items are invalid</response>
     /// <response code="500">Internal server error</response>
     /// <response code="501">Returned if the underlying data source does not support forecasting</response>
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
-    [ProducesResponseType(StatusCodes.Status501NotImplemented, Type = typeof(ValidationProblemDetails))]
     [HttpPost("forecasts/batch")]
     public async IAsyncEnumerable<EmissionsForecastDTO> BatchForecastDataAsync(IEnumerable<EmissionsForecastBatchDTO> requestedForecasts)
     {
@@ -207,7 +204,8 @@ public class CarbonAwareController : ControllerBase
                     { CarbonAwareConstants.Duration, forecastBatchDTO.WindowSize },
                     { CarbonAwareConstants.ForecastRequestedAt, forecastBatchDTO.RequestedAt},
                 };
-
+                // NOTE: Current Error Handling done by HttpResponseExceptionFilter can't handle exceptions
+                // thrown by the underline framework for this method, therefore all exceptions are 500 (done by the framework)
                 var forecast = await _aggregator.GetForecastDataAsync(props);
                 yield return EmissionsForecastDTO.FromEmissionsForecast(forecast);
             }
