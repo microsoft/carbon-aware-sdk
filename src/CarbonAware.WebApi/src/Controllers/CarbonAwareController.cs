@@ -206,6 +206,7 @@ public class CarbonAwareController : ControllerBase
                 };
                 // NOTE: Current Error Handling done by HttpResponseExceptionFilter can't handle exceptions
                 // thrown by the underline framework for this method, therefore all exceptions are 500 (done by the framework)
+                // Using a middleware exception handler approach should cover this use case too.
                 var forecast = await _aggregator.GetForecastDataAsync(props);
                 yield return EmissionsForecastDTO.FromEmissionsForecast(forecast);
             }
