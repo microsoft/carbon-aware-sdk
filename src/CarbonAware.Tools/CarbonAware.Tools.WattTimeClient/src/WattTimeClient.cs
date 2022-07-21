@@ -102,7 +102,7 @@ public class WattTimeClient : IWattTimeClient
     }
 
     /// <inheritdoc/>
-    public async Task<Forecast> GetForecastOnDateAsync(string balancingAuthorityAbbreviation, DateTimeOffset generatedAt)
+    public async Task<Forecast?> GetForecastOnDateAsync(string balancingAuthorityAbbreviation, DateTimeOffset generatedAt)
     {
         Log.LogInformation($"Requesting forecast from balancingAuthority {balancingAuthorityAbbreviation} generated at {generatedAt}.");
 
@@ -121,16 +121,11 @@ public class WattTimeClient : IWattTimeClient
         var result = await this.MakeRequestAsync(Paths.Forecast, parameters, tags);
 
         var forecasts = JsonSerializer.Deserialize<List<Forecast>>(result, options) ?? throw new WattTimeClientException($"Error getting forecasts for {balancingAuthorityAbbreviation}");
-
-        if (!forecasts.Any())
-        {
-            throw new WattTimeClientException($"No forecast generated at time {generatedAt}");
-        }
-        return forecasts.First();
+        return forecasts.FirstOrDefault();
     }
 
     /// <inheritdoc/>
-    public Task<Forecast> GetForecastOnDateAsync(BalancingAuthority balancingAuthority, DateTimeOffset generatedAt)
+    public Task<Forecast?> GetForecastOnDateAsync(BalancingAuthority balancingAuthority, DateTimeOffset generatedAt)
     {
         return this.GetForecastOnDateAsync(balancingAuthority.Abbreviation, generatedAt);
     }
