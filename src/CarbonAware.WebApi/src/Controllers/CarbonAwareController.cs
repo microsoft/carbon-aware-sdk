@@ -248,7 +248,7 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CarbonIntensityBatchDTO>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
-    [HttpGet("average-carbon-intensity/batch")]
+    [HttpPost("average-carbon-intensity/batch")]
     public IActionResult GetAverageCarbonIntensityBatch(IEnumerable<CarbonIntensityBatchDTO> requestedCarbonIntensities)
     {
         // Dummy result.
