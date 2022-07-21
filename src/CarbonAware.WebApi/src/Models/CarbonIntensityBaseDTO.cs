@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 [Serializable]
 public record CarbonIntensityBaseDTO
 {
-    /// <summary>the azure location name </summary>
+    /// <summary>the location name where workflow is run </summary>
     /// <example> eastus </example>
     [JsonPropertyName("location")]
     public string Location { get; set; } = string.Empty;

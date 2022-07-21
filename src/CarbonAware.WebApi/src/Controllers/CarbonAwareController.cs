@@ -210,9 +210,9 @@ public class CarbonAwareController : ControllerBase
     /// <remarks>
     ///  This endpoint is useful for reporting the measured carbon intensity for a specific time period in a specific location.
     /// </remarks>
-    /// <param name="location"> the Azure location name of the region that we are measuring carbon usage in </param>
-    /// <param name="startTime"> the time at which the job and thus carbon usage starts </param>
-    /// <param name="endTime"> the time at which the job and thus carbon usage ends </param>
+    /// <param name="location"> the location name of the region that we are measuring carbon usage in </param>
+    /// <param name="startTime"> the time at which the workflow and thus carbon usage starts </param>
+    /// <param name="endTime"> the time at which the workflow and thus carbon usage ends </param>
     /// <returns> a single object that contains the location, time boundaries and carbon intensity value </returns>
     /// <response code="200">Returns the a single object that contains the info about the request and the marginal carbon intensity </response>
     /// <response code="400">Returned if any of the requested items are invalid</response>
@@ -239,7 +239,7 @@ public class CarbonAwareController : ControllerBase
     /// we validate that the user is only inputting a single location with different time boundaries. If they input multiple locations, we return an error.
     /// for each of the inputs, we return the location, the time boundaries, and the carbon intensity. 
     /// </remarks>
-    /// <param name="requestedCarbonIntensities"> list of inputs where each contains a location and jobStartDate and jobEndState for which to calculate marginal carbon intensity </param>
+    /// <param name="requestedCarbonIntensities"> list of inputs where each contains a location and StartDate and EndState for which to calculate marginal carbon intensity </param>
     /// <returns>a list of CarbonIntensityDTO objects which each have a location, start and end time and the carbon intensity over that time</returns>
     /// <response code="200">Returns a list of outputs where each contains location, time boundaries and the marginal carbon intensity from the input </response>
     /// <response code="400">Returned if any of the requested items are invalid</response>
