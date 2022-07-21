@@ -2,7 +2,6 @@
 
 namespace CarbonAware.WebApi.Models;
 
-
 [Serializable]
 public record SciScore
 {
@@ -21,12 +20,8 @@ public record SciScore
     /// <example>0</example>
     [JsonPropertyName("embodiedEmissionsValue")]
     public double? EmbodiedEmissionsValue { get; set; }
-
+    
     /// <example>1</example>
     [JsonPropertyName("functionalUnitValue")]
     public Int64? FunctionalUnitValue { get; set; }
-
-    // <example> 2007-03-01T13:00:00Z/2007-03-01T15:30:00Z </example>
-    [JsonPropertyName("timeInterval")]
-    public string? TimeInterval { get; set; }
 }

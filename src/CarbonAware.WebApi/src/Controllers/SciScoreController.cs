@@ -52,7 +52,7 @@ public class SciScoreController : ControllerBase
     /// <summary> Gets the marginal carbon intensity value </summary>
     /// <param name="input"> input from JSON request converted to input object with location and time interval </param>
     /// <returns>Result of the call to the aggregator to retrieve carbon intenstiy</returns>
-
+    
     [HttpPost("marginal-carbon-intensity")]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -73,7 +73,6 @@ public class SciScoreController : ControllerBase
             return Ok(score);
         }
     }
-
 
     /// Validate the user input location and convert it to the internal Location object.
     //  Throws ArgumentException if input is invalid.
