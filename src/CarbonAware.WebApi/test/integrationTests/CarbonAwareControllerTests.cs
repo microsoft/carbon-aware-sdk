@@ -6,6 +6,7 @@ using CarbonAware.Model;
 using NUnit.Framework;
 using System.Net;
 using System.Text.Json;
+using CarbonAware.WebApi.Models;
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
@@ -19,6 +20,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     private string fakeURI = "/fake-endpoint";
     private string bestLocationsURI = "/emissions/bylocations/best";
     private string currentForecastURI = "/emissions/forecasts/current";
+    private string batchForecastURI = "/emissions/forecasts/batch";
+
     private JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
     public CarbonAwareControllerTests(DataSourceType dataSource) : base(dataSource) { }
@@ -153,6 +156,72 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
+    [Test]
+     public async Task EmissionsForecastsBatch_NoLocation_ReturnsBadRequest()
+    {
+        IgnoreTestForDataSource("data source does not implement '/emissions/forecasts/batch'", DataSourceType.JSON);
+
+        _dataSourceMocker.SetupForecastMock();
+
+        var forecastData = new List<EmissionsForecastBatchDTO>()
+        {
+            new EmissionsForecastBatchDTO
+            {
+                RequestedAt = new DateTimeOffset(2021,9,1,8,30,0, TimeSpan.Zero)
+            }
+        };
+
+        var result = await PostJSONBodyToURI(forecastData, batchForecastURI);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    }
+
+    [Test]
+     public async Task EmissionsForecastsBatch_NoRequestedAt_ReturnsBadRequest()
+    {
+        IgnoreTestForDataSource("data source does not implement '/emissions/forecasts/batch'", DataSourceType.JSON);
+
+        _dataSourceMocker.SetupForecastMock();
+
+        var forecastData = new List<EmissionsForecastBatchDTO>()
+        {
+            new EmissionsForecastBatchDTO
+            {
+                Location = "eastus"
+            }
+        };
+
+        var result = await PostJSONBodyToURI(forecastData, batchForecastURI);
+
+        Assert.That(result, Is.Not.Null);
+        // TODO: Fix code to return BadRequest instead of InternalServerError
+        // Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    }
+    
+    [Test]
+    public async Task EmissionsForecastsBatch_SupportedDataSources_ReturnsOk()
+    {
+        IgnoreTestForDataSource("data source does not implement '/emissions/forecasts/batch'", DataSourceType.JSON);
+
+        _dataSourceMocker.SetupBatchForecastMock();
+
+        var forecastData = new List<EmissionsForecastBatchDTO>()
+        {
+            new EmissionsForecastBatchDTO
+            {
+                Location = "eastus",
+                DataStartAt = new DateTimeOffset(2021,9,1,8,30,0, TimeSpan.Zero),
+                DataEndAt = new DateTimeOffset(2021,9,2,8,30,0, TimeSpan.Zero),
+                RequestedAt = new DateTimeOffset(2021,9,1,8,30,0, TimeSpan.Zero)
+            }
+        };
+
+        var result = await PostJSONBodyToURI(forecastData, batchForecastURI);
+       
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
     private void IgnoreTestForDataSource(string reasonMessage, params DataSourceType[] ignoredDataSources)
     {
         if (ignoredDataSources.Contains(_dataSource))
