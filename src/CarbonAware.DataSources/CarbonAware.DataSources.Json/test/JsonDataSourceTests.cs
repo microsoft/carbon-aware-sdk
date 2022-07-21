@@ -69,7 +69,7 @@ public class JsonDataSourceTests
         var mockDataSource = SetupMockDataSource();
         var dataSource = mockDataSource.Object;
         var location = new Location {RegionName = "paris"};
-        Assert.ThrowsAsync<NotImplementedException>(async () => await  dataSource.GetCurrentCarbonIntensityForecastAsync(location));
+        Assert.ThrowsAsync<NotImplementedException>(async () => await  dataSource.GetCarbonIntensityForecastAsync(location));
 
     }
 

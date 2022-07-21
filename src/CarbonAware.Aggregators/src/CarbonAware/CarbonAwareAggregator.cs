@@ -55,7 +55,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
             var forecasts = new List<EmissionsForecast>();
             foreach (var location in GetLocationOrThrow(props))
             {
-                var forecast = await this._dataSource.GetCurrentCarbonIntensityForecastAsync(location);
+                var forecast = await this._dataSource.GetCarbonIntensityForecastAsync(location);
                 var firstDataPoint = forecast.ForecastData.First();
                 var lastDataPoint = forecast.ForecastData.Last();
                 forecast.StartTime = GetOffsetOrDefault(props, CarbonAwareConstants.Start, firstDataPoint.Time);

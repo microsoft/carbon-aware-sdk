@@ -25,17 +25,10 @@ public interface ICarbonIntensityDataSource
     public Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(IEnumerable<Location> locations, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime);
 
     /// <summary>
-    /// Gets the forecasted carbon intensity for a location
+    /// Gets the forecasted carbon intensity for a location. If the optional `generatedAt` field is not provided, defaults to the current forecast.
     /// </summary>
     /// <param name="location">The location that should be used for getting the forecast.</param>
-    /// <returns>A forecasted emissions object for the given location.</returns>
-    public Task<EmissionsForecast> GetCurrentCarbonIntensityForecastAsync(Location location);
-
-    /// <summary>
-    /// Gets the batched forecasted carbon intensity for a location for the given requested time
-    /// </summary>
-    /// <param name="location">The location that should be used for getting the forecast.</param>
-    /// <param name="generatedAt">The historical time used to fetch the most recent forecast generated as of that time.</param>
+    /// <param name="generatedAt">[Optional] The historical time used to fetch the most recent forecast generated as of that time.</param>
     /// <returns>A forecasted emissions object for the given location generated at the given time.</returns>
-    public Task<EmissionsForecast> GetCarbonIntensityForecastAsync(Location location, DateTimeOffset generatedAt);
+    public Task<EmissionsForecast> GetCarbonIntensityForecastAsync(Location location, DateTimeOffset? generatedAt = null);
 }

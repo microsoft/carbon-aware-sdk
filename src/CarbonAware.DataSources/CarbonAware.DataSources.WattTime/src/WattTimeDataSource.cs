@@ -59,36 +59,34 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         }
         return result;
     }
-    
+
     /// <inheritdoc />
-    public async Task<EmissionsForecast> GetCurrentCarbonIntensityForecastAsync(Location location)
+    public async Task<EmissionsForecast> GetCarbonIntensityForecastAsync(Location location, DateTimeOffset? generatedAt = null)
     {
-        this.Logger.LogInformation($"Getting carbon intensity forecast for location {location}");
+        // When generatedAt field null, we request the current forecast.
+        bool isCurrent = generatedAt == null;
+        this.Logger.LogInformation($"Getting carbon intensity forecast for location {location}" + (isCurrent ? "" : $"requested at {generatedAt}"));
 
         using (var activity = Activity.StartActivity())
         {
             var balancingAuthority = await this.GetBalancingAuthority(location, activity);
-            var data = await this.WattTimeClient.GetCurrentForecastAsync(balancingAuthority);
-            return ForecastToEmissionsForecast(data, location);
-        }
-    }
-
-    /// <inheritdoc />
-    public async Task<EmissionsForecast> GetCarbonIntensityForecastAsync(Location location, DateTimeOffset generatedAt)
-    {
-        this.Logger.LogInformation($"Getting carbon intensity forecast for location {location} requested at {generatedAt}");
-
-        using (var activity = Activity.StartActivity())
-        {
-            var balancingAuthority = await this.GetBalancingAuthority(location, activity);
-            Forecast? forecast = await this.WattTimeClient.GetForecastOnDateAsync(balancingAuthority, generatedAt);
-            if (forecast == null) {
-                Exception ex = new ArgumentException($"No forecast was generated at the requested time {generatedAt}");
-                activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-                Logger.LogError(ex, ex.Message);
-                throw ex;
+            if (isCurrent)
+            {
+                var forecast = await this.WattTimeClient.GetCurrentForecastAsync(balancingAuthority); 
+                return ForecastToEmissionsForecast(forecast, location);
+            } 
+            else
+            {
+                var forecast = await this.WattTimeClient.GetForecastOnDateAsync(balancingAuthority, (DateTimeOffset)generatedAt!);
+                if (forecast == null)
+                {
+                    Exception ex = new ArgumentException($"No forecast was generated at the requested time {generatedAt}");
+                    activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+                    Logger.LogError(ex, ex.Message);
+                    throw ex;
+                }
+                return ForecastToEmissionsForecast(forecast, location);
             }
-            return ForecastToEmissionsForecast(forecast, location);
         }
     }
 

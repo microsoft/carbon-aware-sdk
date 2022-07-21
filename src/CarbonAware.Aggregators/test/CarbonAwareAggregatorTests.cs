@@ -46,7 +46,7 @@ public class CarbonAwareAggregatorTests
         var expectedStart = start != null ? DateTimeOffset.Parse(start) : firstDataPoint.Time;
         var expectedEnd = end != null ? DateTimeOffset.Parse(end) : lastDataPoint.Time + lastDataPoint.Duration;
 
-        this.CarbonIntensityDataSource.Setup(x => x.GetCurrentCarbonIntensityForecastAsync(It.IsAny<Location>()))
+        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityForecastAsync(It.IsAny<Location>(), null))
             .ReturnsAsync(forecast);
 
         var props = new Dictionary<string, object?>()
@@ -83,7 +83,7 @@ public class CarbonAwareAggregatorTests
     [TestCase("2022-01-01T00:02:00Z", "2022-01-01T00:12:00Z", ExpectedResult = 3, TestName = "Start and end match midway through a datapoint")]
     public async Task<int> TestGetCurrentForecastDataAsync_FiltersDate(string start, string end)
     {
-        this.CarbonIntensityDataSource.Setup(x => x.GetCurrentCarbonIntensityForecastAsync(It.IsAny<Location>()))
+        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityForecastAsync(It.IsAny<Location>(), null))
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
         var props = new Dictionary<string, object>()
         {
@@ -102,7 +102,7 @@ public class CarbonAwareAggregatorTests
     [TestCase("2022-01-01T00:05:00Z", "2022-01-01T00:20:00Z", TestName = "Data set minus first lowest datapoint")]
     public async Task TestGetCurrentForecastDataAsync_OptimalDataPoint(string start, string end)
     {
-        this.CarbonIntensityDataSource.Setup(x => x.GetCurrentCarbonIntensityForecastAsync(It.IsAny<Location>()))
+        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityForecastAsync(It.IsAny<Location>(), null))
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
         var props = new Dictionary<string, object>()
         {
@@ -127,7 +127,7 @@ public class CarbonAwareAggregatorTests
         var dataTickSize = 5.0;
         var dataDuration = windowSize;
         var dataStartTime = new DateTimeOffset(2022,1,1,0,0,0,TimeSpan.Zero);
-        this.CarbonIntensityDataSource.Setup(x => x.GetCurrentCarbonIntensityForecastAsync(It.IsAny<Location>()))
+        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityForecastAsync(It.IsAny<Location>(),null))
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
         var locationName = "westus";
         var props = new Dictionary<string, object>()
@@ -160,7 +160,7 @@ public class CarbonAwareAggregatorTests
         var dataTickSize = 5.0;
         var dataDuration = 5;
         var dataStartTime = new DateTimeOffset(2022,1,1,0,0,0,TimeSpan.Zero);
-        this.CarbonIntensityDataSource.Setup(x => x.GetCurrentCarbonIntensityForecastAsync(It.IsAny<Location>()))
+        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityForecastAsync(It.IsAny<Location>(), null))
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
         var locationName = "westus";
         var props = new Dictionary<string, object>()
@@ -192,7 +192,7 @@ public class CarbonAwareAggregatorTests
     [TestCase("2022-01-01T00:20:00Z", "2022-01-01T00:00:00Z", TestName = "startTime after endTime")]
     public void TestGetCurrentForecastDataAsync_InvalidStartEndTimes_ThrowsException(string start, string end)
     {
-        this.CarbonIntensityDataSource.Setup(x => x.GetCurrentCarbonIntensityForecastAsync(It.IsAny<Location>()))
+        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityForecastAsync(It.IsAny<Location>(), null))
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
         var props = new Dictionary<string, object?>()
         {

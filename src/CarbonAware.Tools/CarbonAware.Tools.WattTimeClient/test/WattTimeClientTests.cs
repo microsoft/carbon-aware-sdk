@@ -315,7 +315,7 @@ public class WattTimeClientTests
         var forecast = await client.GetForecastOnDateAsync(ba.Abbreviation, new DateTimeOffset(2022, 4, 22, 0, 0, 0, TimeSpan.Zero));
         var overloadedForecast = await client.GetForecastOnDateAsync(ba, new DateTimeOffset(2022, 4, 22, 0, 0, 0, TimeSpan.Zero));
 
-        Assert.AreEqual(forecast.GeneratedAt, overloadedForecast.GeneratedAt);
+        Assert.AreEqual(forecast!.GeneratedAt, overloadedForecast!.GeneratedAt);
         Assert.AreEqual(forecast.ForecastData.First(), overloadedForecast.ForecastData.First());
 
         Assert.AreEqual(new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero), forecast.GeneratedAt);
@@ -340,7 +340,7 @@ public class WattTimeClientTests
         client.SetBearerAuthenticationHeader(this.DefaultTokenValue);
 
         var forecast = await client.GetForecastOnDateAsync("balauth", new DateTimeOffset());
-        Assert.AreEqual(new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero), forecast.GeneratedAt);
+        Assert.AreEqual(new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero), forecast!.GeneratedAt);
     }
 
     [Test]
@@ -359,7 +359,7 @@ public class WattTimeClientTests
 
         var forecast = await client.GetForecastOnDateAsync("balauth", new DateTimeOffset());
         
-        Assert.AreEqual(new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero), forecast.GeneratedAt);
+        Assert.AreEqual(new DateTimeOffset(2099, 1, 1, 0, 0, 0, TimeSpan.Zero), forecast!.GeneratedAt);
     }
 
     [Test]
