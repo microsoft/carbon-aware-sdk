@@ -131,10 +131,10 @@ public class CarbonAwareController : ControllerBase
     ///   Defaults to the duration of a single forecast data point.
     /// </param>
     /// <remarks>
-    ///   This endpoint fetches only the most recently generated forecast for all provided locations.  It filters down the full set  
-    ///   of forecasted data points using the "dataStartAt" and "dataEndAt" parameters. If no start or end time boundaries are 
-    ///   provided, all forecasted data points are used.  The data points are then used to calculate average marginal carbon 
-    ///   intensities of the specified "windowSize" and the optimal marginal carbon intensity window is identified.  
+    ///   This endpoint fetches only the most recently generated forecast for all provided locations.  It uses the "dataStartAt" and 
+    ///   "dataEndAt" parameters to scope the forecasted data points (if available for those times). If no start or end time 
+    ///   boundaries are provided, the entire forecast dataset is used. The scoped data points are used to calculate average marginal 
+    ///   carbon intensities of the specified "windowSize" and the optimal marginal carbon intensity window is identified.
     ///
     ///   The forecast data represents what the data source predicts future marginal carbon intesity values to be, 
     ///   not actual measured emissions data (as future values cannot be known).

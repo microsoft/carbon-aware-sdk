@@ -6,6 +6,16 @@ using System.Text.Json.Serialization;
 [Serializable]
 public record EmissionsForecastBaseDTO
 {
+    /// <summary>
+    /// For current requests, this value is the timestamp the request for forecast data was made.
+    /// For historical forecast requests, this value is the timestamp used to access the most 
+    /// recently generated forecast as of that time. 
+    /// </summary>
+    /// <example>2022-06-01T00:03:30Z</example>
+    [JsonPropertyName("requestedAt")]
+    [Required()]
+    public DateTimeOffset RequestedAt { get; set; } = DateTimeOffset.UtcNow;
+
     /// <summary>The location of the forecast</summary>
     /// <example>eastus</example>
     [JsonPropertyName("location")]
