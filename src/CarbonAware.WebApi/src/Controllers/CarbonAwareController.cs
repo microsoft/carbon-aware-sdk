@@ -218,7 +218,7 @@ public class CarbonAwareController : ControllerBase
     /// <response code="400">Returned if any of the requested items are invalid</response>
     /// <response code="500">Internal server error</response>
     [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CarbonIntensityOutputDTO))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CarbonIntensityDTO))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
     [HttpGet("average-carbon-intensity")]
@@ -226,7 +226,7 @@ public class CarbonAwareController : ControllerBase
     {
         // Dummy result.
         // TODO: implement this controller method after spec is approved.
-        var result = new CarbonIntensityOutputDTO();
+        var result = new CarbonIntensityDTO();
         return Ok(result);
     }
 
@@ -253,7 +253,7 @@ public class CarbonAwareController : ControllerBase
     {
         // Dummy result.
         // TODO: implement this controller method after spec is approved.
-        var result = new List<CarbonIntensityOutputDTO>();
+        var result = new List<CarbonIntensityDTO>();
         return Ok(result);
     }
 
