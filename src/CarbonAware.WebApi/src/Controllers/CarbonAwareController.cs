@@ -205,16 +205,16 @@ public class CarbonAwareController : ControllerBase
     }
 
     /// <summary>
-    /// Retrieves the actual data that occurred between the time boundaries and calculates the average carbon intensity that occurred during that window. 
+    /// Retrieves the measured carbon intensity data between the time boundaries and calculates the average carbon intensity during that period. 
     /// </summary>
     /// <remarks>
     ///  This endpoint is useful for reporting the measured carbon intensity for a specific time period in a specific location.
     /// </remarks>
-    /// <param name="location"> the location name of the region that we are measuring carbon usage in </param>
-    /// <param name="startTime"> the time at which the workflow and thus carbon usage starts </param>
-    /// <param name="endTime"> the time at which the workflow and thus carbon usage ends </param>
-    /// <returns> a single object that contains the location, time boundaries and carbon intensity value </returns>
-    /// <response code="200">Returns the a single object that contains the info about the request and the marginal carbon intensity </response>
+    /// <param name="location">The location name of the region that we are measuring carbon usage in. </param>
+    /// <param name="startTime">The time at which the workload and corresponding carbon usage begins.</param>
+    /// <param name="endTime">The time at which the workload and corresponding carbon usage ends. </param>
+    /// <returns>A single object that contains the location, time boundaries and average carbon intensity value.</returns>
+    /// <response code="200">Returns a single object that contains the information about the request and the average marginal carbon intensity</response>
     /// <response code="400">Returned if any of the requested items are invalid</response>
     /// <response code="500">Internal server error</response>
     [Produces("application/json")]
@@ -232,16 +232,16 @@ public class CarbonAwareController : ControllerBase
 
 
     /// <summary>
-    /// Given a list of requests, each with their own location and time boundaries, calculate the average carbon intensity for the actual data that occurred during that window 
-    ///and return a list of carbon intensities
+    /// Given an array of request objects, each with their own location and time boundaries, calculate the average carbon intensity for that location and time period 
+    /// and return an array of carbon intensity objects.
     /// </summary>
     /// <remarks>
-    /// we validate that the user is only inputting a single location with different time boundaries. If they input multiple locations, we return an error.
-    /// for each of the inputs, we return the location, the time boundaries, and the carbon intensity. 
+    /// The application only supports batching across a single location with different time boundaries. If multiple locations are provided, an error is returned.
+    /// For each item in the request array, the application returns a corresponding object containing the location, time boundaries, and average marginal carbon intensity. 
     /// </remarks>
-    /// <param name="requestedCarbonIntensities"> list of inputs where each contains a location and StartDate and EndState for which to calculate marginal carbon intensity </param>
-    /// <returns>a list of CarbonIntensityDTO objects which each have a location, start and end time and the carbon intensity over that time</returns>
-    /// <response code="200">Returns a list of outputs where each contains location, time boundaries and the marginal carbon intensity from the input </response>
+    /// <param name="requestedCarbonIntensities"> Array of inputs where each contains a "location", "startDate", and "endDate" for which to calculate average marginal carbon intensity. </param>
+    /// <returns>An array of CarbonIntensityDTO objects which each have a location, start time, end time, and the average marginal carbon intensity over that time period.</returns>
+    /// <response code="200">Returns an array of objects where each contains location, time boundaries and the corresponding average marginal carbon intensity</response>
     /// <response code="400">Returned if any of the requested items are invalid</response>
     /// <response code="500">Internal server error</response>
     [Produces("application/json")]
