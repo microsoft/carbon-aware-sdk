@@ -195,8 +195,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         var result = await PostJSONBodyToURI(forecastData, batchForecastURI);
 
         Assert.That(result, Is.Not.Null);
-        // TODO: Fix code to return BadRequest instead of InternalServerError
-        // Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
     
     [Test]
