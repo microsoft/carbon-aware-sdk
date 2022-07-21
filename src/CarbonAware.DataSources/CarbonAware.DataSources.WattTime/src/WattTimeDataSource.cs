@@ -81,7 +81,13 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         using (var activity = Activity.StartActivity())
         {
             var balancingAuthority = await this.GetBalancingAuthority(location, activity);
-            var forecast = await this.WattTimeClient.GetForecastOnDateAsync(balancingAuthority, generatedAt);
+            Forecast? forecast = await this.WattTimeClient.GetForecastOnDateAsync(balancingAuthority, generatedAt);
+            if (forecast == null) {
+                Exception ex = new ArgumentException($"No forecast was generated at the requested time {generatedAt}");
+                activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+                Logger.LogError(ex, ex.Message);
+                throw ex;
+            }
             return ForecastToEmissionsForecast(forecast, location);
         }
     }

@@ -50,18 +50,18 @@ public interface IWattTimeClient
     /// </summary>
     /// <param name="balancingAuthorityAbbreviation">Balancing authority abbreviation</param>
     /// <param name="generatedAt">The historical time used to fetch the most recent forecast generated as of that time.</param>
-    /// <returns>An <see cref="Task{Forecast}"/> which contains forecasted emissions data points.</returns>
+    /// <returns>An <see cref="Task{Forecast}"/> which contains forecasted emissions data points or null if no Forecast generated at the requested time.</returns>
     /// <exception cref="WattTimeClientException">Can be thrown when errors occur connecting to WattTime client.  See the WattTimeClientException class for documentation of expected status codes.</exception>
-    public Task<Forecast> GetForecastOnDateAsync(string balancingAuthorityAbbreviation, DateTimeOffset generatedAt);
+    public Task<Forecast?> GetForecastOnDateAsync(string balancingAuthorityAbbreviation, DateTimeOffset generatedAt);
 
     /// <summary>
     /// Async method to get generated forecast at requested time and balancing authority.
     /// </summary>
     /// <param name="balancingAuthority">Balancing authority</param>
     /// <param name="generatedAt">The historical time used to fetch the most recent forecast generated as of that time.</param>
-    /// <returns>An <see cref="Task{Forecast}"/> which contains forecasted emissions data points.</returns>
+    /// <returns>An <see cref="Task{Forecast}"/> which contains forecasted emissions data points or null if no Forecast generated at the requested time.</returns>
     /// <exception cref="WattTimeClientException">Can be thrown when errors occur connecting to WattTime client.  See the WattTimeClientException class for documentation of expected status codes.</exception>
-    public Task<Forecast> GetForecastOnDateAsync(BalancingAuthority balancingAuthority, DateTimeOffset generatedAt);
+    public Task<Forecast?> GetForecastOnDateAsync(BalancingAuthority balancingAuthority, DateTimeOffset generatedAt);
 
     /// <summary>
     /// Async method to get the balancing authority for a given location.
