@@ -223,20 +223,7 @@ public class WattTimeDataSourceTests
     }
 
     [Test]
-    public void GetCurrentCarbonIntensityForecastAsync_ThrowsWhenNoForecastFound()
-    {
-        var location = new Location() { RegionName = "eastus", LocationType = LocationType.CloudProvider, CloudProvider = CloudProvider.Azure };
-        var balancingAuthority = new BalancingAuthority() { Abbreviation = "BA" };
-        SetupBalancingAuthority(balancingAuthority, location);
-
-        // The GetCurrentForecastAsync call throws an exception if there is no current forecast
-        this.WattTimeClient.Setup(w => w.GetCurrentForecastAsync(balancingAuthority)).ThrowsAsync(new WattTimeClientException("No forecast"));
-
-        Assert.ThrowsAsync<WattTimeClientException>(async () => await this.DataSource.GetCarbonIntensityForecastAsync(location));
-    }
-
-    [Test]
-    public void GetCarbonIntensityForecastAsync_ThrowsWhenNoForecastFound()
+    public void GetCarbonIntensityForecastAsync_ThrowsWhenNoForecastFoundForReuqestedTime()
     {
         var location = new Location() { RegionName = "eastus", LocationType = LocationType.CloudProvider, CloudProvider = CloudProvider.Azure };
         var balancingAuthority = new BalancingAuthority() { Abbreviation = "BA" };
