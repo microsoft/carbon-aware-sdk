@@ -30,5 +30,3 @@ public record SciScore
     [JsonPropertyName("timeInterval")]
     public string? TimeInterval { get; set; }
 }
-
-
