@@ -232,8 +232,7 @@ public class CarbonAwareController : ControllerBase
             { CarbonAwareConstants.Start, startTime },
             { CarbonAwareConstants.End, endTime },
         };
-        this._aggregator.CalculateAverageCarbonIntensityAsync(props);
-        var result = new CarbonIntensityDTO();
+        var result = this._aggregator.CalculateAverageCarbonIntensityAsync(props);
         return Ok(result);
     }
 
