@@ -186,7 +186,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
 
         _dataSourceMocker.SetupBatchForecastMock();
 
-        var forecastData = new List<EmissionsForecastBatchDTO>()
+        var inputData = new List<EmissionsForecastBatchDTO>()
         {
             new EmissionsForecastBatchDTO
             {
@@ -197,17 +197,20 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
             }
         };
 
-        var result = await PostJSONBodyToURI(forecastData, batchForecastURI);
+        var result = await PostJSONBodyToURI(inputData, batchForecastURI);
        
         Assert.That(result, Is.Not.Null);
-        Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        Assert.That(result?.Content, Is.Not.Null);
+        Assert.That(result!.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result!.Content, Is.Not.Null);
         var data = await result!.Content.ReadAsStringAsync();
         Assert.That(data, Is.Not.Null);
         var forecasts = JsonSerializer.Deserialize<List<EmissionsForecastDTO>>(data);
         Assert.That(forecasts, Is.Not.Null);
-        Assert.AreEqual(forecasts!.Count, forecastData.Count);
-        Assert.AreEqual(forecasts!.First().Location, forecastData.First().Location);
+        // assert metadata
+        Assert.AreEqual(forecasts!.Count, inputData.Count);
+        Assert.AreEqual(forecasts!.First().Location, inputData.First().Location);
+        Assert.AreEqual(forecasts!.First().StartTime, inputData.First().DataStartAt);
+        Assert.AreEqual(forecasts!.First().EndTime, inputData.First().DataEndAt);
     }
 
     private void IgnoreTestForDataSource(string reasonMessage, params DataSourceType[] ignoredDataSources)
