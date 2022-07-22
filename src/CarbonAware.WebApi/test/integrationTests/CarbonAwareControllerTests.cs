@@ -2,7 +2,6 @@ namespace CarbonAware.WepApi.IntegrationTests;
 
 using CarbonAware.DataSources.Configuration;
 using CarbonAware.WebApi.IntegrationTests;
-using CarbonAware.Model;
 using NUnit.Framework;
 using System.Net;
 using System.Text.Json;
@@ -156,20 +155,23 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    [Test]
-     public async Task EmissionsForecastsBatch_NoLocation_ReturnsBadRequest()
+    [TestCase(true, false, TestName = "Use location, Not use requestedAt")]
+    [TestCase(false, true, TestName = "Not use location, Use requestedAt")]
+     public async Task EmissionsForecastsBatch_MissingRequiredParams_ReturnsBadRequest(bool useLocation, bool useRequestedAt)
     {
         IgnoreTestForDataSource("data source does not implement '/emissions/forecasts/batch'", DataSourceType.JSON);
 
         _dataSourceMocker.SetupForecastMock();
-
-        var forecastData = new List<EmissionsForecastBatchDTO>()
+        var efb = new EmissionsForecastBatchDTO();
+        if (useLocation)
         {
-            new EmissionsForecastBatchDTO
-            {
-                RequestedAt = new DateTimeOffset(2021,9,1,8,30,0, TimeSpan.Zero)
-            }
-        };
+            efb.Location = "eastus";
+        }
+        if (useRequestedAt)
+        {
+            efb.RequestedAt = new DateTimeOffset(2021,9,1,8,30,0, TimeSpan.Zero);
+        }
+        var forecastData = new List<EmissionsForecastBatchDTO>() { efb };
 
         var result = await PostJSONBodyToURI(forecastData, batchForecastURI);
 
@@ -177,27 +179,6 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    [Test]
-     public async Task EmissionsForecastsBatch_NoRequestedAt_ReturnsBadRequest()
-    {
-        IgnoreTestForDataSource("data source does not implement '/emissions/forecasts/batch'", DataSourceType.JSON);
-
-        _dataSourceMocker.SetupForecastMock();
-
-        var forecastData = new List<EmissionsForecastBatchDTO>()
-        {
-            new EmissionsForecastBatchDTO
-            {
-                Location = "eastus"
-            }
-        };
-
-        var result = await PostJSONBodyToURI(forecastData, batchForecastURI);
-
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-    }
-    
     [Test]
     public async Task EmissionsForecastsBatch_SupportedDataSources_ReturnsOk()
     {

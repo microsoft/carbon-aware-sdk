@@ -8,7 +8,6 @@ using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net;
-using WireMock.Models;
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
@@ -159,13 +158,12 @@ public class CarbonAwareControllerTests : TestsBase
     }
 
     /// <summary>
-    /// Tests empty or null location arrays throw ArgumentException.
+    /// Tests empty location arrays throw ArgumentException.
     /// </summary>
     [Test]
     public async Task BatchForecast_NoLocations_ThrowsException()
     {
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateAggregatorWithEmissionsData(new List<EmissionsData>()).Object);
-        var failure = false;
         var forecastData = new List<EmissionsForecastBatchDTO>()
         {
             new EmissionsForecastBatchDTO
@@ -177,13 +175,12 @@ public class CarbonAwareControllerTests : TestsBase
         };
         try
         {
-            await foreach(var x in controller.BatchForecastDataAsync(forecastData)) {}
+            await foreach(var _ in controller.BatchForecastDataAsync(forecastData));
+            Assert.Fail("Exception not thrown");
         }
         catch(Exception ex)
         {
             Assert.IsInstanceOf<ArgumentException>(ex);
-            failure = true;
         }
-        Assert.True(failure);
     }
 }
