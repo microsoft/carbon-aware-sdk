@@ -222,7 +222,7 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
     [HttpGet("average-carbon-intensity")]
-    public async Task<IActionResult> GetAverageCarbonIntensity(string location, DateTimeOffset startTime, DateTimeOffset endTime)
+    public async Task<IActionResult> GetAverageCarbonIntensity([FromQuery, BindRequired] string location, [FromQuery, BindRequired] DateTimeOffset startTime, [FromQuery, BindRequired] DateTimeOffset endTime)
     {
         using (var activity = Activity.StartActivity())
         {
