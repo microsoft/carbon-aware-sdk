@@ -204,7 +204,7 @@ public class CarbonAwareAggregatorTests
     }
 
     [Test]
-    public void TestBatchForecastDataAsync_NoLocation()
+    public void TestGetForecastDataAsync_NoLocation()
     {
         var props = new Dictionary<string, object?>()
         {
@@ -215,7 +215,7 @@ public class CarbonAwareAggregatorTests
     }
 
     [Test]
-    public void TestBatchForecastDataAsync_NoRequestedAt()
+    public void TestGetForecastDataAsync_NoRequestedAt()
     {
         var props = new Dictionary<string, object?>()
         {
