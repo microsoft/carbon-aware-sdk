@@ -13,14 +13,14 @@ public record EmissionsForecastBaseDTO
     /// </summary>
     /// <example>2022-06-01T00:03:30Z</example>
     [JsonPropertyName("requestedAt")]
-    [Required()]
-    public DateTimeOffset RequestedAt { get; set; } = DateTimeOffset.UtcNow;
+    [Required]
+    public DateTimeOffset? RequestedAt { get; set; }
 
     /// <summary>The location of the forecast</summary>
     /// <example>eastus</example>
     [JsonPropertyName("location")]
-    [Required()]
-    public string Location { get; set; } = string.Empty;
+    [Required]
+    public string? Location { get; set; } = string.Empty;
 
     /// <summary>
     /// Start time boundary of forecasted data points. Ignores forecast data points before this time.
