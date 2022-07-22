@@ -52,7 +52,7 @@ public class SciScoreController : ControllerBase
     /// <summary> Gets the marginal carbon intensity value </summary>
     /// <param name="input"> input from JSON request converted to input object with location and time interval </param>
     /// <returns>Result of the call to the aggregator to retrieve carbon intenstiy</returns>
-    
+
     [HttpPost("marginal-carbon-intensity")]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -63,7 +63,7 @@ public class SciScoreController : ControllerBase
         {
             _logger.LogDebug("calling to aggregator to calculate the average carbon intensity with input: {input}", input);
 
-            var carbonIntensity = await _aggregator.CalculateAverageCarbonIntensityAsync(GetLocation(input.Location), input.TimeInterval);
+            var carbonIntensity = await _aggregator. (GetLocation(input.Location), input.TimeInterval);
 
             SciScore score = new SciScore
             {

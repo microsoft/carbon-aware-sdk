@@ -74,6 +74,21 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         }
     }
 
+    public async Task<double> CalculateAverageCarbonIntensityAsync(IDictionary props)
+    {
+        using (var activity = Activity.StartActivity())
+        {
+            var location = GetLocationOrThrow(props);
+            var start = GetOffsetOrDefault(props, CarbonAwareConstants.Start, DateTimeOffset.Now.ToUniversalTime());
+            var end = GetOffsetOrDefault(props, CarbonAwareConstants.End, start);
+            var emissionData = await this._dataSource.GetCarbonIntensityAsync(location, start, end);
+            var value = emissionData.AverageOverPeriod(start, end);
+            _logger.LogInformation($"Carbon Intensity Average: {value}");
+
+            return value;
+        }
+    }
+
     private EmissionsData? GetOptimalEmissions(IEnumerable<EmissionsData> emissionsData)
     {
         if (!emissionsData.Any())

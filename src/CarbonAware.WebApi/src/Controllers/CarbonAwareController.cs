@@ -226,6 +226,13 @@ public class CarbonAwareController : ControllerBase
     {
         // Dummy result.
         // TODO: implement this controller method after spec is approved.
+        IEnumerable<Location> locationEnumerable = CreateLocationsFromQueryString(new string[] { location });
+        var props = new Dictionary<string, object?>() {
+            { CarbonAwareConstants.Locations, locationEnumerable },
+            { CarbonAwareConstants.Start, startTime },
+            { CarbonAwareConstants.End, endTime },
+        };
+        this._aggregator.CalculateAverageCarbonIntensityAsync(props);
         var result = new CarbonIntensityDTO();
         return Ok(result);
     }
