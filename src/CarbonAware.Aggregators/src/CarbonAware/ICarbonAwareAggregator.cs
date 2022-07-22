@@ -28,6 +28,10 @@ public interface ICarbonAwareAggregator : IAggregator
     /// <returns>List of current emissions forecasts by location.</returns>
     Task<IEnumerable<EmissionsForecast>> GetCurrentForecastDataAsync(IDictionary props);
 
+    /// <summary>
+    /// Get the average carbon intensity.
+    /// </summary>
+    /// <param name="props">IDictionary with properties required by concrete classes</param>
+    /// <returns>The the average carbon-intensity value by location for the time-interval.</returns>
     Task<double> CalculateAverageCarbonIntensityAsync(IDictionary props);
-
 }
