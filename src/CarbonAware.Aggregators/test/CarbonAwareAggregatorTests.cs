@@ -10,6 +10,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -201,5 +202,78 @@ public class CarbonAwareAggregatorTests
             { CarbonAwareConstants.End, end }
         };
         Assert.ThrowsAsync<ArgumentException>(async () => await Aggregator.GetCurrentForecastDataAsync(props));
+    }
+
+    [TestCase("eastus", "2021-11-18T00:00:00Z", "2021-11-18T08:00:00Z", ExpectedResult = 60)]
+    [TestCase("westus", "2021-11-17T00:00:00Z", "2021-11-18T00:00:00Z", ExpectedResult = 20)]
+    [TestCase("eastus", "2021-11-19T00:00:00Z", "2021-12-30T00:00:00Z", ExpectedResult = 0)]
+    [TestCase("fakelocation", "2021-11-18T00:00:00Z", "2021-12-30T00:00:00Z", ExpectedResult = 0)]
+    public async Task<double> CalculateAverageCarbonIntensityAsync_ValidTimeInterval(string regionName, string startString, string endString)
+    {
+        // Arrange
+        var location = new Location()
+        {
+            LocationType = LocationType.CloudProvider,
+            CloudProvider = CloudProvider.Azure,
+            RegionName = regionName
+        };
+
+        List<Location> locations = new List<Location>() {
+          location
+        };
+
+        DateTimeOffset start, end;
+        DateTimeOffset.TryParse(startString, out start);
+        DateTimeOffset.TryParse(endString, out end);
+
+        var props = new Dictionary<string, object?>()
+        {
+            { CarbonAwareConstants.Locations, locations },
+            { CarbonAwareConstants.Start, start },
+            { CarbonAwareConstants.End, end }
+        };
+
+        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityAsync(It.IsAny<IEnumerable<Location>>(),
+            It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+            .ReturnsAsync(TestData.GetFilteredEmissionDataList(location.RegionName, startString, endString));
+
+        // Act
+        var result = await this.Aggregator.CalculateAverageCarbonIntensityAsync(props);
+
+        // Assert
+        this.CarbonIntensityDataSource.Verify(r => r.GetCarbonIntensityAsync(locations, start, end), Times.Once);
+        return result;
+    }
+
+    [Test]
+    public async Task CalculateAverageCarbonIntensityAsync_UnderspecifiedTimeInterval()
+    {
+        // Arrange
+        var location = new Location()
+        {
+            LocationType = LocationType.Geoposition,
+            Latitude = (decimal)1.0,
+            Longitude = (decimal)2.0
+        };
+
+        List<Location> locations = new List<Location>() {
+          location
+        };
+
+        var start = DateTimeOffset.Parse("2019-01-01", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal);
+        var end = DateTimeOffset.Parse("2019-01-02", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal);
+
+        var props = new Dictionary<string, object?>()
+        {
+            { CarbonAwareConstants.Locations, locations },
+            { CarbonAwareConstants.Start, start },
+            { CarbonAwareConstants.End, end }
+        };
+
+        // Act
+        await this.Aggregator.CalculateAverageCarbonIntensityAsync(props);
+
+        // Assert
+        this.CarbonIntensityDataSource.Verify(r => r.GetCarbonIntensityAsync(locations, start, end), Times.Once);
     }
 }

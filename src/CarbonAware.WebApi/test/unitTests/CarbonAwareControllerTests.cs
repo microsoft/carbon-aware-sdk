@@ -2,6 +2,7 @@ namespace CarbonAware.WepApi.UnitTests;
 
 using CarbonAware.Model;
 using CarbonAware.WebApi.Controllers;
+using CarbonAware.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -109,6 +110,26 @@ public class CarbonAwareControllerTests : TestsBase
 
         TestHelpers.AssertStatusCode(result, HttpStatusCode.OK);
         aggregator.Verify(a => a.GetCurrentForecastDataAsync(It.IsAny<Dictionary<string, object>>()), Times.Once);
+    }
+
+    /// <summary>
+    /// Tests that successfull call to the aggregator with any data returned results in action with OK status.
+    /// </summary>
+    [TestCase("Sydney", "2022-03-07T01:00:00", "2022-03-07T03:30:00")]
+    public async Task GetAverageCarbonIntensity_SuccessfulCallReturnsOk(string location, DateTimeOffset start, DateTimeOffset end)
+    {
+        // Arrange
+        double data = 0.7;
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateCarbonAwareAggregatorWithAverageCI(data).Object);
+
+        // Act
+        var carbonIntensityOutput = (await controller.GetAverageCarbonIntensity(location, start, end)) as ObjectResult;
+
+        // Assert
+        TestHelpers.AssertStatusCode(carbonIntensityOutput, HttpStatusCode.OK);
+        var expectedContent = new CarbonIntensityDTO { Location = location, StartTime = start, EndTime = end, CarbonIntensity = data };
+        var actualContent = (carbonIntensityOutput == null) ? string.Empty : carbonIntensityOutput.Value;
+        Assert.AreEqual(expectedContent, actualContent);
     }
 
     /// <summary>
