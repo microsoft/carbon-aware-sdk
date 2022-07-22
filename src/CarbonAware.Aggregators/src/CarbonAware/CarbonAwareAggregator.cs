@@ -1,7 +1,6 @@
 using CarbonAware.Extensions;
 using CarbonAware.Interfaces;
 using CarbonAware.Model;
-using CarbonAware.Tools.WattTimeClient.Model;
 using Microsoft.Extensions.Logging;
 using System.Collections;
 using System.Diagnostics;

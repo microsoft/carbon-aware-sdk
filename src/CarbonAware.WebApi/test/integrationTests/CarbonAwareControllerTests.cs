@@ -201,7 +201,15 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
        
         Assert.That(result, Is.Not.Null);
         Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result?.Content, Is.Not.Null);
+        var data = await result!.Content.ReadAsStringAsync();
+        Assert.That(data, Is.Not.Null);
+        var forecasts = JsonSerializer.Deserialize<List<EmissionsForecastDTO>>(data);
+        Assert.That(forecasts, Is.Not.Null);
+        Assert.AreEqual(forecasts!.Count, forecastData.Count);
+        Assert.AreEqual(forecasts!.First().Location, forecastData.First().Location);
     }
+
     private void IgnoreTestForDataSource(string reasonMessage, params DataSourceType[] ignoredDataSources)
     {
         if (ignoredDataSources.Contains(_dataSource))
