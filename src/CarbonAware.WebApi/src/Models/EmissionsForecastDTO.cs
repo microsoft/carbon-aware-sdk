@@ -17,6 +17,14 @@ public record EmissionsForecastDTO : EmissionsForecastBaseDTO
     /// The optimal forecasted data point within the 'forecastData' array.
     /// Null if 'forecastData' array is empty.
     /// </summary>
+    /// <example>
+    /// {
+    ///   "location": "eastus",
+    ///   "timestamp": "2022-06-01T14:45:00Z",
+    ///   "duration": 30,
+    ///   "value": 359.23
+    /// }
+    /// </example>
     [JsonPropertyName("optimalDataPoint")]
     public EmissionsDataDTO? OptimalDataPoint { get; set; }
 
