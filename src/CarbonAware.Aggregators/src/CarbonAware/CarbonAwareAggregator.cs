@@ -55,7 +55,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
             foreach (var location in GetLocationOrThrow(props))
             {
                 var forecast = await this._dataSource.GetCarbonIntensityForecastAsync(location);
-                EmissionsForecast emissionsForecast = await GenerateForecastDateAndProcessForecast(forecast, props, windowSize);
+                EmissionsForecast emissionsForecast = GenerateForecastDateAndProcessForecast(forecast, props, windowSize);
                 forecasts.Add(emissionsForecast);
             }
 
@@ -63,7 +63,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         }
     }
 
-    private async Task<EmissionsForecast> GenerateForecastDateAndProcessForecast(EmissionsForecast forecast, IDictionary props, TimeSpan windowSize)
+    private EmissionsForecast GenerateForecastDateAndProcessForecast(EmissionsForecast forecast, IDictionary props, TimeSpan windowSize)
     {
         var firstDataPoint = forecast.ForecastData.First();
         var lastDataPoint = forecast.ForecastData.Last();
@@ -89,7 +89,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
             _logger.LogInformation("Aggregator getting carbon intensity forecast from data source");
 
             var forecast = await this._dataSource.GetCarbonIntensityForecastAsync(location, forecastRequestedAt);
-            var emissionsForecast = await GenerateForecastDateAndProcessForecast(forecast, props, GetDurationOrDefault(props));
+            var emissionsForecast = GenerateForecastDateAndProcessForecast(forecast, props, GetDurationOrDefault(props));
 
             return emissionsForecast;
         }

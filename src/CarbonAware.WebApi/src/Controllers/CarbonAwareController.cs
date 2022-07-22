@@ -201,8 +201,8 @@ public class CarbonAwareController : ControllerBase
                 IEnumerable<Location> locationEnumerable = CreateLocationsFromQueryString(new string[] { forecastBatchDTO.Location! });
                 var props = new Dictionary<string, object?>() {
                     { CarbonAwareConstants.Locations, locationEnumerable },
-                    { CarbonAwareConstants.ForecastStart, forecastBatchDTO.DataStartAt },
-                    { CarbonAwareConstants.ForecastEnd, forecastBatchDTO.DataEndAt },
+                    { CarbonAwareConstants.Start, forecastBatchDTO.DataStartAt },
+                    { CarbonAwareConstants.End, forecastBatchDTO.DataEndAt },
                     { CarbonAwareConstants.Duration, forecastBatchDTO.WindowSize },
                     { CarbonAwareConstants.ForecastRequestedAt, forecastBatchDTO.RequestedAt },
                 };
