@@ -74,4 +74,5 @@ public class SciScoreControllerTests : TestsBase
         Assert.ThrowsAsync<ArgumentException>(async () => await controller.GetCarbonIntensityAsync(input));
     }
 }
+#pragma warning restore CS0618 // 'SciScoreAggregator.CalculateAverageCarbonIntensityAsync(Location, string)' is obsolete: 'This method is obsolete. Use ICarbonAwareAggregator equivalent method instead.'
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
