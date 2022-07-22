@@ -9,6 +9,7 @@ using NUnit.Framework;
 
 namespace CarbonAware.WepApi.UnitTests;
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS0618 // 'SciScoreController.GetCarbonIntensityAsync(SciScoreInput)' is obsolete: 'This method is obsolete. Use CarbonAwareController equivalent method instead.'
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
