@@ -181,7 +181,7 @@ public class CarbonAwareController : ControllerBase
     /// This endpoint is useful for back-testing what one might have done in the past, if they had access to the 
     /// current forecast at the time.
     /// </remarks>
-    /// <param name="requestedForecasts"> Array of generated forecasts.</param>
+    /// <param name="requestedForecasts"> Array of requested forecasts.</param>
     /// <returns>An array of forecasts with their optimal marginal carbon intensity window.</returns>
     /// <response code="200">Returns the requested forecast objects</response>
     /// <response code="400">Returned if any of the input parameters are invalid</response>
