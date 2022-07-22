@@ -215,6 +215,18 @@ public class CarbonAwareAggregatorTests
     }
 
     [Test]
+    public void TestGetForecastDataAsync_MultipleLocations()
+    {
+        var props = new Dictionary<string, object?>()
+        {
+            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" }, new Location() { RegionName = "eastus" } } },
+            { CarbonAwareConstants.ForecastRequestedAt, new DateTimeOffset(2021,9,1,8,30,0, TimeSpan.Zero) }
+        };
+
+        Assert.ThrowsAsync<ArgumentException>(async () => await this.Aggregator.GetForecastDataAsync(props));
+    }
+
+    [Test]
     public void TestGetForecastDataAsync_NoRequestedAt()
     {
         var props = new Dictionary<string, object?>()

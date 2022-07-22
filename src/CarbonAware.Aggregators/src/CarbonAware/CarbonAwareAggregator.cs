@@ -48,14 +48,13 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
     {
         using (var activity = Activity.StartActivity())
         {
-            TimeSpan windowSize = GetDurationOrDefault(props);
             _logger.LogInformation("Aggregator getting carbon intensity forecast from data source");
 
             var forecasts = new List<EmissionsForecast>();
             foreach (var location in GetLocationOrThrow(props))
             {
                 var forecast = await this._dataSource.GetCarbonIntensityForecastAsync(location);
-                EmissionsForecast emissionsForecast = await GenerateForecastDateAndProcessForecast(forecast, props, windowSize);
+                var emissionsForecast = ProcessAndValidateForecast(forecast, props);
                 forecasts.Add(emissionsForecast);
             }
 
@@ -63,21 +62,19 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         }
     }
 
-    private async Task<EmissionsForecast> GenerateForecastDateAndProcessForecast(EmissionsForecast forecast, IDictionary props, TimeSpan windowSize)
-    {
-        var firstDataPoint = forecast.ForecastData.First();
-        var lastDataPoint = forecast.ForecastData.Last();
-        forecast.StartTime = GetOffsetOrDefault(props, CarbonAwareConstants.Start, firstDataPoint.Time);
-        forecast.EndTime = GetOffsetOrDefault(props, CarbonAwareConstants.End, lastDataPoint.Time + lastDataPoint.Duration);
-        return ValidateAndProcessEmissionsForecast(forecast, windowSize);
-    }
-
     /// <inheritdoc />
     public async Task<EmissionsForecast> GetForecastDataAsync(IDictionary props)
     {
         using (var activity = Activity.StartActivity())
         {
-            var location = GetLocationOrThrow(props).First(); // Should only be one location
+            var locations = GetLocationOrThrow(props);
+            if (locations.Count() > 1)
+            {
+                var ex = new ArgumentException(CarbonAwareConstants.Locations + " field should only contain one location for forecast data.");
+                _logger.LogError("Argument exception", ex);
+                throw ex;
+            };
+
             var forecastRequestedAt = GetOffsetOrDefault(props, CarbonAwareConstants.ForecastRequestedAt, default);
             if (forecastRequestedAt.Equals(default)) 
             {
@@ -88,15 +85,26 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
 
             _logger.LogInformation("Aggregator getting carbon intensity forecast from data source");
 
-            var forecast = await this._dataSource.GetCarbonIntensityForecastAsync(location, forecastRequestedAt);
-            var emissionsForecast = await GenerateForecastDateAndProcessForecast(forecast, props, GetDurationOrDefault(props));
-
+            var forecast = await this._dataSource.GetCarbonIntensityForecastAsync(locations.First(), forecastRequestedAt);
+            var emissionsForecast = ProcessAndValidateForecast(forecast, props);
             return emissionsForecast;
         }
     }
 
-    private EmissionsForecast ValidateAndProcessEmissionsForecast(EmissionsForecast forecast, TimeSpan windowSize)
+    /// <summary>
+    /// Given an EmissionsForecast and the original props, processes and validates it based on the request props
+    /// </summary>
+    /// <param name="forecast"></param>
+    /// <param name="props"></param>
+    /// <returns></returns>
+    private EmissionsForecast ProcessAndValidateForecast(EmissionsForecast forecast, IDictionary props)
     {
+        TimeSpan windowSize = GetDurationOrDefault(props);
+        var firstDataPoint = forecast.ForecastData.First();
+        var lastDataPoint = forecast.ForecastData.Last();
+        forecast.StartTime = GetOffsetOrDefault(props, CarbonAwareConstants.Start, firstDataPoint.Time);
+        forecast.EndTime = GetOffsetOrDefault(props, CarbonAwareConstants.End, lastDataPoint.Time + lastDataPoint.Duration);
+        
         forecast.Validate();
         forecast.ForecastData = IntervalHelper.FilterByDuration(forecast.ForecastData, forecast.StartTime, forecast.EndTime);
         forecast.ForecastData = forecast.ForecastData.RollingAverage(windowSize);
