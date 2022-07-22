@@ -1,15 +1,11 @@
 using CarbonAware.Aggregators.CarbonAware;
-using CarbonAware.Aggregators.Configuration;
 using CarbonAware.Interfaces;
 using CarbonAware.Model;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -61,8 +57,8 @@ public class CarbonAwareAggregatorTests
 
         // Assert
         var forecastResult = results.First();
-        Assert.AreEqual(expectedStart, forecastResult.StartTime);
-        Assert.AreEqual(expectedEnd, forecastResult.EndTime);
+        Assert.AreEqual(expectedStart, forecastResult.DataStartAt);
+        Assert.AreEqual(expectedEnd, forecastResult.DataEndAt);
     }
 
     [Test]

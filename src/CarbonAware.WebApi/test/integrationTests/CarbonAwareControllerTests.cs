@@ -126,8 +126,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         // A valid region name is required: 'location' is not specifically under test.
         queryStrings["location"] = "westus";
         // Mock data setup is set to current date.  This date will always be in the past.
-        queryStrings["startTime"] = "1999-01-01T00:00:00Z";
-        queryStrings["endTime"] = "1999-01-02T00:00:00Z";
+        queryStrings["dataStartAt"] = "1999-01-01T00:00:00Z";
+        queryStrings["dataEndAt"] = "1999-01-02T00:00:00Z";
 
         var endpointURI = ConstructUriWithQueryString(currentForecastURI, queryStrings);
 
@@ -209,8 +209,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         // assert metadata
         Assert.AreEqual(forecasts!.Count, inputData.Count);
         Assert.AreEqual(forecasts!.First().Location, inputData.First().Location);
-        Assert.AreEqual(forecasts!.First().StartTime, inputData.First().DataStartAt);
-        Assert.AreEqual(forecasts!.First().EndTime, inputData.First().DataEndAt);
+        Assert.AreEqual(forecasts!.First().DataStartAt, inputData.First().DataStartAt);
+        Assert.AreEqual(forecasts!.First().DataEndAt, inputData.First().DataEndAt);
     }
 
     private void IgnoreTestForDataSource(string reasonMessage, params DataSourceType[] ignoredDataSources)
