@@ -127,7 +127,7 @@ public class CarbonAwareAggregatorTests
         var dataTickSize = 5.0;
         var dataDuration = windowSize;
         var dataStartTime = new DateTimeOffset(2022,1,1,0,0,0,TimeSpan.Zero);
-        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityForecastAsync(It.IsAny<Location>(),null))
+        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityForecastAsync(It.IsAny<Location>(), null))
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
         var locationName = "westus";
         var props = new Dictionary<string, object>()
@@ -223,6 +223,51 @@ public class CarbonAwareAggregatorTests
         };
 
         Assert.ThrowsAsync<ArgumentException>(async () => await this.Aggregator.GetForecastDataAsync(props));
+    }
+
+    [TestCase("2021-12-31T00:00:00Z", "2022-01-01T00:20:00Z", TestName = "early startTime, valid endTime")]
+    [TestCase("2022-01-01T00:00:00Z", "2022-01-01T00:30:00Z", TestName = "valid startTime, late endTime")]
+    [TestCase("2021-12-31T00:00:00Z", null, TestName = "early startTime, default endTime")]
+    [TestCase(null, "2022-01-01T00:30:00Z", TestName = "default startTime, late endTime")]
+    [TestCase("2022-01-01T00:20:00Z", "2022-01-01T00:00:00Z", TestName = "startTime after endTime")]
+    public void TestGetForecastDataAsync_InvalidStartEndTimes_ThrowsException(string start, string end)
+    {
+        var requestedAt = new DateTimeOffset(2021, 01, 01, 00, 00, 0, TimeSpan.Zero);
+
+        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityForecastAsync(It.IsAny<Location>(), requestedAt))
+            .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
+        var props = new Dictionary<string, object?>()
+        {
+            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" } } },
+            { CarbonAwareConstants.Start, start },
+            { CarbonAwareConstants.End, end },
+            { CarbonAwareConstants.ForecastRequestedAt, requestedAt }
+
+        };
+        Assert.ThrowsAsync<ArgumentException>(async () => await Aggregator.GetForecastDataAsync(props));
+    }
+
+    [TestCase("2022-01-01T00:00:00Z", "2022-01-01T00:20:00Z", TestName = "Full data set")]
+    [TestCase("2022-01-01T00:05:00Z", "2022-01-01T00:20:00Z", TestName = "Data set minus first lowest datapoint")]
+    public async Task TestGetForecastDataAsync_OptimalDataPoint(string start, string end)
+    {
+        var requestedAt = new DateTimeOffset(2021, 01, 01, 00, 00, 0, TimeSpan.Zero);
+        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityForecastAsync(It.IsAny<Location>(), requestedAt))
+            .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
+        var props = new Dictionary<string, object>()
+        {
+            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" } } },
+            { CarbonAwareConstants.Start, start },
+            { CarbonAwareConstants.End, end },
+            { CarbonAwareConstants.ForecastRequestedAt, requestedAt }
+
+        };
+
+        var forecast = await this.Aggregator.GetForecastDataAsync(props);
+        var firstDataPoint = forecast.ForecastData.First();
+        var optimalDataPoint = forecast.OptimalDataPoint;
+
+        Assert.AreEqual(firstDataPoint, optimalDataPoint);
     }
 
 

@@ -55,15 +55,21 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
             foreach (var location in GetLocationOrThrow(props))
             {
                 var forecast = await this._dataSource.GetCarbonIntensityForecastAsync(location);
-                var firstDataPoint = forecast.ForecastData.First();
-                var lastDataPoint = forecast.ForecastData.Last();
-                forecast.StartTime = GetOffsetOrDefault(props, CarbonAwareConstants.Start, firstDataPoint.Time);
-                forecast.EndTime = GetOffsetOrDefault(props, CarbonAwareConstants.End, lastDataPoint.Time + lastDataPoint.Duration);
-                forecasts.Add(ValidateAndProcessEmissionsForecast(forecast, windowSize));
+                EmissionsForecast emissionsForecast = await GenerateForecastDateAndProcessForecast(forecast, props, windowSize);
+                forecasts.Add(emissionsForecast);
             }
 
             return forecasts;
         }
+    }
+
+    private async Task<EmissionsForecast> GenerateForecastDateAndProcessForecast(EmissionsForecast forecast, IDictionary props, TimeSpan windowSize)
+    {
+        var firstDataPoint = forecast.ForecastData.First();
+        var lastDataPoint = forecast.ForecastData.Last();
+        forecast.StartTime = GetOffsetOrDefault(props, CarbonAwareConstants.Start, firstDataPoint.Time);
+        forecast.EndTime = GetOffsetOrDefault(props, CarbonAwareConstants.End, lastDataPoint.Time + lastDataPoint.Duration);
+        return ValidateAndProcessEmissionsForecast(forecast, windowSize);
     }
 
     /// <inheritdoc />
@@ -83,11 +89,9 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
             _logger.LogInformation("Aggregator getting carbon intensity forecast from data source");
 
             var forecast = await this._dataSource.GetCarbonIntensityForecastAsync(location, forecastRequestedAt);
-            var lastDataPoint = forecast.ForecastData.Last();
-            forecast.StartTime = GetOffsetOrDefault(props, CarbonAwareConstants.ForecastStart, forecast.ForecastData.First().Time);
-            forecast.EndTime = GetOffsetOrDefault(props, CarbonAwareConstants.ForecastEnd, lastDataPoint.Time + lastDataPoint.Duration);
+            var emissionsForecast = await GenerateForecastDateAndProcessForecast(forecast, props, GetDurationOrDefault(props));
 
-            return ValidateAndProcessEmissionsForecast(forecast, GetDurationOrDefault(props));
+            return emissionsForecast;
         }
     }
 
