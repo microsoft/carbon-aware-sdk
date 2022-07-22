@@ -171,7 +171,7 @@ public class CarbonAwareController : ControllerBase
 
     /// <summary>
     /// Given an array of dates that each represents historical generated forecasts, retrieves the data that contains
-    /// forecasts metadata, the optimal forecast and a range of forecasts filtered by the attributes [forecastStart..forecastEnd] if provided.
+    /// forecasts metadata, the optimal forecast and a range of forecasts filtered by the attributes [start...end] if provided.
     /// </summary>
     /// <remarks>
     /// This endpoint takes a batch of requests for historical forecast data, fetches them, and calculates the optimal 
@@ -201,8 +201,8 @@ public class CarbonAwareController : ControllerBase
                 IEnumerable<Location> locationEnumerable = CreateLocationsFromQueryString(new string[] { forecastBatchDTO.Location! });
                 var props = new Dictionary<string, object?>() {
                     { CarbonAwareConstants.Locations, locationEnumerable },
-                    { CarbonAwareConstants.ForecastStart, forecastBatchDTO.DataStartAt },
-                    { CarbonAwareConstants.ForecastEnd, forecastBatchDTO.DataEndAt },
+                    { CarbonAwareConstants.Start, forecastBatchDTO.DataStartAt },
+                    { CarbonAwareConstants.End, forecastBatchDTO.DataEndAt },
                     { CarbonAwareConstants.Duration, forecastBatchDTO.WindowSize },
                     { CarbonAwareConstants.ForecastRequestedAt, forecastBatchDTO.RequestedAt },
                 };

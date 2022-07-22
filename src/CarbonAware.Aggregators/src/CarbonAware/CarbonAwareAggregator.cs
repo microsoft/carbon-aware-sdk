@@ -99,7 +99,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
     /// <returns></returns>
     private EmissionsForecast ProcessAndValidateForecast(EmissionsForecast forecast, IDictionary props)
     {
-        TimeSpan windowSize = GetDurationOrDefault(props);
+        var windowSize = GetDurationOrDefault(props);
         var firstDataPoint = forecast.ForecastData.First();
         var lastDataPoint = forecast.ForecastData.Last();
         forecast.StartTime = GetOffsetOrDefault(props, CarbonAwareConstants.Start, firstDataPoint.Time);
