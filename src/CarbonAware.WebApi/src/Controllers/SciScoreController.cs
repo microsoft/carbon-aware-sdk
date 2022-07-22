@@ -16,6 +16,8 @@ namespace CarbonAware.WebApi.Controllers;
 public class SciScoreController : ControllerBase
 {
     private readonly ILogger<SciScoreController> _logger;
+
+    // NOTE: Changed to `ICarbonAwareAggregator` to help the deprecation-path
     private readonly ICarbonAwareAggregator _aggregator;
 
     private static readonly ActivitySource Activity = new ActivitySource(nameof(SciScoreController));

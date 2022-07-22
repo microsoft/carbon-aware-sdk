@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
+// NOTE: Added `InternalsVisibleTo` only to help the deprecation-path
 [assembly:InternalsVisibleTo("CarbonAware.WebApi")]
 
 namespace CarbonAware.Aggregators.SciScore;
@@ -48,6 +49,7 @@ public class SciScoreAggregator : ISciScoreAggregator
 
     // Validate and parse time interval string into a tuple of (start, end) DateTimeOffsets.
     // Throws ArgumentException for invalid input.
+    // NOTE: Changed to `internal static` to help the deprecation-path
     internal static (DateTimeOffset start, DateTimeOffset end) ParseTimeInterval(string timeInterval)
     {
         DateTimeOffset start;
