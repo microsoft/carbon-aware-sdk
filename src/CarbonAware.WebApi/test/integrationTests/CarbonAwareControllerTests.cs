@@ -157,8 +157,13 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
 
     [TestCase(true, false, TestName = "Use location, Not use requestedAt")]
     [TestCase(false, true, TestName = "Not use location, Use requestedAt")]
+    [TestCase(false, false, TestName = "Not use location, Not use requestedAt")]
      public async Task EmissionsForecastsBatch_MissingRequiredParams_ReturnsBadRequest(bool useLocation, bool useRequestedAt)
     {
+        if (useLocation && useRequestedAt)
+        {
+            Assert.Fail("Invalid test");
+        }
         IgnoreTestForDataSource("data source does not implement '/emissions/forecasts/batch'", DataSourceType.JSON);
 
         _dataSourceMocker.SetupForecastMock();
