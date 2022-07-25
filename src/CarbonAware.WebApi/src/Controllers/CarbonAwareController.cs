@@ -211,7 +211,7 @@ public class CarbonAwareController : ControllerBase
                 // thrown by the underline framework for this method, therefore all exceptions are handled as 500.
                 // Refactoring with a middleware exception handler should cover this use case too.
                 var forecast = await _aggregator.GetForecastDataAsync(props);
-                yield return EmissionsForecastDTO.FromEmissionsForecast(forecast);
+                yield return EmissionsForecastDTO.FromEmissionsForecast(forecast, props);
             }
         }
     }

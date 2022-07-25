@@ -1,6 +1,7 @@
 ﻿namespace CarbonAware.WebApi.Models;
 
 using CarbonAware.Model;
+using System.Collections;
 using System.Text.Json.Serialization;
 
 [Serializable]
@@ -58,7 +59,7 @@ public record EmissionsForecastDTO : EmissionsForecastBaseDTO
     [JsonPropertyName("forecastData")]
     public IEnumerable<EmissionsDataDTO>? ForecastData { get; set; }
 
-    public static EmissionsForecastDTO FromEmissionsForecast(EmissionsForecast emissionsForecast)
+    public static EmissionsForecastDTO FromEmissionsForecast(EmissionsForecast emissionsForecast, IDictionary? props = default)
     {
         return new EmissionsForecastDTO
         {
@@ -68,7 +69,8 @@ public record EmissionsForecastDTO : EmissionsForecastBaseDTO
             DataEndAt = emissionsForecast.DataEndAt,
             WindowSize = (int)emissionsForecast.WindowSize.TotalMinutes,
             OptimalDataPoint = EmissionsDataDTO.FromEmissionsData(emissionsForecast.OptimalDataPoint),
-            ForecastData = emissionsForecast.ForecastData.Select(d => EmissionsDataDTO.FromEmissionsData(d))!
+            ForecastData = emissionsForecast.ForecastData.Select(d => EmissionsDataDTO.FromEmissionsData(d))!,
+            RequestedAt = (DateTimeOffset?)(props?[CarbonAwareConstants.ForecastRequestedAt] ?? DateTimeOffset.UtcNow)
         };
     }
 }
