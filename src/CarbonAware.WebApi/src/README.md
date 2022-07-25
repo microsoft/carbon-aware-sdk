@@ -228,7 +228,7 @@ Parameters:
 1. requestedForecasts: Array of requested forecasts. Each requested forecast contains
     * `requestedAt`: This is a required parameter and is the historical time used to fetch the most recent forecast as of that time.
     * `location`: This is a required parameter and is the name of the data region for the configured Cloud provider.
-     `dataStartAt`: Start time boundary of the forecast data points. Ignores forecast data points before this time. Must be within the forecast data point timestamps. Defaults to the earliest time in the forecast data.
+    * `dataStartAt`: Start time boundary of the forecast data points. Ignores forecast data points before this time. Must be within the forecast data point timestamps. Defaults to the earliest time in the forecast data.
     * `dataEndAt`: End time boundary of the forecast data points. Ignores forecast data points after this time. Must be within the forecast data point timestamps. Defaults to the latest time in the forecast data. 
     * `windowSize`: The estimated duration (in minutes) of the workload. Defaults to the duration of a single forecast data point
 
@@ -274,7 +274,12 @@ EG
         "value": 535.7318741001667
       },
       ..
-    ]
+    ],
+    "requestedAt": "2022-06-01T12:05:00
+    "location": "eastus",
+    "dataStartAt": "2022-06-01T14:00:00Z",
+    "dataEndAt": "2022-06-01T18:00:00Z",
+    "windowSize": 30,
   }
 ]
 ```
