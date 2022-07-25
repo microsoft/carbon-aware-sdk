@@ -113,6 +113,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         {
             forecast.WindowSize = forecast.ForecastData.First().Duration;
         }
+        forecast.RequestedAt = (DateTimeOffset)(props?[CarbonAwareConstants.ForecastRequestedAt] ?? DateTimeOffset.UtcNow);
         return forecast;
     }
 
