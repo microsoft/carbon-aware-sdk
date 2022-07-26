@@ -79,34 +79,23 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         }
   
     }
-
     private void ValidateInput(IDictionary props)
     {
-        var errors = new Dictionary<string, List<string>>();
-        
-        if (props[CarbonAwareConstants.Locations] ==  null)
+        var error = new ArgumentException("Invalid EmissionsForecast request");
+        if (props[CarbonAwareConstants.Locations] == null)
         {
-            AddErrorMessage(errors, "locations", "locations parameter must be provided and be non empty");
+            error.Data["locations"] = @"locations parameter must be provided and be non empty";
         }
-  
-        IEnumerable<Location> locations = (IEnumerable<Location>) props[CarbonAwareConstants.Locations]!;
-        if (locations?.Count() > 1)
+        else if (props[CarbonAwareConstants.Locations] is IEnumerable<Location> locations && locations.Count() > 1)
         {
-            AddErrorMessage(errors, "locations", "field should only contain one location for forecast data.");
-        };
-
+            error.Data["locations"] = @"field should only contain one location for forecast data.";
+        }
         if (props[CarbonAwareConstants.ForecastRequestedAt] == null)
         {
-            AddErrorMessage(errors, "forecastRequestedAt", CarbonAwareConstants.ForecastRequestedAt + " field is required and was not provided.");
+            error.Data["locations"] = $"{CarbonAwareConstants.ForecastRequestedAt} field is required and was not provided.";
         }
-
-        if (errors.Keys.Count > 0)
+        if (error.Data.Count > 0)
         {
-            ArgumentException error = new ArgumentException("Invalid EmissionsForecast request");
-            foreach (KeyValuePair<string, List<string>> message in errors)
-            {
-                error.Data[message.Key] = message.Value.ToArray();
-            }
             throw error;
         }
     }
