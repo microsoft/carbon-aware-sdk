@@ -100,15 +100,6 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         }
     }
 
-    private void AddErrorMessage(Dictionary<string, List<string>> errors, string key, string message)
-    {
-        if (!errors.ContainsKey(key))
-        {
-            errors[key] = new List<string>();
-        }
-        errors[key].Add(message);
-    }
-
     /// <summary>
     /// Given an EmissionsForecast and the original props, processes and validates it based on the request props
     /// </summary>
