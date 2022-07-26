@@ -142,46 +142,44 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         return value * LBS_TO_GRAMS_CONVERSION_FACTOR / MWH_TO_KWH_CONVERSION_FACTOR;
     }
 
-    private IEnumerable<EmissionsData> ConvertToEmissionsData(IEnumerable<GridEmissionDataPoint> data)
+    private IEnumerable<EmissionsData> ConvertToEmissionsData(IEnumerable<GridEmissionDataPoint> gridEmissionDataPoints)
     {
-        var defaultDuration = GetDurationFromGridEmissionDataPointsOrDefault(data);
+        var defaultDuration = GetDurationFromGridEmissionDataPointsOrDefault(gridEmissionDataPoints, TimeSpan.Zero);
         
         // Linq statement to convert WattTime forecast data into EmissionsData for the CarbonAware SDK.
-        return data.Select(e => new EmissionsData() 
+        return gridEmissionDataPoints.Select(e => new EmissionsData() 
                     { 
                         Location = e.BalancingAuthorityAbbreviation, 
                         Rating = ConvertMoerToGramsPerKilowattHour(e.Value), 
                         Time = e.PointTime,
-                        Duration = FrequencyToTimeSpan(e.Frequency, defaultDuration)
+                        Duration = FrequencyToTimeSpanOrDefault(e.Frequency, defaultDuration)
                     });
     }
 
-    private TimeSpan GetDurationFromGridEmissionDataPoints(IEnumerable<GridEmissionDataPoint> emissions)
+    private TimeSpan GetDurationFromGridEmissionDataPoints(IEnumerable<GridEmissionDataPoint> gridEmissionDataPoints)
     {
-        var firstPoint = emissions.FirstOrDefault(); 
-        var secondPoint = emissions.Skip(1)?.FirstOrDefault();
+        var firstPoint = gridEmissionDataPoints.FirstOrDefault(); 
+        var secondPoint = gridEmissionDataPoints.Skip(1)?.FirstOrDefault();
 
         var first = firstPoint ?? throw new WattTimeClientException("Too few data points returned"); 
         var second = secondPoint ?? throw new WattTimeClientException("Too few data points returned");
 
-        return (second.PointTime - first.PointTime).Duration();
+        return (first.PointTime - second.PointTime).Duration();
     }
 
-    private TimeSpan GetDurationFromGridEmissionDataPointsOrDefault(IEnumerable<GridEmissionDataPoint> emissions)
+    private TimeSpan GetDurationFromGridEmissionDataPointsOrDefault(IEnumerable<GridEmissionDataPoint> gridEmissionDataPoints, TimeSpan defaultValue)
     {
-        var duration = TimeSpan.Zero;
         try 
         {
-            duration = GetDurationFromGridEmissionDataPoints(emissions);
+            return GetDurationFromGridEmissionDataPoints(gridEmissionDataPoints);
         }
-        catch (WattTimeClientException e) 
+        catch (WattTimeClientException) 
         {
-            Logger.LogWarning("Too few data points returned from WattTime");    
+            return defaultValue;   
         }
-       return duration;
     }
 
-    private TimeSpan FrequencyToTimeSpan(int? frequency, TimeSpan defaultValue)
+    private TimeSpan FrequencyToTimeSpanOrDefault(int? frequency, TimeSpan defaultValue)
     {
        return (frequency != null) ? TimeSpan.FromSeconds((double)frequency) : defaultValue;
     }
