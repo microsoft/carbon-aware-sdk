@@ -92,7 +92,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         }
         if (props[CarbonAwareConstants.ForecastRequestedAt] == null)
         {
-            error.Data["locations"] = $"{CarbonAwareConstants.ForecastRequestedAt} field is required and was not provided.";
+            error.Data["forecast"] = $"{CarbonAwareConstants.ForecastRequestedAt} field is required and was not provided.";
         }
         if (error.Data.Count > 0)
         {
