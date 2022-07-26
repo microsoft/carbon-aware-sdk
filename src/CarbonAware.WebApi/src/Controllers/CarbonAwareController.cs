@@ -193,7 +193,7 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
     [HttpPost("forecasts/batch")]
-    public async IAsyncEnumerable<EmissionsForecastDTO> BatchForecastDataAsync(IEnumerable<EmissionsForecastDTO> requestedForecasts)
+    public async IAsyncEnumerable<EmissionsForecastDTO> BatchForecastDataAsync(IEnumerable<EmissionsForecastBatchDTO> requestedForecasts)
     {
         using (var activity = Activity.StartActivity())
         {
