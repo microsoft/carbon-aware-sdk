@@ -104,7 +104,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         var lastDataPoint = forecast.ForecastData.Last();
         forecast.DataStartAt = GetOffsetOrDefault(props, CarbonAwareConstants.Start, firstDataPoint.Time);
         forecast.DataEndAt = GetOffsetOrDefault(props, CarbonAwareConstants.End, lastDataPoint.Time + lastDataPoint.Duration);
-        
+        forecast.RequestedAt = GetOffsetOrDefault(props, CarbonAwareConstants.ForecastRequestedAt, DateTimeOffset.UtcNow);
         forecast.Validate();
         forecast.ForecastData = IntervalHelper.FilterByDuration(forecast.ForecastData, forecast.DataStartAt, forecast.DataEndAt);
         forecast.ForecastData = forecast.ForecastData.RollingAverage(windowSize);
@@ -113,7 +113,6 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         {
             forecast.WindowSize = forecast.ForecastData.First().Duration;
         }
-        forecast.RequestedAt = (DateTimeOffset)(props?[CarbonAwareConstants.ForecastRequestedAt] ?? DateTimeOffset.UtcNow);
         return forecast;
     }
 
@@ -138,16 +137,16 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
     {
         // Default if null
         var dateTimeOffset = props[field] ?? defaultValue;
-
+        DateTimeOffset outValue;
         // If fail to parse property, throw error
-        if (!DateTimeOffset.TryParse(dateTimeOffset.ToString(), null, DateTimeStyles.AssumeUniversal, out defaultValue))
+        if (!DateTimeOffset.TryParse(dateTimeOffset.ToString(), null, DateTimeStyles.AssumeUniversal, out outValue))
         {
             Exception ex = new ArgumentException("Failed to parse" + field + "field. Must be a valid DateTimeOffset");
             _logger.LogError("argument exception", ex);
             throw ex;
         }
 
-        return defaultValue;
+        return outValue;
     }
 
     private IEnumerable<Location> GetLocationOrThrow(IDictionary props)

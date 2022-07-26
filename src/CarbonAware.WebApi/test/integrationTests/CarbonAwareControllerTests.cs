@@ -216,6 +216,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.AreEqual(forecasts!.First().Location, inputData.First().Location);
         Assert.AreEqual(forecasts!.First().DataStartAt, inputData.First().DataStartAt);
         Assert.AreEqual(forecasts!.First().DataEndAt, inputData.First().DataEndAt);
+        Assert.AreEqual(forecasts!.First().RequestedAt, inputData.First().RequestedAt);
     }
 
     private void IgnoreTestForDataSource(string reasonMessage, params DataSourceType[] ignoredDataSources)

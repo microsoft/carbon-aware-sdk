@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -278,5 +279,25 @@ public class CarbonAwareAggregatorTests
         Assert.AreEqual(firstDataPoint, optimalDataPoint);
     }
 
+    [Test]
+    public async Task TestGetForecastDataAsync_Metadata()
+    {
+        var requestedAt = new DateTimeOffset(2021, 01, 01, 00, 00, 0, TimeSpan.Zero);
+        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityForecastAsync(It.IsAny<Location>(), requestedAt))
+            .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
+        const string location = "westus";
+        var props = new Dictionary<string, object>()
+        {
+            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = location } } },
+            { CarbonAwareConstants.Start, DateTimeOffset.Parse("2022-01-01T00:00:00Z") },
+            { CarbonAwareConstants.End,  DateTimeOffset.Parse("2022-01-01T00:20:00Z") },
+            { CarbonAwareConstants.ForecastRequestedAt, requestedAt }
+        };
 
+        var forecast = await this.Aggregator.GetForecastDataAsync(props);
+        Assert.AreEqual(forecast.Location.RegionName, location);
+        Assert.AreEqual(forecast.DataStartAt, props[CarbonAwareConstants.Start]);
+        Assert.AreEqual(forecast.DataEndAt, props[CarbonAwareConstants.End]);
+        Assert.AreEqual(forecast.RequestedAt, props[CarbonAwareConstants.ForecastRequestedAt]);
+    }
 }
