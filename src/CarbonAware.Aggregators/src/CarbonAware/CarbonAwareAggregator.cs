@@ -53,7 +53,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
             var forecasts = new List<EmissionsForecast>();
             foreach (var location in GetLocationOrThrow(props))
             {
-                var forecast = await this._dataSource.GetCarbonIntensityForecastAsync(location);
+                var forecast = await this._dataSource.GetCurrentCarbonIntensityForecastAsync(location);
                 var emissionsForecast = ProcessAndValidateForecast(forecast, props);
                 forecasts.Add(emissionsForecast);
             }

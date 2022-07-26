@@ -163,7 +163,7 @@ public class WattTimeDataSourceTests
                 ).ReturnsAsync(() => forecast);
 
             // Act
-            result = await this.DataSource.GetCarbonIntensityForecastAsync(location);
+            result = await this.DataSource.GetCurrentCarbonIntensityForecastAsync(location);
         }
         else
         {
@@ -203,7 +203,7 @@ public class WattTimeDataSourceTests
 
         this.LocationSource.Setup(l => l.ToGeopositionLocationAsync(location)).Throws<LocationConversionException>();
 
-        Assert.ThrowsAsync<LocationConversionException>(async () => await this.DataSource.GetCarbonIntensityForecastAsync(location));
+        Assert.ThrowsAsync<LocationConversionException>(async () => await this.DataSource.GetCurrentCarbonIntensityForecastAsync(location));
         Assert.ThrowsAsync<LocationConversionException>(async () => await this.DataSource.GetCarbonIntensityForecastAsync(location, new DateTimeOffset()));
     }
 
@@ -244,7 +244,7 @@ public class WattTimeDataSourceTests
 
         SetupBalancingAuthority(balancingAuthority, location);
 
-        Assert.ThrowsAsync<WattTimeClientException>(async () => await this.DataSource.GetCarbonIntensityForecastAsync(location));
+        Assert.ThrowsAsync<WattTimeClientException>(async () => await this.DataSource.GetCurrentCarbonIntensityForecastAsync(location));
     }
 
     [DatapointSource]
