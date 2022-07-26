@@ -24,4 +24,6 @@ public record CarbonIntensityBaseDTO
     [Required]
     public DateTimeOffset? EndTime { get; set; }
 
+    
+
 }

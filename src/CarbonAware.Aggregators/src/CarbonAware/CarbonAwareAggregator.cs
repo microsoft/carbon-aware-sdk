@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace CarbonAware.Aggregators.CarbonAware;
 
@@ -82,8 +83,11 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         {
             var start = GetOffsetOrDefault(props, CarbonAwareConstants.Start, DateTimeOffset.Now.ToUniversalTime());
             var end = GetOffsetOrDefault(props, CarbonAwareConstants.End, start);
+            var location = GetLocationOrThrow(props);
+            ValidateDateInput(start, end);
+
             _logger.LogInformation("Aggregator getting average carbon intensity from data source");
-            var emissionData = await this._dataSource.GetCarbonIntensityAsync(GetLocationOrThrow(props), start, end);
+            var emissionData = await this._dataSource.GetCarbonIntensityAsync(location, start, end);
             var value = emissionData.AverageOverPeriod(start, end);
             _logger.LogInformation($"Carbon Intensity Average: {value}");
 
@@ -120,6 +124,15 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         }
 
         return defaultValue;
+    }
+
+    // TODO (Akshara) add validation helper function for start and end time 
+    private void ValidateDateInput(DateTimeOffset start, DateTimeOffset end)
+    {
+        if (DateTimeOffset.Compare(start, end) > 0)
+        {
+            throw new ArgumentException($"Invalid start and end. Start time must come before end time. start is {start}, end is {end}");
+        }
     }
 
     private IEnumerable<Location> GetLocationOrThrow(IDictionary props)
