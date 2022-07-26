@@ -285,17 +285,17 @@ public class CarbonAwareAggregatorTests
         var requestedAt = new DateTimeOffset(2021, 01, 01, 00, 00, 0, TimeSpan.Zero);
         this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityForecastAsync(It.IsAny<Location>(), requestedAt))
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
-        const string location = "westus";
+        const string reg = "westus";
         var props = new Dictionary<string, object>()
         {
-            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = location } } },
+            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = reg } } },
             { CarbonAwareConstants.Start, DateTimeOffset.Parse("2022-01-01T00:00:00Z") },
             { CarbonAwareConstants.End,  DateTimeOffset.Parse("2022-01-01T00:20:00Z") },
             { CarbonAwareConstants.ForecastRequestedAt, requestedAt }
         };
 
         var forecast = await this.Aggregator.GetForecastDataAsync(props);
-        Assert.AreEqual(forecast.Location.RegionName, location);
+        Assert.AreEqual(forecast.Location.RegionName, reg);
         Assert.AreEqual(forecast.DataStartAt, props[CarbonAwareConstants.Start]);
         Assert.AreEqual(forecast.DataEndAt, props[CarbonAwareConstants.End]);
         Assert.AreEqual(forecast.RequestedAt, props[CarbonAwareConstants.ForecastRequestedAt]);
