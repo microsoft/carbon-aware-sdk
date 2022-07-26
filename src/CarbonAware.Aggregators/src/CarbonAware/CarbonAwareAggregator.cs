@@ -71,7 +71,6 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
             if (locations.Count() > 1)
             {
                 var ex = new ArgumentException(CarbonAwareConstants.Locations + " field should only contain one location for forecast data.");
-                _logger.LogError("Argument exception", ex);
                 throw ex;
             };
 
@@ -79,7 +78,6 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
             if (forecastRequestedAt.Equals(default)) 
             {
                 var ex = new ArgumentException(CarbonAwareConstants.ForecastRequestedAt + " field is required and was not provided.");
-                _logger.LogError("Argument exception", ex);
                 throw ex;
             }
 

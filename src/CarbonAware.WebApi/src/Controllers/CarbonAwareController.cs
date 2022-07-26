@@ -171,7 +171,7 @@ public class CarbonAwareController : ControllerBase
     }
 
     /// <summary>
-    /// Given an array of dates that each represents historical generated forecasts, retrieves the data that contains
+    /// Given an array of historical forecasts, retrieves the data that contains
     /// forecasts metadata, the optimal forecast and a range of forecasts filtered by the attributes [start...end] if provided.
     /// </summary>
     /// <remarks>
@@ -193,7 +193,7 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
     [HttpPost("forecasts/batch")]
-    public async IAsyncEnumerable<EmissionsForecastDTO> BatchForecastDataAsync(IEnumerable<EmissionsForecastBatchDTO> requestedForecasts)
+    public async IAsyncEnumerable<EmissionsForecastDTO> BatchForecastDataAsync(IEnumerable<EmissionsForecastDTO> requestedForecasts)
     {
         using (var activity = Activity.StartActivity())
         {
