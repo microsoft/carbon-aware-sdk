@@ -171,7 +171,7 @@ public class CarbonAwareController : ControllerBase
     }
 
     /// <summary>
-    /// Given an array of dates that each represents historical generated forecasts, retrieves the data that contains
+    /// Given an array of historical forecasts, retrieves the data that contains
     /// forecasts metadata, the optimal forecast and a range of forecasts filtered by the attributes [start...end] if provided.
     /// </summary>
     /// <remarks>

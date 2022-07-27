@@ -161,7 +161,7 @@ public class CarbonAwareControllerTests : TestsBase
     /// Tests empty location arrays throw ArgumentException.
     /// </summary>
     [Test]
-    public async Task BatchForecast_NoLocations_ThrowsException()
+    public void BatchForecast_NoLocations_ThrowsException()
     {
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateAggregatorWithEmissionsData(new List<EmissionsData>()).Object);
         var forecastData = new List<EmissionsForecastBatchDTO>()
@@ -173,14 +173,8 @@ public class CarbonAwareControllerTests : TestsBase
                 RequestedAt = new DateTimeOffset(2021,9,1,8,30,0, TimeSpan.Zero)
             }
         };
-        try
-        {
+        Assert.ThrowsAsync<ArgumentException>(async () => {
             await foreach(var _ in controller.BatchForecastDataAsync(forecastData));
-            Assert.Fail("Exception not thrown");
-        }
-        catch(Exception ex)
-        {
-            Assert.IsInstanceOf<ArgumentException>(ex);
-        }
+        });
     }
 }

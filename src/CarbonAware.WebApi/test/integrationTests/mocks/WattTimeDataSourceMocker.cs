@@ -173,18 +173,6 @@ public class WattTimeDataSourceMocker : IDataSourceMocker
                     .WithBody(body)
         );
     }
-
-    private void SetupResponseGivenPostRequest(string path, string body)
-    {
-        _server
-            .Given(Request.Create().WithPath("/" + path).UsingPost())
-            .RespondWith(
-                Response.Create()
-                    .WithStatusCode(HttpStatusCode.OK)
-                    .WithHeader("Content-Type", MediaTypeNames.Application.Json)
-                    .WithBody(body)
-        );
-    }
     private void SetupBaMock(BalancingAuthority? content = null) =>
         SetupResponseGivenGetRequest(Paths.BalancingAuthorityFromLocation, JsonSerializer.Serialize(content ?? defaultBalancingAuthority));
 

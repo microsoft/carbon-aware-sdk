@@ -65,38 +65,41 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
     /// <inheritdoc />
     public async Task<EmissionsForecast> GetForecastDataAsync(IDictionary props)
     {
+        EmissionsForecast forecast;
         using (var activity = Activity.StartActivity())
         {
-            var locations = GetLocationOrThrow(props);
-            if (locations.Count() > 1)
-            {
-                var ex = new ArgumentException(CarbonAwareConstants.Locations + " field should only contain one location for forecast data.");
-                _logger.LogError("Argument exception", ex);
-                throw ex;
-            };
-
+            ValidateInput(props);
+          
+            var locations = (IEnumerable<Location>) props[CarbonAwareConstants.Locations]!;
             var forecastRequestedAt = GetOffsetOrDefault(props, CarbonAwareConstants.ForecastRequestedAt, default);
-            if (forecastRequestedAt.Equals(default)) 
-            {
-                var ex = new ArgumentException(CarbonAwareConstants.ForecastRequestedAt + " field is required and was not provided.");
-                _logger.LogError("Argument exception", ex);
-                throw ex;
-            }
+            _logger.LogDebug($"Aggregator getting carbon intensity forecast from data source for location {locations.First()} and requestedAt {forecastRequestedAt}");
 
-            _logger.LogInformation("Aggregator getting carbon intensity forecast from data source");
-
-            var forecast = await this._dataSource.GetCarbonIntensityForecastAsync(locations.First(), forecastRequestedAt);
+            forecast = await this._dataSource.GetCarbonIntensityForecastAsync(locations.First(), forecastRequestedAt);
             var emissionsForecast = ProcessAndValidateForecast(forecast, props);
             return emissionsForecast;
         }
+  
     }
-
-    /// <summary>
-    /// Given an EmissionsForecast and the original props, processes and validates it based on the request props
-    /// </summary>
-    /// <param name="forecast"></param>
-    /// <param name="props"></param>
-    /// <returns></returns>
+    private void ValidateInput(IDictionary props)
+    {
+        var error = new ArgumentException("Invalid EmissionsForecast request");
+        if (props[CarbonAwareConstants.Locations] == null)
+        {
+            error.Data["location"] = @"locations parameter must be provided and be non empty";
+        }
+        else if (props[CarbonAwareConstants.Locations] is IEnumerable<Location> locations && locations.Count() > 1)
+        {
+            error.Data["location"] = @"field should only contain one location for forecast data.";
+        }
+        if (props[CarbonAwareConstants.ForecastRequestedAt] == null)
+        {
+            error.Data["requestedAt"] = $"{CarbonAwareConstants.ForecastRequestedAt} field is required and was not provided.";
+        }
+        if (error.Data.Count > 0)
+        {
+            throw error;
+        }
+    }
     private EmissionsForecast ProcessAndValidateForecast(EmissionsForecast forecast, IDictionary props)
     {
         var windowSize = GetDurationOrDefault(props);
