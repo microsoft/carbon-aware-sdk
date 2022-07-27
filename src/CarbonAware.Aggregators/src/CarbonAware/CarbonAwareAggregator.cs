@@ -84,28 +84,21 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         var error = new ArgumentException("Invalid EmissionsForecast request");
         if (props[CarbonAwareConstants.Locations] == null)
         {
-            error.Data["locations"] = @"locations parameter must be provided and be non empty";
+            error.Data["location"] = @"locations parameter must be provided and be non empty";
         }
         else if (props[CarbonAwareConstants.Locations] is IEnumerable<Location> locations && locations.Count() > 1)
         {
-            error.Data["locations"] = @"field should only contain one location for forecast data.";
+            error.Data["location"] = @"field should only contain one location for forecast data.";
         }
         if (props[CarbonAwareConstants.ForecastRequestedAt] == null)
         {
-            error.Data["forecast"] = $"{CarbonAwareConstants.ForecastRequestedAt} field is required and was not provided.";
+            error.Data["requestedAt"] = $"{CarbonAwareConstants.ForecastRequestedAt} field is required and was not provided.";
         }
         if (error.Data.Count > 0)
         {
             throw error;
         }
     }
-
-    /// <summary>
-    /// Given an EmissionsForecast and the original props, processes and validates it based on the request props
-    /// </summary>
-    /// <param name="forecast"></param>
-    /// <param name="props"></param>
-    /// <returns></returns>
     private EmissionsForecast ProcessAndValidateForecast(EmissionsForecast forecast, IDictionary props)
     {
         var windowSize = GetDurationOrDefault(props);
