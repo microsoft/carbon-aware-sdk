@@ -115,7 +115,7 @@ public class CarbonAwareControllerTests : TestsBase
     /// <summary>
     /// Tests that successfull call to the aggregator with any data returned results in action with OK status.
     /// </summary>
-    [TestCase("Sydney", "2022-03-07T01:00:00", "2022-03-07T03:30:00")]
+    [TestCase("Sydney", "2022-03-07T01:00:00", "2022-03-07T03:30:00", TestName = "GetAvgCI SuccessfulCallReturnsOk")]
     public async Task GetAverageCarbonIntensity_SuccessfulCallReturnsOk(string location, DateTimeOffset start, DateTimeOffset end)
     {
         // Arrange
