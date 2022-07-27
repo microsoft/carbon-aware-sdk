@@ -79,7 +79,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         using (var activity = Activity.StartActivity())
         {
             var balancingAuthority = await this.GetBalancingAuthority(location, activity);
-            var forecast = await this.WattTimeClient.GetForecastOnDateAsync(balancingAuthority, TimeToLowerest(requestedAt));
+            var forecast = await this.WattTimeClient.GetForecastOnDateAsync(balancingAuthority, TimeToLowestIncrement(requestedAt));
             if (forecast == null)
             {
                 Exception ex = new ArgumentException($"No forecast was generated at the requested time {requestedAt}");
@@ -101,13 +101,13 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
             Time = e.PointTime,
             Duration = duration
         });
-        var emForecast = new EmissionsForecast()
+        var emissionsForecast = new EmissionsForecast()
         {
             GeneratedAt = forecast.GeneratedAt,
             Location = location,
             ForecastData = forecastData
         };
-        return emForecast;
+        return emissionsForecast;
     }
 
     private async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(Location location, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
@@ -187,9 +187,9 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         return balancingAuthority;
     }
 
-    private DateTimeOffset TimeToLowerest(DateTimeOffset date, int minutes = 5)
+    private DateTimeOffset TimeToLowestIncrement(DateTimeOffset date, int minutes = 5)
     {
         var d = TimeSpan.FromMinutes(minutes);
-        return new DateTimeOffset(((date.Ticks + d.Ticks - 1) / d.Ticks) * d.Ticks, date.Offset);
+        return new DateTimeOffset((date.Ticks / d.Ticks) * d.Ticks, date.Offset);
     }
 }
