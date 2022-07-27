@@ -245,6 +245,24 @@ public class CarbonAwareAggregatorTests
         return result;
     }
 
+    [TestCase("2021-11-18T00:00:00Z", null, TestName = "AverageCI valid startTime, null endTime")]
+    [TestCase(null, "2021-11-18T00:00:00Z", TestName = "AverageCI null startTime, valid endTime")]
+    public void TestCalculateAverageCarbonIntensityAsync_InvalidStartEndTimes_ThrowsException(string start, string end)
+    {
+        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityAsync(It.IsAny<IEnumerable<Location>>(),
+            It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+            .ReturnsAsync(TestData.GetAllEmissionDataList());
+
+        var props = new Dictionary<string, object?>()
+        {
+            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" } } },
+            { CarbonAwareConstants.Start, start },
+            { CarbonAwareConstants.End, end }
+        };
+
+        Assert.ThrowsAsync<ArgumentException>(async () => await Aggregator.CalculateAverageCarbonIntensityAsync(props));
+    }
+
     [Test]
     public async Task CalculateAverageCarbonIntensityAsync_UnderspecifiedTimeInterval()
     {
