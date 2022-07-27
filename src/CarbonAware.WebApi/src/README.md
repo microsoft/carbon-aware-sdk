@@ -243,8 +243,8 @@ EG
     "dataEndAt": "2022-06-01T18:00:00Z",
     "windowSize": 30,
     "requestedAt": "2022-06-01T12:01:00Z"
-  }
-    {
+  },
+  {
     "location": "westus",
     "dataStartAt": "2022-06-13T08:00:00Z",
     "dataEndAt": "2022-06-13T10:00:00Z",
