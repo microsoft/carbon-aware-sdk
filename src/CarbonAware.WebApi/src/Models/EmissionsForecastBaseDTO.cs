@@ -7,7 +7,6 @@ using System.Text.Json.Serialization;
 public record EmissionsForecastBaseDTO
 {
     /// <summary>
-    /// For current requests, this value is the timestamp the request for forecast data was made.
     /// For historical forecast requests, this value is the timestamp used to access the most 
     /// recently generated forecast as of that time. 
     /// </summary>
