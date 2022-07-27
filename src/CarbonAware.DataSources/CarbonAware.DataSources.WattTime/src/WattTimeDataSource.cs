@@ -79,7 +79,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         using (var activity = Activity.StartActivity())
         {
             var balancingAuthority = await this.GetBalancingAuthority(location, activity);
-            var forecast = await this.WattTimeClient.GetForecastOnDateAsync(balancingAuthority, requestedAt);
+            var forecast = await this.WattTimeClient.GetForecastOnDateAsync(balancingAuthority, TimeToLowerest(requestedAt));
             if (forecast == null)
             {
                 Exception ex = new ArgumentException($"No forecast was generated at the requested time {requestedAt}");
@@ -185,5 +185,11 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         Logger.LogDebug("Converted location {location} to balancing authority {balancingAuthorityAbbreviation}", location, balancingAuthority.Abbreviation);
 
         return balancingAuthority;
+    }
+
+    private DateTimeOffset TimeToLowerest(DateTimeOffset date, int minutes = 5)
+    {
+        var d = TimeSpan.FromMinutes(minutes);
+        return new DateTimeOffset(((date.Ticks + d.Ticks - 1) / d.Ticks) * d.Ticks, date.Offset);
     }
 }
