@@ -20,11 +20,11 @@ namespace CarbonAware.Aggregators.Tests;
 public class CarbonAwareAggregatorTests
 {
     // Test class sets these fields in [SetUp] rather than traditional class constructor.
-    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private Mock<ILogger<CarbonAwareAggregator>> Logger { get; set; }
     private Mock<ICarbonIntensityDataSource> CarbonIntensityDataSource { get; set; }
     private CarbonAwareAggregator Aggregator { get; set; }
-    #pragma warning restore CS8618
+#pragma warning restore CS8618
 
     [SetUp]
     public void Setup()
@@ -68,7 +68,7 @@ public class CarbonAwareAggregatorTests
 
     [Test]
     public async Task TestGetCurrentForecastDataAsync_NoLocation()
-    {        
+    {
         var emptyProps = new Dictionary<string, object>();
         var emptyLocationProps = new Dictionary<string, object>()
         {
@@ -127,7 +127,7 @@ public class CarbonAwareAggregatorTests
         var windowSize = 10;
         var dataTickSize = 5.0;
         var dataDuration = windowSize;
-        var dataStartTime = new DateTimeOffset(2022,1,1,0,0,0,TimeSpan.Zero);
+        var dataStartTime = new DateTimeOffset(2022, 1, 1, 0, 0, 0, TimeSpan.Zero);
         this.CarbonIntensityDataSource.Setup(x => x.GetCurrentCarbonIntensityForecastAsync(It.IsAny<Location>()))
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
         var locationName = "westus";
@@ -141,7 +141,7 @@ public class CarbonAwareAggregatorTests
 
         var expectedData = new List<EmissionsData>();
         var expectedRatings = new double[] { 15.0, 25.0, 35.0 };
-        for(var i = 0; i < expectedRatings.Count(); i++)
+        for (var i = 0; i < expectedRatings.Count(); i++)
         {
             expectedData.Add(new EmissionsData() { Time = dataStartTime + i * TimeSpan.FromMinutes(dataTickSize), Location = locationName, Rating = expectedRatings[i], Duration = TimeSpan.FromMinutes(dataDuration) });
         }
@@ -160,7 +160,7 @@ public class CarbonAwareAggregatorTests
         // Arrange
         var dataTickSize = 5.0;
         var dataDuration = 5;
-        var dataStartTime = new DateTimeOffset(2022,1,1,0,0,0,TimeSpan.Zero);
+        var dataStartTime = new DateTimeOffset(2022, 1, 1, 0, 0, 0, TimeSpan.Zero);
         this.CarbonIntensityDataSource.Setup(x => x.GetCurrentCarbonIntensityForecastAsync(It.IsAny<Location>()))
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
         var locationName = "westus";
@@ -173,7 +173,7 @@ public class CarbonAwareAggregatorTests
 
         var expectedData = new List<EmissionsData>();
         var expectedRatings = new double[] { 10.0, 20.0, 30.0, 40.0 };
-        for(var i = 0; i < expectedRatings.Count(); i++)
+        for (var i = 0; i < expectedRatings.Count(); i++)
         {
             expectedData.Add(new EmissionsData() { Time = dataStartTime + i * TimeSpan.FromMinutes(dataTickSize), Location = locationName, Rating = expectedRatings[i], Duration = TimeSpan.FromMinutes(dataDuration) });
         }

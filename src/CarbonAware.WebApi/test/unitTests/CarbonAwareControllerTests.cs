@@ -132,6 +132,49 @@ public class CarbonAwareControllerTests : TestsBase
         Assert.AreEqual(expectedContent, actualContent);
     }
 
+    /// <summary> 
+    /// batch should throw error with multiple locations
+    ///</summary>
+    [TestCase("Sydney", "Melbourne", "2022-03-07T03:30:00", "2022-03-07T07:30:00")]
+    public async Task CalculateAverageCarbonIntensityBatch_MultipleDifferentLocations(string location1, string location2, DateTimeOffset start, DateTimeOffset end)
+    {
+        // Arrange
+        var request1 = new CarbonIntensityBatchDTO { Location = location1, StartTime = start, EndTime = end };
+        var request2 = new CarbonIntensityBatchDTO { Location = location2, StartTime = start, EndTime = end };
+        double data = 0.7;
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateCarbonAwareAggregatorWithAverageCIBatch(data).Object);
+        // Act
+        var requestList = new List<CarbonIntensityBatchDTO> { request1, request2 };
+        var result = (await controller.GetAverageCarbonIntensityBatch(requestList) as ObjectResult;
+        // Assert
+        TestHelpers.AssertStatusCode(result, HttpStatusCode.BadRequest);
+    }
+
+    // batch should have values with valid input for a single or multiple locations in the batch
+    [Test]
+    public async Task CalculateAverageCarbonIntensityBatch_ValidInput(string location, DateTimeOffset start1, DateTimeOffset start2, DateTimeOffset end1, DateTimeOffset end2)
+    {
+        // Arrange
+        double data1 = 0.7;
+        double data2 = 0.3;
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateCarbonAwareAggregatorWithAverageCIBatch(data1, data2).Object);
+
+        var request1 = new CarbonIntensityBatchDTO { Location = location, StartTime = start1, EndTime = end1 };
+        var request2 = new CarbonIntensityBatchDTO { Location = location, StartTime = start2, EndTime = end2 };
+        var requestList = new List<CarbonIntensityBatchDTO> { request1, request2 };
+        // Act
+        var carbonIntensityOutput = (await controller.GetAverageCarbonIntensityBatch(requestList)) as ObjectResult;
+
+        // Assert
+        TestHelpers.AssertStatusCode(carbonIntensityOutput, HttpStatusCode.OK);
+        var expectedContent1 = new CarbonIntensityDTO { Location = location, StartTime = start1, EndTime = end1, CarbonIntensity = data1 };
+        var expectedContent2 = new CarbonIntensityDTO { Location = location, StartTime = start2, EndTime = end2, CarbonIntensity = data2 };
+        var actualContent = (carbonIntensityOutput == null) ? string.Empty : carbonIntensityOutput.Value;
+        var expectedContent = new List<CarbonIntensityDTO> { expectedContent1, expectedContent2 };
+        Assert.AreEqual(expectedContent, actualContent);
+    }
+
+
     /// <summary>
     /// Tests that a success call to aggregator with no data returned results in action with No Content status.
     /// </summary>

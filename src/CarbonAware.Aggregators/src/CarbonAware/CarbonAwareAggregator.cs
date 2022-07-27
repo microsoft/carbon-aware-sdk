@@ -126,7 +126,6 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         return defaultValue;
     }
 
-    // TODO (Akshara) add validation helper function for start and end time 
     private void ValidateDateInput(DateTimeOffset start, DateTimeOffset end)
     {
         if (DateTimeOffset.Compare(start, end) > 0)
