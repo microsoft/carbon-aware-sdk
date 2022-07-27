@@ -102,15 +102,15 @@ public class WattTimeClient : IWattTimeClient
     }
 
     /// <inheritdoc/>
-    public async Task<Forecast?> GetForecastOnDateAsync(string balancingAuthorityAbbreviation, DateTimeOffset generatedAt)
+    public async Task<Forecast?> GetForecastOnDateAsync(string balancingAuthorityAbbreviation, DateTimeOffset requestedAt)
     {
-        Log.LogInformation($"Requesting forecast from balancingAuthority {balancingAuthorityAbbreviation} generated at {generatedAt}.");
+        Log.LogInformation($"Requesting forecast from balancingAuthority {balancingAuthorityAbbreviation} generated at {requestedAt}.");
 
         var parameters = new Dictionary<string, string>()
         {
             { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation },
-            { QueryStrings.StartTime, generatedAt.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture) },
-            { QueryStrings.EndTime, generatedAt.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture) }
+            { QueryStrings.StartTime, requestedAt.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture) },
+            { QueryStrings.EndTime, requestedAt.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture) }
         };
 
         var tags = new Dictionary<string, string>()
@@ -125,9 +125,9 @@ public class WattTimeClient : IWattTimeClient
     }
 
     /// <inheritdoc/>
-    public Task<Forecast?> GetForecastOnDateAsync(BalancingAuthority balancingAuthority, DateTimeOffset generatedAt)
+    public Task<Forecast?> GetForecastOnDateAsync(BalancingAuthority balancingAuthority, DateTimeOffset requestedAt)
     {
-        return this.GetForecastOnDateAsync(balancingAuthority.Abbreviation, generatedAt);
+        return this.GetForecastOnDateAsync(balancingAuthority.Abbreviation, requestedAt);
     }
 
     /// <inheritdoc/>

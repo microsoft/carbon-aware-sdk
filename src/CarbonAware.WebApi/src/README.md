@@ -236,14 +236,20 @@ If neither `dataStartAt` nor `dataEndAt` are provided, all forecasted data point
 
 EG
 ```
-requestedForecasts = 
 [
   {
     "location": "eastus",
     "dataStartAt": "2022-06-01T14:00:00Z",
     "dataEndAt": "2022-06-01T18:00:00Z",
     "windowSize": 30,
-    "requestedAt": "2022-06-01T12:05:00Z"
+    "requestedAt": "2022-06-01T12:01:00Z"
+  }
+    {
+    "location": "west",
+    "dataStartAt": "2022-06-01T08:00:00Z",
+    "dataEndAt": "2022-06-01T10:00:00Z",
+    "windowSize": 30,
+    "requestedAt": "2022-06-01T6:05:00Z"
   }
 ]
 
@@ -253,32 +259,33 @@ EG
 ```
 [
   {
-    "generatedAt": "2022-06-01T12:05:00+00:00",
+    "generatedAt": "2022-06-01T12:00:00+00:00",
     "optimalDataPoint": {
       "location": "IE",
       "timestamp": "2022-06-01T16:45:00+00:00",
       "duration": 10,
       "value": 448.4451043375
     },
-    "forecastData": [
-      {
-        "location": "IE",
-        "timestamp": "2022-06-01T14:00:00+00:00",
-        "duration": 10,
-        "value": 532.02293146
-      },
-      {
-        "location": "IE",
-        "timestamp": "2022-06-01T14:05:00+00:00",
-        "duration": 10,
-        "value": 535.7318741001667
-      },
-      ..
-    ],
-    "requestedAt": "2022-06-01T12:05:00
+    "forecastData": [ ... ] // all relevant forecast data points
+    "requestedAt": "2022-06-01T12:01:00
     "location": "eastus",
     "dataStartAt": "2022-06-01T14:00:00Z",
     "dataEndAt": "2022-06-01T18:00:00Z",
+    "windowSize": 30,
+  },
+    {
+    "generatedAt": "2022-06-01T06:05:00+00:00",
+    "optimalDataPoint": {
+      "location": "IE",
+      "timestamp": "2022-06-01T09:25:00+00:00",
+      "duration": 10,
+      "value": 328.178478
+    },
+    "forecastData": [ ... ] // all relevant forecast data points
+    "requestedAt": "2022-06-01T06:05:00
+    "location": "westus",
+    "dataStartAt": "2022-06-01T08:00:00Z",
+    "dataEndAt": "2022-06-01T10:00:00Z",
     "windowSize": 30,
   }
 ]

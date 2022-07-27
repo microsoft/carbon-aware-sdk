@@ -73,16 +73,16 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
     }
 
     /// <inheritdoc />
-    public async Task<EmissionsForecast> GetCarbonIntensityForecastAsync(Location location, DateTimeOffset generatedAt)
+    public async Task<EmissionsForecast> GetCarbonIntensityForecastAsync(Location location, DateTimeOffset requestedAt)
     {
-        this.Logger.LogInformation($"Getting carbon intensity forecast for location {location} requested at {generatedAt}");
+        this.Logger.LogInformation($"Getting carbon intensity forecast for location {location} requested at {requestedAt}");
         using (var activity = Activity.StartActivity())
         {
             var balancingAuthority = await this.GetBalancingAuthority(location, activity);
-            var forecast = await this.WattTimeClient.GetForecastOnDateAsync(balancingAuthority, (DateTimeOffset)generatedAt!);
+            var forecast = await this.WattTimeClient.GetForecastOnDateAsync(balancingAuthority, requestedAt);
             if (forecast == null)
             {
-                Exception ex = new ArgumentException($"No forecast was generated at the requested time {generatedAt}");
+                Exception ex = new ArgumentException($"No forecast was generated at the requested time {requestedAt}");
                 activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
                 Logger.LogError(ex, ex.Message);
                 throw ex;
