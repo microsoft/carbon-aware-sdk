@@ -245,11 +245,11 @@ EG
     "requestedAt": "2022-06-01T12:01:00Z"
   }
     {
-    "location": "west",
-    "dataStartAt": "2022-06-01T08:00:00Z",
-    "dataEndAt": "2022-06-01T10:00:00Z",
+    "location": "westus",
+    "dataStartAt": "2022-06-13T08:00:00Z",
+    "dataEndAt": "2022-06-13T10:00:00Z",
     "windowSize": 30,
-    "requestedAt": "2022-06-01T6:05:00Z"
+    "requestedAt": "2022-06-13T6:05:00Z"
   }
 ]
 
@@ -274,18 +274,18 @@ EG
     "windowSize": 30,
   },
     {
-    "generatedAt": "2022-06-01T06:05:00+00:00",
+    "generatedAt": "2022-06-13T06:05:00+00:00",
     "optimalDataPoint": {
       "location": "IE",
-      "timestamp": "2022-06-01T09:25:00+00:00",
+      "timestamp": "2022-06-13T09:25:00+00:00",
       "duration": 10,
       "value": 328.178478
     },
     "forecastData": [ ... ] // all relevant forecast data points
-    "requestedAt": "2022-06-01T06:05:00
+    "requestedAt": "2022-06-13T06:05:00
     "location": "westus",
-    "dataStartAt": "2022-06-01T08:00:00Z",
-    "dataEndAt": "2022-06-01T10:00:00Z",
+    "dataStartAt": "2022-06-13T08:00:00Z",
+    "dataEndAt": "2022-06-13T10:00:00Z",
     "windowSize": 30,
   }
 ]
