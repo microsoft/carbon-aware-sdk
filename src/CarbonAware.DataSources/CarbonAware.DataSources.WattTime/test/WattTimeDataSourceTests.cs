@@ -306,6 +306,53 @@ public class WattTimeDataSourceTests
         Assert.That(result * GRAMS_TO_POUNDS / KWH_TO_MWH, Is.EqualTo(lbsPerMwhEmissions).Within(FLOATING_POINT_TOLERANCE));
     }
 
+    /// <summary>
+    /// Tests that if 'frequency' is not provided in the WattTime response of emission data, it is calculated from the first 2 data points, or defaulted to 0 if fewer than 2 data points are returned 
+    /// </summary>
+    [TestCase(new double[] { 300, 300 }, new object?[] { 300, null }, TestName = "GetCarbonIntensity - for multiple data points, frequency is null for one data point ")]
+    [TestCase(new double[] { 0 }, new object?[] { null }, TestName = "GetCarbonIntensity - for less than 2 data points, frequency is null for one data point ")]
+    [TestCase(new double[] { 300, 300 }, new object?[] { null, null }, TestName = "GetCarbonIntensity - for multiple data points, frequency is null for all data points")]
+    [TestCase(new double[] { 500 }, new object?[] { 500 }, TestName = "GetCarbonIntensity - frequency is not null")]
+    public async Task GetCarbonIntensity_CalculatesDurationBasedOnFrequency(double[] durationValues, params object[] frequencyValues)
+    {
+        var location = new Location() { RegionName = "eastus", LocationType = LocationType.CloudProvider, CloudProvider = CloudProvider.Azure };
+        var balancingAuthority = new BalancingAuthority() { Abbreviation = "BA" };
+        var startDate = new DateTimeOffset(2022, 4, 18, 12, 30, 00, TimeSpan.FromHours(-6));
+        var endDate = new DateTimeOffset(2022, 4, 18, 12, 50, 00, TimeSpan.FromHours(-6));
+
+        SetupEmissionsData(frequencyValues, startDate);
+        SetupBalancingAuthority(balancingAuthority, location);
+
+        var result = await this.DataSource.GetCarbonIntensityAsync(new List<Location>() { location }, startDate, endDate);
+
+        List<double> expectedDurationList = durationValues.ToList<double>();
+        List<double> actualDurationList = result.Select(e => e.Duration.TotalSeconds).ToList();
+        
+        CollectionAssert.AreEqual(expectedDurationList, actualDurationList);
+    }
+
+    private void SetupEmissionsData(object[] frequencyValues, DateTimeOffset startDate)
+    {
+        var emissions = new List<GridEmissionDataPoint>();
+        var start = startDate;
+
+        for (var i = 0; i < frequencyValues.Count(); i++)
+        {
+            emissions.Add(new GridEmissionDataPoint()
+            {
+                Frequency = (frequencyValues[i] == null ? null : (int)frequencyValues[i]),
+                PointTime = start
+            });
+            start = start + TimeSpan.FromMinutes(5);
+        }
+
+        this.WattTimeClient.Setup(w => w.GetDataAsync(
+            It.IsAny<BalancingAuthority>(),
+            It.IsAny<DateTimeOffset>(),
+            It.IsAny<DateTimeOffset>())
+        ).ReturnsAsync(() => emissions);
+    }
+
     private void SetupBalancingAuthority(BalancingAuthority balancingAuthority, Location location)
     {
         this.LocationSource.Setup(r => r.ToGeopositionLocationAsync(location)).Returns(Task.FromResult(location));
