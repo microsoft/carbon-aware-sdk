@@ -81,11 +81,10 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
     {
         using (var activity = Activity.StartActivity())
         {
-            var start = GetOffsetOrDefault(props, CarbonAwareConstants.Start, DateTimeOffset.Now.ToUniversalTime());
-            var end = GetOffsetOrDefault(props, CarbonAwareConstants.End, start);
+            var start = GetOffsetOrThrow(props, CarbonAwareConstants.Start);
+            var end = GetOffsetOrThrow(props, CarbonAwareConstants.End);
             var location = GetLocationOrThrow(props);
             ValidateDateInput(start, end);
-
             _logger.LogInformation("Aggregator getting average carbon intensity from data source");
             var emissionData = await this._dataSource.GetCarbonIntensityAsync(location, start, end);
             var value = emissionData.AverageOverPeriod(start, end);
@@ -141,6 +140,24 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
             return locations;
         }
         Exception ex = new ArgumentException("locations parameter must be provided and be non empty");
+        _logger.LogError("argument exception", ex);
+        throw ex;
+    }
+
+    /// <summary>
+    /// Extracts the given offset prop and converts to DateTimeOffset. If prop is not defined, throws
+    /// </summary>
+    /// <param name="props"></param>
+    /// <returns>DateTimeOffset representing end period of carbon aware data search. </returns>
+    /// <exception cref="ArgumentException">Throws exception if prop isn't found or isn't a valid DateTimeOffset. </exception>
+    private DateTimeOffset GetOffsetOrThrow(IDictionary props, string field)
+    {
+        if (props[field] != null)
+        {
+            return GetOffsetOrDefault(props, field, DateTimeOffset.MinValue);
+        }
+
+        Exception ex = new ArgumentException("Failed to find" + field + "field. Must be a valid DateTimeOffset");
         _logger.LogError("argument exception", ex);
         throw ex;
     }
