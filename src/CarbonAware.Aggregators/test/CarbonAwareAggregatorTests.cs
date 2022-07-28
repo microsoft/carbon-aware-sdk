@@ -299,7 +299,6 @@ public class CarbonAwareAggregatorTests
         Assert.AreEqual(forecast.Location.RegionName, reg);
         Assert.AreEqual(forecast.DataStartAt, props[CarbonAwareConstants.Start]);
         Assert.AreEqual(forecast.DataEndAt, props[CarbonAwareConstants.End]);
-        Assert.AreEqual(forecast.RequestedAt, props[CarbonAwareConstants.ForecastRequestedAt]);
     }
 
     [TestCase("eastus", "2021-11-18T00:00:00Z", "2021-11-18T08:00:00Z", ExpectedResult = 60)]
