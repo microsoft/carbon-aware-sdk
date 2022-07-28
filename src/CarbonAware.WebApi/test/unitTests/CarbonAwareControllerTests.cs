@@ -9,7 +9,6 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using WireMock.Models;
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
@@ -116,7 +115,7 @@ public class CarbonAwareControllerTests : TestsBase
     /// <summary>
     /// Tests that successfull call to the aggregator with any data returned results in action with OK status.
     /// </summary>
-    [TestCase("Sydney", "2022-03-07T01:00:00", "2022-03-07T03:30:00", TestName = "GetAvgCI SuccessfulCallReturnsOk")]
+    [TestCase("Sydney", "2022-03-07T01:00:00", "2022-03-07T03:30:00", TestName = "GetAverageCarbonIntensity Success ReturnsOk")]
     public async Task GetAverageCarbonIntensity_SuccessfulCallReturnsOk(string location, DateTimeOffset start, DateTimeOffset end)
     {
         // Arrange
@@ -163,13 +162,13 @@ public class CarbonAwareControllerTests : TestsBase
         var expectedContent1 = new CarbonIntensityDTO { Location = location, StartTime = start1, EndTime = end1, CarbonIntensity = data };
         var expectedContent2 = new CarbonIntensityDTO { Location = location, StartTime = start2, EndTime = end2, CarbonIntensity = data };
         var expectedContent = new List<CarbonIntensityDTO> { expectedContent1, expectedContent2 };
-        Assert.AreEqual(expectedContent, actualContent);
+        CollectionAssert.AreEqual(expectedContent, actualContent);
     }
 
     /// <summary>
     /// Tests that are missing a location and thus throw an ArgumentException error
     /// </summary>
-    [TestCase(null, "2022-03-07T01:00:00", "2022-03-07T01:00:00", TestName = "BatchAvgCI throws exception for no location")]
+    [TestCase(null, "2022-03-07T01:00:00", "2022-03-07T01:00:00", TestName = "CalculateAverageCarbonIntensityBatch throws exception for no location")]
     public void CalculateAverageCarbonIntensityBatch_InvalidInput(string? location, DateTimeOffset? start, DateTimeOffset? end)
     {
         //Arrange

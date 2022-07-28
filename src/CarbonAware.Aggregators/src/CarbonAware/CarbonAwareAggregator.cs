@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
-using System.Runtime.CompilerServices;
 
 namespace CarbonAware.Aggregators.CarbonAware;
 
@@ -172,7 +171,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
 
     private void ValidateDateInput(DateTimeOffset start, DateTimeOffset end)
     {
-        if (DateTimeOffset.Compare(start, end) > 0)
+        if (start > end)
         {
             throw new ArgumentException($"Invalid start and end. Start time must come before end time. start is {start}, end is {end}");
         }
