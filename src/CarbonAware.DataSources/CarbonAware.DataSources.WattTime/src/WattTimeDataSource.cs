@@ -88,7 +88,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
                 Logger.LogError(ex, ex.Message);
                 throw ex;
             }
-            return ForecastToEmissionsForecast(forecast, location, roundedRequestedAt); 
+            return ForecastToEmissionsForecast(forecast, location, requestedAt); 
         }
     }
 
