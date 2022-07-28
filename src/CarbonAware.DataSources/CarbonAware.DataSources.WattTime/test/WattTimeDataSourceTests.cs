@@ -247,7 +247,7 @@ public class WattTimeDataSourceTests
         Assert.ThrowsAsync<WattTimeClientException>(async () => await this.DataSource.GetCurrentCarbonIntensityForecastAsync(location));
     }
 
-    [TestCase("2022-01-01T00:00:00Z", "2022-01-01T00:00:00Z", TestName = "Not Rounded")]
+    [TestCase("2022-01-01T00:00:00Z", "2022-01-01T00:00:00Z", TestName = "GetCarbonIntensityForecastAsync returns expected value: requestedAt == floor")]
     [TestCase("2022-01-01T00:03:20Z", "2022-01-01T00:00:00Z", TestName = "Round to floor")]
     [TestCase("2022-01-01T00:07:00Z", "2022-01-01T00:05:00Z", TestName = "Round to lowest increment")]
     public async Task GetCarbonIntensityForecastAsync_RequiredAtRounded(string requested, string expected)
