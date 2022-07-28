@@ -10,6 +10,7 @@ The Carbon Aware SDK provides an API to get the marginal carbon intensity for a 
     - [GET emissions/bylocations](#get-emissionsbylocations)
     - [GET emissions/bylocations/best](#get-emissionsbylocationsbest)
     - [GET emissions/forecasts/current](#get-forecastscurrent)
+    - [POST emissions/forecasts/batch](#post-forecastsbatch)
   - [Error Handling](#error-handling)
   - [Autogenerate WebAPI](#autogenerate-webapi)
   
@@ -158,32 +159,41 @@ EG
 ]
 ```
 
-
 ### GET emissions/forecasts/current
 
-This endpoint fetches the most recent forecast for all provided locations and calculates the optimal marginal carbon intensity windows (per the specified windowSize) for each, within the start and end time boundaries. 
-If no start or end time boundaries are provided, all forecasted data points are used. 
+This endpoint fetches only the most recently generated forecast for all provided locations.  It uses the "dataStartAt" and 
+"dataEndAt" parameters to scope the forecasted data points (if available for those times). If no start or end time 
+boundaries are provided, the entire forecast dataset is used. The scoped data points are used to calculate average marginal 
+carbon intensities of the specified "windowSize" and the optimal marginal carbon intensity window is identified.
 
-The forecast data represents what the data source predicts future marginal carbon intesity values to be, not actual measured emissions data (as future values cannot be known).
+The forecast data represents what the data source predicts future marginal carbon intesity values to be, 
+not actual measured emissions data (as future values cannot be known).
+
 This endpoint is useful for determining if there is a more carbon-optimal time to use electicity predicted in the future.
 
 Parameters:
-1. location: This is a required parameter and is an array of the names of the data region for the configured Cloud provider.
-2. startTime: Start time boundary of forecasted data points. Ignores current forecast data points before this time. It defaults to the earliest time in the forecast data.
-3. endTime: End time boundary of forecasted data points. Ignores current forecast data points after this time. Defaults to the latest time in the forecast data.
-If time period is not provided, it retrieves all the data until the current time.
-4. windowSize: The estimated duration (in minutes) of the workload. Defaults to the duration of a single forecast data point.
+1. `location`: This is a required parameter and is an array of the names of the data region for the configured Cloud provider.
+2. `dataStartAt`: Start time boundary of the current forecast data points. Ignores current forecast data points before this time. Must be within the forecast data point timestamps. Defaults to the earliest time in the forecast data.
+3. `dataEndAt`: End time boundary of the current forecast data points. Ignores current forecast data points after this time. Must be within the forecast data point timestamps. Defaults to the latest time in the forecast data.
+If neither `dataStartAt` nor `dataEndAt` are provided, all forecasted data points are used in calculating the optimal marginal carbon intensity window.
+4. `windowSize`: The estimated duration (in minutes) of the workload. Defaults to the duration of a single forecast data point.
 
 EG
 ```
-https://<server_name>/emissions/forecasts/current?location=northeurope&startTime=2022-07-19T14:00:00.000Z&endTime=2022-07-20T04:38:00.000Z&windowSize=10
+https://<server_name>/emissions/forecasts/current?location=northeurope&dataStartAt=2022-07-19T14:00:00Z&dataEndAt=2022-07-20T04:38:00Z&windowSize=10
 ```
 The response is an array of forecasts (one per requested location) with their optimal marginal carbon intensity windows.
+
 EG
 ```
 [
   {
+    "requestedAt": "2022-07-19T13:37:49+00:00",
     "generatedAt": "2022-07-19T13:35:00+00:00",
+    "location": "northeurope",
+    "dataStartAt": "2022-07-19T14:00:00Z",
+    "dataEndAt": "2022-07-20T04:38:00Z",
+    "windowSize": 10,
     "optimalDataPoint": {
       "location": "IE",
       "timestamp": "2022-07-19T18:45:00+00:00",
@@ -193,18 +203,90 @@ EG
     "forecastData": [
       {
         "location": "IE",
-        "timestamp": "2022-07-19T13:55:00+00:00",
+        "timestamp": "2022-07-19T14:00:00+00:00",
         "duration": 10,
         "value": 532.02293146
       },
+      ...
       {
         "location": "IE",
-        "timestamp": "2022-07-19T14:00:00+00:00",
+        "timestamp": "2022-07-20T04:25:00+00:00",
         "duration": 10,
         "value": 535.7318741001667
-      },
-      ..
+      }
     ]
+  }
+]
+```
+
+### POST emissions/forecasts/batch
+This endpoint takes a batch of requests for historical forecast data, fetches them, and calculates the optimal marginal carbon intensity windows for each using the same parameters available to the '/emissions/forecasts/current' endpoint.
+
+This endpoint is useful for back-testing what one might have done in the past, if they had access to the current forecast at the time.
+
+Parameters:
+1. requestedForecasts: Array of requested forecasts. Each requested forecast contains
+    * `requestedAt`: This is a required parameter and is the historical time used to fetch the most recent forecast as of that time.
+    * `location`: This is a required parameter and is the name of the data region for the configured Cloud provider.
+    * `dataStartAt`: Start time boundary of the forecast data points. Ignores forecast data points before this time. Must be within the forecast data point timestamps. Defaults to the earliest time in the forecast data.
+    * `dataEndAt`: End time boundary of the forecast data points. Ignores forecast data points after this time. Must be within the forecast data point timestamps. Defaults to the latest time in the forecast data. 
+    * `windowSize`: The estimated duration (in minutes) of the workload. Defaults to the duration of a single forecast data point
+
+If neither `dataStartAt` nor `dataEndAt` are provided, all forecasted data points are used in calculating the optimal marginal carbon intensity window.
+
+EG
+```
+[
+  {
+    "location": "eastus",
+    "dataStartAt": "2022-06-01T14:00:00Z",
+    "dataEndAt": "2022-06-01T18:00:00Z",
+    "windowSize": 30,
+    "requestedAt": "2022-06-01T12:01:00Z"
+  },
+  {
+    "location": "westus",
+    "dataStartAt": "2022-06-13T08:00:00Z",
+    "dataEndAt": "2022-06-13T10:00:00Z",
+    "windowSize": 30,
+    "requestedAt": "2022-06-13T6:05:00Z"
+  }
+]
+
+```
+The response is an array of forecasts (one per requested location) with their optimal marginal carbon intensity windows.
+EG
+```
+[
+  {
+    "generatedAt": "2022-06-01T12:00:00+00:00",
+    "optimalDataPoint": {
+      "location": "IE",
+      "timestamp": "2022-06-01T16:45:00+00:00",
+      "duration": 10,
+      "value": 448.4451043375
+    },
+    "forecastData": [ ... ] // all relevant forecast data points
+    "requestedAt": "2022-06-01T12:01:00
+    "location": "eastus",
+    "dataStartAt": "2022-06-01T14:00:00Z",
+    "dataEndAt": "2022-06-01T18:00:00Z",
+    "windowSize": 30,
+  },
+    {
+    "generatedAt": "2022-06-13T06:05:00+00:00",
+    "optimalDataPoint": {
+      "location": "IE",
+      "timestamp": "2022-06-13T09:25:00+00:00",
+      "duration": 10,
+      "value": 328.178478
+    },
+    "forecastData": [ ... ] // all relevant forecast data points
+    "requestedAt": "2022-06-13T06:05:00
+    "location": "westus",
+    "dataStartAt": "2022-06-13T08:00:00Z",
+    "dataEndAt": "2022-06-13T10:00:00Z",
+    "windowSize": 30,
   }
 ]
 ```
