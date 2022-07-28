@@ -293,7 +293,6 @@ public class WattTimeDataSourceTests
         Assert.AreEqual(result.GeneratedAt, expectedAt);
     }
 
-
     [DatapointSource]
     public float[] moerValues = new float[] { 0.0F, 10.0F, 100.0F, 1000.0F, 596.1367F};
 
