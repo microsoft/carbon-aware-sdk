@@ -247,6 +247,52 @@ public class WattTimeDataSourceTests
         Assert.ThrowsAsync<WattTimeClientException>(async () => await this.DataSource.GetCurrentCarbonIntensityForecastAsync(location));
     }
 
+    [TestCase("2022-01-01T00:00:00Z", "2022-01-01T00:00:00Z", TestName = "Not Rounded")]
+    [TestCase("2022-01-01T00:03:20Z", "2022-01-01T00:00:00Z", TestName = "Round to floor")]
+    [TestCase("2022-01-01T00:07:00Z", "2022-01-01T00:05:00Z", TestName = "Round to lowest increment")]
+    public async Task GetCarbonIntensityForecastAsync_RequiredAtRounded(string requested, string expected)
+    {
+        // Arrange
+        var location = new Location() { RegionName = "eastus", LocationType = LocationType.CloudProvider, CloudProvider = CloudProvider.Azure };
+        var balancingAuthority = new BalancingAuthority() { Abbreviation = "BA" };
+        var requestedAt = DateTimeOffset.Parse(requested);
+        var expectedAt = DateTimeOffset.Parse(expected);
+        var startPoint = DateTimeOffset.Parse("2022-01-01T00:00:00Z");
+
+        var emissionData = new List<GridEmissionDataPoint>()
+        {
+            new GridEmissionDataPoint()
+            {
+                BalancingAuthorityAbbreviation = balancingAuthority.Abbreviation,
+                PointTime = startPoint,
+                Value = 10,
+            },
+            new GridEmissionDataPoint()
+            {
+                BalancingAuthorityAbbreviation = balancingAuthority.Abbreviation,
+                PointTime = startPoint + TimeSpan.FromMinutes(5),
+                Value = 10,
+            },
+        };
+        var forecast = new Forecast()
+        {
+            GeneratedAt = startPoint,
+            ForecastData = emissionData
+        };
+
+        SetupBalancingAuthority(balancingAuthority, location);
+        this.WattTimeClient.Setup(w => w.GetForecastOnDateAsync(balancingAuthority, expectedAt)
+                ).ReturnsAsync(() => forecast);
+
+        // Act
+        var result = await this.DataSource.GetCarbonIntensityForecastAsync(location, requestedAt);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(result.RequestedAt, expectedAt);
+    }
+
+
     [DatapointSource]
     public float[] moerValues = new float[] { 0.0F, 10.0F, 100.0F, 1000.0F, 596.1367F};
 

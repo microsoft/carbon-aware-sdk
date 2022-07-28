@@ -83,7 +83,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
             var forecast = await this.WattTimeClient.GetForecastOnDateAsync(balancingAuthority, roundedRequestedAt);
             if (forecast == null)
             {
-                Exception ex = new ArgumentException($"No forecast was generated at the requested time {requestedAt}");
+                var ex = new ArgumentException($"No forecast was generated at the requested time {roundedRequestedAt}");
                 activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
                 Logger.LogError(ex, ex.Message);
                 throw ex;
