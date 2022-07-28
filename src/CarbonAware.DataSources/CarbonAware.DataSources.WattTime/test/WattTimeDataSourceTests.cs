@@ -285,7 +285,6 @@ public class WattTimeDataSourceTests
 
         // Act
         var result = await this.DataSource.GetCarbonIntensityForecastAsync(location, requestedAt);
-        
 
         // Assert
         Assert.IsNotNull(result);
