@@ -285,7 +285,7 @@ public class CarbonAwareController : ControllerBase
         {
             foreach (var carbonIntensityBatchDTO in requestedCarbonIntensities)
             {
-                IEnumerable<Location> locationEnumerable = CreateLocationsFromQueryString(new string[] { carbonIntensityBatchDTO.Location });
+                IEnumerable<Location> locationEnumerable = CreateLocationsFromQueryString(new string[] { carbonIntensityBatchDTO.Location! });
                 var props = new Dictionary<string, object?>() {
                     { CarbonAwareConstants.Locations, locationEnumerable },
                     { CarbonAwareConstants.Start, carbonIntensityBatchDTO.StartTime },
