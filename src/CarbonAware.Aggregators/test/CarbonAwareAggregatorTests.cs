@@ -7,10 +7,7 @@ using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-<<<<<<< HEAD
 using System.Diagnostics;
-=======
->>>>>>> 241890465c61a471554efda0fa0e0fc264ea2f07
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -141,11 +138,7 @@ public class CarbonAwareAggregatorTests
         };
 
         var expectedData = new List<EmissionsData>();
-<<<<<<< HEAD
-        var expectedRatings = new double[] { 15.0, 25.0, 35.0 };
-=======
         var expectedRatings = new double[] { 15.0, 25.0 };
->>>>>>> 241890465c61a471554efda0fa0e0fc264ea2f07
         for (var i = 0; i < expectedRatings.Count(); i++)
         {
             expectedData.Add(new EmissionsData() { Time = dataStartTime + i * TimeSpan.FromMinutes(dataTickSize), Location = locationName, Rating = expectedRatings[i], Duration = TimeSpan.FromMinutes(dataDuration) });

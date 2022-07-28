@@ -133,7 +133,9 @@ public class CarbonAwareControllerTests : TestsBase
         Assert.AreEqual(expectedContent, actualContent);
     }
 
-    // batch should have values with valid input for a single or multiple locations in the batch
+    /// <summary>
+    /// Tests that successfull call the average carbon intensity for a batch of requests on valid input
+    /// </summary>
     [Test]
     public async Task CalculateAverageCarbonIntensityBatch_ValidInput()
     {
@@ -164,7 +166,9 @@ public class CarbonAwareControllerTests : TestsBase
         Assert.AreEqual(expectedContent, actualContent);
     }
 
-    // batch missing a start time or endTime or location
+    /// <summary>
+    /// Tests that are missing a location and thus throw an ArgumentException error
+    /// </summary>
     [TestCase(null, "2022-03-07T01:00:00", "2022-03-07T01:00:00", TestName = "BatchAvgCI throws exception for no location")]
     public void CalculateAverageCarbonIntensityBatch_InvalidInput(string? location, DateTimeOffset? start, DateTimeOffset? end)
     {
