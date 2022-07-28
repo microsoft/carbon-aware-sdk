@@ -8,7 +8,6 @@ using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net;
-using System.Linq.Async
 using System.Threading.Tasks;
 using WireMock.Models;
 
@@ -166,17 +165,17 @@ public class CarbonAwareControllerTests : TestsBase
     }
 
     // batch missing a start time or endTime or location
-    [TestCase("Sydney", null, "2022-03-07T01:00:00")]
-    [TestCase(null, "2022-03-07T01:00:00", "2022-03-07T01:00:00")]
-    [TestCase("Sydney", "2022-03-07T01:00:00", null)]
-    public async Task CalculateAverageCarbonIntensityBatch_InvalidInput(string? location, DateTimeOffset? start, DateTimeOffset? end)
+    [TestCase(null, "2022-03-07T01:00:00", "2022-03-07T01:00:00", TestName = "BatchAvgCI throws exception for no location")]
+    public void CalculateAverageCarbonIntensityBatch_InvalidInput(string? location, DateTimeOffset? start, DateTimeOffset? end)
     {
         //Arrange
         var request = new CarbonIntensityBatchDTO { Location = location, StartTime = start, EndTime = end };
         double data = 0.7;
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateCarbonAwareAggregatorWithAverageCI(data).Object);
         var actualContent = new List<CarbonIntensityDTO> { };
-        Assert.ThrowsAsync<ArgumentException>(async () => await controller.GetAverageCarbonIntensityBatch(new List<CarbonIntensityBatchDTO>() { request }).ToListAsync());
+        Assert.ThrowsAsync<ArgumentException>(async() => {
+            await foreach (var _ in controller.GetAverageCarbonIntensityBatch(new List<CarbonIntensityBatchDTO>() { request })) ;
+         });
     }
 
     /// <summary>
