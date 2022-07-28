@@ -248,7 +248,7 @@ public class WattTimeDataSourceTests
     }
 
     [TestCase("2022-01-01T00:00:00Z", "2022-01-01T00:00:00Z", TestName = "GetCarbonIntensityForecastAsync returns expected value 2022-01-01T00:00:00Z round to floor")]
-    [TestCase("2021-05-01T00:03:20Z", "2022-05-01T00:00:00Z", TestName = "GetCarbonIntensityForecastAsync returns expected value 2022-05-01T00:00:00Z round to floor")]
+    [TestCase("2021-05-01T00:03:20Z", "2021-05-01T00:00:00Z", TestName = "GetCarbonIntensityForecastAsync returns expected value 2021-05-01T00:00:00Z round to floor")]
     [TestCase("2022-01-01T00:07:00Z", "2022-01-01T00:05:00Z", TestName = "GetCarbonIntensityForecastAsync returns expected value 2022-01-01T00:05:00Z round to floor")]
     public async Task GetCarbonIntensityForecastAsync_RequiredAtRounded(string requested, string expected)
     {
@@ -257,26 +257,25 @@ public class WattTimeDataSourceTests
         var balancingAuthority = new BalancingAuthority() { Abbreviation = "BA" };
         var requestedAt = DateTimeOffset.Parse(requested);
         var expectedAt = DateTimeOffset.Parse(expected);
-        var startPoint = DateTimeOffset.Parse("2022-01-01T00:00:00Z");
 
         var emissionData = new List<GridEmissionDataPoint>()
         {
             new GridEmissionDataPoint()
             {
                 BalancingAuthorityAbbreviation = balancingAuthority.Abbreviation,
-                PointTime = startPoint,
+                PointTime = expectedAt,
                 Value = 10,
             },
             new GridEmissionDataPoint()
             {
                 BalancingAuthorityAbbreviation = balancingAuthority.Abbreviation,
-                PointTime = startPoint + TimeSpan.FromMinutes(5),
+                PointTime = expectedAt + TimeSpan.FromMinutes(5),
                 Value = 10,
             },
         };
         var forecast = new Forecast()
         {
-            GeneratedAt = startPoint,
+            GeneratedAt = expectedAt,
             ForecastData = emissionData
         };
 
@@ -286,10 +285,12 @@ public class WattTimeDataSourceTests
 
         // Act
         var result = await this.DataSource.GetCarbonIntensityForecastAsync(location, requestedAt);
+        
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(result.RequestedAt, expectedAt);
+        Assert.AreEqual(result.RequestedAt, requestedAt);
+        Assert.AreEqual(result.GeneratedAt, expectedAt);
     }
 
 
