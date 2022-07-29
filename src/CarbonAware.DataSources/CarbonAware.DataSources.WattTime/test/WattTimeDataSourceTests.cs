@@ -336,11 +336,11 @@ public class WattTimeDataSourceTests
         var emissions = new List<GridEmissionDataPoint>();
         var start = startDate;
 
-        for (var i = 0; i < frequencyValues.Count(); i++)
+        foreach (var frequency in frequencyValues)
         {
             emissions.Add(new GridEmissionDataPoint()
             {
-                Frequency = (frequencyValues[i] == null ? null : (int)frequencyValues[i]),
+                Frequency = (frequency == null?null:Convert.ToInt32(frequency)),
                 PointTime = start
             });
             start = start + TimeSpan.FromMinutes(5);
