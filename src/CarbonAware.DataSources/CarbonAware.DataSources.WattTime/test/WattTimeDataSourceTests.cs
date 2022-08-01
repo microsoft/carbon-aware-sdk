@@ -56,7 +56,7 @@ public class WattTimeDataSourceTests
     public async Task GetCarbonIntensity_ReturnsResultsWhenRecordsFound()
     {
         var startDate = this.DefaultDataStartTime;
-        var endDate = new DateTimeOffset(2022, 4, 18, 12, 33, 42, TimeSpan.FromHours(-6));
+        var endDate = startDate.AddMinutes(1);
         var lbsPerMwhEmissions = 10;
         var gPerKwhEmissions = this.DataSource.ConvertMoerToGramsPerKilowattHour(lbsPerMwhEmissions);
 
@@ -86,7 +86,7 @@ public class WattTimeDataSourceTests
     public async Task GetCarbonIntensity_ReturnsEmptyListWhenNoRecordsFound()
     {
         var startDate = new DateTimeOffset(2022, 4, 18, 12, 32, 42, TimeSpan.FromHours(-6));
-        var endDate = new DateTimeOffset(2022, 4, 18, 12, 33, 42, TimeSpan.FromHours(-6));
+        var endDate = startDate.AddMinutes(1);
 
         this.WattTimeClient.Setup(w => w.GetDataAsync(
             this.DefaultBalancingAuthority,
@@ -104,7 +104,7 @@ public class WattTimeDataSourceTests
     public void GetCarbonIntensity_ThrowsWhenRegionNotFound()
     {
         var startDate = new DateTimeOffset(2022, 4, 18, 12, 32, 42, TimeSpan.FromHours(-6));
-        var endDate = new DateTimeOffset(2022, 4, 18, 12, 33, 42, TimeSpan.FromHours(-6));
+        var endDate = startDate.AddMinutes(1);
 
         this.LocationSource.Setup(l => l.ToGeopositionLocationAsync(this.DefaultLocation)).Throws<LocationConversionException>();
 
@@ -117,7 +117,7 @@ public class WattTimeDataSourceTests
     {
         // Arrange
         var startDate = this.DefaultDataStartTime;
-        var endDate = new DateTimeOffset(2022, 4, 18, 12, 33, 42, TimeSpan.FromHours(-6));
+        var endDate = startDate.AddMinutes(1);
         var generatedAt = new DateTimeOffset(2022, 4, 18, 12, 30, 00, TimeSpan.FromHours(-6));
         var lbsPerMwhEmissions = 10;
         var gPerKwhEmissions = this.DataSource.ConvertMoerToGramsPerKilowattHour(lbsPerMwhEmissions);
@@ -181,7 +181,7 @@ public class WattTimeDataSourceTests
     }
 
     [Test]
-    public void GetCarbonIntensityForecastAsync_ThrowsWhenNoForecastFoundForReuqestedTime()
+    public void GetCarbonIntensityForecastAsync_ThrowsWhenNoForecastFoundForRequestedTime()
     {
         var generatedAt = new DateTimeOffset();
 
@@ -259,11 +259,12 @@ public class WattTimeDataSourceTests
     [TestCase(new double[] { 0 }, null, TestName = "GetCarbonIntensity - for less than 2 data points, frequency is null for one data point ")]
     [TestCase(new double[] { 300, 300 }, null, null, TestName = "GetCarbonIntensity - for multiple data points, frequency is null for all data points")]
     [TestCase(new double[] { 500 }, 500, TestName = "GetCarbonIntensity - frequency is not null")]
+    [TestCase(new double[] { }, TestName = "GetCarbonIntensity - for zero data points, returns empty enumerable")]
     public async Task GetCarbonIntensity_CalculatesDurationBasedOnFrequency(double[] durationValues, params int?[] frequencyValues)
     {
         // Arrange
         var startDate = this.DefaultDataStartTime;
-        var endDate = new DateTimeOffset(2022, 4, 18, 12, 50, 00, TimeSpan.FromHours(-6));
+        var endDate = startDate.AddMinutes(10);
         var emissionData = GenerateDataPoints(frequencyValues.Length);
         for( int i = 0; i < frequencyValues.Length; i++)
         {
@@ -290,10 +291,10 @@ public class WattTimeDataSourceTests
     private void MockBalancingAuthorityLocationMapping()
     {
         this.LocationSource.Setup(r => r.ToGeopositionLocationAsync(this.DefaultLocation)).Returns(Task.FromResult(this.DefaultLocation));
-        var latitude = this.DefaultLocation.Latitude.ToString() ?? throw new ArgumentNullException(String.Format("Could not find location"));
-        var longitude = this.DefaultLocation.Longitude.ToString() ?? throw new ArgumentNullException(String.Format("Could not find location"));
+        var latitude = this.DefaultLocation.Latitude.ToString();
+        var longitude = this.DefaultLocation.Longitude.ToString();
 
-        this.WattTimeClient.Setup(w => w.GetBalancingAuthorityAsync(latitude, longitude)
+        this.WattTimeClient.Setup(w => w.GetBalancingAuthorityAsync(latitude!, longitude!)
         ).ReturnsAsync(() => this.DefaultBalancingAuthority);
     }
 
