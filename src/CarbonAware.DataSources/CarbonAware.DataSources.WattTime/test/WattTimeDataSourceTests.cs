@@ -298,8 +298,9 @@ public class WattTimeDataSourceTests
         ).ReturnsAsync(() => this.DefaultBalancingAuthority);
     }
 
-    private List<GridEmissionDataPoint> GenerateDataPoints(int numberOfDatapoints, float value = 10, DateTimeOffset startTime = default, int? frequency = 300)
+    private List<GridEmissionDataPoint> GenerateDataPoints(int numberOfDatapoints, float value = 10, DateTimeOffset startTime = default)
     {
+        var defaultFrequency = 300;
         var dataPoints = new List<GridEmissionDataPoint>();
         var pointTime = startTime == default ? this.DefaultDataStartTime : startTime;
         for (int i = 0; i < numberOfDatapoints; i++)
@@ -309,11 +310,10 @@ public class WattTimeDataSourceTests
                 BalancingAuthorityAbbreviation = this.DefaultBalancingAuthority.Abbreviation,
                 PointTime = pointTime,
                 Value = value,
-                Frequency = frequency
+                Frequency = defaultFrequency
             };
             dataPoints.Add(dataPoint);
-            var nextDataPointDuration = frequency ?? 300;
-            pointTime += TimeSpan.FromSeconds(nextDataPointDuration);
+            pointTime += TimeSpan.FromSeconds(defaultFrequency);
         };
 
         return dataPoints;

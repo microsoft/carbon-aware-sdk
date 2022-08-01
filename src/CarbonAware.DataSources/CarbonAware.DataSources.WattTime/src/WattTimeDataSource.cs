@@ -166,7 +166,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
         // Handle chronological and reverse-chronological data by using `.Duration()` to get
         // the absolute value of the TimeSpan between the two points.
-        return (first.PointTime - second.PointTime).Duration();
+        return first.PointTime.Subtract(second.PointTime).Duration();
     }
 
     private TimeSpan GetDurationFromGridEmissionDataPointsOrDefault(IEnumerable<GridEmissionDataPoint> gridEmissionDataPoints, TimeSpan defaultValue)
