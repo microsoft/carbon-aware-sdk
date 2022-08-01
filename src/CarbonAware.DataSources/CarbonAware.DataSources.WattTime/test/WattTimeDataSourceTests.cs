@@ -60,7 +60,7 @@ public class WattTimeDataSourceTests
         var lbsPerMwhEmissions = 10;
         var gPerKwhEmissions = this.DataSource.ConvertMoerToGramsPerKilowattHour(lbsPerMwhEmissions);
 
-        var emissionData = GenerateDataPoints(new int?[1], lbsPerMwhEmissions);
+        var emissionData = GenerateDataPoints(1, value: lbsPerMwhEmissions);
 
         this.WattTimeClient.Setup(w => w.GetDataAsync(
             this.DefaultBalancingAuthority,
@@ -124,7 +124,7 @@ public class WattTimeDataSourceTests
         var gPerKwhEmissions = this.DataSource.ConvertMoerToGramsPerKilowattHour(lbsPerMwhEmissions);
         var expectedDuration = TimeSpan.FromMinutes(5);
 
-        var emissionData = GenerateDataPoints(new int?[2], lbsPerMwhEmissions);
+        var emissionData = GenerateDataPoints(2, value: lbsPerMwhEmissions);
         var forecast = new Forecast()
         {
             GeneratedAt = generatedAt,
@@ -197,7 +197,7 @@ public class WattTimeDataSourceTests
     public void GetCurrentCarbonIntensityForecastAsync_ThrowsWhenTooFewDatapointsReturned(int numDataPoints)
     {
         // Arrange
-        var emissionData = GenerateDataPoints(new int?[numDataPoints]);
+        var emissionData = GenerateDataPoints(numDataPoints);
 
         var forecast = new Forecast()
         {
@@ -222,7 +222,7 @@ public class WattTimeDataSourceTests
         var requestedAt = DateTimeOffset.Parse(requested);
         var expectedAt = DateTimeOffset.Parse(expected);
 
-        var emissionData = GenerateDataPoints(new int?[2], startTime: requestedAt);
+        var emissionData = GenerateDataPoints(2, startTime: requestedAt);
         var forecast = new Forecast()
         {
             GeneratedAt = expectedAt,
@@ -268,7 +268,12 @@ public class WattTimeDataSourceTests
         // Arrange
         var startDate = this.DefaultDataStartTime;
         var endDate = new DateTimeOffset(2022, 4, 18, 12, 50, 00, TimeSpan.FromHours(-6));
-        var emissionData = GenerateDataPoints(frequencyValues);
+        var emissionData = GenerateDataPoints(frequencyValues.Length);
+        for( int i = 0; i < frequencyValues.Length; i++)
+        {
+            emissionData[i].Frequency = frequencyValues[i];
+        }
+        
         List<double> expectedDurationList = durationValues.ToList<double>();
 
         this.WattTimeClient.Setup(w => w.GetDataAsync(
@@ -296,11 +301,11 @@ public class WattTimeDataSourceTests
         ).ReturnsAsync(() => this.DefaultBalancingAuthority);
     }
 
-    private List<GridEmissionDataPoint> GenerateDataPoints(int?[] frequencies, float value = 10, DateTimeOffset startTime = default)
+    private List<GridEmissionDataPoint> GenerateDataPoints(int numberOfDatapoints, float value = 10, DateTimeOffset startTime = default, int? frequency =300)
     {
         var dataPoints = new List<GridEmissionDataPoint>();
         var pointTime = startTime == default ? this.DefaultDataStartTime : startTime;
-        foreach (var frequency in frequencies)
+        for(int i = 0; i < numberOfDatapoints; i++)
         {
             var dataPoint = new GridEmissionDataPoint()
             {
@@ -316,5 +321,21 @@ public class WattTimeDataSourceTests
 
         return dataPoints;
     }
+     /*   foreach (var frequency in frequencies)
+        {
+            var dataPoint = new GridEmissionDataPoint()
+            {
+                BalancingAuthorityAbbreviation = this.DefaultBalancingAuthority.Abbreviation,
+                PointTime = pointTime,
+                Value = value,
+                Frequency = frequency
+            };
+            dataPoints.Add(dataPoint);
+            var nextDataPointDuration = frequency ?? 300;
+            pointTime += TimeSpan.FromSeconds(nextDataPointDuration);
+        };
+
+        return dataPoints;
+    }*/
 }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
