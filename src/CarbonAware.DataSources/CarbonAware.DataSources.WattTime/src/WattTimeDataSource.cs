@@ -181,7 +181,7 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
 
     private TimeSpan FrequencyToTimeSpanOrDefault(int? frequency, TimeSpan defaultValue)
     {
-       return (frequency != null) ? TimeSpan.FromSeconds((double)frequency) : defaultValue;
+        return (frequency != null) ? TimeSpan.FromSeconds((double)frequency) : defaultValue;
     }
 
     private async Task<BalancingAuthority> GetBalancingAuthority(Location location, Activity? activity)

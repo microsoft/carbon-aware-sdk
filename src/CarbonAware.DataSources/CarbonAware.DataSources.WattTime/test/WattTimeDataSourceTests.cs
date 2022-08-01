@@ -68,7 +68,6 @@ public class WattTimeDataSourceTests
             It.IsAny<DateTimeOffset>())
         ).ReturnsAsync(() => emissionData);
 
-        //SetupBalancingAuthority(balancingAuthority, location);
         var result = await this.DataSource.GetCarbonIntensityAsync(new List<Location>() { this.DefaultLocation }, startDate, endDate);
 
         Assert.IsNotNull(result);
@@ -208,8 +207,6 @@ public class WattTimeDataSourceTests
         this.WattTimeClient.Setup(w => w.GetCurrentForecastAsync(this.DefaultBalancingAuthority)
             ).ReturnsAsync(() => forecast);
 
-        //SetupBalancingAuthority(balancingAuthority, location);
-
         Assert.ThrowsAsync<WattTimeClientException>(async () => await this.DataSource.GetCurrentCarbonIntensityForecastAsync(this.DefaultLocation));
     }
 
@@ -229,7 +226,6 @@ public class WattTimeDataSourceTests
             ForecastData = emissionData
         };
 
-        //SetupBalancingAuthority(balancingAuthority, location);
         this.WattTimeClient.Setup(w => w.GetForecastOnDateAsync(this.DefaultBalancingAuthority, expectedAt)
                 ).ReturnsAsync(() => forecast);
 
@@ -301,11 +297,11 @@ public class WattTimeDataSourceTests
         ).ReturnsAsync(() => this.DefaultBalancingAuthority);
     }
 
-    private List<GridEmissionDataPoint> GenerateDataPoints(int numberOfDatapoints, float value = 10, DateTimeOffset startTime = default, int? frequency =300)
+    private List<GridEmissionDataPoint> GenerateDataPoints(int numberOfDatapoints, float value = 10, DateTimeOffset startTime = default, int? frequency = 300)
     {
         var dataPoints = new List<GridEmissionDataPoint>();
         var pointTime = startTime == default ? this.DefaultDataStartTime : startTime;
-        for(int i = 0; i < numberOfDatapoints; i++)
+        for (int i = 0; i < numberOfDatapoints; i++)
         {
             var dataPoint = new GridEmissionDataPoint()
             {
@@ -321,21 +317,5 @@ public class WattTimeDataSourceTests
 
         return dataPoints;
     }
-     /*   foreach (var frequency in frequencies)
-        {
-            var dataPoint = new GridEmissionDataPoint()
-            {
-                BalancingAuthorityAbbreviation = this.DefaultBalancingAuthority.Abbreviation,
-                PointTime = pointTime,
-                Value = value,
-                Frequency = frequency
-            };
-            dataPoints.Add(dataPoint);
-            var nextDataPointDuration = frequency ?? 300;
-            pointTime += TimeSpan.FromSeconds(nextDataPointDuration);
-        };
-
-        return dataPoints;
-    }*/
 }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
