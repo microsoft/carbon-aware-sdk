@@ -164,8 +164,6 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         var first = firstPoint ?? throw new WattTimeClientException("Too few data points returned"); 
         var second = secondPoint ?? throw new WattTimeClientException("Too few data points returned");
 
-        // Handle chronological and reverse-chronological data by using `.Duration()` to get
-        // the absolute value of TimeSpan between the two points.
         return (first.PointTime - second.PointTime).Duration();
     }
 
