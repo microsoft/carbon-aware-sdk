@@ -171,7 +171,7 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
 
     private void ValidateDateInput(DateTimeOffset start, DateTimeOffset end)
     {
-        if (start > end)
+        if (start >= end)
         {
             throw new ArgumentException($"Invalid start and end. Start time must come before end time. start is {start}, end is {end}");
         }

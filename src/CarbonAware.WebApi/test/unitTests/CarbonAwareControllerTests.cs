@@ -168,17 +168,23 @@ public class CarbonAwareControllerTests : TestsBase
     /// <summary>
     /// Tests that are missing a location and thus throw an ArgumentException error
     /// </summary>
-    [TestCase(null, "2022-03-07T01:00:00", "2022-03-07T01:00:00", TestName = "CalculateAverageCarbonIntensityBatch throws exception for no location")]
-    public void CalculateAverageCarbonIntensityBatch_InvalidInput(string? location, DateTimeOffset? start, DateTimeOffset? end)
+    [Test]
+    public void CalculateAverageCarbonIntensityBatch_NoLocations_ThrowsException()
     {
         //Arrange
-        var request = new CarbonIntensityBatchDTO { Location = location, StartTime = start, EndTime = end };
-        double data = 0.7;
+        var batchRequestData = new List<CarbonIntensityBatchDTO>()
+        {
+            new CarbonIntensityBatchDTO
+            {
+                StartTime = new DateTimeOffset(2021,9,1,8,30,0, TimeSpan.Zero),
+                EndTime = new DateTimeOffset(2021,9,2,8,30,0, TimeSpan.Zero)
+            }
+        };
+        var data = 0.7d;
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateCarbonAwareAggregatorWithAverageCI(data).Object);
-        var actualContent = new List<CarbonIntensityDTO> { };
         Assert.ThrowsAsync<ArgumentException>(async () =>
         {
-            await foreach (var _ in controller.GetAverageCarbonIntensityBatch(new List<CarbonIntensityBatchDTO>() { request })) ;
+            await foreach (var _ in controller.GetAverageCarbonIntensityBatch(batchRequestData)) ;
         });
     }
 

@@ -274,13 +274,12 @@ public class CarbonAwareController : ControllerBase
     /// <response code="400">Returned if any of the requested items are invalid</response>
     /// <response code="500">Internal server error</response>
     [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CarbonIntensityBatchDTO>))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
     [HttpPost("average-carbon-intensity/batch")]
     public async IAsyncEnumerable<CarbonIntensityDTO> GetAverageCarbonIntensityBatch(IEnumerable<CarbonIntensityBatchDTO> requestedCarbonIntensities)
     {
-        // TODO: implement this controller method after spec is approved.
         using (var activity = Activity.StartActivity())
         {
             foreach (var carbonIntensityBatchDTO in requestedCarbonIntensities)

@@ -344,6 +344,7 @@ public class CarbonAwareAggregatorTests
     [TestCase("2021-11-18T00:00:00Z", null, TestName = "AverageCI valid startTime, null endTime")]
     [TestCase(null, "2021-11-18T00:00:00Z", TestName = "AverageCI null startTime, valid endTime")]
     [TestCase("2021-11-19T00:00:00Z", "2021-11-18T00:00:00Z", TestName = "AverageCI startTime greater than endTime")]
+    [TestCase("2021-11-18T00:00:00Z", "2021-11-18T00:00:00Z", TestName = "AverageCI startTime equal endTime")]
     public void TestCalculateAverageCarbonIntensityAsync_InvalidStartEndTimes_ThrowsException(string start, string end)
     {
         this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityAsync(It.IsAny<IEnumerable<Location>>(),
