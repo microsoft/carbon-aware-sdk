@@ -1,11 +1,11 @@
-namespace CarbonAware.WepApi.IntegrationTests;
-
 using CarbonAware.DataSources.Configuration;
 using CarbonAware.WebApi.IntegrationTests;
 using NUnit.Framework;
 using System.Net;
 using System.Text.Json;
 using CarbonAware.WebApi.Models;
+
+namespace CarbonAware.WepApi.IntegrationTests;
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
@@ -20,6 +20,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     private string bestLocationsURI = "/emissions/bylocations/best";
     private string currentForecastURI = "/emissions/forecasts/current";
     private string batchForecastURI = "/emissions/forecasts/batch";
+    private string actualURI = "/emissions/average-carbon-intensity";
+    private string batchActualURI = "/emissions/average-carbon-intensity/batch";
 
     private JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
@@ -217,6 +219,104 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.AreEqual(forecasts!.First().DataStartAt, inputData.First().DataStartAt);
         Assert.AreEqual(forecasts!.First().DataEndAt, inputData.First().DataEndAt);
         Assert.AreEqual(forecasts!.First().RequestedAt, inputData.First().RequestedAt);
+    }
+
+    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus")]
+    [TestCase("2021-12-25", "2021-12-26", "westus")]
+    public async Task EmissionsActual_ReturnsOk(DateTimeOffset start, DateTimeOffset end, string location)
+    {
+        _dataSourceMocker.SetupDataMock(start, end, location);
+
+        var queryStrings = new Dictionary<string, string>();
+        queryStrings["location"] = location;
+        queryStrings["startTime"] = $"{start:O}";
+        queryStrings["endTime"] = $"{end:O}";
+
+        var endpointURI = ConstructUriWithQueryString(actualURI, queryStrings);
+        var result = await _client.GetAsync(endpointURI);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result!.Content, Is.Not.Null);
+        var data = await result!.Content.ReadAsStringAsync();
+        Assert.That(data, Is.Not.Null);
+        var value = JsonSerializer.Deserialize<CarbonIntensityDTO>(data);
+        Assert.That(value, Is.Not.Null);
+        Assert.That(value!.CarbonIntensity, Is.Not.EqualTo(0));
+        Assert.That(value!.StartTime, Is.EqualTo(start));
+        Assert.That(value!.EndTime, Is.EqualTo(end));
+    }
+
+    [TestCase("location", "", TestName = "empty location query string")]
+    [TestCase("non-location-param", "", TestName = "location param not present")]
+    public async Task EmissionsActual_EmptyLocationQueryString_ReturnsBadRequest(string queryString, string value)
+    {
+        var queryStrings = new Dictionary<string, string>();
+        queryStrings[queryString] = value;
+
+        var endpointURI = ConstructUriWithQueryString(actualURI, queryStrings);
+        var result = await _client.GetAsync(endpointURI);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    }
+
+    [TestCase(false, false, false, TestName = "Not use location, Not use startTime, Not use endTime")]
+    [TestCase(true, false, false, TestName = "Use location, Not use startTime, Not use endTime")]
+    [TestCase(true, true, false, TestName = "Use location, Use startTime, Not use endTime")]
+     public async Task EmissionsBatchActual_MissingRequiredParams_ReturnsBadRequest(bool useLocation, bool useStart, bool useEnd)
+    {
+        if (useLocation && useStart && useEnd)
+        {
+            Assert.Fail("Invalid test");
+        }
+        _dataSourceMocker.SetupForecastMock();
+        var intensityBatch = new CarbonIntensityBatchDTO();
+        if (useLocation)
+        {
+            intensityBatch.Location = "eastus";
+        }
+        if (useStart)
+        {
+            intensityBatch.StartTime = DateTimeOffset.Parse("2022-03-01T15:30:00Z");
+        }
+        if (useEnd)
+        {
+            intensityBatch.EndTime = DateTimeOffset.Parse("2022-03-01T18:30:00Z");
+        }
+       
+        var intesityData = new List<CarbonIntensityBatchDTO>() { intensityBatch };
+
+        var result = await PostJSONBodyToURI(intesityData, batchActualURI);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    }
+
+    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus")]
+    [TestCase("2021-12-25", "2021-12-26", "westus")]
+    public async Task EmissionsBatchActual_SupportedDataSources_ReturnsOk(DateTimeOffset start, DateTimeOffset end, string location)
+    {
+        _dataSourceMocker.SetupDataMock(start, end, location);
+        var intensityBatch = new CarbonIntensityBatchDTO()
+        {
+            Location = location,
+            StartTime = start,
+            EndTime = end
+        };
+        var intesityData = new List<CarbonIntensityBatchDTO>() { intensityBatch };
+        var result = await PostJSONBodyToURI(intesityData, batchActualURI);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(result!.Content, Is.Not.Null);
+        var data = await result!.Content.ReadAsStringAsync();
+        Assert.That(data, Is.Not.Null);
+        var values = JsonSerializer.Deserialize<List<CarbonIntensityDTO>>(data);
+        Assert.That(values, Is.Not.Null);
+        Assert.That(values!.Count, Is.EqualTo(intesityData.Count));
+        Assert.That(values!.First().CarbonIntensity, Is.Not.EqualTo(0));
+        Assert.That(values!.First().StartTime, Is.EqualTo(start));
+        Assert.That(values!.First().EndTime, Is.EqualTo(end));
     }
 
     private void IgnoreTestForDataSource(string reasonMessage, params DataSourceType[] ignoredDataSources)
