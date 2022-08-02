@@ -221,8 +221,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.AreEqual(forecasts!.First().RequestedAt, inputData.First().RequestedAt);
     }
 
-    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus")]
-    [TestCase("2021-12-25", "2021-12-26", "westus")]
+    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", TestName = "Get EmissionsActual expects OK for eastus")]
+    [TestCase("2021-12-25", "2021-12-26", "westus", TestName = "Get EmissionsActual expects OK for westus")]
     public async Task EmissionsActual_ReturnsOk(DateTimeOffset start, DateTimeOffset end, string location)
     {
         _dataSourceMocker.SetupDataMock(start, end, location);
@@ -247,8 +247,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(value!.EndTime, Is.EqualTo(end));
     }
 
-    [TestCase("location", "", TestName = "empty location query string")]
-    [TestCase("non-location-param", "", TestName = "location param not present")]
+    [TestCase("location", "", TestName = "Get EmissionsActual empty location query string expects BadRequest")]
+    [TestCase("non-location-param", "", TestName = "Get EmissionsActual location param not present expects BadRequest")]
     public async Task EmissionsActual_EmptyLocationQueryString_ReturnsBadRequest(string queryString, string value)
     {
         var queryStrings = new Dictionary<string, string>();
@@ -261,9 +261,9 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    [TestCase(false, false, false, TestName = "Not use location, Not use startTime, Not use endTime")]
-    [TestCase(true, false, false, TestName = "Use location, Not use startTime, Not use endTime")]
-    [TestCase(true, true, false, TestName = "Use location, Use startTime, Not use endTime")]
+    [TestCase(false, false, false, TestName = "EmissionsBatchActual Not use location, Not use startTime, Not use endTime")]
+    [TestCase(true, false, false, TestName = "EmissionsBatchActual Use location, Not use startTime, Not use endTime")]
+    [TestCase(true, true, false, TestName = "EmissionsBatchActual Use location, Use startTime, Not use endTime")]
     public async Task EmissionsBatchActual_MissingRequiredParams_ReturnsBadRequest(bool useLocation, bool useStart, bool useEnd)
     {
         if (useLocation && useStart && useEnd)
@@ -293,8 +293,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus")]
-    [TestCase("2021-12-25", "2021-12-26", "westus")]
+    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", TestName = "EmissionsBatchActual expects OK for eastus")]
+    [TestCase("2021-12-25", "2021-12-26", "westus", TestName = "EmissionsBatchActual expects OK for westus")]
     public async Task EmissionsBatchActual_SupportedDataSources_ReturnsOk(DateTimeOffset start, DateTimeOffset end, string location)
     {
         _dataSourceMocker.SetupDataMock(start, end, location);
