@@ -270,7 +270,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         {
             Assert.Fail("Invalid test");
         }
-        _dataSourceMocker.SetupForecastMock();
+
         var intensityBatch = new CarbonIntensityBatchDTO();
         if (useLocation)
         {
