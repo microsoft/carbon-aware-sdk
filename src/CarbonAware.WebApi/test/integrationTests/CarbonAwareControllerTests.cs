@@ -264,7 +264,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     [TestCase(false, false, false, TestName = "Not use location, Not use startTime, Not use endTime")]
     [TestCase(true, false, false, TestName = "Use location, Not use startTime, Not use endTime")]
     [TestCase(true, true, false, TestName = "Use location, Use startTime, Not use endTime")]
-     public async Task EmissionsBatchActual_MissingRequiredParams_ReturnsBadRequest(bool useLocation, bool useStart, bool useEnd)
+    public async Task EmissionsBatchActual_MissingRequiredParams_ReturnsBadRequest(bool useLocation, bool useStart, bool useEnd)
     {
         if (useLocation && useStart && useEnd)
         {
