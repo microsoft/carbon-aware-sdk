@@ -221,8 +221,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.AreEqual(forecasts!.First().RequestedAt, inputData.First().RequestedAt);
     }
 
-    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", TestName = "Get EmissionsActual expects OK for eastus")]
-    [TestCase("2021-12-25", "2021-12-26", "westus", TestName = "Get EmissionsActual expects OK for westus")]
+    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", TestName = "EmissionsActual expects OK for eastus")]
+    [TestCase("2021-12-25", "2021-12-26", "westus", TestName = "EmissionsActual expects OK for westus")]
     public async Task EmissionsActual_ReturnsOk(DateTimeOffset start, DateTimeOffset end, string location)
     {
         _dataSourceMocker.SetupDataMock(start, end, location);
@@ -247,8 +247,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(value!.EndTime, Is.EqualTo(end));
     }
 
-    [TestCase("location", "", TestName = "Get EmissionsActual empty location query string expects BadRequest")]
-    [TestCase("non-location-param", "", TestName = "Get EmissionsActual location param not present expects BadRequest")]
+    [TestCase("location", "", TestName = "EmissionsActual empty location query string expects BadRequest")]
+    [TestCase("non-location-param", "", TestName = "EmissionsActual location param not present expects BadRequest")]
     public async Task EmissionsActual_EmptyLocationQueryString_ReturnsBadRequest(string queryString, string value)
     {
         var queryStrings = new Dictionary<string, string>();
