@@ -298,7 +298,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     }
 
     [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", 1, TestName = "EmissionsMarginalCarbonIntensityBatch expects OK for single element batch")]
-    [TestCase("2021-12-25", "2021-12-26", "westus", 3, TestName = "EmissionsMarginalCarbonIntensityBatch expects OK for westus 3 elements")]
+    [TestCase("2021-12-25", "2021-12-26", "westus", 3, TestName = "EmissionsMarginalCarbonIntensityBatch expects OK for multiple element batch")]
     public async Task EmissionsMarginalCarbonIntensityBatch_SupportedDataSources_ReturnsOk(string start, string end, string location, int nelems)
     {
         var startDate = DateTimeOffset.Parse(start);
