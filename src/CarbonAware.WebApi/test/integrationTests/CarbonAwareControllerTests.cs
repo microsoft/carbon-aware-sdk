@@ -239,7 +239,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
 
         var queryStrings = new Dictionary<string, string>();
         queryStrings["location"] = location;
-        queryStrings["startTime"] = $"{start:O}";
+        queryStrings["startTime"] = start;
         queryStrings["endTime"] = $"{end:O}";
 
         var endpointURI = ConstructUriWithQueryString(averageCarbonIntensityURI, queryStrings);
