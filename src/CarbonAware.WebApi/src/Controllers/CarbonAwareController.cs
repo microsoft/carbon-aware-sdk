@@ -39,9 +39,9 @@ public class CarbonAwareController : ControllerBase
         using (var activity = Activity.StartActivity())
         {
             //The LocationType is hardcoded for now. Ideally this should be received from the request or configuration 
-            IEnumerable<Location> locationEnumerable = CreateLocationsFromQueryString(locations);
+            IEnumerable<Location> locationEnumerable = CreateMultipleLocationsFromStrings(locations);
             var props = new Dictionary<string, object?>() {
-                { CarbonAwareConstants.Locations, locationEnumerable },
+                { CarbonAwareConstants.MultipleLocations, locationEnumerable },
                 { CarbonAwareConstants.Start, time},
                 { CarbonAwareConstants.End, toTime },
                 { CarbonAwareConstants.Duration, durationMinutes },
@@ -73,9 +73,9 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            IEnumerable<Location> locationEnumerable = CreateLocationsFromQueryString(locations);
+            IEnumerable<Location> locationEnumerable = CreateMultipleLocationsFromStrings(locations);
             var props = new Dictionary<string, object?>() {
-                { CarbonAwareConstants.Locations, locationEnumerable },
+                { CarbonAwareConstants.MultipleLocations, locationEnumerable },
                 { CarbonAwareConstants.Start, time },
                 { CarbonAwareConstants.End, toTime},
                 { CarbonAwareConstants.Duration, durationMinutes },
@@ -151,9 +151,9 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            IEnumerable<Location> locationEnumerable = CreateLocationsFromQueryString(locations);
+            IEnumerable<Location> locationEnumerable = CreateMultipleLocationsFromStrings(locations);
             var props = new Dictionary<string, object?>() {
-                { CarbonAwareConstants.Locations, locationEnumerable },
+                { CarbonAwareConstants.MultipleLocations, locationEnumerable },
                 { CarbonAwareConstants.Start, dataStartAt },
                 { CarbonAwareConstants.End, dataEndAt },
                 { CarbonAwareConstants.Duration, windowSize },
@@ -195,7 +195,7 @@ public class CarbonAwareController : ControllerBase
             foreach (var forecastBatchDTO in requestedForecasts)
             {
                 var props = new Dictionary<string, object?>() {
-                    { CarbonAwareConstants.Location, CreateLocationFromQueryString(forecastBatchDTO.Location!) },
+                    { CarbonAwareConstants.SingleLocation, CreateSingleLocationFromString(forecastBatchDTO.Location!) },
                     { CarbonAwareConstants.Start, forecastBatchDTO.DataStartAt },
                     { CarbonAwareConstants.End, forecastBatchDTO.DataEndAt },
                     { CarbonAwareConstants.Duration, forecastBatchDTO.WindowSize },
@@ -233,7 +233,7 @@ public class CarbonAwareController : ControllerBase
         using (var activity = Activity.StartActivity())
         {
             var props = new Dictionary<string, object?>() {
-                { CarbonAwareConstants.Location, CreateLocationFromQueryString(location) },
+                { CarbonAwareConstants.SingleLocation, CreateSingleLocationFromString(location) },
                 { CarbonAwareConstants.Start, startTime },
                 { CarbonAwareConstants.End, endTime },
             };
@@ -277,7 +277,7 @@ public class CarbonAwareController : ControllerBase
             foreach (var carbonIntensityBatchDTO in requestedCarbonIntensities)
             {
                 var props = new Dictionary<string, object?>() {
-                    { CarbonAwareConstants.Location, CreateLocationFromQueryString(carbonIntensityBatchDTO.Location!) },
+                    { CarbonAwareConstants.SingleLocation, CreateSingleLocationFromString(carbonIntensityBatchDTO.Location!) },
                     { CarbonAwareConstants.Start, carbonIntensityBatchDTO.StartTime },
                     { CarbonAwareConstants.End, carbonIntensityBatchDTO.EndTime }
                 };
@@ -297,17 +297,17 @@ public class CarbonAwareController : ControllerBase
         }
     }
 
-    private IEnumerable<Location> CreateLocationsFromQueryString(string[] queryStringLocations)
+    private IEnumerable<Location> CreateMultipleLocationsFromStrings(string[] stringLocations)
     {
-        var locations = queryStringLocations
+        var locations = stringLocations
             .Where(location => !String.IsNullOrEmpty(location))
             .Select(location => new Location() { RegionName = location, LocationType = LocationType.CloudProvider });
         return locations.Any() ? locations : throw new ArgumentException("Required field: A value for 'location' must be provided.");
     }
 
-    private Location CreateLocationFromQueryString(string queryStringLocation)
+    private Location CreateSingleLocationFromString(string stringLocation)
     {
-        if (String.IsNullOrEmpty(queryStringLocation)) throw new ArgumentException("Required field: A value for 'location' must be provided.");
-        return new Location() { RegionName = queryStringLocation, LocationType = LocationType.CloudProvider };
+        if (String.IsNullOrEmpty(stringLocation)) throw new ArgumentException("Required field: A value for 'location' must be provided.");
+        return new Location() { RegionName = stringLocation, LocationType = LocationType.CloudProvider };
     }
 }

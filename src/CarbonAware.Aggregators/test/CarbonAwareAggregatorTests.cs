@@ -48,7 +48,7 @@ public class CarbonAwareAggregatorTests
 
         var props = new Dictionary<string, object?>()
         {
-            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" } } },
+            { CarbonAwareConstants.MultipleLocations, new List<Location>() { new Location() { RegionName = "westus" } } },
             { CarbonAwareConstants.Start, start },
             { CarbonAwareConstants.End, end },
         };
@@ -68,7 +68,7 @@ public class CarbonAwareAggregatorTests
         var emptyProps = new Dictionary<string, object>();
         var emptyLocationProps = new Dictionary<string, object>()
         {
-            { CarbonAwareConstants.Locations, new List<Location>() }
+            { CarbonAwareConstants.MultipleLocations, new List<Location>() }
         };
 
         Assert.ThrowsAsync<ArgumentException>(async () => await this.Aggregator.GetCurrentForecastDataAsync(emptyProps));
@@ -84,7 +84,7 @@ public class CarbonAwareAggregatorTests
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
         var props = new Dictionary<string, object>()
         {
-            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" } } },
+            { CarbonAwareConstants.MultipleLocations, new List<Location>() { new Location() { RegionName = "westus" } } },
             { CarbonAwareConstants.Start, start },
             { CarbonAwareConstants.End, end }
         };
@@ -103,7 +103,7 @@ public class CarbonAwareAggregatorTests
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
         var props = new Dictionary<string, object>()
         {
-            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" } } },
+            { CarbonAwareConstants.MultipleLocations, new List<Location>() { new Location() { RegionName = "westus" } } },
             { CarbonAwareConstants.Start, start },
             { CarbonAwareConstants.End, end }
         };
@@ -129,7 +129,7 @@ public class CarbonAwareAggregatorTests
         var locationName = "westus";
         var props = new Dictionary<string, object>()
         {
-            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" } } },
+            { CarbonAwareConstants.MultipleLocations, new List<Location>() { new Location() { RegionName = "westus" } } },
             { CarbonAwareConstants.Start, "2022-01-01T00:00:00Z" },
             { CarbonAwareConstants.End, "2022-01-01T00:15:00Z" },
             { CarbonAwareConstants.Duration, windowSize }
@@ -162,7 +162,7 @@ public class CarbonAwareAggregatorTests
         var locationName = "westus";
         var props = new Dictionary<string, object>()
         {
-            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" } } },
+            { CarbonAwareConstants.MultipleLocations, new List<Location>() { new Location() { RegionName = "westus" } } },
             { CarbonAwareConstants.Start, "2022-01-01T00:00:00Z" },
             { CarbonAwareConstants.End, "2022-01-01T00:20:00Z" },
         };
@@ -193,7 +193,7 @@ public class CarbonAwareAggregatorTests
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
         var props = new Dictionary<string, object?>()
         {
-            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" } } },
+            { CarbonAwareConstants.MultipleLocations, new List<Location>() { new Location() { RegionName = "westus" } } },
             { CarbonAwareConstants.Start, start },
             { CarbonAwareConstants.End, end }
         };
@@ -216,7 +216,7 @@ public class CarbonAwareAggregatorTests
     {
         var props = new Dictionary<string, object?>()
         {
-            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" }, new Location() { RegionName = "eastus" } } },
+            { CarbonAwareConstants.MultipleLocations, new List<Location>() { new Location() { RegionName = "westus" }, new Location() { RegionName = "eastus" } } },
             { CarbonAwareConstants.ForecastRequestedAt, new DateTimeOffset(2021,9,1,8,30,0, TimeSpan.Zero) }
         };
 
@@ -228,7 +228,7 @@ public class CarbonAwareAggregatorTests
     {
         var props = new Dictionary<string, object?>()
         {
-            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "eastus" } } }
+            { CarbonAwareConstants.MultipleLocations, new List<Location>() { new Location() { RegionName = "eastus" } } }
         };
 
         Assert.ThrowsAsync<ArgumentException>(async () => await this.Aggregator.GetForecastDataAsync(props));
@@ -247,7 +247,7 @@ public class CarbonAwareAggregatorTests
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
         var props = new Dictionary<string, object?>()
         {
-            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" } } },
+            { CarbonAwareConstants.MultipleLocations, new List<Location>() { new Location() { RegionName = "westus" } } },
             { CarbonAwareConstants.Start, start },
             { CarbonAwareConstants.End, end },
             { CarbonAwareConstants.ForecastRequestedAt, requestedAt }
@@ -265,7 +265,7 @@ public class CarbonAwareAggregatorTests
             .ReturnsAsync(TestData.GetForecast("2022-01-01T00:00:00Z"));
         var props = new Dictionary<string, object>()
         {
-            { CarbonAwareConstants.Location, new Location() { RegionName = "westus" } },
+            { CarbonAwareConstants.SingleLocation, new Location() { RegionName = "westus" } },
             { CarbonAwareConstants.Start, start },
             { CarbonAwareConstants.End, end },
             { CarbonAwareConstants.ForecastRequestedAt, requestedAt }
@@ -288,7 +288,7 @@ public class CarbonAwareAggregatorTests
         const string reg = "westus";
         var props = new Dictionary<string, object>()
         {
-            { CarbonAwareConstants.Location, new Location() { RegionName = reg } },
+            { CarbonAwareConstants.SingleLocation, new Location() { RegionName = reg } },
             { CarbonAwareConstants.Start, DateTimeOffset.Parse("2022-01-01T00:00:00Z") },
             { CarbonAwareConstants.End,  DateTimeOffset.Parse("2022-01-01T00:20:00Z") },
             { CarbonAwareConstants.ForecastRequestedAt, requestedAt }
@@ -320,7 +320,7 @@ public class CarbonAwareAggregatorTests
 
         var props = new Dictionary<string, object?>()
         {
-            { CarbonAwareConstants.Location, location },
+            { CarbonAwareConstants.SingleLocation, location },
             { CarbonAwareConstants.Start, start },
             { CarbonAwareConstants.End, end }
         };
@@ -349,7 +349,7 @@ public class CarbonAwareAggregatorTests
 
         var props = new Dictionary<string, object?>()
         {
-            { CarbonAwareConstants.Locations, new List<Location>() { new Location() { RegionName = "westus" } } },
+            { CarbonAwareConstants.MultipleLocations, new List<Location>() { new Location() { RegionName = "westus" } } },
             { CarbonAwareConstants.Start, start },
             { CarbonAwareConstants.End, end }
         };
@@ -373,7 +373,7 @@ public class CarbonAwareAggregatorTests
 
         var props = new Dictionary<string, object?>()
         {
-            { CarbonAwareConstants.Location, location },
+            { CarbonAwareConstants.SingleLocation, location },
             { CarbonAwareConstants.Start, start },
             { CarbonAwareConstants.End, end }
         };

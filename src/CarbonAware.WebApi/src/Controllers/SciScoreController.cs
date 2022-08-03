@@ -71,7 +71,7 @@ public class SciScoreController : ControllerBase
             (DateTimeOffset start, DateTimeOffset end) = SciScoreAggregator.ParseTimeInterval(input.TimeInterval);
 
             var props = new Dictionary<string, object?>() {
-                { CarbonAwareConstants.Locations, locationEnumerable },
+                { CarbonAwareConstants.MultipleLocations, locationEnumerable },
                 { CarbonAwareConstants.Start, start },
                 { CarbonAwareConstants.End, end },
             };

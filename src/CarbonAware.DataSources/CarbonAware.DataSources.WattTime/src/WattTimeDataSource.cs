@@ -51,19 +51,22 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
     public async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(IEnumerable<Location> locations, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
     {
         this.Logger.LogInformation("Getting carbon intensity for locations {locations} for period {periodStartTime} to {periodEndTime}.", locations, periodStartTime, periodEndTime);
-        List<EmissionsData> result = new ();
-        foreach (var location in locations)
+        using (var activity = Activity.StartActivity())
         {
-            IEnumerable<EmissionsData> interimResult = await GetCarbonIntensityAsync(location, periodStartTime, periodEndTime);
-            result.AddRange(interimResult);
+            List<EmissionsData> result = new ();
+            foreach (var location in locations)
+            {
+                IEnumerable<EmissionsData> interimResult = await GetCarbonIntensityAsync(location, periodStartTime, periodEndTime);
+                result.AddRange(interimResult);
+            }
+            return result;
         }
-        return result;
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(Location location, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
     {
         Logger.LogInformation($"Getting carbon intensity for location {location} for period {periodStartTime} to {periodEndTime}.");
-
         using (var activity = Activity.StartActivity())
         {
             var balancingAuthority = await this.GetBalancingAuthority(location, activity);
