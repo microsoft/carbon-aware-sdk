@@ -304,7 +304,11 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         var startDate = DateTimeOffset.Parse(start);
         var endDate = DateTimeOffset.Parse(end);
         _dataSourceMocker.SetupDataMock(startDate, endDate, location);
-        var intesityData = Enumerable.Range(0, nelems).Select(x => new CarbonIntensityBatchDTO() 
+        var intesityData = Enumerable.Range(0, nelems).Select(x => new {
+            location = location,
+            startTime = start,
+            endTime = end
+        }); 
         {
             Location = location,
             StartTime = startDate,
