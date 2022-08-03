@@ -299,7 +299,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         _dataSourceMocker.SetupDataMock(startDate, endDate, location);
         var intesityData = Enumerable.Range(0, nelems).Select(x => new {
             location = location,
-            startTime = startDate,
+            startTime = start,
             endTime = endDate
         });
         using (var result = await PostJSONBodyToURI(intesityData, batchAverageCarbonIntensityURI))
