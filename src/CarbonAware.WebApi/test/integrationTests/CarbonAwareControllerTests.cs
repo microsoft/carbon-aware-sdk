@@ -196,12 +196,11 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         var startDate = DateTimeOffset.Parse(start);
         var endDate = DateTimeOffset.Parse(end);
         _dataSourceMocker.SetupBatchForecastMock();
-        var inputData = Enumerable.Range(0, nelems).Select(x => new EmissionsForecastBatchDTO() 
-        {
-            RequestedAt = reqAtDate,
-            DataStartAt = startDate,
-            DataEndAt = endDate,
-            Location = location
+        var inputData = Enumerable.Range(0, nelems).Select(x => new {
+            requestedAt = reqAt,
+            dataStartAt = start,
+            dataEndAt = end,
+            location = location
         });
 
         using (var result = await PostJSONBodyToURI(inputData, batchForecastURI))
@@ -294,7 +293,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         var result = await PostJSONBodyToURI(intesityData, batchAverageCarbonIntensityURI);
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        Assert.That(result!.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
     [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", 1, TestName = "EmissionsMarginalCarbonIntensityBatch expects OK for single element batch")]
@@ -306,13 +305,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         _dataSourceMocker.SetupDataMock(startDate, endDate, location);
         var intesityData = Enumerable.Range(0, nelems).Select(x => new {
             location = location,
-            startTime = start,
-            endTime = end
-        }); 
-        {
-            Location = location,
-            StartTime = startDate,
-            EndTime = endDate
+            startTime = startDate,
+            endTime = endDate
         });
         using (var result = await PostJSONBodyToURI(intesityData, batchAverageCarbonIntensityURI))
         {
