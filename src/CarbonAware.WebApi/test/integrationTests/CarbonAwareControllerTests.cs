@@ -198,7 +198,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         _dataSourceMocker.SetupBatchForecastMock();
         var inputData = Enumerable.Range(0, nelems).Select(x => new {
             requestedAt = reqAt,
-            dataStartAt = expectedDataStartAt,
+            dataStartAt = start,
             dataEndAt = expectedDataEndAt,
             location = location
         });
