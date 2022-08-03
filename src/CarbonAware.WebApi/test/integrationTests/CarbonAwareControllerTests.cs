@@ -297,7 +297,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", 1, TestName = "EmissionsMarginalCarbonIntensityBatch expects OK for eastus 1 element")]
+    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", 1, TestName = "EmissionsMarginalCarbonIntensityBatch expects OK for single element batch")]
     [TestCase("2021-12-25", "2021-12-26", "westus", 3, TestName = "EmissionsMarginalCarbonIntensityBatch expects OK for westus 3 elements")]
     public async Task EmissionsMarginalCarbonIntensityBatch_SupportedDataSources_ReturnsOk(string start, string end, string location, int nelems)
     {
