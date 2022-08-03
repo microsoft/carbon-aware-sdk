@@ -237,7 +237,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         queryStrings["startTime"] = $"{start:O}";
         queryStrings["endTime"] = $"{end:O}";
 
-        var endpointURI = ConstructUriWithQueryString(actualURI, queryStrings);
+        var endpointURI = ConstructUriWithQueryString(actualHistoricalURI, queryStrings);
         using (var result = await _client.GetAsync(endpointURI))
         {
             Assert.That(result, Is.Not.Null);
@@ -262,16 +262,16 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         var queryStrings = new Dictionary<string, string>();
         queryStrings[queryString] = value;
 
-        var endpointURI = ConstructUriWithQueryString(actualURI, queryStrings);
+        var endpointURI = ConstructUriWithQueryString(actualHistoricalURI, queryStrings);
         var result = await _client.GetAsync(endpointURI);
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    [TestCase(false, false, false, TestName = "EmissionsBatchActual Not use location, Not use startTime, Not use endTime")]
-    [TestCase(true, false, false, TestName = "EmissionsBatchActual Use location, Not use startTime, Not use endTime")]
-    [TestCase(true, true, false, TestName = "EmissionsBatchActual Use location, Use startTime, Not use endTime")]
+    [TestCase(false, false, false, TestName = "EmissionsBatchActual Not use location, Not use startTime, Not use endTime expects BadRequest")]
+    [TestCase(true, false, false, TestName = "EmissionsBatchActual Use location, Not use startTime, Not use endTime expects BadRequest")]
+    [TestCase(true, true, false, TestName = "EmissionsBatchActual Use location, Use startTime, Not use endTime expects BadRequest")]
     public async Task EmissionsBatchActual_MissingRequiredParams_ReturnsBadRequest(bool useLocation, bool useStart, bool useEnd)
     {
         if (useLocation && useStart && useEnd)
@@ -280,18 +280,9 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         }
 
         var intensityBatch = new CarbonIntensityBatchDTO();
-        if (useLocation)
-        {
-            intensityBatch.Location = "eastus";
-        }
-        if (useStart)
-        {
-            intensityBatch.StartTime = DateTimeOffset.Parse("2022-03-01T15:30:00Z");
-        }
-        if (useEnd)
-        {
-            intensityBatch.EndTime = DateTimeOffset.Parse("2022-03-01T18:30:00Z");
-        }
+        intensityBatch.Location = useLocation ? "eastus" : null;
+        intensityBatch.StartTime = useStart ? DateTimeOffset.Parse("2022-03-01T15:30:00Z") : null;
+        intensityBatch.EndTime = useEnd ? DateTimeOffset.Parse("2022-03-01T18:30:00Z") : null;
        
         var intesityData = new List<CarbonIntensityBatchDTO>() { intensityBatch };
 
