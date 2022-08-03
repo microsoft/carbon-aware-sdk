@@ -305,7 +305,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         using (var result = await PostJSONBodyToURI(intesityData, batchAverageCarbonIntensityURI))
         {
             Assert.That(result, Is.Not.Null);
-            Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(result!.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             Assert.That(result!.Content, Is.Not.Null);
             using (var data = await result!.Content.ReadAsStreamAsync())
             {
