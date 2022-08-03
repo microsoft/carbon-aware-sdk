@@ -293,30 +293,33 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", TestName = "EmissionsBatchActual expects OK for eastus")]
-    [TestCase("2021-12-25", "2021-12-26", "westus", TestName = "EmissionsBatchActual expects OK for westus")]
-    public async Task EmissionsBatchActual_SupportedDataSources_ReturnsOk(DateTimeOffset start, DateTimeOffset end, string location)
+    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", 1, TestName = "EmissionsBatchActual expects OK for eastus 1 element")]
+    [TestCase("2021-12-25", "2021-12-26", "westus", 3, TestName = "EmissionsBatchActual expects OK for westus 3 elements")]
+    public async Task EmissionsBatchActual_SupportedDataSources_ReturnsOk(DateTimeOffset start, DateTimeOffset end, string location, int nelems)
     {
         _dataSourceMocker.SetupDataMock(start, end, location);
-        var intensityBatch = new CarbonIntensityBatchDTO()
+        var intesityData = Enumerable.Range(0, nelems).Select(x => new CarbonIntensityBatchDTO() 
         {
             Location = location,
             StartTime = start,
             EndTime = end
-        };
-        var intesityData = new List<CarbonIntensityBatchDTO>() { intensityBatch };
+        });
         var result = await PostJSONBodyToURI(intesityData, batchActualURI);
         Assert.That(result, Is.Not.Null);
         Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result!.Content, Is.Not.Null);
         var data = await result!.Content.ReadAsStringAsync();
         Assert.That(data, Is.Not.Null);
-        var values = JsonSerializer.Deserialize<List<CarbonIntensityDTO>>(data);
+        var values = JsonSerializer.Deserialize<IEnumerable<CarbonIntensityDTO>>(data);
         Assert.That(values, Is.Not.Null);
-        Assert.That(values!.Count, Is.EqualTo(intesityData.Count));
-        Assert.That(values!.First().CarbonIntensity, Is.Not.EqualTo(0));
-        Assert.That(values!.First().StartTime, Is.EqualTo(start));
-        Assert.That(values!.First().EndTime, Is.EqualTo(end));
+        Assert.That(values!.Count, Is.EqualTo(intesityData.Count()));
+        foreach (var val in values!)
+        {
+            Assert.That(val.CarbonIntensity, Is.Not.EqualTo(0));
+            Assert.That(val.Location, Is.EqualTo(location));
+            Assert.That(val.StartTime, Is.EqualTo(start));
+            Assert.That(val.EndTime, Is.EqualTo(end));
+        }
     }
 
     private void IgnoreTestForDataSource(string reasonMessage, params DataSourceType[] ignoredDataSources)
