@@ -20,8 +20,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     private string bestLocationsURI = "/emissions/bylocations/best";
     private string currentForecastURI = "/emissions/forecasts/current";
     private string batchForecastURI = "/emissions/forecasts/batch";
-    private string actualHistoricalURI = "/emissions/average-carbon-intensity";
-    private string batchActualURI = "/emissions/average-carbon-intensity/batch";
+    private string averageCarbonIntensityURI = "/emissions/average-carbon-intensity";
+    private string batchAverageCarbonIntensityURI = "/emissions/average-carbon-intensity/batch";
 
     private JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
@@ -188,16 +188,19 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
 
     [TestCase("2021-09-01T08:30:00Z", "2021-09-01T09:00:00Z", "2021-09-01T12:00:00Z", "eastus", 1, TestName = "EmissionsForecastsBatch expects OK for eastus 1 element")]
     [TestCase("2021-09-01T08:30:00Z", "2021-09-01T08:30:00Z", "2021-09-02T08:30:00Z", "westus", 3, TestName = "EmissionsForecastsBatch expects OK for westus 3 element")]
-    public async Task EmissionsForecastsBatch_SupportedDataSources_ReturnsOk(DateTimeOffset reqAt, DateTimeOffset start, DateTimeOffset end, string location, int nelems)
+    public async Task EmissionsForecastsBatch_SupportedDataSources_ReturnsOk(string reqAt, string start, string end, string location, int nelems)
     {
         IgnoreTestForDataSource("data source does not implement '/emissions/forecasts/batch'", DataSourceType.JSON);
 
+        var reqAtDate = DateTimeOffset.Parse(reqAt);
+        var startDate = DateTimeOffset.Parse(start);
+        var endDate = DateTimeOffset.Parse(end);
         _dataSourceMocker.SetupBatchForecastMock();
         var inputData = Enumerable.Range(0, nelems).Select(x => new EmissionsForecastBatchDTO() 
         {
-            RequestedAt = reqAt,
-            DataStartAt = start,
-            DataEndAt = end,
+            RequestedAt = reqAtDate,
+            DataStartAt = startDate,
+            DataEndAt = endDate,
             Location = location
         });
 
@@ -215,9 +218,9 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
                 foreach (var forecast in forecasts!)
                 {
                     Assert.That(forecast.Location, Is.EqualTo(location));
-                    Assert.That(forecast.DataStartAt, Is.EqualTo(start));
-                    Assert.That(forecast.DataEndAt, Is.EqualTo(end));
-                    Assert.That(forecast.RequestedAt, Is.EqualTo(reqAt));
+                    Assert.That(forecast.DataStartAt, Is.EqualTo(startDate));
+                    Assert.That(forecast.DataEndAt, Is.EqualTo(endDate));
+                    Assert.That(forecast.RequestedAt, Is.EqualTo(reqAtDate));
                     Assert.That(forecast.GeneratedAt, Is.Not.Null);
                     Assert.That(forecast.OptimalDataPoint, Is.Not.Null);
                     Assert.That(forecast.ForecastData, Is.Not.Null);
@@ -226,18 +229,20 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         }
     }
 
-    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", TestName = "EmissionsActual expects OK for eastus")]
-    [TestCase("2021-12-25", "2021-12-26", "westus", TestName = "EmissionsActual expects OK for westus")]
-    public async Task EmissionsActual_ReturnsOk(DateTimeOffset start, DateTimeOffset end, string location)
+    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", TestName = "EmissionsMarginalCarbonIntensity expects OK for eastus")]
+    [TestCase("2021-12-25", "2021-12-26", "westus", TestName = "EmissionsMarginalCarbonIntensity expects OK for westus")]
+    public async Task EmissionsMarginalCarbonIntensity_ReturnsOk(string start, string end, string location)
     {
-        _dataSourceMocker.SetupDataMock(start, end, location);
+        var startDate = DateTimeOffset.Parse(start);
+        var endDate = DateTimeOffset.Parse(end);
+        _dataSourceMocker.SetupDataMock(startDate, endDate, location);
 
         var queryStrings = new Dictionary<string, string>();
         queryStrings["location"] = location;
         queryStrings["startTime"] = $"{start:O}";
         queryStrings["endTime"] = $"{end:O}";
 
-        var endpointURI = ConstructUriWithQueryString(actualHistoricalURI, queryStrings);
+        var endpointURI = ConstructUriWithQueryString(averageCarbonIntensityURI, queryStrings);
         using (var result = await _client.GetAsync(endpointURI))
         {
             Assert.That(result, Is.Not.Null);
@@ -249,30 +254,30 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
                 var value = await JsonSerializer.DeserializeAsync<CarbonIntensityDTO>(data);
                 Assert.That(value, Is.Not.Null);
                 Assert.That(value!.CarbonIntensity, Is.Not.EqualTo(0));
-                Assert.That(value!.StartTime, Is.EqualTo(start));
-                Assert.That(value!.EndTime, Is.EqualTo(end));
+                Assert.That(value!.StartTime, Is.EqualTo(startDate));
+                Assert.That(value!.EndTime, Is.EqualTo(endDate));
             }
         }
     }
 
-    [TestCase("location", "", TestName = "EmissionsActual empty location query string expects BadRequest")]
-    [TestCase("non-location-param", "", TestName = "EmissionsActual location param not present expects BadRequest")]
-    public async Task EmissionsActual_EmptyLocationQueryString_ReturnsBadRequest(string queryString, string value)
+    [TestCase("location", "", TestName = "EmissionsMarginalCarbonIntensity empty location query string expects BadRequest")]
+    [TestCase("non-location-param", "", TestName = "EmissionsMarginalCarbonIntensity location param not present expects BadRequest")]
+    public async Task EEmissionsMarginalCarbonIntensity_EmptyLocationQueryString_ReturnsBadRequest(string queryString, string value)
     {
         var queryStrings = new Dictionary<string, string>();
         queryStrings[queryString] = value;
 
-        var endpointURI = ConstructUriWithQueryString(actualHistoricalURI, queryStrings);
+        var endpointURI = ConstructUriWithQueryString(averageCarbonIntensityURI, queryStrings);
         var result = await _client.GetAsync(endpointURI);
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    [TestCase(false, false, false, TestName = "EmissionsBatchActual Not use location, Not use startTime, Not use endTime expects BadRequest")]
-    [TestCase(true, false, false, TestName = "EmissionsBatchActual Use location, Not use startTime, Not use endTime expects BadRequest")]
-    [TestCase(true, true, false, TestName = "EmissionsBatchActual Use location, Use startTime, Not use endTime expects BadRequest")]
-    public async Task EmissionsBatchActual_MissingRequiredParams_ReturnsBadRequest(bool useLocation, bool useStart, bool useEnd)
+    [TestCase(false, false, false, TestName = "EmissionsMarginalCarbonIntensityBatch Not use location, Not use startTime, Not use endTime expects BadRequest")]
+    [TestCase(true, false, false, TestName = "EmissionsMarginalCarbonIntensityBatch Use location, Not use startTime, Not use endTime expects BadRequest")]
+    [TestCase(true, true, false, TestName = "EmissioEmissionsMarginalCarbonIntensityBatch Use location, Use startTime, Not use endTime expects BadRequest")]
+    public async Task EmissionsMarginalCarbonIntensityBatch_MissingRequiredParams_ReturnsBadRequest(bool useLocation, bool useStart, bool useEnd)
     {
         if (useLocation && useStart && useEnd)
         {
@@ -286,24 +291,26 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
        
         var intesityData = new List<CarbonIntensityBatchDTO>() { intensityBatch };
 
-        var result = await PostJSONBodyToURI(intesityData, batchActualURI);
+        var result = await PostJSONBodyToURI(intesityData, batchAverageCarbonIntensityURI);
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", 1, TestName = "EmissionsBatchActual expects OK for eastus 1 element")]
-    [TestCase("2021-12-25", "2021-12-26", "westus", 3, TestName = "EmissionsBatchActual expects OK for westus 3 elements")]
-    public async Task EmissionsBatchActual_SupportedDataSources_ReturnsOk(DateTimeOffset start, DateTimeOffset end, string location, int nelems)
+    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", 1, TestName = "EmissionsMarginalCarbonIntensityBatch expects OK for eastus 1 element")]
+    [TestCase("2021-12-25", "2021-12-26", "westus", 3, TestName = "EmissionsMarginalCarbonIntensityBatch expects OK for westus 3 elements")]
+    public async Task EmissionsMarginalCarbonIntensityBatch_SupportedDataSources_ReturnsOk(string start, string end, string location, int nelems)
     {
-        _dataSourceMocker.SetupDataMock(start, end, location);
+        var startDate = DateTimeOffset.Parse(start);
+        var endDate = DateTimeOffset.Parse(end);
+        _dataSourceMocker.SetupDataMock(startDate, endDate, location);
         var intesityData = Enumerable.Range(0, nelems).Select(x => new CarbonIntensityBatchDTO() 
         {
             Location = location,
-            StartTime = start,
-            EndTime = end
+            StartTime = startDate,
+            EndTime = endDate
         });
-        using (var result = await PostJSONBodyToURI(intesityData, batchActualURI))
+        using (var result = await PostJSONBodyToURI(intesityData, batchAverageCarbonIntensityURI))
         {
             Assert.That(result, Is.Not.Null);
             Assert.That(result?.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -318,8 +325,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
                 {
                     Assert.That(val.CarbonIntensity, Is.Not.EqualTo(0));
                     Assert.That(val.Location, Is.EqualTo(location));
-                    Assert.That(val.StartTime, Is.EqualTo(start));
-                    Assert.That(val.EndTime, Is.EqualTo(end));
+                    Assert.That(val.StartTime, Is.EqualTo(startDate));
+                    Assert.That(val.EndTime, Is.EqualTo(endDate));
                 }
             }
         }
