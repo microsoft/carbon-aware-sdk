@@ -300,7 +300,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         var intesityData = Enumerable.Range(0, nelems).Select(x => new {
             location = location,
             startTime = start,
-            endTime = endDate
+            endTime = end
         });
         using (var result = await PostJSONBodyToURI(intesityData, batchAverageCarbonIntensityURI))
         {
