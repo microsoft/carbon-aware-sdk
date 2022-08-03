@@ -240,7 +240,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         var queryStrings = new Dictionary<string, string>();
         queryStrings["location"] = location;
         queryStrings["startTime"] = start;
-        queryStrings["endTime"] = $"{end:O}";
+        queryStrings["endTime"] = end;
 
         var endpointURI = ConstructUriWithQueryString(averageCarbonIntensityURI, queryStrings);
         using (var result = await _client.GetAsync(endpointURI))
