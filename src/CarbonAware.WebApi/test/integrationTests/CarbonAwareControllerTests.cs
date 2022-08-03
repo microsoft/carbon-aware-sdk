@@ -157,28 +157,19 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    [TestCase(true, false, TestName = "Use location, Not use requestedAt")]
-    [TestCase(false, true, TestName = "Not use location, Use requestedAt")]
-    [TestCase(false, false, TestName = "Not use location, Not use requestedAt")]
-     public async Task EmissionsForecastsBatch_MissingRequiredParams_ReturnsBadRequest(bool useLocation, bool useRequestedAt)
+    [TestCase(null, null, TestName = "EmissionsForecastsBatch returns BadRequest for missing params: location, requestedAt")]
+    [TestCase("eastus", null, TestName = "EmissionsForecastsBatch returns BadRequest for missing param: requestedAt")]
+    [TestCase(null, "2021-09-01T08:30:00Z", TestName = "EmissionsForecastsBatch returns BadRequest for missing param: location")]
+    [TestCase("eastus", "2021-9-1T08:30:00Z", TestName = "EmissionsForecastsBatch returns BadRequest for wrong date format")]
+     public async Task EmissionsForecastsBatch_MissingRequiredParams_ReturnsBadRequest(string location, string requestedAt)
     {
-        if (useLocation && useRequestedAt)
-        {
-            Assert.Fail("Invalid test");
-        }
         IgnoreTestForDataSource("data source does not implement '/emissions/forecasts/batch'", DataSourceType.JSON);
 
         _dataSourceMocker.SetupForecastMock();
-        var efb = new EmissionsForecastBatchDTO();
-        if (useLocation)
-        {
-            efb.Location = "eastus";
-        }
-        if (useRequestedAt)
-        {
-            efb.RequestedAt = new DateTimeOffset(2021,9,1,8,30,0, TimeSpan.Zero);
-        }
-        var forecastData = new List<EmissionsForecastBatchDTO>() { efb };
+        var forecastData = Enumerable.Range(0, 1).Select(x => new {
+            location = location,
+            requestedAt = requestedAt
+        });
 
         var result = await PostJSONBodyToURI(forecastData, batchForecastURI);
 
@@ -277,7 +268,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     [TestCase("eastus", null, null, TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: startTime, endTime missing")]
     [TestCase("eastus", "2022-03-01T15:30:00Z", null, TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: endTime missing")]
     [TestCase("eastus", null, "2022-03-01T18:00:00Z", TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: startTime missing")]
-    [TestCase("westus", "2022-3-1T15:30:00Z", "2022-3-1T18:00:00Z", TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for wrong time format")]
+    [TestCase("westus", "2022-3-1T15:30:00Z", "2022-3-1T18:00:00Z", TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for wrong date format")]
     public async Task EmissionsMarginalCarbonIntensityBatch_MissingRequiredParams_ReturnsBadRequest(string location, string startTime, string endTime)
     {
         var intesityData = Enumerable.Range(0, 1).Select(x => new {
