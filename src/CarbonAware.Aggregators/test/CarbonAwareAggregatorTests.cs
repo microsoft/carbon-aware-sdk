@@ -325,7 +325,7 @@ public class CarbonAwareAggregatorTests
             { CarbonAwareConstants.End, end }
         };
 
-        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityAsync(It.IsAny<IEnumerable<Location>>(),
+        this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityAsync(It.IsAny<Location>(),
             It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
             .ReturnsAsync(TestData.GetFilteredEmissionDataList(location.RegionName, startString, endString));
 
