@@ -252,7 +252,6 @@ public class CarbonAwareController : ControllerBase
         }
     }
 
-
     /// <summary>
     /// Given an array of request objects, each with their own location and time boundaries, calculate the average carbon intensity for that location and time period 
     /// and return an array of carbon intensity objects.

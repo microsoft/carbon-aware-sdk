@@ -60,6 +60,30 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         return result;
     }
 
+    public async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(Location location, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
+    {
+        Logger.LogInformation($"Getting carbon intensity for location {location} for period {periodStartTime} to {periodEndTime}.");
+
+        using (var activity = Activity.StartActivity())
+        {
+            var balancingAuthority = await this.GetBalancingAuthority(location, activity);
+            var (newStartTime, newEndTime) = IntervalHelper.ExtendTimeByWindow(periodStartTime, periodEndTime, MinSamplingWindow);
+            var data = await this.WattTimeClient.GetDataAsync(balancingAuthority, newStartTime, newEndTime);
+            if (Logger.IsEnabled(LogLevel.Debug))
+            {
+                Logger.LogDebug($"Found {data.Count()} total forecasts for location {location} for period {periodStartTime} to {periodEndTime}.");
+            }
+            var windowData = ConvertToEmissionsData(data);
+            var filteredData = IntervalHelper.FilterByDuration(windowData, periodStartTime, periodEndTime);
+
+            if (!filteredData.Any())
+            {
+                Logger.LogInformation($"Not enough data with {MinSamplingWindow} window");
+            }
+            return filteredData;
+        }
+    }
+
     /// <inheritdoc />
     public async Task<EmissionsForecast> GetCurrentCarbonIntensityForecastAsync(Location location)
     {
@@ -111,30 +135,6 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         };
         emissionsForecast.RequestedAt = requestedAt;
         return emissionsForecast;
-    }
-
-    private async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(Location location, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
-    {
-        Logger.LogInformation($"Getting carbon intensity for location {location} for period {periodStartTime} to {periodEndTime}.");
-
-        using (var activity = Activity.StartActivity())
-        {
-            var balancingAuthority = await this.GetBalancingAuthority(location, activity);
-            var (newStartTime, newEndTime) = IntervalHelper.ExtendTimeByWindow(periodStartTime, periodEndTime, MinSamplingWindow);
-            var data = await this.WattTimeClient.GetDataAsync(balancingAuthority, newStartTime, newEndTime);
-            if (Logger.IsEnabled(LogLevel.Debug))
-            {
-                Logger.LogDebug($"Found {data.Count()} total forecasts for location {location} for period {periodStartTime} to {periodEndTime}.");
-            }
-            var windowData = ConvertToEmissionsData(data);
-            var filteredData = IntervalHelper.FilterByDuration(windowData, periodStartTime, periodEndTime);
-
-            if (!filteredData.Any())
-            {
-                Logger.LogInformation($"Not enough data with {MinSamplingWindow} window");
-            }
-            return filteredData;
-        }
     }
 
     internal double ConvertMoerToGramsPerKilowattHour(double value)

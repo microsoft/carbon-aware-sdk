@@ -37,6 +37,12 @@ public class JsonDataSource : ICarbonIntensityDataSource
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    public Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(Location location, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
+    {
+        return GetCarbonIntensityAsync(new List<Location>(){location}, periodStartTime, periodEndTime);
+        
+    }
+
     public Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(IEnumerable<Location> locations, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
     {
         _logger.LogInformation("JSON data source getting carbon intensity for locations {locations} for period {periodStartTime} to {periodEndTime}.", locations, periodStartTime, periodEndTime);
