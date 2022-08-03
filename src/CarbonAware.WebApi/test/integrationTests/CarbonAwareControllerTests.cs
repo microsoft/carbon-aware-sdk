@@ -20,7 +20,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     private string bestLocationsURI = "/emissions/bylocations/best";
     private string currentForecastURI = "/emissions/forecasts/current";
     private string batchForecastURI = "/emissions/forecasts/batch";
-    private string actualURI = "/emissions/average-carbon-intensity";
+    private string actualHistoricalURI = "/emissions/average-carbon-intensity";
     private string batchActualURI = "/emissions/average-carbon-intensity/batch";
 
     private JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
