@@ -67,11 +67,11 @@ public class SciScoreController : ControllerBase
         {
             _logger.LogDebug("calling to aggregator to calculate the average carbon intensity with input: {input}", input);
 
-            IEnumerable<Location> locationEnumerable = new List<Location>(){ GetLocation(input.Location) };
+            Location location = GetLocation(input.Location);
             (DateTimeOffset start, DateTimeOffset end) = SciScoreAggregator.ParseTimeInterval(input.TimeInterval);
 
             var props = new Dictionary<string, object?>() {
-                { CarbonAwareConstants.MultipleLocations, locationEnumerable },
+                { CarbonAwareConstants.SingleLocation, location },
                 { CarbonAwareConstants.Start, start },
                 { CarbonAwareConstants.End, end },
             };
