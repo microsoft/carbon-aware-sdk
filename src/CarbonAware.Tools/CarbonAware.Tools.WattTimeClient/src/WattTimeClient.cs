@@ -117,11 +117,11 @@ public class WattTimeClient : IWattTimeClient
         {
             { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
         };
-
-        var result = await this.MakeRequestAsync(Paths.Forecast, parameters, tags);
-
-        var forecasts = JsonSerializer.Deserialize<List<Forecast>>(result, options) ?? throw new WattTimeClientException($"Error getting forecasts for {balancingAuthorityAbbreviation}");
-        return forecasts.FirstOrDefault();
+        using (var result = await this.MakeRequestAsyncGetStream(Paths.Forecast, parameters, tags))
+        {
+            var forecasts = await JsonSerializer.DeserializeAsync<List<Forecast>>(result, options) ?? throw new WattTimeClientException($"Error getting forecasts for {balancingAuthorityAbbreviation}");
+            return forecasts.FirstOrDefault();
+        }
     }
 
     /// <inheritdoc/>
@@ -191,17 +191,17 @@ public class WattTimeClient : IWattTimeClient
         return this.GetHistoricalDataAsync(balancingAuthority.Abbreviation);
     }
 
-    private async Task<HttpResponseMessage> GetAsyncWithAuthRetry(string uriPath)
+    private async Task<HttpResponseMessage> GetAsyncWithAuthRetry(string uriPath, bool readHeaders = false)
     {
         await this.EnsureTokenAsync();
-
-        var response = await this.client.GetAsync(uriPath);
+        var completion = readHeaders ? HttpCompletionOption.ResponseHeadersRead : HttpCompletionOption.ResponseContentRead;
+        var response = await this.client.GetAsync(uriPath, completion);
 
         if (RetriableStatusCodes.Contains(response.StatusCode))
         {
             Log.LogDebug("Failed to get url {url} with status code {statusCode}.  Attempting to log in again.", uriPath, response.StatusCode);
             await this.UpdateAuthTokenAsync();
-            response = await this.client.GetAsync(uriPath);
+            response = await this.client.GetAsync(uriPath, completion);
         }
 
         if (!response.IsSuccessStatusCode)
@@ -221,9 +221,9 @@ public class WattTimeClient : IWattTimeClient
         return data ?? string.Empty;
     }
 
-    private async Task<Stream> GetAsyncStreamWithAuthRetry(string uriPath)
+    private async Task<Stream> GetAsyncStreamWithAuthRetry(string uriPath, bool options = false)
     {
-        var response = await this.GetAsyncWithAuthRetry(uriPath);
+        var response = await this.GetAsyncWithAuthRetry(uriPath, options);
         return await response.Content.ReadAsStreamAsync();
     }
 
@@ -300,6 +300,30 @@ public class WattTimeClient : IWattTimeClient
             return result;
         }
     }
+
+    private async Task<Stream> MakeRequestAsyncGetStream(string path, Dictionary<string, string> parameters, Dictionary<string, string>? tags = null)
+    {
+        using (var activity = Activity.StartActivity())
+        {
+            var url = BuildUrlWithQueryString(path, parameters);
+
+            Log.LogInformation("Requesting data using url {url}", url);
+
+            if (tags != null)
+            {
+                foreach (var kvp in tags)
+                {
+                    activity?.AddTag(kvp.Key, kvp.Value);
+                }
+            }
+            var result = await this.GetAsyncStreamWithAuthRetry(url, true);
+
+            Log.LogDebug("For query {url}, received data {result}", url, result);
+
+            return result;
+        }
+    }
+
 
     private string BuildUrlWithQueryString(string url, IDictionary<string, string> queryStringParams)
     {
