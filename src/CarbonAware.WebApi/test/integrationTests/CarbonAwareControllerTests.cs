@@ -199,7 +199,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         var inputData = Enumerable.Range(0, nelems).Select(x => new {
             requestedAt = reqAt,
             dataStartAt = start,
-            dataEndAt = expectedDataEndAt,
+            dataEndAt = end,
             location = location
         });
 
