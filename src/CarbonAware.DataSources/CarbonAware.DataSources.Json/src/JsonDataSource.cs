@@ -40,7 +40,7 @@ public class JsonDataSource : ICarbonIntensityDataSource
     /// <inheritdoc />
     public Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(Location location, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
     {
-        return GetCarbonIntensityAsync(new List<Location>(){location}, periodStartTime, periodEndTime);
+        return GetCarbonIntensityAsync(new List<Location>() { location }, periodStartTime, periodEndTime);
     }
 
     /// <inheritdoc />
