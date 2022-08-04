@@ -26,6 +26,32 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
     }
 
     /// <inheritdoc />
+    public async Task<IEnumerable<EmissionsData>> GetEmissionsDataAsync(CarbonAwareParameters parameters)
+    {
+        using (var activity = Activity.StartActivity())
+        {
+            // Many examples here... we only want one in the end.
+
+            // example validator function
+            parameters.Validators.Add(CarbonAwareParameters.StartBeforeEndValidator);
+            // example static validator function
+            parameters.Validators.Add(CarbonAwareParametersValidator.ValidateStartBeforeEnd);
+            // example specification pattern (specific)
+            parameters.Specifications.Add(new StartBeforeEnd());
+            // example specification pattern (dynamic)
+            parameters.Specifications.Add(new PropertyIsSet(nameof(parameters.End)));
+
+            // Invoke the validators/specifications
+            parameters.Validate(multipleLocationsRequired: true);
+
+            var locations = parameters.MultipleLocations;
+            var end = parameters.EndOrDefault(DateTimeOffset.Now.ToUniversalTime());
+            var start = parameters.StartOrDefault(end.AddDays(-7));
+
+            return await this._dataSource.GetCarbonIntensityAsync(locations, start, end);
+        }
+    }
+
     public async Task<IEnumerable<EmissionsData>> GetEmissionsDataAsync(IDictionary props)
     {
         using (var activity = Activity.StartActivity())

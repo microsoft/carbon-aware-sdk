@@ -11,6 +11,7 @@ public interface ICarbonAwareAggregator : IAggregator
     /// <param name="props">IDictionary with properties required by concrete classes</param>
     /// <returns>An IEnumerable instance with EmissionsData instances.</returns>
     Task<IEnumerable<EmissionsData>> GetEmissionsDataAsync(IDictionary props);
+    Task<IEnumerable<EmissionsData>> GetEmissionsDataAsync(CarbonAwareParameters parameters);
 
     /// <summary>
     /// Returns best emissions data record.

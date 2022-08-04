@@ -67,19 +67,24 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [HttpGet("bylocations")]
-    public async Task<IActionResult> GetEmissionsDataForLocationsByTime([FromQuery(Name = "location"), BindRequired] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
+    public async Task<IActionResult> GetEmissionsDataForLocationsByTime([FromQuery(Name = "location"), BindRequired] string[] locations, DateTimeOffset? time = null, DateTimeOffset? toTime = null, int durationMinutes = 0)
     {
         using (var activity = Activity.StartActivity())
         {
-            IEnumerable<Location> locationEnumerable = CreateMultipleLocationsFromStrings(locations);
-            var props = new Dictionary<string, object?>() {
-                { CarbonAwareConstants.MultipleLocations, locationEnumerable },
-                { CarbonAwareConstants.Start, time },
-                { CarbonAwareConstants.End, toTime},
-                { CarbonAwareConstants.Duration, durationMinutes },
+            var parameters = new CarbonAwareParameters(
+                multipleLocations: CreateMultipleLocationsFromStrings(locations),
+                start: time,
+                end: toTime,
+                duration: TimeSpan.FromMinutes(durationMinutes)
+            )
+            {
+                MultipleLocationsDisplayName = "location",
+                StartDisplayName = "time",
+                EndDisplayName = "toTime",
+                DurationDisplayName = "durationMinutes"
             };
 
-            var response = await _aggregator.GetEmissionsDataAsync(props);
+            var response = await _aggregator.GetEmissionsDataAsync(parameters);
             return response.Any() ? Ok(response) : NoContent();
         }
     }
