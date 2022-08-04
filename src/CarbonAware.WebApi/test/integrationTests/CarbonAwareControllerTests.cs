@@ -161,7 +161,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     [TestCase("eastus", null, TestName = "EmissionsForecastsBatch returns BadRequest for missing param: requestedAt")]
     [TestCase(null, "2021-09-01T08:30:00Z", TestName = "EmissionsForecastsBatch returns BadRequest for missing param: location")]
     [TestCase("eastus", "2021-9-1T08:30:00Z", TestName = "EmissionsForecastsBatch returns BadRequest for wrong date format")]
-     public async Task EmissionsForecastsBatch_MissingRequiredParams_ReturnsBadRequest(string location, string requestedAt)
+    public async Task EmissionsForecastsBatch_MissingRequiredParams_ReturnsBadRequest(string location, string requestedAt)
     {
         IgnoreTestForDataSource("data source does not implement '/emissions/forecasts/batch'", DataSourceType.JSON);
 
