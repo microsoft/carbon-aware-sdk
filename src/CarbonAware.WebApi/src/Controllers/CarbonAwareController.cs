@@ -48,8 +48,6 @@ public class CarbonAwareController : ControllerBase
                 { CarbonAwareConstants.Best, true }
             };
 
-            _logger.LogInformation("Calling aggregator GetBestEmissionsDataAsync with payload {@props}", props);
-
             var response = await _aggregator.GetBestEmissionsDataAsync(props);
             return response != null ? Ok(response) : NoContent();
         }
@@ -80,8 +78,6 @@ public class CarbonAwareController : ControllerBase
                 { CarbonAwareConstants.End, toTime},
                 { CarbonAwareConstants.Duration, durationMinutes },
             };
-
-            _logger.LogInformation("Calling aggregator GetEmissionsDataAsync with payload {@props}", props);
 
             var response = await _aggregator.GetEmissionsDataAsync(props);
             return response.Any() ? Ok(response) : NoContent();
