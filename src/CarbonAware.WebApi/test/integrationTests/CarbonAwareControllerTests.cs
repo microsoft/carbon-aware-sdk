@@ -250,8 +250,8 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         }
     }
 
-    [TestCase("location", "", TestName = "EmissionsMarginalCarbonIntensity empty location query string expects BadRequest")]
-    [TestCase("non-location-param", "", TestName = "EmissionsMarginalCarbonIntensity location param not present expects BadRequest")]
+    [TestCase("location", "", TestName = "EmissionsMarginalCarbonIntensity returns BadRequest for missing value for location")]
+    [TestCase("non-location-param", "", TestName = "EmissionsMarginalCarbonIntensity returns BadRequest for location not present")]
     public async Task EmissionsMarginalCarbonIntensity_EmptyLocationQueryString_ReturnsBadRequest(string queryString, string value)
     {
         var queryStrings = new Dictionary<string, string>();
@@ -264,10 +264,10 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    [TestCase(null, null, null, TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: location, startTime, endTime missing")]
-    [TestCase("eastus", null, null, TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: startTime, endTime missing")]
-    [TestCase("eastus", "2022-03-01T15:30:00Z", null, TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: endTime missing")]
-    [TestCase("eastus", null, "2022-03-01T18:00:00Z", TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: startTime missing")]
+    [TestCase(null, null, null, TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: location, startTime, endTime")]
+    [TestCase("eastus", null, null, TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: startTime, endTime")]
+    [TestCase("eastus", "2022-03-01T15:30:00Z", null, TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: endTime")]
+    [TestCase("eastus", null, "2022-03-01T18:00:00Z", TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: startTime")]
     [TestCase("westus", "2022-3-1T15:30:00Z", "2022-3-1T18:00:00Z", TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for wrong date format")]
     public async Task EmissionsMarginalCarbonIntensityBatch_MissingRequiredParams_ReturnsBadRequest(string location, string startTime, string endTime)
     {
