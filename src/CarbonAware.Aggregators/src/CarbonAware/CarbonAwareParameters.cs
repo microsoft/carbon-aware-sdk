@@ -15,10 +15,15 @@ public class CarbonAwareParameters
     }
 
     private RequiredProperties _requiredProperties;
+    private DateTimeOffset _start = default;
 
     public Location? SingleLocation { get; set; }
     public IEnumerable<Location>? MultipleLocations { get; set; }
-    public DateTimeOffset? Start { get; set; }
+    public DateTimeOffset Start
+    {
+        get => _requiredProperties.Start && _start == default ? throw new InvalidOperationException("Start is not set") : _start;
+        set => _start = value;
+    }
     public DateTimeOffset? End { get; set; }
     public DateTimeOffset? Requested { get; set; }
     public TimeSpan? Duration { get; set; }
@@ -32,7 +37,7 @@ public class CarbonAwareParameters
     public string DurationDisplayName { get; set; } = "duration";
 
     // Accessors with defaults 
-    public DateTimeOffset StartOrDefault(DateTimeOffset defaultStart) => Start ?? defaultStart;
+    public DateTimeOffset StartOrDefault(DateTimeOffset defaultStart) => Start == default ? defaultStart : Start;
     public DateTimeOffset EndOrDefault(DateTimeOffset defaultEnd) => End ?? defaultEnd;
     public DateTimeOffset RequestedOrDefault(DateTimeOffset defaultRequested) => Requested ?? defaultRequested;
     public TimeSpan DurationOrDefault(TimeSpan defaultDuration) => Duration ?? defaultDuration;
