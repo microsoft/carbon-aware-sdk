@@ -71,17 +71,16 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            var parameters = new CarbonAwareParameters(
-                multipleLocations: CreateMultipleLocationsFromStrings(locations),
-                start: time,
-                end: toTime,
-                duration: TimeSpan.FromMinutes(durationMinutes)
-            )
+            var parameters = new CarbonAwareParameters()
             {
+                MultipleLocations = CreateMultipleLocationsFromStrings(locations),
+                Start = time,
+                End = toTime,
+                Duration = TimeSpan.FromMinutes(durationMinutes),
                 MultipleLocationsDisplayName = "location",
                 StartDisplayName = "time",
                 EndDisplayName = "toTime",
-                DurationDisplayName = "durationMinutes"
+                DurationDisplayName = "durationMinutes",
             };
 
             var response = await _aggregator.GetEmissionsDataAsync(parameters);

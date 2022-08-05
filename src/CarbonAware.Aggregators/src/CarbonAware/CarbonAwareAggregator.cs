@@ -30,18 +30,6 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
     {
         using (var activity = Activity.StartActivity())
         {
-            // Many examples here... we only want one in the end.
-
-            // example validator function
-            parameters.Validators.Add(CarbonAwareParameters.StartBeforeEndValidator);
-            // example static validator function
-            parameters.Validators.Add(CarbonAwareParametersValidator.ValidateStartBeforeEnd);
-            // example specification pattern (specific)
-            parameters.Specifications.Add(new StartBeforeEnd());
-            // example specification pattern (dynamic)
-            parameters.Specifications.Add(new PropertyIsSet(nameof(parameters.End)));
-
-            // Invoke the validators/specifications
             parameters.Validate(multipleLocationsRequired: true);
 
             var locations = parameters.MultipleLocations;
