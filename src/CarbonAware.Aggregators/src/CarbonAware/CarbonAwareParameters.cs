@@ -4,6 +4,18 @@ namespace CarbonAware.Aggregators.CarbonAware;
 
 public class CarbonAwareParameters
 {
+    struct RequiredProperties
+    {
+        public bool SingleLocation { get; set; }
+        public bool MultipleLocations { get; set; }
+        public bool Start { get; set; }
+        public bool End { get; set; }
+        public bool Requested { get; set; }
+        public bool Duration { get; set; }
+    }
+
+    private RequiredProperties _requiredProperties;
+
     public Location? SingleLocation { get; set; }
     public IEnumerable<Location>? MultipleLocations { get; set; }
     public DateTimeOffset? Start { get; set; }
@@ -25,41 +37,61 @@ public class CarbonAwareParameters
     public DateTimeOffset RequestedOrDefault(DateTimeOffset defaultRequested) => Requested ?? defaultRequested;
     public TimeSpan DurationOrDefault(TimeSpan defaultDuration) => Duration ?? defaultDuration;
 
+    public CarbonAwareParameters()
+    {
+        _requiredProperties = new RequiredProperties
+        {
+            SingleLocation = false,
+            MultipleLocations = false,
+            Start = false,
+            End = false,
+            Requested = false,
+            Duration = false
+        };
+    }
 
-    public void Validate(
-        bool singleLocationRequired = false,
-        bool multipleLocationsRequired = false,
-        bool startRequired = false,
-        bool endRequired = false,
-        bool requestedRequired = false,
-        bool durationRequired = false,
-        bool startBeforeEndRequired = false
-    )
+    public void SetRequiredProperties(
+        bool singleLocation = false,
+        bool multipleLocations = false,
+        bool start = false,
+        bool end = false,
+        bool requested = false,
+        bool duration = false)
+    {
+        _requiredProperties.SingleLocation = singleLocation;
+        _requiredProperties.MultipleLocations = multipleLocations;
+        _requiredProperties.Start = start;
+        _requiredProperties.End = end;
+        _requiredProperties.Requested = requested;
+        _requiredProperties.Duration = duration;
+    }
+
+    public void Validate(bool startBeforeEndRequired = false)
     {
         var errors = new Dictionary<string, List<string>>();
 
         // Validate Properties
-        if (singleLocationRequired && SingleLocation == null)
+        if (_requiredProperties.SingleLocation && SingleLocation == null)
         {
             errors.AppendValue(SingleLocationDisplayName, $"{SingleLocationDisplayName} is required");
         }
-        if (multipleLocationsRequired && (MultipleLocations == null || !MultipleLocations.Any()))
+        if (_requiredProperties.MultipleLocations && (MultipleLocations == null || !MultipleLocations.Any()))
         {
             errors.AppendValue(MultipleLocationsDisplayName, $"{MultipleLocationsDisplayName} is required");
         }
-        if (startRequired && Start == null)
+        if (_requiredProperties.Start && Start == null)
         {
             errors.AppendValue(StartDisplayName, $"{StartDisplayName} is required");
         }
-        if (endRequired && End == null)
+        if (_requiredProperties.End && End == null)
         {
             errors.AppendValue(EndDisplayName, $"{EndDisplayName} is required");
         }
-        if (requestedRequired && Requested == null)
+        if (_requiredProperties.Requested && Requested == null)
         {
             errors.AppendValue(RequestedDisplayName, $"{RequestedDisplayName} is required");
         }
-        if (durationRequired && Duration == null)
+        if (_requiredProperties.Duration && Duration == null)
         {
             errors.AppendValue(DurationDisplayName, $"{DurationDisplayName} is required");
         }

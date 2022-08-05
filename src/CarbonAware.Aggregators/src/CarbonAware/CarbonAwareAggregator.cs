@@ -30,7 +30,8 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
     {
         using (var activity = Activity.StartActivity())
         {
-            parameters.Validate(multipleLocationsRequired: true);
+            parameters.SetRequiredProperties(multipleLocations: true);
+            parameters.Validate();
 
             var locations = parameters.MultipleLocations;
             var end = parameters.EndOrDefault(DateTimeOffset.Now.ToUniversalTime());
