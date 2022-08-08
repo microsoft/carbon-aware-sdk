@@ -26,18 +26,18 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<EmissionsData>> GetEmissionsDataAsync(CarbonAwareParameters parameters)
+    public async Task<IEnumerable<EmissionsData>> GetEmissionsDataAsync(CarbonAwareParameters p)
     {
         using (var activity = Activity.StartActivity())
         {
-            parameters.SetRequiredProperties(multipleLocations: true);
-            parameters.Validate();
+            p.SetRequiredProperties(multipleLocations: true);
+            p.SetPropertyDefaults(end: DateTimeOffset.UtcNow);
+            // We need to set the default `End` property separately before we can rely on it to 
+            // compute the default `Start` property.
+            p.SetPropertyDefaults(start: p.End.AddDays(-7));
+            p.Validate();
 
-            var locations = parameters.MultipleLocations;
-            var end = parameters.EndOrDefault(DateTimeOffset.Now.ToUniversalTime());
-            var start = parameters.StartOrDefault(end.AddDays(-7));
-
-            return await this._dataSource.GetCarbonIntensityAsync(locations, start, end);
+            return await this._dataSource.GetCarbonIntensityAsync(p.MultipleLocations, p.Start, p.End);
         }
     }
 

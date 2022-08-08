@@ -67,7 +67,7 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [HttpGet("bylocations")]
-    public async Task<IActionResult> GetEmissionsDataForLocationsByTime([FromQuery(Name = "location"), BindRequired] string[] locations, DateTimeOffset time = default, DateTimeOffset? toTime = null, int durationMinutes = 0)
+    public async Task<IActionResult> GetEmissionsDataForLocationsByTime([FromQuery(Name = "location"), BindRequired] string[] locations, DateTimeOffset time = DateTimeOffset.MinValue, DateTimeOffset toTime = DateTimeOffset.MaxValue, int durationMinutes = 0)
     {
         using (var activity = Activity.StartActivity())
         {

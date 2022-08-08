@@ -15,16 +15,24 @@ public class CarbonAwareParameters
     }
 
     private RequiredProperties _requiredProperties;
-    private DateTimeOffset _start = default;
+    private DateTimeOffset _startDefault = DateTimeOffset.MinValue;
+    private DateTimeOffset _start;
+
+    private DateTimeOffset _endDefault = DateTimeOffset.MaxValue;
+    private DateTimeOffset _end;
 
     public Location? SingleLocation { get; set; }
     public IEnumerable<Location>? MultipleLocations { get; set; }
     public DateTimeOffset Start
     {
-        get => _requiredProperties.Start && _start == default ? throw new InvalidOperationException("Start is not set") : _start;
+        get => _requiredProperties.Start && _start == _startDefault ? throw new InvalidOperationException("Start is not set") : _start;
         set => _start = value;
     }
-    public DateTimeOffset? End { get; set; }
+    public DateTimeOffset Start
+    {
+        get => _requiredProperties.End && _end == _endDefault ? throw new InvalidOperationException("End is not set") : _end;
+        set => _end = value;
+    }
     public DateTimeOffset? Requested { get; set; }
     public TimeSpan? Duration { get; set; }
     
@@ -37,8 +45,6 @@ public class CarbonAwareParameters
     public string DurationDisplayName { get; set; } = "duration";
 
     // Accessors with defaults 
-    public DateTimeOffset StartOrDefault(DateTimeOffset defaultStart) => Start == default ? defaultStart : Start;
-    public DateTimeOffset EndOrDefault(DateTimeOffset defaultEnd) => End ?? defaultEnd;
     public DateTimeOffset RequestedOrDefault(DateTimeOffset defaultRequested) => Requested ?? defaultRequested;
     public TimeSpan DurationOrDefault(TimeSpan defaultDuration) => Duration ?? defaultDuration;
 
@@ -53,6 +59,8 @@ public class CarbonAwareParameters
             Requested = false,
             Duration = false
         };
+        _start = _startDefault;
+        _end = _endDefault;
     }
 
     public void SetRequiredProperties(
@@ -71,6 +79,14 @@ public class CarbonAwareParameters
         _requiredProperties.Duration = duration;
     }
 
+    public void SetPropertyDefaults(
+        DateTimeOffset start = _startDefault,
+        DateTimeOffset end = _endDefault)
+    {
+        _startDefault = start;
+        _endDefault = end;
+    }
+
     public void Validate(bool startBeforeEndRequired = false)
     {
         var errors = new Dictionary<string, List<string>>();
@@ -84,11 +100,11 @@ public class CarbonAwareParameters
         {
             errors.AppendValue(MultipleLocationsDisplayName, $"{MultipleLocationsDisplayName} is required");
         }
-        if (_requiredProperties.Start && Start == null)
+        if (_requiredProperties.Start && Start == _startDefault)
         {
             errors.AppendValue(StartDisplayName, $"{StartDisplayName} is required");
         }
-        if (_requiredProperties.End && End == null)
+        if (_requiredProperties.End && End == _endDefault)
         {
             errors.AppendValue(EndDisplayName, $"{EndDisplayName} is required");
         }
@@ -106,7 +122,7 @@ public class CarbonAwareParameters
         // Validate Relationships
         if (startBeforeEndRequired)
         {
-            if (Start != null && End != null && Start > End)
+            if (Start > End)
             {
                 errors.AppendValue(StartDisplayName, $"{StartDisplayName} must be before {EndDisplayName}");
             }
