@@ -30,11 +30,9 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
     {
         using (var activity = Activity.StartActivity())
         {
-            p.SetRequiredProperties(multipleLocations: true);
-            p.SetPropertyDefaults(end: DateTimeOffset.UtcNow);
-            // We need to set the default `End` property separately before we can rely on it to 
-            // compute the default `Start` property.
-            p.SetPropertyDefaults(start: p.End.AddDays(-7));
+            p.Props.MultipleLocations.IsRequired = true;
+            p.Props.End.DefaultValue = DateTimeOffset.UtcNow;
+            p.Props.Start.DefaultValue = p.End.AddDays(-7);
             p.Validate();
 
             return await this._dataSource.GetCarbonIntensityAsync(p.MultipleLocations, p.Start, p.End);

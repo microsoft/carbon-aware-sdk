@@ -14,6 +14,10 @@ public class CarbonAwareController : ControllerBase
     private readonly ILogger<CarbonAwareController> _logger;
     private readonly ICarbonAwareAggregator _aggregator;
     private static readonly ActivitySource Activity = new ActivitySource(nameof(CarbonAwareController));
+    private const string QUERY_STRING_LOCATION = "location";
+    private const string QUERY_STRING_TIME = "time";
+    private const string QUERY_STRING_TO_TIME = "toTime";
+    private const string QUERY_STRING_DURATION_MINUTES = "durationMinutes";
 
     public CarbonAwareController(ILogger<CarbonAwareController> logger, ICarbonAwareAggregator aggregator)
     {
@@ -67,21 +71,22 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [HttpGet("bylocations")]
-    public async Task<IActionResult> GetEmissionsDataForLocationsByTime([FromQuery(Name = "location"), BindRequired] string[] locations, DateTimeOffset time = DateTimeOffset.MinValue, DateTimeOffset toTime = DateTimeOffset.MaxValue, int durationMinutes = 0)
+    public async Task<IActionResult> GetEmissionsDataForLocationsByTime(
+        [FromQuery(Name = QUERY_STRING_LOCATION), BindRequired] string[] locations,
+        [FromQuery(Name = QUERY_STRING_TIME)] DateTimeOffset? time = null,
+        [FromQuery(Name = QUERY_STRING_TO_TIME)] DateTimeOffset? toTime = null,
+        [FromQuery(Name = QUERY_STRING_DURATION_MINUTES)] int? durationMinutes = null)
     {
         using (var activity = Activity.StartActivity())
         {
-            var parameters = new CarbonAwareParameters()
-            {
-                MultipleLocations = CreateMultipleLocationsFromStrings(locations),
-                Start = time,
-                End = toTime,
-                Duration = TimeSpan.FromMinutes(durationMinutes),
-                MultipleLocationsDisplayName = "location",
-                StartDisplayName = "time",
-                EndDisplayName = "toTime",
-                DurationDisplayName = "durationMinutes",
-            };
+            var parameters = new CarbonAwareParameters();
+            parameters.Props.MultipleLocations.DisplayName = QUERY_STRING_LOCATION;
+            parameters.Props.Start.DisplayName = QUERY_STRING_TIME;
+            parameters.Props.End.DisplayName = QUERY_STRING_TO_TIME;
+            
+            parameters.MultipleLocations = CreateMultipleLocationsFromStrings(locations);
+            if (time is not null) { parameters.Start = time ?? default; }
+            if (toTime is not null) { parameters.End = toTime ?? default; }
 
             var response = await _aggregator.GetEmissionsDataAsync(parameters);
             return response.Any() ? Ok(response) : NoContent();
