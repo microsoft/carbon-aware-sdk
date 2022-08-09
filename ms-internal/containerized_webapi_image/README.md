@@ -5,7 +5,7 @@ The goal of this readme is to show how to build a container WebApi image that ca
 ## Build and List Runtime Image
 
 Use `docker` to build the WebApi images.
-(Note: Make sure the run docker at the root branch)
+(Note: Make sure the run `docker` at the root branch)
 
 ```sh
 cd ./$(git rev-parse --show-cdup)
@@ -58,18 +58,41 @@ carbon_aware   v1        6293e2528bf2   About an hour ago   230MB
 ## Upload image to a Container Registry
 
 For easy image consumption, upload it to a well known Container Registry, either local or cloud provider. The following are examples of using [docker hub](https://hub.docker.com) or [Azure Container Registry](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-quickstart-task-cli)
+
 ### Docker Hub
+
+Sign in to [Docker Hub](https://hub.docker.com) and create a repository (e.g <your-username>/my-private-repo)
+
+1. Build and Push
+    ```sh
+    docker login --username=your-username
+    cd ./$(git rev-parse --show-cdup)
+    docker build -t <your-username>/my-private-repo/carbon_aware:v1 -f ms-internal/containerized_image/Dockerfile .
+    docker push <your-username>/my-private-repo/carbon_aware:v1
+    ```
+1. Pull
+
+    ```sh
+    docker pull <your-username>/my-private-repo/carbon_aware:v1
+    ```
 
 ### Azure Container Registry
 
-Assuming there is Container Registry created, using the user's credentials, lets push the image using `docker` (there other way using for instance `Azure CLI`)
-```sh
-docker login <myacrname>.azurecr.io -u username -p <CopiedKeyFromPortal>
-cd ./$(git rev-parse --show-cdup)
-docker build -t <myacrname>.azurecr.io/carbon_aware:v1 -f ms-internal/containerized_image/Dockerfile .
-docker push <myacrname>.azurecr.io/carbon_aware:v1
-```
+1. Build and Push image
+    Assuming there is Container Registry created, using the user's credentials, lets push the image using `docker` (there other way using for instance [Azure CLI](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-tutorial-quick-task))
 
+    ```sh
+    docker login <myacrname>.azurecr.io -u username -p <CopiedKeyFromPortal>
+    cd ./$(git rev-parse --show-cdup)
+    docker build -t <myacrname>.azurecr.io/carbon_aware:v1 -f ms-internal/containerized_image/Dockerfile .
+    docker push <myacrname>.azurecr.io/carbon_aware:v1
+    ```
+1. Pull image
+
+    ```sh
+    docker login <myacrname>.azurecr.io -u username -p <CopiedKeyFromPortal>
+    docker pull <myacrname>.azurecr.io/carbon_aware:v1
+    ```
 
 ## Pipeline integration (Github Action)
 
