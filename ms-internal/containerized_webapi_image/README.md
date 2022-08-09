@@ -22,7 +22,7 @@ carbon_aware   v1        6293e2528bf2   About an hour ago   230MB
 
 ## Run WebApi Image
 
-1. For instance, the following command uses localhost port 8000 mapped to the WebApi port 80 and setting [WattTime](https://www.watttime.org) credentials.
+1. For instance, the following command uses localhost port 8000 mapped to the WebApi port 80 with setting from [WattTime](https://www.watttime.org) provider.
 
     ```sh
     docker run --rm -p 8000:80 \
@@ -31,7 +31,7 @@ carbon_aware   v1        6293e2528bf2   About an hour ago   230MB
     > -e WattTimeClient__Password="userpwd" \
     > carbon_aware:v1
     ```
-1. Verify that the WebApi is responding to requests, either using a Rest Client (e.g. postman, curl)
+1. Verify that the WebApi is responding to requests, using a Rest Client (e.g. `postman`, `curl`)
     ```sh
     curl -v -s -X 'POST' http://localhost:8000/emissions/forecasts/batch  -H 'accept: */*' -H 'Content-Type: application/json' -d '[
         {
@@ -79,7 +79,7 @@ Sign in to [Docker Hub](https://hub.docker.com) and create a repository (e.g <yo
 ### Azure Container Registry
 
 1. Build and Push image
-    Assuming there is Container Registry created, using the user's credentials, lets push the image using `docker` (there other way using for instance [Azure CLI](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-tutorial-quick-task))
+    Assuming there is Container Registry created, using the user's credentials, lets push the image using `docker` (it can be done also using [Azure CLI](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-tutorial-quick-task))
 
     ```sh
     docker login <myacrname>.azurecr.io -u username -p <CopiedKeyFromPortal>
