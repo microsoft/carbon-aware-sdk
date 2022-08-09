@@ -1,52 +1,48 @@
-﻿using System.CommandLine;
-using System.CommandLine.Invocation;
+﻿using CarbonAware.NewCLI.CommandKeywords;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System.CommandLine;
+using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Aggregators.Configuration;
+using Microsoft.Extensions.Logging;
 
-
-namespace CarbonAware.CL2;
+namespace CarbonAware.NewCLI;
 
 class Program
 {
     public static int Main(string[] args)
     {
+        ServiceProvider serviceProvider = BootstrapServices();
+
         var rootCommand = new RootCommand()
         {
             Name = "carbonaware",
             Description = "Root command for retrieving data using Carbonaware SDK"
         };
 
-        var emissionsCommand = new Command("emissions")
-        {
-            new Option<string>("--locations") 
-            { 
-                Description = "List of Locations",
-                IsRequired = true 
-            },
-
-            new Option<string>("--startTime")
-            {
-                Description =  "startTime",
-                IsRequired = false
-            }
-
-        };
-
-        emissionsCommand.SetHandler(() =>
-        {
-            Console.WriteLine("test command");
-        });
-
-        rootCommand.AddCommand(emissionsCommand);
-
-        rootCommand.SetHandler(() =>
-        {
-            Console.WriteLine("Success");
-            });
+        EmissionsCommand.AddEmissionsCommands(ref rootCommand, serviceProvider.GetRequiredService<ICarbonAwareAggregator>());
 
         return rootCommand.Invoke(args);
+
     }
 
-    static void ReadFile(String text)
+    private static ServiceProvider BootstrapServices()
     {
-        Console.WriteLine("here");
+
+        var configurationBuilder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables();
+        var config = configurationBuilder.Build();
+        var services = new ServiceCollection();
+        services.Configure<CarbonAwareVariablesConfiguration>(config.GetSection(CarbonAwareVariablesConfiguration.Key));
+        services.AddSingleton<IConfiguration>(config);
+        services.AddCarbonAwareEmissionServices(config);
+
+        services.AddLogging(configure => configure.AddConsole());
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        return serviceProvider;
     }
+
 }
