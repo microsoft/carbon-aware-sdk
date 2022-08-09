@@ -73,7 +73,7 @@ jobs:
 
       - name: Docker Target Final
         run: docker build . -f ${DOCKERFILE_PATH} -t ca-api
-        working-directory: ./src
+        working-directory: .
         
       - name: Docker Run Container
         run: |
