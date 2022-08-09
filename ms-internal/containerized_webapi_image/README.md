@@ -8,8 +8,8 @@ Use `docker` to build the WebApi images.
 (Note: Make sure the run `docker` at the root branch)
 
 ```sh
-cd ./$(git rev-parse --show-cdup)
-docker build -t carbon_aware:v1 -f ms-internal/containerized_image/Dockerfile .
+cd ./$(git rev-parse --show-cdup)/src
+docker build -t carbon_aware:v1 -f CarbonAware.WebApi/src/Dockerfile .
 ```
 
 List `carbon_aware` image 
@@ -66,8 +66,8 @@ Sign in to [Docker Hub](https://hub.docker.com) and create a repository (e.g <yo
 1. Build and Push
     ```sh
     docker login --username=your-username
-    cd ./$(git rev-parse --show-cdup)
-    docker build -t <your-username>/my-private-repo/carbon_aware:v1 -f ms-internal/containerized_image/Dockerfile .
+    cd ./$(git rev-parse --show-cdup)/src
+    docker build -t <your-username>/my-private-repo/carbon_aware:v1 -f CarbonAware.WebApi/src/Dockerfile .
     docker push <your-username>/my-private-repo/carbon_aware:v1
     ```
 1. Pull
@@ -83,8 +83,8 @@ Sign in to [Docker Hub](https://hub.docker.com) and create a repository (e.g <yo
 
     ```sh
     docker login <myacrname>.azurecr.io -u username -p <CopiedKeyFromPortal>
-    cd ./$(git rev-parse --show-cdup)
-    docker build -t <myacrname>.azurecr.io/carbon_aware:v1 -f ms-internal/containerized_image/Dockerfile .
+    cd ./$(git rev-parse --show-cdup)/src
+    docker build -t <myacrname>.azurecr.io/carbon_aware:v1 -f arbonAware.WebApi/src/Dockerfile .
     docker push <myacrname>.azurecr.io/carbon_aware:v1
     ```
 1. Pull image
@@ -96,3 +96,4 @@ Sign in to [Docker Hub](https://hub.docker.com) and create a repository (e.g <yo
 
 ## Pipeline integration (Github Action)
 
+[Github Workflows](https://docs.github.com/en/actions/publishing-packages/publishing-docker-images#publishing-images-to-docker-hub)

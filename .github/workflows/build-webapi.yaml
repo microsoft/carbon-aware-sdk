@@ -10,7 +10,7 @@ on:
       - '.github/workflows/**'
 
 env:
-  DOCKERFILE_PATH: "ms-internal/containerized_webapi_image/Dockerfile"
+  DOCKERFILE_PATH: "CarbonAware.WebApi/src/Dockerfile"
   HEALTH_ENDPOINT: "0.0.0.0:8080/health"
   DATA_ENDPOINT: "0.0.0.0:8080/emissions/bylocation?location=eastus"
   DLL_FILE_PATH: "./bin/Release/net6.0/CarbonAware.WebApi.dll"
@@ -73,7 +73,7 @@ jobs:
 
       - name: Docker Target Final
         run: docker build . -f ${DOCKERFILE_PATH} -t ca-api
-        working-directory: .
+        working-directory: ./src
         
       - name: Docker Run Container
         run: |
