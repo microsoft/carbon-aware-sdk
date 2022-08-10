@@ -22,7 +22,7 @@ carbon_aware   v1        6293e2528bf2   About an hour ago   230MB
 
 ## Run WebApi Image
 
-1. For instance, the following command uses localhost port 8000 mapped to the WebApi port 80 with setting from [WattTime](https://www.watttime.org) provider.
+1. Run the image using `docker run` with port 8000 that it is mapped to the WebApi port 80 using configuration settings for [WattTime](https://www.watttime.org) provider.
 
     ```sh
     docker run --rm -p 8000:80 \
@@ -52,16 +52,16 @@ carbon_aware   v1        6293e2528bf2   About an hour ago   230MB
     < 
     [{"generatedAt":"2021-11-01T00:00:00+00:00","optimalDataPoint":{
         ...
-    }]
+    }}]
     ```
 
 ## Upload image to a Container Registry
 
-For easy image consumption, upload it to a well known Container Registry, either local or cloud provider. The following are examples of using [docker hub](https://hub.docker.com) or [Azure Container Registry](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-quickstart-task-cli)
+For easy image consumption, upload it to a well known Container Registry, either local or Cloud Provider. The following are examples of using [docker hub](https://hub.docker.com) or [Azure Container Registry](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-quickstart-task-cli)
 
 ### Docker Hub
 
-Sign in to [Docker Hub](https://hub.docker.com) and create a repository (e.g <your-username>/my-private-repo)
+Sign in to [Docker Hub](https://hub.docker.com) and create a private (or public) repository (e.g <your-username>/my-private-repo)
 
 1. Build and Push
     ```sh
@@ -73,16 +73,17 @@ Sign in to [Docker Hub](https://hub.docker.com) and create a repository (e.g <yo
 1. Pull
 
     ```sh
+    docker login --username=your-username
     docker pull <your-username>/my-private-repo/carbon_aware:v1
     ```
 
 ### Azure Container Registry
 
 1. Build and Push image
-    Assuming there is Container Registry created, using the user's credentials, lets push the image using `docker` (it can be done also using [Azure CLI](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-tutorial-quick-task))
+    Assuming there is Container Registry created, using the user's credentials push the image using `docker` (it can be done also using [Azure CLI](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-tutorial-quick-task))
 
     ```sh
-    docker login <myacrname>.azurecr.io -u username -p <CopiedKeyFromPortal>
+    docker login <myacrname>.azurecr.io -u username -p <CopiedKeyFromAzurePortal>
     cd ./$(git rev-parse --show-cdup)/src
     docker build -t <myacrname>.azurecr.io/carbon_aware:v1 -f arbonAware.WebApi/src/Dockerfile .
     docker push <myacrname>.azurecr.io/carbon_aware:v1
@@ -90,7 +91,7 @@ Sign in to [Docker Hub](https://hub.docker.com) and create a repository (e.g <yo
 1. Pull image
 
     ```sh
-    docker login <myacrname>.azurecr.io -u username -p <CopiedKeyFromPortal>
+    docker login <myacrname>.azurecr.io -u username -p <CopiedKeyFromAzurePortal>
     docker pull <myacrname>.azurecr.io/carbon_aware:v1
     ```
 
