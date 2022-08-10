@@ -32,13 +32,13 @@ public static class EmissionsCommand
             Arity = ArgumentArity.OneOrMore
         };
 
-        var startTimeOption = new Option<DateTime>("--startTime")
+        var startTimeOption = new Option<DateTime?>("--startTime", getDefaultValue: () => null)
         {
             Description = "Start time for emissions data window",
             IsRequired = false
         };
 
-        var toTimeOption = new Option<DateTime>("--toTime")
+        var toTimeOption = new Option<DateTime?>("--toTime", getDefaultValue: () => null)
         {
             Description = "To Time for emissions data window",
             IsRequired = false
