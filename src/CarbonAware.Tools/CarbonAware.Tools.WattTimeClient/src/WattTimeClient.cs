@@ -61,9 +61,10 @@ public class WattTimeClient : IWattTimeClient
             { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
         };
 
-        var result = await this.MakeRequestAsync(Paths.Data, parameters, tags);
-
-        return JsonSerializer.Deserialize<List<GridEmissionDataPoint>>(result, options) ?? new List<GridEmissionDataPoint>();
+        using (var result = await this.MakeRequestGetStreamAsync(Paths.Data, parameters, tags))
+        {
+            return await JsonSerializer.DeserializeAsync<List<GridEmissionDataPoint>>(result, options) ?? throw new WattTimeClientException($"Error getting forecasts for {balancingAuthorityAbbreviation}");
+        }
     }
 
     /// <inheritdoc/>
@@ -117,7 +118,7 @@ public class WattTimeClient : IWattTimeClient
         {
             { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
         };
-        using (var result = await this.MakeRequestAsyncGetStream(Paths.Forecast, parameters, tags))
+        using (var result = await this.MakeRequestGetStreamAsync(Paths.Forecast, parameters, tags))
         {
             var forecasts = await JsonSerializer.DeserializeAsync<List<Forecast>>(result, options) ?? throw new WattTimeClientException($"Error getting forecasts for {balancingAuthorityAbbreviation}");
             return forecasts.FirstOrDefault();
@@ -177,7 +178,7 @@ public class WattTimeClient : IWattTimeClient
             Log.LogInformation("Requesting data using url {url}", url);
             activity?.AddTag(QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation);
 
-            var result = await this.GetAsyncStreamWithAuthRetry(url);
+            var result = await this.GetStreamWithAuthRetryAsync(url);
 
             Log.LogDebug("For query {url}, received data stream", url);
 
@@ -191,10 +192,10 @@ public class WattTimeClient : IWattTimeClient
         return this.GetHistoricalDataAsync(balancingAuthority.Abbreviation);
     }
 
-    private async Task<HttpResponseMessage> GetAsyncWithAuthRetry(string uriPath, bool readHeaders = false)
+    private async Task<HttpResponseMessage> GetAsyncWithAuthRetry(string uriPath)
     {
         await this.EnsureTokenAsync();
-        var completion = readHeaders ? HttpCompletionOption.ResponseHeadersRead : HttpCompletionOption.ResponseContentRead;
+        var completion = HttpCompletionOption.ResponseHeadersRead;
         var response = await this.client.GetAsync(uriPath, completion);
 
         if (RetriableStatusCodes.Contains(response.StatusCode))
@@ -221,9 +222,9 @@ public class WattTimeClient : IWattTimeClient
         return data ?? string.Empty;
     }
 
-    private async Task<Stream> GetAsyncStreamWithAuthRetry(string uriPath, bool options = false)
+    private async Task<Stream> GetStreamWithAuthRetryAsync(string uriPath)
     {
-        var response = await this.GetAsyncWithAuthRetry(uriPath, options);
+        var response = await this.GetAsyncWithAuthRetry(uriPath);
         return await response.Content.ReadAsStreamAsync();
     }
 
@@ -301,7 +302,7 @@ public class WattTimeClient : IWattTimeClient
         }
     }
 
-    private async Task<Stream> MakeRequestAsyncGetStream(string path, Dictionary<string, string> parameters, Dictionary<string, string>? tags = null)
+    private async Task<Stream> MakeRequestGetStreamAsync(string path, Dictionary<string, string> parameters, Dictionary<string, string>? tags = null)
     {
         using (var activity = Activity.StartActivity())
         {
@@ -316,7 +317,7 @@ public class WattTimeClient : IWattTimeClient
                     activity?.AddTag(kvp.Key, kvp.Value);
                 }
             }
-            var result = await this.GetAsyncStreamWithAuthRetry(url, true);
+            var result = await this.GetStreamWithAuthRetryAsync(url);
 
             Log.LogDebug("For query {url}, received data {result}", url, result);
 
