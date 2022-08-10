@@ -1,91 +1,20 @@
-The Carbon Aware SDK provides an API to get the marginal carbon intensity for a given location and time period. The values reported in the Green Software Foundation's specification for marginal carbon intensity (Grams per Kilowatt Hour). In order to use the API, the environment needs to be prepared with a set of configuration parameters. Instructions on setting up the environment could be found here - https://github.com/microsoft/carbon-aware-sdk/blob/dev/GettingStarted.md
+The Carbon Aware SDK provides an API to get the marginal carbon intensity for a given location and time period. The values reported in the Green Software Foundation's specification for marginal carbon intensity (Grams per Kilowatt Hour). In order to use the API, the environment needs to be prepared with a set of configuration parameters. Instructions on setting up the environment could be found here - [GettingStarted.md](../../../GettingStarted.md)
 
 # Carbon Aware REST API
 
 - [Carbon Aware REST API](#carbon-aware-rest-api)
   - [Endpoints](#endpoints)
-    - [POST /sci-scores](#post-sci-scores)
-    - [POST /sci-scores/marginal-carbon-intensity](#post-sci-scoresmarginal-carbon-intensity)
     - [GET emissions/bylocation](#get-emissionsbylocation)
     - [GET emissions/bylocations](#get-emissionsbylocations)
     - [GET emissions/bylocations/best](#get-emissionsbylocationsbest)
-    - [GET emissions/forecasts/current](#get-forecastscurrent)
-    - [POST emissions/forecasts/batch](#post-forecastsbatch)
+    - [GET emissions/forecasts/current](#get-emissionsforecastscurrent)
+    - [POST emissions/forecasts/batch](#post-emissionsforecastsbatch)
+    - [GET emissions/average-carbon-intensity](#get-emissionsaverage-carbon-intensity)
+    - [POST emissions/average-carbon-intensity/batch](#post-emissionsaverage-carbon-intensitybatch)
   - [Error Handling](#error-handling)
   - [Autogenerate WebAPI](#autogenerate-webapi)
   
 ## Endpoints
-
-### POST /sci-scores
-
-This endpoint calculates the SCI score using the [Green Software Foundation SCI specification formula](https://github.com/Green-Software-Foundation/software_carbon_intensity/blob/main/Software_Carbon_Intensity/Software_Carbon_Intensity_Specification.md#methodology-summary).
-
-> ((E \* I) + M)/R
-
-- (E) Energy
-- (I) Marginal Carbon Intensity
-- (M) Embodied Emissions
-- (R) Functional Unit
-
-The payload object must include `location` and `timeInterval`.
-
-If location is of type `CloudProvider`, the object should include the `providerName` and `regionName` attributes.
-If location if of type `Geoposition` then the object should include `latitude` and `longitude` attributes.
-
-EG
-```
-{
-    "location": {
-        "locationType": "CloudProvider",
-        "providerName": "Azure",
-        "regionName": "uswest"
-    },
-    "timeInterval": "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z"
-}
-```
-
-The response object MUST include the SCI score and the component variables. EG
-
-```
-{
-  "sciScore": 80.0,
-  "energyValue": 1.0,
-  "marginalCarbonIntensityValue": 750.0,
-  "embodiedEmissionsValue": 50.0,
-  "functionalUnitValue": 10
-}
-```
-
-### POST /sci-scores/marginal-carbon-intensity
-
-This endpoint calculates just the Average Marginal Carbon Intensity which is the `I` portion of the Green Software Foundation specification.  This is useful if you only need to report this value, or if another service is responsible for the other parts of your SCI score. 
-
-The payload object must include location and timeInterval, it is the same as the payload for the `/sci-scores` endpoint and follows the same `locationType` requirements as above.
-
-EG
-```
-{
-    "location": {
-        "locationType": "Geoposition",
-        "latitude": -37.814,
-        "longitude": 144.96332
-    },
-    "timeInterval": "2007-03-01T13:00:00Z/2007-03-01T15:30:00Z"
-}
-```
-
-The response object is the same SciScore object as above, but only `marginalCarbonIntensityValue` is populated, the other attributes are set to `null`.
-
-EG
-```
-{
-  "sciScore": null,
-  "energyValue": null,
-  "marginalCarbonIntensityValue": 750.0,
-  "embodiedEmissionsValue": null,
-  "functionalUnitValue": null
-}
-```
 
 ### GET emissions/bylocation
 
@@ -290,8 +219,92 @@ EG
   }
 ]
 ```
-  
 
+### GET emissions/average-carbon-intensity
+
+This endpoint retrieves the measured carbon intensity data between the time boundaries and calculates the average carbon intensity during that period. Location is a required parameter and is the name of the data region for the configured Cloud provider.
+
+This endpoint is useful for reporting the measured carbon intensity for a specific time period in a specific location.
+
+Parameters:
+1. `location`: This is a required parameter and is the string name of the data region for the configured Cloud provider.
+2. `startTime`: The time at which the workload and corresponding carbon usage begins.
+3. `endTime`: The time at which the workload and corresponding carbon usage ends.
+
+EG
+```
+https://<server_name>/emissions/average-carbon-intensity?location=eastus&startTime=2022-07-19T14:00:00Z&endTime=2022-07-19T18:00:00Z
+```
+The response is a single object that contains the information about the request and the average marginal carbon intensity
+
+EG
+```
+{
+  "location": "eastus",
+  "startTime": "2022-07-19T14:00:00Z",
+  "endTime": "2022-07-19T18:00:00Z",
+  "carbonIntensity": 345.434
+}
+```
+
+### POST emissions/average-carbon-intensity/batch
+This endpoint takes an array of request objects, each with their own location and time boundaries, and calculates the average carbon intensity for that location and time period.
+
+This endpoint only supports batching across a single location with different time boundaries. If multiple locations are provided, an error is returned. For each item in the request array, the application returns a corresponding object containing the location, time boundaries, and average marginal carbon intensity. 
+
+Parameters:
+1. requestedCarbonIntensities: Array of requested carbon intensities. Each requested carbon intensity contains
+    * `location`: This is a required parameter and is the name of the data region for the configured Cloud provider.
+    * `startTime`: The time at which the workflow we are requesting carbon intensity for started.
+    * `endTime`: The time at which the workflow we are requesting carbon intensity for ended.
+
+EG
+```
+[
+  {
+    "location": "eastus",
+    "startTime": "2022-05-01T14:00:00",
+    "endTime": "2022-05-01T18:00:00"
+  },
+  {
+    "location": "eastus",
+    "startTime": "2022-06-01T14:00:00",
+    "endTime": "2022-06-01T18:00:00"
+  },
+  {
+    "location": "eastus",
+    "startTime": "2022-07-01T14:00:00",
+    "endTime": "2022-07-01T18:00:00"
+  }
+]
+
+```
+The response is an array of CarbonIntensityDTO objects which each have a location, start time, end time, and the average marginal carbon intensity over that time period.
+
+EG
+```
+[
+  {
+    "carbonIntensity": 32.935208333333335,
+    "location": "eastus",
+    "startTime": "2022-05-01T14:00:00-04:00",
+    "endTime": "2022-05-01T18:00:00-04:00"
+  },
+  {
+    "carbonIntensity": 89.18215277777779,
+    "location": "eastus",
+    "startTime": "2022-06-01T14:00:00-04:00",
+    "endTime": "2022-06-01T18:00:00-04:00"
+  },
+  {
+    "carbonIntensity": 10.416875,
+    "location": "eastus",
+    "startTime": "2022-07-01T14:00:00-04:00",
+    "endTime": "2022-07-01T18:00:00-04:00"
+  }
+]
+```
+  
 ## Error Handling
 
 The WebAPI leveraged the [.Net controller filter pipeline](https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/filters?view=aspnetcore-6.0) to ensure that all requests respond with a consistent JSON schema.
