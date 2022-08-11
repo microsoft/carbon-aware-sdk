@@ -97,4 +97,6 @@ Sign in to [Docker Hub](https://hub.docker.com) and create a private (or public)
 
 ## Pipeline Integration (Github Action)
 
+To automate an image deployment from a GitHub CI/CD pipeline, the following link provides detailed information on how to build a `workflow` with all the necesarily tools in order to push an image to a container registry of user's preference (i.e. Docker Hub).
+
 [Github Workflows](https://docs.github.com/en/actions/publishing-packages/publishing-docker-images#publishing-images-to-docker-hub)
