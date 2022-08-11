@@ -31,7 +31,7 @@ carbon_aware   v1        6293e2528bf2   About an hour ago   230MB
     > -e WattTimeClient__Password="userpwd" \
     > carbon_aware:v1
     ```
-1. Verify that the WebApi is responding to requests, using a Rest Client (e.g. `postman`, `curl`)
+1. Verify that the WebApi is responding to requests using an HTTP client tool (e.g. `postman`, `curl`)
     ```sh
     curl -v -s -X 'POST' http://localhost:8000/emissions/forecasts/batch  -H 'accept: */*' -H 'Content-Type: application/json' -d '[
         {
