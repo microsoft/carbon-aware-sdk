@@ -95,6 +95,6 @@ Sign in to [Docker Hub](https://hub.docker.com) and create a private (or public)
     docker pull <myacrname>.azurecr.io/carbon_aware:v1
     ```
 
-## Pipeline integration (Github Action)
+## Pipeline Integration (Github Action)
 
 [Github Workflows](https://docs.github.com/en/actions/publishing-packages/publishing-docker-images#publishing-images-to-docker-hub)
