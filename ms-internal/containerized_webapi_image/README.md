@@ -22,7 +22,7 @@ carbon_aware   v1        6293e2528bf2   About an hour ago   230MB
 
 ## Run WebApi Image
 
-1. Run the image using `docker run` with port 8000 that it is mapped to the WebApi port 80 using configuration settings for [WattTime](https://www.watttime.org) provider.
+1. Run the image using `docker run` with host port 8000 mapped to the WebApi port 80 and configure environment variable settings for [WattTime](https://www.watttime.org) provider.
 
     ```sh
     docker run --rm -p 8000:80 \
