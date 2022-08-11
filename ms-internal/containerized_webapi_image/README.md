@@ -80,7 +80,7 @@ Sign in to [Docker Hub](https://hub.docker.com) and create a private (or public)
 ### Azure Container Registry
 
 1. Build and Push image
-    Assuming there is Container Registry created, using the user's credentials push the image using `docker` (it can be done also using [Azure CLI](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-tutorial-quick-task))
+    Assuming the container registry is already created, use the user's credentials push the image using `docker` (it can be done also using [Azure CLI](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-tutorial-quick-task))
 
     ```sh
     docker login <myacrname>.azurecr.io -u username -p <CopiedKeyFromAzurePortal>
