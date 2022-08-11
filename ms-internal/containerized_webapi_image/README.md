@@ -57,7 +57,7 @@ carbon_aware   v1        6293e2528bf2   About an hour ago   230MB
 
 ## Upload image to a Container Registry
 
-For easy image consumption, upload it to a well known Container Registry, either local or Cloud Provider. The following are examples of using [docker hub](https://hub.docker.com) or [Azure Container Registry](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-quickstart-task-cli)
+For easy image consumption, upload it to a well-known container registry, self-hosted or managed. The following are examples of using [docker hub](https://hub.docker.com) or [Azure Container Registry](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-quickstart-task-cli)
 
 ### Docker Hub
 
