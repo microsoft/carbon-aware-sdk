@@ -89,9 +89,9 @@ public class WattTimeClient : IWattTimeClient
             { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
         };
 
-        var result = await this.MakeRequestAsync(Paths.Forecast, parameters, tags);
+        var result = await this.MakeRequestGetStreamAsync(Paths.Forecast, parameters, tags);
 
-        var forecast = JsonSerializer.Deserialize<Forecast?>(result, options) ?? throw new WattTimeClientException($"Error getting forecast for  {balancingAuthorityAbbreviation}");
+        var forecast = await JsonSerializer.DeserializeAsync<Forecast?>(result, options) ?? throw new WattTimeClientException($"Error getting forecast for  {balancingAuthorityAbbreviation}");
 
         return forecast;
     }
@@ -148,9 +148,9 @@ public class WattTimeClient : IWattTimeClient
             { QueryStrings.Longitude, longitude }
         };
 
-        var result = await this.MakeRequestAsync(Paths.BalancingAuthorityFromLocation, parameters, tags);
+        var result = await this.MakeRequestGetStreamAsync(Paths.BalancingAuthorityFromLocation, parameters, tags);
         
-        var balancingAuthority = JsonSerializer.Deserialize<BalancingAuthority>(result, options) ?? throw new WattTimeClientException($"Error getting Balancing Authority for latitude {latitude} and longitude {longitude}");
+        var balancingAuthority = await JsonSerializer.DeserializeAsync<BalancingAuthority>(result, options) ?? throw new WattTimeClientException($"Error getting Balancing Authority for latitude {latitude} and longitude {longitude}");
 
         return balancingAuthority;
     }
@@ -214,13 +214,6 @@ public class WattTimeClient : IWattTimeClient
         return response;
     }
 
-    private async Task<string> GetAsyncStringWithAuthRetry(string uriPath)
-    {
-        var response = await this.GetAsyncWithAuthRetry(uriPath);
-        var data = await response.Content.ReadAsStringAsync();
-        return data ?? string.Empty;
-    }
-
     private async Task<Stream> GetStreamWithAuthRetryAsync(string uriPath)
     {
         var response = await this.GetAsyncWithAuthRetry(uriPath);
@@ -275,30 +268,6 @@ public class WattTimeClient : IWattTimeClient
     internal void SetBearerAuthenticationHeader(string token)
     {
         this.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(AuthenticationHeaderTypes.Bearer, token);
-    }
-
-    private async Task<string> MakeRequestAsync(string path, Dictionary<string, string> parameters, Dictionary<string, string>? tags = null)
-    {
-        using (var activity = Activity.StartActivity())
-        {
-            var url = BuildUrlWithQueryString(path, parameters);
-
-            Log.LogInformation("Requesting data using url {url}", url);
-
-            if (tags != null)
-            {
-                foreach (var kvp in tags)
-                {
-                    activity?.AddTag(kvp.Key, kvp.Value);
-                }
-            }
-
-            var result = await this.GetAsyncStringWithAuthRetry(url);
-
-            Log.LogDebug("For query {url}, received data {result}", url, result);
-
-            return result;
-        }
     }
 
     private async Task<Stream> MakeRequestGetStreamAsync(string path, Dictionary<string, string> parameters, Dictionary<string, string>? tags = null)
