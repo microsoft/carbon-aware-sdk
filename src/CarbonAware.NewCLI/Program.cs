@@ -5,6 +5,7 @@ using System.CommandLine;
 using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.Aggregators.Configuration;
 using Microsoft.Extensions.Logging;
+using CarbonAware.NewCLI.CommandKeywords.Emissions;
 
 namespace CarbonAware.NewCLI;
 
@@ -20,7 +21,7 @@ class Program
             Description = "Root command for retrieving data using Carbonaware SDK"
         };
 
-        EmissionsCommand.AddEmissionsCommands(ref rootCommand, serviceProvider.GetRequiredService<ICarbonAwareAggregator>());
+        EmissionsRootCommand.AddEmissionsCommands(ref rootCommand, serviceProvider.GetRequiredService<ICarbonAwareAggregator>());
 
         return rootCommand.Invoke(args);
 
@@ -37,7 +38,6 @@ class Program
         services.Configure<CarbonAwareVariablesConfiguration>(config.GetSection(CarbonAwareVariablesConfiguration.Key));
         services.AddSingleton<IConfiguration>(config);
         services.AddCarbonAwareEmissionServices(config);
-
         services.AddLogging(configure => configure.AddConsole());
 
         var serviceProvider = services.BuildServiceProvider();

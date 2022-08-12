@@ -1,5 +1,5 @@
 ﻿using CarbonAware.Aggregators.CarbonAware;
-using CarbonAware.NewCLI.CommandKeywords;
+using CarbonAware.NewCLI.CommandKeywords.Emissions;
 using Moq;
 using System.CommandLine;
 using System.CommandLine.Parsing;
@@ -20,7 +20,7 @@ namespace CarbonAware.NewCLI.UnitTests
         public void AddEmissionsCommand_CreatesCorrectSubCommandAndOptions()
         {
             var command = new RootCommand();
-            EmissionsCommand.AddEmissionsCommands(ref command, _aggregator.Object);
+            EmissionsRootCommand.AddEmissionsCommands(ref command, _aggregator.Object);
 
             var subCommands =  command.Subcommands.AsEnumerable();
             var listCommand = subCommands.First().Subcommands.First();
@@ -33,7 +33,7 @@ namespace CarbonAware.NewCLI.UnitTests
         public void Providing_RequiredArguments_SuccessfullyCallsAggregator()
         {
             var command = new RootCommand();
-            EmissionsCommand.AddEmissionsCommands(ref command, _aggregator.Object);
+            EmissionsRootCommand.AddEmissionsCommands(ref command, _aggregator.Object);
             String[] args = {"emissions", "list", "--locations", "eastus"};
             
             var exitCode = command.Invoke(args);
@@ -47,7 +47,7 @@ namespace CarbonAware.NewCLI.UnitTests
         {
             var command = new RootCommand();
         
-            EmissionsCommand.AddEmissionsCommands(ref command, _aggregator.Object);
+            EmissionsRootCommand.AddEmissionsCommands(ref command, _aggregator.Object);
             String[] args = { "emissions", "list", "--startTime", "02-02-2022" };
            
             var exitCode = command.Invoke(args);
@@ -60,7 +60,7 @@ namespace CarbonAware.NewCLI.UnitTests
         {
             var command = new RootCommand();
 
-            EmissionsCommand.AddEmissionsCommands(ref command, _aggregator.Object);
+            EmissionsRootCommand.AddEmissionsCommands(ref command, _aggregator.Object);
             String[] args = { "emissions", "list", "--locations", "eastus", "--startTime", startTime!, "--toTime", toTime! };
 
             var exitCode = command.Invoke(args);

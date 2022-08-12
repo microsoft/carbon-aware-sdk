@@ -3,27 +3,24 @@ using CarbonAware.Model;
 using System.CommandLine;
 using System.Text.Json;
 
-namespace CarbonAware.NewCLI.CommandKeywords;
+namespace CarbonAware.NewCLI.CommandKeywords.Emissions;
 
-public static class EmissionsCommand
+/// <summary>
+/// Defines the command to help get a list of emission data by location for a specified time period.
+/// </summary>
+/// <option name="location"> String named location.</option>
+/// <option name="time"> [Optional] Start time for the data query.</option>
+/// <option name="toTime"> [Optional] End time for the data query.</option>
+/// <returns>Array of EmissionsData objects that contains the location, time and the rating in g/kWh</returns>
+public static class EmissionsListCommand
 {
     static ICarbonAwareAggregator? _aggregator;
-
-    public static void AddEmissionsCommands(ref RootCommand rootCommandBase, ICarbonAwareAggregator aggregator)
+    public static void AddEmissionsListCommand(this Command parent, ICarbonAwareAggregator aggregator)
     {
-        var emissionsCommand = new Command("emissions", "Main Command for all Emissions related subcommands.");
-        rootCommandBase.Add(emissionsCommand);
-
         _aggregator = aggregator;
 
-        AddListSubcommand(ref emissionsCommand);
-
-    }
-
-    private static void AddListSubcommand(ref Command baseCommand)
-    {
         var listCommand = new Command("list", "Lists emission data for given locations and times.");
-
+        
         var locationOption = new Option<string[]>("--locations")
         {
             Description = "Space separated strings of Locations to get emissions data for.",
@@ -60,15 +57,15 @@ public static class EmissionsCommand
             var result = await ListEmissions(locations, startTime, toTime, best);
             var outputData = $"{JsonSerializer.Serialize(result)}";
             Console.WriteLine(outputData);
-        },locationOption, startTimeOption, toTimeOption, bestOption);
+        }, locationOption, startTimeOption, toTimeOption, bestOption);
 
-        baseCommand.AddCommand(listCommand);
+        parent.AddCommand(listCommand);
     }
 
-    private static async Task<IEnumerable<EmissionsData>> ListEmissions(string[] locations, DateTime? startTime  = null, DateTime? toTime = null, bool best = false)
+    private static async Task<IEnumerable<EmissionsData>> ListEmissions(string[] locations, DateTimeOffset? startTime = null, DateTimeOffset? toTime = null, bool best = false)
     {
         IEnumerable<Location> locationsProp = locations.Select(loc => new Location() { RegionName = loc, LocationType = LocationType.CloudProvider });
-        var props = new Dictionary<string, object>() 
+        var props = new Dictionary<string, object?>()
         {
                 { CarbonAwareConstants.MultipleLocations, locationsProp },
                 { CarbonAwareConstants.Start, startTime },
@@ -76,7 +73,7 @@ public static class EmissionsCommand
                 { CarbonAwareConstants.Best, best }
         };
 
-        return await _aggregator.GetEmissionsDataAsync(props);
+        return await _aggregator!.GetEmissionsDataAsync(props);
     }
-
 }
+
