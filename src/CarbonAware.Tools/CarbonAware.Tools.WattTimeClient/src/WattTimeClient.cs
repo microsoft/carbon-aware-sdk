@@ -34,6 +34,8 @@ public class WattTimeClient : IWattTimeClient
 
     private ILogger<WattTimeClient> Log { get; }
 
+    private IBACache baCache;
+
     public WattTimeClient(IHttpClientFactory factory, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log)
     {
         this.client = factory.CreateClient(IWattTimeClient.NamedClient);
@@ -42,6 +44,7 @@ public class WattTimeClient : IWattTimeClient
         this.client.BaseAddress = new Uri(this.Configuration.BaseUrl);
         this.client.DefaultRequestHeaders.Accept.Clear();
         this.client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
+        this.baCache = new BACache();
     }
 
     /// <inheritdoc/>
@@ -148,11 +151,16 @@ public class WattTimeClient : IWattTimeClient
             { QueryStrings.Longitude, longitude }
         };
 
+        var coordinates = new Tuple<string, string>( latitude, longitude );
+        if (baCache.TryGetValue(coordinates, out BalancingAuthority? cachedBalancingAuthority))
+        {
+            return cachedBalancingAuthority!;
+        }
         var result = await this.MakeRequestGetStreamAsync(Paths.BalancingAuthorityFromLocation, parameters, tags);
-        
         var balancingAuthority = await JsonSerializer.DeserializeAsync<BalancingAuthority>(result, options) ?? throw new WattTimeClientException($"Error getting Balancing Authority for latitude {latitude} and longitude {longitude}");
-
+        baCache.SetValue(coordinates, balancingAuthority);
         return balancingAuthority;
+
     }
 
     /// <inheritdoc/>
