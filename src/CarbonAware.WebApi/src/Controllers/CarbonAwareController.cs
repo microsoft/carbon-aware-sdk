@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using CarbonAware.Model;
 using System.Diagnostics;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace CarbonAware.WebApi.Controllers;
 
@@ -44,29 +45,18 @@ public class CarbonAwareController : ControllerBase
     /// <summary>
     /// Calculate the observed emission data by list of locations for a specified time period.
     /// </summary>
-    /// <param name="locations"> String array of named locations.</param>
-    /// <param name="time"> [Optional] Start time for the data query.</param>
-    /// <param name="toTime"> [Optional] End time for the data query.</param>
-    /// <param name="durationMinutes"> [Optional] Duration for the data query.</param>
+    /// <param name="parameters">The request object <see cref="EmissionsDataForLocationsParametersDTO"/></param>
     /// <returns>Array of EmissionsData objects that contains the location, time and the rating in g/kWh</returns>
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsData>))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [HttpGet("bylocations")]
-    public async Task<IActionResult> GetEmissionsDataForLocationsByTime([FromQuery(Name = "location"), BindRequired] string[] locations, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
+    public async Task<IActionResult> GetEmissionsDataForLocationsByTime([FromQuery] EmissionsDataForLocationsParametersDTO parameters)
     {
         using (var activity = Activity.StartActivity())
         {
-            IEnumerable<Location> locationEnumerable = CreateMultipleLocationsFromStrings(locations);
-            var props = new Dictionary<string, object?>() {
-                { CarbonAwareConstants.MultipleLocations, locationEnumerable },
-                { CarbonAwareConstants.Start, time },
-                { CarbonAwareConstants.End, toTime},
-                { CarbonAwareConstants.Duration, durationMinutes },
-            };
-
-            var response = await _aggregator.GetEmissionsDataAsync(props);
+            var response = await _aggregator.GetEmissionsDataAsync(parameters);
             return response.Any() ? Ok(response) : NoContent();
         }
     }
@@ -77,18 +67,23 @@ public class CarbonAwareController : ControllerBase
     /// <param name="location"> String named location.</param>
     /// <param name="time"> [Optional] Start time for the data query.</param>
     /// <param name="toTime"> [Optional] End time for the data query.</param>
-    /// <param name="durationMinutes"> [Optional] Duration for the data query.</param>
     /// <returns>Array of EmissionsData objects that contains the location, time and the rating in g/kWh</returns>
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsData>))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [HttpGet("bylocation")]
-    public async Task<IActionResult> GetEmissionsDataForLocationByTime([FromQuery, BindRequired] string location, DateTime? time = null, DateTime? toTime = null, int durationMinutes = 0)
+    public async Task<IActionResult> GetEmissionsDataForLocationByTime([FromQuery, SwaggerParameter(Required = true)] string location, DateTimeOffset? time = null, DateTimeOffset? toTime = null)
     {
         using (var activity = Activity.StartActivity())
         {
-            return await GetEmissionsDataForLocationsByTime(new string[]{ location }, time, toTime, durationMinutes);
+            var parameters = new EmissionsDataForLocationsParametersDTO
+            {
+                MultipleLocations = new string[]{ location },
+                Start = time,
+                End = toTime
+            };
+            return await GetEmissionsDataForLocationsByTime(parameters);
         }
     }
 

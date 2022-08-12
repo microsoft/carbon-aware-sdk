@@ -21,9 +21,13 @@ public abstract class TestsBase
     protected static Mock<ICarbonAwareAggregator> CreateAggregatorWithEmissionsData(List<EmissionsData> data)
     {
         var aggregator = new Mock<ICarbonAwareAggregator>();
-        aggregator.Setup(x =>
-            x.GetEmissionsDataAsync(
-                It.IsAny<Dictionary<string, object>>())).ReturnsAsync(data);
+        aggregator.Setup(x => x.GetEmissionsDataAsync(It.IsAny<CarbonAwareParameters>()))
+            .Callback((CarbonAwareParameters parameters) =>
+            {
+                parameters.SetRequiredProperties(PropertyName.MultipleLocations);
+                parameters.Validate();
+            })
+            .ReturnsAsync(data);
         return aggregator;
     }
 
