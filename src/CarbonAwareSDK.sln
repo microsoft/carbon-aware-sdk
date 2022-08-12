@@ -52,6 +52,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.NewCLI", "Carbo
 		{D538572C-1412-47FE-8CC3-950EF295EB7F} = {D538572C-1412-47FE-8CC3-950EF295EB7F}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarbonAware.NewCLI.UnitTests", "CarbonAware.NewCLI.UnitTests\CarbonAware.NewCLI.UnitTests.csproj", "{F8B14EE4-37FB-4D99-A165-2BC1D7201640}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -150,6 +152,10 @@ Global
 		{8892E643-F985-440F-8CAD-7D980FDB05D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8892E643-F985-440F-8CAD-7D980FDB05D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8892E643-F985-440F-8CAD-7D980FDB05D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8B14EE4-37FB-4D99-A165-2BC1D7201640}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8B14EE4-37FB-4D99-A165-2BC1D7201640}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8B14EE4-37FB-4D99-A165-2BC1D7201640}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8B14EE4-37FB-4D99-A165-2BC1D7201640}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
