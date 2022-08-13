@@ -15,5 +15,6 @@ public static class ServiceCollectionExtensions
         services.ConfigureWattTimeClient(configuration);
         services.TryAddSingleton<ICarbonIntensityDataSource, WattTimeDataSource>();
         services.TryAddSingleton<ILocationSource, AzureLocationSource>();
+        services.AddMemoryCache();
     }
 }

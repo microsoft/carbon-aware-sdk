@@ -11,6 +11,7 @@ using System.Net;
 using CarbonAware.Tools.WattTimeClient.Configuration;
 using CarbonAware.Tools.WattTimeClient.Constants;
 using System.Globalization;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CarbonAware.Tools.WattTimeClient;
 
@@ -34,9 +35,9 @@ public class WattTimeClient : IWattTimeClient
 
     private ILogger<WattTimeClient> Log { get; }
 
-    private IBACache baCache;
+    private IMemoryCache baCache;
 
-    public WattTimeClient(IHttpClientFactory factory, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log)
+    public WattTimeClient(IHttpClientFactory factory, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log, IMemoryCache memoryCache)
     {
         this.client = factory.CreateClient(IWattTimeClient.NamedClient);
         this.ConfigurationMonitor = configurationMonitor;
@@ -44,7 +45,7 @@ public class WattTimeClient : IWattTimeClient
         this.client.BaseAddress = new Uri(this.Configuration.BaseUrl);
         this.client.DefaultRequestHeaders.Accept.Clear();
         this.client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
-        this.baCache = new BACache();
+        this.baCache = memoryCache;
     }
 
     /// <inheritdoc/>
@@ -152,15 +153,13 @@ public class WattTimeClient : IWattTimeClient
         };
 
         var coordinates = new Tuple<string, string>( latitude, longitude );
-        if (baCache.TryGetValue(coordinates, out BalancingAuthority? cachedBalancingAuthority))
+        var balancingAuthority = await baCache.GetOrCreateAsync(coordinates, async entry =>
         {
-            return cachedBalancingAuthority!;
-        }
-        var result = await this.MakeRequestGetStreamAsync(Paths.BalancingAuthorityFromLocation, parameters, tags);
-        var balancingAuthority = await JsonSerializer.DeserializeAsync<BalancingAuthority>(result, options) ?? throw new WattTimeClientException($"Error getting Balancing Authority for latitude {latitude} and longitude {longitude}");
-        baCache.SetValue(coordinates, balancingAuthority);
+            entry.SlidingExpiration = TimeSpan.FromSeconds(15);
+            var result = await this.MakeRequestGetStreamAsync(Paths.BalancingAuthorityFromLocation, parameters, tags);
+            return await JsonSerializer.DeserializeAsync<BalancingAuthority>(result, options) ?? throw new WattTimeClientException($"Error getting Balancing Authority for latitude {latitude} and longitude {longitude}");
+        });
         return balancingAuthority;
-
     }
 
     /// <inheritdoc/>
