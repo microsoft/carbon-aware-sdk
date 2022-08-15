@@ -75,24 +75,33 @@ public class CarbonAwareParameters
     }
 
     /// <summary>
-    /// Validates the properties and relationships between properties. This includes
+    /// Validates the properties and relationships between properties. Any validation errors found are packaged into an
+    /// ArguementException and thrown. If there are no errors, simply returns void. 
+    /// </summary>
+    /// <remarks> Validation includes two checks.
     ///  - Check that required properties are set
     ///  - Check that specified relationships between properties (like start < end) are true
-    /// </summary>
+    ///  If any validation errors are found during property validation, with throw without validating property relationships
+    /// </remarks>
     public void Validate()
     {
-        var multipleLocations = _props[PropertyName.MultipleLocations];
+        // Validate Properties
+        var errors = new Dictionary<string, List<string>>(); 
+        foreach(var propertyName in GetPropertyNames()) 
+        {
+            var property = _props[propertyName];
+            if (!property.IsValid) { errors.AppendValue(property.DisplayName, $"{property.DisplayName} is not set"); }
+        }
+
+        // Throw any property validation errors found. If none, continue to validate relationships.
+        CheckErrors(errors);
+        
+        // Validate Relationships
         var start = _props[PropertyName.Start];
         var end = _props[PropertyName.End];
+        if (Start >= End) { errors.AppendValue(start.DisplayName, $"{start.DisplayName} must be before {end.DisplayName}"); }
 
-        // Validate Properties
-        var errors = ValidateProperties(new Property[]{ multipleLocations, start, end});
-
-        // Only check relationships between properties if no validation errors
-        if (!errors.Any()) {
-            // Validate Relationships
-            if (Start >= End) { errors.AppendValue(start.DisplayName, $"{start.DisplayName} must be before {end.DisplayName}"); }
-        }
+        // Throw any relationship validation errors found. If none, return.
         CheckErrors(errors);
     }
 
@@ -142,22 +151,6 @@ public class CarbonAwareParameters
     }
 
     /// <summary>
-    /// Validates the given properties
-    /// </summary>
-    /// <param name="properties">List of properties to validate.</param>
-    /// <remarks>Does not throw if a property is invalid, appends to error dictionary.</remarks>
-    /// <returns>Dictionary of validation errors.</returns>
-    private Dictionary<string, List<string>> ValidateProperties(Property[] properties) 
-    {
-        var errors = new Dictionary<string, List<string>>();
-        foreach(var property in properties) 
-        {
-            if (!property.IsValid) { errors.AppendValue(property.DisplayName, $"{property.DisplayName} is not set"); }
-        }
-        return errors;
-    }
-
-    /// <summary>
     /// Convert an array of string locations into an enumerable of Location objects. 
     /// </summary>
     /// <param name="locations">Array of string locations.</param>
@@ -191,10 +184,18 @@ public class CarbonAwareParameters
     private static Dictionary<PropertyName, Property> InitProperties()
     {
         var properties = new Dictionary<PropertyName, Property>();
+        foreach (PropertyName name in GetPropertyNames())
+        {
+            properties[name] = new Property(name);
+        }
+        return properties;
+    }
+
+    private static IEnumerable<PropertyName> GetPropertyNames() {
+        var properties = new List<PropertyName>();
         foreach (string name in Enum.GetNames<PropertyName>())
         {
-            var propertyName = Enum.Parse<PropertyName>(name);
-            properties[propertyName] = new Property(propertyName);
+            properties.Add(Enum.Parse<PropertyName>(name));
         }
         return properties;
     }
