@@ -265,22 +265,35 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
-    [TestCase(null, null, null, TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: location, startTime, endTime")]
-    [TestCase("eastus", null, null, TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: startTime, endTime")]
-    [TestCase("eastus", "2022-03-01T15:30:00Z", null, TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: endTime")]
-    [TestCase("eastus", null, "2022-03-01T18:00:00Z", TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for missing params: startTime")]
     [TestCase("westus", "2022-3-1T15:30:00Z", "2022-3-1T18:00:00Z", TestName = "EmissionsMarginalCarbonIntensityBatch returns BadRequest for wrong date format")]
     public async Task EmissionsMarginalCarbonIntensityBatch_MissingRequiredParams_ReturnsBadRequest(string location, string startTime, string endTime)
     {
         var intesityData = Enumerable.Range(0, 1).Select(x => new {
-            location = location,
-            startTime = startTime,
-            endTime = endTime
+            SingleLocation = location,
+            Start = startTime,
+            End = endTime
         });
         var result = await PostJSONBodyToURI(intesityData, batchAverageCarbonIntensityURI);
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result!.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    }
+
+    [TestCase(null, null, null, TestName = "EmissionsMarginalCarbonIntensityBatch returns InternalServerError for missing params: location, startTime, endTime")]
+    [TestCase("eastus", null, null, TestName = "EmissionsMarginalCarbonIntensityBatch returns InternalServerError for missing params: startTime, endTime")]
+    [TestCase("eastus", "2022-03-01T15:30:00Z", null, TestName = "EmissionsMarginalCarbonIntensityBatch returns InternalServerError for missing params: endTime")]
+    [TestCase("eastus", null, "2022-03-01T18:00:00Z", TestName = "EmissionsMarginalCarbonIntensityBatch returns InternalServerError for missing params: startTime")]
+    public async Task EmissionsMarginalCarbonIntensityBatch_MissingRequiredParams_ReturnsInternalServerError(string location, string startTime, string endTime)
+    {
+        var intesityData = Enumerable.Range(0, 1).Select(x => new {
+            SingleLocation = location,
+            Start = startTime,
+            End = endTime
+        });
+        var result = await PostJSONBodyToURI(intesityData, batchAverageCarbonIntensityURI);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result!.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
     }
 
     [TestCase("2022-01-01T04:05:06Z", "2022-01-02T04:05:06Z", "eastus", 1, TestName = "EmissionsMarginalCarbonIntensityBatch expects OK for single element batch")]
@@ -291,9 +304,9 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         var endDate = DateTimeOffset.Parse(end);
         _dataSourceMocker.SetupDataMock(startDate, endDate, location);
         var intesityData = Enumerable.Range(0, nelems).Select(x => new {
-            location = location,
-            startTime = start,
-            endTime = end
+            SingleLocation = location,
+            Start = start,
+            End = end
         });
         using (var result = await PostJSONBodyToURI(intesityData, batchAverageCarbonIntensityURI))
         {

@@ -29,10 +29,11 @@ public interface ICarbonAwareAggregator : IAggregator
     /// <summary>
     /// Get the average carbon intensity.
     /// </summary>
-    /// <param name="props">IDictionary with properties required by concrete classes</param>
+    /// <param name="parameters"><see cref="CarbonAwareParameters"> with properties required by concrete classes</param>
     /// <returns>The the average carbon-intensity value by location for the time-interval.</returns>
-    Task<double> CalculateAverageCarbonIntensityAsync(IDictionary props);
+    Task<double> CalculateAverageCarbonIntensityAsync(CarbonAwareParameters parameters);
 
+    /// <summary>
     /// Get forecasted emissions data.
     /// </summary>
     /// <param name="parameters"><see cref="CarbonAwareParameters"> with properties required by concrete classes</param>

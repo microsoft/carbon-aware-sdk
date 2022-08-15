@@ -289,15 +289,13 @@ public class CarbonAwareAggregatorTests
             RegionName = regionName
         };
 
-        DateTimeOffset start, end;
-        DateTimeOffset.TryParse(startString, out start);
-        DateTimeOffset.TryParse(endString, out end);
+        var start = DateTimeOffset.Parse(startString);
+        var end = DateTimeOffset.Parse(endString);
 
-        var props = new Dictionary<string, object?>()
-        {
-            { CarbonAwareConstants.SingleLocation, location },
-            { CarbonAwareConstants.Start, start },
-            { CarbonAwareConstants.End, end }
+        var parameters = new CarbonAwareParameters() { 
+            SingleLocation = location, 
+            Start = start, 
+            End = end
         };
 
         this.CarbonIntensityDataSource.Setup(x => x.GetCarbonIntensityAsync(It.IsAny<Location>(),
@@ -305,7 +303,7 @@ public class CarbonAwareAggregatorTests
             .ReturnsAsync(TestData.GetFilteredEmissionDataList(location.RegionName, startString, endString));
 
         // Act
-        var result = await this.Aggregator.CalculateAverageCarbonIntensityAsync(props);
+        var result = await this.Aggregator.CalculateAverageCarbonIntensityAsync(parameters);
 
         // Assert
         this.CarbonIntensityDataSource.Verify(r => r.GetCarbonIntensityAsync(location, start, end), Times.Once);
@@ -322,14 +320,13 @@ public class CarbonAwareAggregatorTests
             It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
             .ReturnsAsync(TestData.GetAllEmissionDataList());
 
-        var props = new Dictionary<string, object?>()
-        {
-            { CarbonAwareConstants.MultipleLocations, new List<Location>() { new Location() { RegionName = "westus" } } },
-            { CarbonAwareConstants.Start, start },
-            { CarbonAwareConstants.End, end }
+        var parameters = new CarbonAwareParameters() { 
+            SingleLocation = new Location() { RegionName = "westus" }, 
         };
+        if (start!=null) parameters.Start = DateTimeOffset.Parse(start);
+        if (end != null) parameters.End = DateTimeOffset.Parse(end);
 
-        Assert.ThrowsAsync<ArgumentException>(async () => await Aggregator.CalculateAverageCarbonIntensityAsync(props));
+        Assert.ThrowsAsync<ArgumentException>(async () => await Aggregator.CalculateAverageCarbonIntensityAsync(parameters));
     }
 
     [Test]
@@ -346,15 +343,15 @@ public class CarbonAwareAggregatorTests
         var start = DateTimeOffset.Parse("2019-01-01", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal);
         var end = DateTimeOffset.Parse("2019-01-02", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal);
 
-        var props = new Dictionary<string, object?>()
+        var parameters = new CarbonAwareParameters()
         {
-            { CarbonAwareConstants.SingleLocation, location },
-            { CarbonAwareConstants.Start, start },
-            { CarbonAwareConstants.End, end }
+            SingleLocation = location,
+            Start = start,
+            End = end
         };
 
         // Act
-        await this.Aggregator.CalculateAverageCarbonIntensityAsync(props);
+        await this.Aggregator.CalculateAverageCarbonIntensityAsync(parameters);
 
         // Assert
         this.CarbonIntensityDataSource.Verify(r => r.GetCarbonIntensityAsync(location, start, end), Times.Once);

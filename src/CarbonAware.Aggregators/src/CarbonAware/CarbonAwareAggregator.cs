@@ -72,16 +72,18 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
     }
 
     /// <inheritdoc />
-    public async Task<double> CalculateAverageCarbonIntensityAsync(IDictionary props)
+    public async Task<double> CalculateAverageCarbonIntensityAsync(CarbonAwareParameters parameters)
     {
         using (var activity = Activity.StartActivity())
         {
-            var start = GetOffsetOrThrow(props, CarbonAwareConstants.Start);
-            var end = GetOffsetOrThrow(props, CarbonAwareConstants.End);
-            var location = GetSingleLocationOrThrow(props);
-            ValidateDateInput(start, end);
+            parameters.SetRequiredProperties(PropertyName.SingleLocation, PropertyName.Start, PropertyName.End);
+            parameters.Validate();
+
+            var end = parameters.End;
+            var start = parameters.Start;
+
             _logger.LogInformation("Aggregator getting average carbon intensity from data source");
-            var emissionData = await this._dataSource.GetCarbonIntensityAsync(location, start, end);
+            var emissionData = await this._dataSource.GetCarbonIntensityAsync(parameters.SingleLocation, start, end);
             var value = emissionData.AverageOverPeriod(start, end);
             _logger.LogInformation($"Carbon Intensity Average: {value}");
 

@@ -126,8 +126,15 @@ public class CarbonAwareControllerTests : TestsBase
         double data = 0.7;
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateCarbonAwareAggregatorWithAverageCI(data).Object);
 
+        var parameters = new CarbonIntensityParametersDTO
+        {
+            SingleLocation = location,
+            Start = start,
+            End = end
+        };
+
         // Act
-        var carbonIntensityOutput = (await controller.GetAverageCarbonIntensity(location, start, end)) as ObjectResult;
+        var carbonIntensityOutput = (await controller.GetAverageCarbonIntensity(parameters)) as ObjectResult;
 
         // Assert
         TestHelpers.AssertStatusCode(carbonIntensityOutput, HttpStatusCode.OK);
@@ -152,8 +159,8 @@ public class CarbonAwareControllerTests : TestsBase
         double data = 0.7;
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateCarbonAwareAggregatorWithAverageCI(data).Object);
 
-        var request1 = new CarbonIntensityBatchDTO { Location = location, StartTime = start1, EndTime = end1 };
-        var request2 = new CarbonIntensityBatchDTO { Location = location, StartTime = start2, EndTime = end2 };
+        var request1 = new CarbonIntensityBatchDTO { SingleLocation = location, Start = start1, End = end1 };
+        var request2 = new CarbonIntensityBatchDTO { SingleLocation = location, Start = start2, End = end2 };
         var requestList = new List<CarbonIntensityBatchDTO> { request1, request2 };
         // Act
         var actualContent = new List<CarbonIntensityDTO> { };
@@ -180,8 +187,8 @@ public class CarbonAwareControllerTests : TestsBase
         {
             new CarbonIntensityBatchDTO
             {
-                StartTime = new DateTimeOffset(2021,9,1,8,30,0, TimeSpan.Zero),
-                EndTime = new DateTimeOffset(2021,9,2,8,30,0, TimeSpan.Zero)
+                Start = new DateTimeOffset(2021,9,1,8,30,0, TimeSpan.Zero),
+                End = new DateTimeOffset(2021,9,2,8,30,0, TimeSpan.Zero)
             }
         };
         var data = 0.7d;
