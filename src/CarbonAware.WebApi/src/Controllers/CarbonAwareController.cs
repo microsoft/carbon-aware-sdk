@@ -95,19 +95,7 @@ public class CarbonAwareController : ControllerBase
     /// <summary>
     ///   Retrieves the most recent forecasted data and calculates the optimal marginal carbon intensity window.
     /// </summary>
-    /// <param name="locations"> String array of named locations.</param>
-    /// <param name="dataStartAt">
-    ///   Start time boundary of forecasted data points. Ignores current forecast data points before this time.
-    ///   Defaults to the earliest time in the forecast data.
-    /// </param>
-    /// <param name="dataEndAt">
-    ///   End time boundary of forecasted data points. Ignores current forecast data points after this time.
-    ///   Defaults to the latest time in the forecast data.
-    /// </param>
-    /// <param name="windowSize">
-    ///   The estimated duration (in minutes) of the workload.
-    ///   Defaults to the duration of a single forecast data point.
-    /// </param>
+    /// <param name="parameters">The request object <see cref="EmissionsForecastCurrentParametersDTO"/></param>
     /// <remarks>
     ///   This endpoint fetches only the most recently generated forecast for all provided locations.  It uses the "dataStartAt" and 
     ///   "dataEndAt" parameters to scope the forecasted data points (if available for those times). If no start or end time 
@@ -130,19 +118,11 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status501NotImplemented, Type = typeof(ValidationProblemDetails))]
     [HttpGet("forecasts/current")]
-    public async Task<IActionResult> GetCurrentForecastData([FromQuery(Name = "location"), BindRequired] string[] locations, DateTimeOffset? dataStartAt = null, DateTimeOffset? dataEndAt = null, int? windowSize = null)
+    public async Task<IActionResult> GetCurrentForecastData([FromQuery] EmissionsForecastCurrentParametersDTO parameters)
     {
         using (var activity = Activity.StartActivity())
         {
-            IEnumerable<Location> locationEnumerable = CreateMultipleLocationsFromStrings(locations);
-            var props = new Dictionary<string, object?>() {
-                { CarbonAwareConstants.MultipleLocations, locationEnumerable },
-                { CarbonAwareConstants.Start, dataStartAt },
-                { CarbonAwareConstants.End, dataEndAt },
-                { CarbonAwareConstants.Duration, windowSize },
-            };
-
-            var forecasts = await _aggregator.GetCurrentForecastDataAsync(props);
+            var forecasts = await _aggregator.GetCurrentForecastDataAsync(parameters);
             var results = forecasts.Select(f => EmissionsForecastDTO.FromEmissionsForecast(f));
             return Ok(results);
         }
@@ -171,23 +151,16 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
     [HttpPost("forecasts/batch")]
-    public async IAsyncEnumerable<EmissionsForecastDTO> BatchForecastDataAsync(IEnumerable<EmissionsForecastBatchDTO> requestedForecasts)
+    public async IAsyncEnumerable<EmissionsForecastDTO> BatchForecastDataAsync([FromBody] IEnumerable<EmissionsForecastBatchParametersDTO> requestedForecasts)
     {
         using (var activity = Activity.StartActivity())
         {
-            foreach (var forecastBatchDTO in requestedForecasts)
+            foreach (var forecastParameters in requestedForecasts)
             {
-                var props = new Dictionary<string, object?>() {
-                    { CarbonAwareConstants.SingleLocation, CreateSingleLocationFromString(forecastBatchDTO.Location!) },
-                    { CarbonAwareConstants.Start, forecastBatchDTO.DataStartAt },
-                    { CarbonAwareConstants.End, forecastBatchDTO.DataEndAt },
-                    { CarbonAwareConstants.Duration, forecastBatchDTO.WindowSize },
-                    { CarbonAwareConstants.ForecastRequestedAt, forecastBatchDTO.RequestedAt },
-                };
                 // NOTE: Current Error Handling done by HttpResponseExceptionFilter can't handle exceptions
                 // thrown by the underline framework for this method, therefore all exceptions are handled as 500.
                 // Refactoring with a middleware exception handler should cover this use case too.
-                var forecast = await _aggregator.GetForecastDataAsync(props);
+                var forecast = await _aggregator.GetForecastDataAsync(forecastParameters);
                 yield return EmissionsForecastDTO.FromEmissionsForecast(forecast);
             }
         }

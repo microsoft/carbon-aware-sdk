@@ -6,6 +6,7 @@ using CarbonAware.WebApi.Controllers;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Diagnostics;
+using static CarbonAware.Aggregators.CarbonAware.CarbonAwareParameters;
 
 /// <summary>
 /// TestsBase for all WebAPI specific tests.
@@ -45,7 +46,7 @@ public abstract class TestsBase
         var aggregator = new Mock<ICarbonAwareAggregator>();
         aggregator.Setup(x =>
             x.GetCurrentForecastDataAsync(
-                It.IsAny<Dictionary<string, object>>())).ReturnsAsync(forecasts);
+                It.IsAny<CarbonAwareParameters>())).ReturnsAsync(forecasts);
         return aggregator;
     }
 

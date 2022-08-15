@@ -22,10 +22,9 @@ public interface ICarbonAwareAggregator : IAggregator
     /// <summary>
     /// Get current forecasted emissions data.
     /// </summary>
-    /// <param name="props">IDictionary with properties required by concrete classes.</param>
-    /// <see cref="CarbonAwareConstants"/>
+    /// <param name="parameters"><see cref="CarbonAwareParameters"> with properties required by concrete classes</param>
     /// <returns>List of current emissions forecasts by location.</returns>
-    Task<IEnumerable<EmissionsForecast>> GetCurrentForecastDataAsync(IDictionary props);
+    Task<IEnumerable<EmissionsForecast>> GetCurrentForecastDataAsync(CarbonAwareParameters parameters);
 
     /// <summary>
     /// Get the average carbon intensity.
@@ -36,8 +35,7 @@ public interface ICarbonAwareAggregator : IAggregator
 
     /// Get forecasted emissions data.
     /// </summary>
-    /// <param name="props">IDictionary with properties required by concrete classes.</param>
-    /// <see cref="CarbonAwareConstants"/>
+    /// <param name="parameters"><see cref="CarbonAwareParameters"> with properties required by concrete classes</param>
     /// <returns>Single emissions forecast for a given location generated at the requested time given start and end periods.</returns>
-    Task<EmissionsForecast> GetForecastDataAsync(IDictionary props);
+    Task<EmissionsForecast> GetForecastDataAsync(CarbonAwareParameters parameters);
 }

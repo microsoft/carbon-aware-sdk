@@ -1,5 +1,6 @@
 using CarbonAware.Model;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
 
 namespace CarbonAware.Aggregators.CarbonAware;
 
@@ -17,10 +18,17 @@ public class CarbonAwareParametersBaseDTO
         var mapping = new Dictionary<string, string>();
         foreach (var DTOproperty in this.GetType().GetProperties())
         {
-            BindPropertyAttribute? customAttribute = (BindPropertyAttribute?) Attribute.GetCustomAttribute(DTOproperty, typeof(BindPropertyAttribute));
-            if (customAttribute != null && customAttribute.Name != null)
+            var customAttributes = Attribute.GetCustomAttributes(DTOproperty, true);
+            foreach (var customAttribute in customAttributes)
             {
-                mapping.Add(DTOproperty.Name, customAttribute.Name);
+                string? displayName = null; 
+                if (customAttribute is JsonPropertyNameAttribute jsonPropertyName){ displayName = jsonPropertyName.Name; }
+                if (customAttribute is FromQueryAttribute fromQuery){ displayName = fromQuery.Name; }
+
+                if(!string.IsNullOrWhiteSpace(displayName))
+                {
+                    mapping.Add(DTOproperty.Name, displayName);
+                }
             }
         }
         return mapping;
@@ -35,7 +43,6 @@ public class CarbonAwareParameters
     private DateTimeOffset _end = DateTimeOffset.MaxValue;
     private TimeSpan _duration = TimeSpan.Zero;
     private DateTimeOffset _requested = DateTimeOffset.UtcNow;
-
 
     public enum PropertyName { MultipleLocations, SingleLocation, Start, End, Duration, Requested };
     public IEnumerable<Location> MultipleLocations {

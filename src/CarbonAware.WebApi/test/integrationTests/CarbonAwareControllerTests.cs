@@ -157,6 +157,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
     }
 
+    [Ignore("Ignore until middleware handles batch errors")]
     [TestCase(null, null, TestName = "EmissionsForecastsBatch returns BadRequest for missing params: location, requestedAt")]
     [TestCase("eastus", null, TestName = "EmissionsForecastsBatch returns BadRequest for missing param: requestedAt")]
     [TestCase(null, "2021-09-01T08:30:00Z", TestName = "EmissionsForecastsBatch returns BadRequest for missing param: location")]

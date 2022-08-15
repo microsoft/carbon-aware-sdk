@@ -53,17 +53,17 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<EmissionsForecast>> GetCurrentForecastDataAsync(IDictionary props)
+    public async Task<IEnumerable<EmissionsForecast>> GetCurrentForecastDataAsync(CarbonAwareParameters parameters)
     {
         using (var activity = Activity.StartActivity())
         {
-            _logger.LogInformation("Aggregator getting carbon intensity forecast from data source");
-
+            parameters.SetRequiredProperties(PropertyName.MultipleLocations);
+            parameters.Validate();
             var forecasts = new List<EmissionsForecast>();
-            foreach (var location in GetMutlipleLocationsOrThrow(props))
+            foreach (var location in parameters.MultipleLocations)
             {
                 var forecast = await this._dataSource.GetCurrentCarbonIntensityForecastAsync(location);
-                var emissionsForecast = ProcessAndValidateForecast(forecast, props);
+                var emissionsForecast = ProcessAndValidateForecast(forecast, parameters);
                 forecasts.Add(emissionsForecast);
             }
 
@@ -89,16 +89,16 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         }
     }
 
-    public async Task<EmissionsForecast> GetForecastDataAsync(IDictionary props)
+    public async Task<EmissionsForecast> GetForecastDataAsync(CarbonAwareParameters parameters)
     {
         EmissionsForecast forecast;
         using (var activity = Activity.StartActivity())
         {
-            (var location, var forecastRequestedAt) = GetAndValidateForecastInput(props);
-            _logger.LogDebug($"Aggregator getting carbon intensity forecast from data source for location {location} and requestedAt {forecastRequestedAt}");
+            parameters.SetRequiredProperties(PropertyName.SingleLocation, PropertyName.Requested);
+            parameters.Validate();
 
-            forecast = await this._dataSource.GetCarbonIntensityForecastAsync(location, forecastRequestedAt);
-            var emissionsForecast = ProcessAndValidateForecast(forecast, props);
+            forecast = await this._dataSource.GetCarbonIntensityForecastAsync(parameters.SingleLocation, parameters.Requested);
+            var emissionsForecast = ProcessAndValidateForecast(forecast, parameters);
             return emissionsForecast;
         }
     }
@@ -125,13 +125,13 @@ public class CarbonAwareAggregator : ICarbonAwareAggregator
         return (location, requestedAt);
     }
 
-    private EmissionsForecast ProcessAndValidateForecast(EmissionsForecast forecast, IDictionary props)
+    private EmissionsForecast ProcessAndValidateForecast(EmissionsForecast forecast, CarbonAwareParameters parameters)
     {
-        var windowSize = GetDurationOrDefault(props);
+        var windowSize = parameters.Duration;
         var firstDataPoint = forecast.ForecastData.First();
         var lastDataPoint = forecast.ForecastData.Last();
-        forecast.DataStartAt = GetOffsetOrDefault(props, CarbonAwareConstants.Start, firstDataPoint.Time);
-        forecast.DataEndAt = GetOffsetOrDefault(props, CarbonAwareConstants.End, lastDataPoint.Time + lastDataPoint.Duration);
+        forecast.DataStartAt = parameters.GetStartOrDefault(firstDataPoint.Time);
+        forecast.DataEndAt = parameters.GetEndOrDefault(lastDataPoint.Time + lastDataPoint.Duration);
         forecast.Validate();
         forecast.ForecastData = IntervalHelper.FilterByDuration(forecast.ForecastData, forecast.DataStartAt, forecast.DataEndAt);
         forecast.ForecastData = forecast.ForecastData.RollingAverage(windowSize, forecast.DataStartAt, forecast.DataEndAt);

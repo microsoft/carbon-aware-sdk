@@ -9,6 +9,7 @@ using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 /// <summary>
@@ -105,13 +106,14 @@ public class CarbonAwareControllerTests : TestsBase
                 Time = DateTime.Now
             }
         };
+        var input = new EmissionsForecastCurrentParametersDTO() { MultipleLocations = locations };
         var aggregator = CreateAggregatorWithForecastData(data);
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, aggregator.Object);
 
-        IActionResult result = await controller.GetCurrentForecastData(locations);
+        IActionResult result = await controller.GetCurrentForecastData(input);
 
         TestHelpers.AssertStatusCode(result, HttpStatusCode.OK);
-        aggregator.Verify(a => a.GetCurrentForecastDataAsync(It.IsAny<Dictionary<string, object>>()), Times.Once);
+        aggregator.Verify(a => a.GetCurrentForecastDataAsync(It.IsAny<CarbonAwareParameters>()), Times.Once);
     }
 
     /// <summary>
@@ -223,38 +225,14 @@ public class CarbonAwareControllerTests : TestsBase
     }
 
     /// <summary>
-    /// Tests empty or null location arrays throw ArgumentException.
+    /// GetEmissionsDataForLocationsByTime: Tests empty or null location arrays throw ArgumentException.
     /// </summary>
     [TestCase(new object?[] { null, null }, TestName = "array of nulls: simulates 'location=&location=' empty value input")]
     [TestCase(new object?[] { null, }, TestName = "array of nulls: simulates 'location=' empty value input")]
     [TestCase(new object?[] { }, TestName = "empty array: simulates no 'location' query string")]
-    public void GetEmissions_NoLocations_ThrowsException(params string[] locations)
+    public void GetEmissionsDataForLocationsByTime_NoLocations_ThrowsException(params string[] locations)
     {
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateAggregatorWithEmissionsData(new List<EmissionsData>()).Object);
-
         Assert.ThrowsAsync<ArgumentException>(async () => await controller.GetEmissionsDataForLocationsByTime(locations));
-        Assert.ThrowsAsync<ArgumentException>(async () => await controller.GetCurrentForecastData(locations));
-    }
-
-    /// <summary>
-    /// Tests empty location arrays throw ArgumentException.
-    /// </summary>
-    [Test]
-    public void BatchForecast_NoLocations_ThrowsException()
-    {
-        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateAggregatorWithEmissionsData(new List<EmissionsData>()).Object);
-        var forecastData = new List<EmissionsForecastBatchDTO>()
-        {
-            new EmissionsForecastBatchDTO
-            {
-                DataStartAt = new DateTimeOffset(2021,9,1,8,30,0, TimeSpan.Zero),
-                DataEndAt = new DateTimeOffset(2021,9,2,8,30,0, TimeSpan.Zero),
-                RequestedAt = new DateTimeOffset(2021,9,1,8,30,0, TimeSpan.Zero)
-            }
-        };
-        Assert.ThrowsAsync<ArgumentException>(async () =>
-        {
-            await foreach (var _ in controller.BatchForecastDataAsync(forecastData)) ;
-        });
     }
 }
