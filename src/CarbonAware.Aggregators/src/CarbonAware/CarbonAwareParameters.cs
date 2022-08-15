@@ -81,23 +81,18 @@ public class CarbonAwareParameters
     /// </summary>
     public void Validate()
     {
-        var errors = new Dictionary<string, List<string>>();
-
         var multipleLocations = _props[PropertyName.MultipleLocations];
         var start = _props[PropertyName.Start];
         var end = _props[PropertyName.End];
 
         // Validate Properties
-        if (!multipleLocations.IsValid) { errors.AppendValue(multipleLocations.DisplayName, $"{multipleLocations.DisplayName} is not set"); }
-        if (!start.IsValid) { errors.AppendValue(start.DisplayName, $"{start.DisplayName} is not set"); }
-        if (!end.IsValid) { errors.AppendValue(end.DisplayName, $"{end.DisplayName} is not set"); }
+        var errors = ValidateProperties(new Property[]{ multipleLocations, start, end});
 
-        // Want to throw any property validation errors before checking any relationships between properties
-        CheckErrors(errors); 
-
-        // Validate Relationships
-        if (Start >= End) { errors.AppendValue(start.DisplayName, $"{start.DisplayName} must be before {end.DisplayName}"); }
-
+        // Only check relationships between properties if no validation errors
+        if (!errors.Any()) {
+            // Validate Relationships
+            if (Start >= End) { errors.AppendValue(start.DisplayName, $"{start.DisplayName} must be before {end.DisplayName}"); }
+        }
         CheckErrors(errors);
     }
 
@@ -144,6 +139,22 @@ public class CarbonAwareParameters
         if (p.End.HasValue) { parameters.End = p.End.Value; }
 
         return parameters;
+    }
+
+    /// <summary>
+    /// Validates the given properties
+    /// </summary>
+    /// <param name="properties">List of properties to validate.</param>
+    /// <remarks>Does not throw if a property is invalid, appends to error dictionary.</remarks>
+    /// <returns>Dictionary of validation errors.</returns>
+    private Dictionary<string, List<string>> ValidateProperties(Property[] properties) 
+    {
+        var errors = new Dictionary<string, List<string>>();
+        foreach(var property in properties) 
+        {
+            if (!property.IsValid) { errors.AppendValue(property.DisplayName, $"{property.DisplayName} is not set"); }
+        }
+        return errors;
     }
 
     /// <summary>

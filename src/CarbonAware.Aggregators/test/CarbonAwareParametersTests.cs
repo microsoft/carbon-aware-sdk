@@ -193,8 +193,8 @@ public class CarbonAwareParametersTests
         Assert.AreEqual(startIsSet, result._props[PropertyName.Start].IsSet);
         Assert.AreEqual(endIsSet, result._props[PropertyName.End].IsSet);
         if (multipleLocationsIsSet) { Assert.AreEqual(location, result.MultipleLocations.First().RegionName); }
-        if (startIsSet) { Assert.AreEqual(start.Value, result.Start); }
-        if (endIsSet) { Assert.AreEqual(end.Value, result.End); }
+        if (startIsSet) { Assert.AreEqual(start!.Value, result.Start); }
+        if (endIsSet) { Assert.AreEqual(end!.Value, result.End); }
     }
 
     [Test]
