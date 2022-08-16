@@ -165,7 +165,7 @@ public class CarbonAwareParameters
     /// Asserts there are no errors or throws ArgumentException.
     /// </summary>
     /// <param name="errors"> Dictionary of errors mapping the name of the parameter that caused the error to any associated error messages.</param>
-    /// <remarks>All errors packed into a single Argument exception with corresponding Data entries.</remarks>
+    /// <remarks>All errors packed into a single ArgumentException with corresponding Data entries.</remarks>
     private static void AssertNoErrors(Dictionary<string, List<string>> errors)
     {
         if (errors.Keys.Count > 0)
