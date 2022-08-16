@@ -76,7 +76,7 @@ public class CarbonAwareParameters
 
     /// <summary>
     /// Validates the properties and relationships between properties. Any validation errors found are packaged into an
-    /// ArguementException and thrown. If there are no errors, simply returns void. 
+    /// ArgumentException and thrown. If there are no errors, simply returns void. 
     /// </summary>
     /// <remarks> Validation includes two checks.
     ///  - Check that required properties are set
@@ -162,9 +162,10 @@ public class CarbonAwareParameters
     }
 
     /// <summary>
-    /// Packages all the provided errors into a single Arguement exception with corresponding Data entries.
+    /// Checks if any errors and combines them into a single Arguement exception with corresponding Data entries that is thrown
     /// </summary>
     /// <param name="errors"> Dictionary of errors mapping the name of the parameter that caused the error to any associated error messages.</param>
+    /// <remarks>If no erorrs, function returns. Otherwise throws</remarks>
     private static void CheckErrors(Dictionary<string, List<string>> errors)
     {
         if (errors.Keys.Count > 0)
