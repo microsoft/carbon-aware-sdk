@@ -93,16 +93,16 @@ public class CarbonAwareParameters
             if (!property.IsValid) { errors.AppendValue(property.DisplayName, $"{property.DisplayName} is not set"); }
         }
 
-        // Throw any property validation errors found. If none, continue to validate relationships.
-        CheckErrors(errors);
+        // Assert no property validation errors before validating relationships. Throws if any errors.
+        AssertNoErrors(errors);
         
         // Validate Relationships
         var start = _props[PropertyName.Start];
         var end = _props[PropertyName.End];
         if (Start >= End) { errors.AppendValue(start.DisplayName, $"{start.DisplayName} must be before {end.DisplayName}"); }
 
-        // Throw any relationship validation errors found. If none, return.
-        CheckErrors(errors);
+        // Assert no relationship validation errors. Throws if any errors.
+        AssertNoErrors(errors);
     }
 
     /// <summary>
@@ -162,11 +162,11 @@ public class CarbonAwareParameters
     }
 
     /// <summary>
-    /// Checks if any errors and combines them into a single Arguement exception with corresponding Data entries that is thrown
+    /// Asserts there are no errors or throws ArgumentException.
     /// </summary>
     /// <param name="errors"> Dictionary of errors mapping the name of the parameter that caused the error to any associated error messages.</param>
-    /// <remarks>If no erorrs, function returns. Otherwise throws</remarks>
-    private static void CheckErrors(Dictionary<string, List<string>> errors)
+    /// <remarks>All errors packed into a single Argument exception with corresponding Data entries.</remarks>
+    private static void AssertNoErrors(Dictionary<string, List<string>> errors)
     {
         if (errors.Keys.Count > 0)
         {
