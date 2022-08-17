@@ -29,7 +29,7 @@ Outputs a nested `JSON` object with the location, time, rating and duration of e
 
 EG Input
 ```
-.\CarbonAware.NewCLI.exe carbonaware emissions list --locations eastus
+.\CarbonAware.NewCLI.exe emissions list --locations eastus
 ```
 
 EG Output

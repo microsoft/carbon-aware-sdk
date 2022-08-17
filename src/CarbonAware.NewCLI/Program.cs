@@ -17,8 +17,7 @@ class Program
 
         var rootCommand = new RootCommand()
         {
-            Name = "carbonaware",
-            Description = "Root command for retrieving data using Carbonaware SDK"
+            Description = "CLI for retrieving data using Carbonaware SDK"
         };
 
         EmissionsRootCommand.AddEmissionsCommands(ref rootCommand, serviceProvider.GetRequiredService<ICarbonAwareAggregator>());
