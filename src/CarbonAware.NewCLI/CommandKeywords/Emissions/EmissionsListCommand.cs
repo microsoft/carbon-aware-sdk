@@ -9,8 +9,8 @@ namespace CarbonAware.NewCLI.CommandKeywords.Emissions;
 /// Defines the command to help get a list of emission data by location for a specified time period.
 /// </summary>
 /// <option name="location"> String named location.</option>
-/// <option name="time"> [Optional] Start time for the data query.</option>
-/// <option name="toTime"> [Optional] End time for the data query.</option>
+/// <option name="startTime"> [Optional] Start time for the data query.</option>
+/// <option name="endTime"> [Optional] End time for the data query.</option>
 /// <returns>Array of EmissionsData objects that contains the location, time and the rating in g/kWh</returns>
 public static class EmissionsListCommand
 {
@@ -35,7 +35,7 @@ public static class EmissionsListCommand
             IsRequired = false
         };
 
-        var toTimeOption = new Option<DateTime?>("--toTime", getDefaultValue: () => null)
+        var endTimeOption = new Option<DateTime?>("--endTime", getDefaultValue: () => null)
         {
             Description = "To Time for emissions data window",
             IsRequired = false
@@ -49,27 +49,27 @@ public static class EmissionsListCommand
 
         listCommand.AddOption(locationOption);
         listCommand.AddOption(startTimeOption);
-        listCommand.AddOption(toTimeOption);
+        listCommand.AddOption(endTimeOption);
         listCommand.AddOption(bestOption);
 
-        listCommand.SetHandler(async (locations, startTime, toTime, best) =>
+        listCommand.SetHandler(async (locations, startTime, endTime, best) =>
         {
-            var result = await ListEmissions(locations, startTime, toTime, best);
+            var result = await ListEmissions(locations, startTime, endTime, best);
             var outputData = $"{JsonSerializer.Serialize(result)}";
             Console.WriteLine(outputData);
-        }, locationOption, startTimeOption, toTimeOption, bestOption);
+        }, locationOption, startTimeOption, endTimeOption, bestOption);
 
         parent.AddCommand(listCommand);
     }
 
-    private static async Task<IEnumerable<EmissionsData>> ListEmissions(string[] locations, DateTimeOffset? startTime = null, DateTimeOffset? toTime = null, bool best = false)
+    private static async Task<IEnumerable<EmissionsData>> ListEmissions(string[] locations, DateTimeOffset? startTime = null, DateTimeOffset? endTime = null, bool best = false)
     {
         IEnumerable<Location> locationsProp = locations.Select(loc => new Location() { RegionName = loc, LocationType = LocationType.CloudProvider });
         var props = new Dictionary<string, object?>()
         {
                 { CarbonAwareConstants.MultipleLocations, locationsProp },
                 { CarbonAwareConstants.Start, startTime },
-                { CarbonAwareConstants.End, toTime },
+                { CarbonAwareConstants.End, endTime },
                 { CarbonAwareConstants.Best, best }
         };
 
