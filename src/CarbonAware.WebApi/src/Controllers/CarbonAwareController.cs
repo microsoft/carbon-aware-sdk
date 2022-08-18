@@ -142,22 +142,21 @@ public class CarbonAwareController : ControllerBase
     /// <response code="500">Internal server error</response>
     /// <response code="501">Returned if the underlying data source does not support forecasting</response>
     [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmissionsForecastDTO>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
     [HttpPost("forecasts/batch")]
-    public async IAsyncEnumerable<EmissionsForecastDTO> BatchForecastDataAsync([FromBody] IEnumerable<EmissionsForecastBatchParametersDTO> requestedForecasts)
+    public async Task<IActionResult> BatchForecastDataAsync([FromBody] IEnumerable<EmissionsForecastBatchParametersDTO> requestedForecasts)
     {
         using (var activity = Activity.StartActivity())
         {
-            foreach (var forecastParameters in requestedForecasts)
+            var result = await Task.WhenAll(requestedForecasts.Select(async forecastParameters =>
             {
-                // NOTE: Current Error Handling done by HttpResponseExceptionFilter can't handle exceptions
-                // thrown by the underline framework for this method, therefore all exceptions are handled as 500.
-                // Refactoring with a middleware exception handler should cover this use case too.
                 var forecast = await _aggregator.GetForecastDataAsync(forecastParameters);
-                yield return EmissionsForecastDTO.FromEmissionsForecast(forecast);
-            }
+                return EmissionsForecastDTO.FromEmissionsForecast(forecast);
+            }));
+
+            return Ok(result);
         }
     }
 
@@ -209,19 +208,16 @@ public class CarbonAwareController : ControllerBase
     /// <response code="400">Returned if any of the requested items are invalid</response>
     /// <response code="500">Internal server error</response>
     [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CarbonIntensityDTO>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
     [HttpPost("average-carbon-intensity/batch")]
-    public async IAsyncEnumerable<CarbonIntensityDTO> GetAverageCarbonIntensityBatch([FromBody] IEnumerable<CarbonIntensityBatchDTO> requestedCarbonIntensities)
+    public async Task<IActionResult> GetAverageCarbonIntensityBatch([FromBody] IEnumerable<CarbonIntensityBatchDTO> requestedCarbonIntensities)
     {
         using (var activity = Activity.StartActivity())
         {
-            foreach (var carbonIntensityBatchDTO in requestedCarbonIntensities)
+            var result = await Task.WhenAll(requestedCarbonIntensities.Select(async carbonIntensityBatchDTO =>
             {
-                // NOTE: Current Error Handling done by HttpResponseExceptionFilter can't handle exceptions
-                // thrown by the underline framework for this method, therefore all exceptions are handled as 500.
-                // Refactoring with a middleware exception handler should cover this use case too.
                 var carbonIntensity = await this._aggregator.CalculateAverageCarbonIntensityAsync(carbonIntensityBatchDTO);
                 CarbonIntensityDTO carbonIntensityDTO = new CarbonIntensityDTO
                 {
@@ -230,8 +226,10 @@ public class CarbonAwareController : ControllerBase
                     EndTime = carbonIntensityBatchDTO.End,
                     CarbonIntensity = carbonIntensity,
                 };
-                yield return carbonIntensityDTO;
-            }
+                return carbonIntensityDTO;
+            }));
+
+            return Ok(result);
         }
     }
 
