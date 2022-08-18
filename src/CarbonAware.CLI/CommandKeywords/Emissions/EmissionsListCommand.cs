@@ -3,7 +3,7 @@ using CarbonAware.Model;
 using System.CommandLine;
 using System.Text.Json;
 
-namespace CarbonAware.NewCLI.CommandKeywords.Emissions;
+namespace CarbonAware.CLI.CommandKeywords.Emissions;
 
 /// <summary>
 /// Defines the command to help get a list of emission data by location for a specified time period.

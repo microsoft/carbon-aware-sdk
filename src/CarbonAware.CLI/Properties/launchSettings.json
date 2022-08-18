@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "CarbonAware.NewCLI": {
+      "commandName": "Project",
+      "commandLineArgs": "carbonaware emissions list --startTime=2022-04-04 --toTime=2022-05-01",
+      "workingDirectory": "C:\\apps\\carbon-aware-new-branch\\carbon-aware-sdk\\src\\CarbonAware.NewCLI"
+    }
+  }
+}

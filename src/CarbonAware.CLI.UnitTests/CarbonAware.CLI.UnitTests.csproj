@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CarbonAware.Aggregators\src\CarbonAware.Aggregators.csproj" />
-    <ProjectReference Include="..\CarbonAware.NewCLI\CarbonAware.NewCLI.csproj" />
+    <ProjectReference Include="..\CarbonAware.CLI\CarbonAware.CLI.csproj" />
   </ItemGroup>
 
 </Project>

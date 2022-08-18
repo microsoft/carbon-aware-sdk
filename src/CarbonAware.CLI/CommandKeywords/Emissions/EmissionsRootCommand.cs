@@ -3,7 +3,7 @@ using CarbonAware.Model;
 using System.CommandLine;
 using System.Text.Json;
 
-namespace CarbonAware.NewCLI.CommandKeywords.Emissions;
+namespace CarbonAware.CLI.CommandKeywords.Emissions;
 
 public static class EmissionsRootCommand
 { 

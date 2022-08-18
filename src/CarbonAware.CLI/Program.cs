@@ -1,13 +1,12 @@
-﻿using CarbonAware.NewCLI.CommandKeywords;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.CommandLine;
 using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.Aggregators.Configuration;
 using Microsoft.Extensions.Logging;
-using CarbonAware.NewCLI.CommandKeywords.Emissions;
+using CarbonAware.CLI.CommandKeywords.Emissions;
 
-namespace CarbonAware.NewCLI;
+namespace CarbonAware.CLI;
 
 class Program
 {
