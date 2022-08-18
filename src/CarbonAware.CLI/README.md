@@ -65,7 +65,7 @@ Outputs a nested `JSON` object with the location, time, rating and duration of e
 
 EG Input
 ```
-.\CarbonAware.NewCLI.exe emissions list --locations eastus
+.\CarbonAware.CLI.exe emissions list --locations eastus
 ```
 
 EG Output
@@ -103,7 +103,7 @@ Outputs a nested `JSON` object with the location, time, rating and duration of e
 
 EG Input
 ```
-.\CarbonAware.NewCLI.exe emissions current-forecast list --locations eastus
+.\CarbonAware.CLI.exe emissions current-forecast list --locations eastus
 ```
 
 EG Output
@@ -145,7 +145,7 @@ EG Output
 
 EG Input
 ```
-.\CarbonAware.NewCLI.exe emissions average-intensity show --locations eastus
+.\CarbonAware.CLI.exe emissions average-intensity show --locations eastus
 ```
 
 EG Output
