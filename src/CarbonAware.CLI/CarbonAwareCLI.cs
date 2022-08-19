@@ -8,9 +8,9 @@ using CarbonAware.CLI.CommandKeywords.Emissions;
 
 namespace CarbonAware.CLI;
 
-class Program
+class CarbonAwareCLI
 {
-    public static int Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
         ServiceProvider serviceProvider = BootstrapServices();
 
@@ -21,7 +21,7 @@ class Program
 
         EmissionsRootCommand.AddEmissionsCommands(ref rootCommand, serviceProvider.GetRequiredService<ICarbonAwareAggregator>());
 
-        return rootCommand.Invoke(args);
+        return await rootCommand.InvokeAsync(args);
 
     }
 

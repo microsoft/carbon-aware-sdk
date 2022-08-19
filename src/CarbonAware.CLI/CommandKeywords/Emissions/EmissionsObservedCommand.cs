@@ -22,17 +22,18 @@ public static class EmissionsObservedCommand
         _aggregator = aggregator;
 
         var command = new Command("observed", "Lists observed emission data for given locations and times.");
+        parent.AddCommand(command);
 
+        // Define options and arguments
         var locationsArgument = TokenBuilder.CreateLocationsArgument();
-        command.AddArgument(locationsArgument);
-
         var startTimeOption = TokenBuilder.CreateStartTimeOption();
-
         var endTimeOption = TokenBuilder.CreateEndTimeOption();
-
+        
+        command.AddArgument(locationsArgument);
         command.AddOption(startTimeOption);
         command.AddOption(endTimeOption);
 
+        // Define handler 
         command.SetHandler(async (locations, startTime, endTime) =>
         {
             var result = await ListEmissions(locations, startTime, endTime);
@@ -40,7 +41,6 @@ public static class EmissionsObservedCommand
             Console.WriteLine(outputData);
         }, locationsArgument, startTimeOption, endTimeOption);
 
-        parent.AddCommand(command);
     }
 
     private static async Task<IEnumerable<EmissionsData>> ListEmissions(string[] locations, DateTimeOffset? startTime = null, DateTimeOffset? endTime = null, bool best = false)

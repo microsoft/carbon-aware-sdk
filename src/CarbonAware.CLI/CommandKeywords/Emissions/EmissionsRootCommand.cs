@@ -15,8 +15,6 @@ public static class EmissionsRootCommand
 
         emissionsCommand.AddEmissionsObservedCommand(aggregator);
 
-        // Just a placeholder to show extensibility
-        //emissionsCommand.AddEmissionsForecastCommand(aggregator);
     }
 
 }

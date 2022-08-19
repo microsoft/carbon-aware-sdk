@@ -64,13 +64,4 @@ public class TokenBuilder
         return resOption;
     }
 
-
-    /* public void defineArguments()
-    {
-        var rm = new ResourceManager("CarbonAware.CLI.Resource1", Assembly.GetExecutingAssembly());
-        String? starTime = rm.GetString("startTime");
-        //ResXResourceWriter resx = new ResXResourceWriter(@".\CarResources.resx");
-    }
-*/
-
 }

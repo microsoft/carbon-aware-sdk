@@ -1,17 +1,14 @@
-The Carbon Aware SDK provides a CLI to get the marginal carbon intensity for a given location and time period. The values reported in the Green Software Foundation's specification for marginal carbon intensity (Grams per Kilowatt Hour). In order to use the CLI, the environment needs to be prepared with a set of configuration parameters. Instructions on setting up the environment could be found here - https://github.com/microsoft/carbon-aware-sdk/blob/dev/GettingStarted.md
+The Carbon Aware SDK provides a CLI to get the emissions data and forecast data for a given location and time period. The values reported in the Green Software Foundation's specification for marginal carbon intensity (Grams per Kilowatt Hour). In order to use the CLI, the environment needs to be prepared with a set of configuration parameters. Instructions on setting up the environment could be found here - https://github.com/microsoft/carbon-aware-sdk/blob/dev/GettingStarted.md
 
 # CLI Command Naming Conventions: 
 
 - The CLI contains an aggregator keyword. 
-- The only current aggregator keyword is `emissions`, which takes multiple commands. 
+- The only current aggregator keyword is `emissions`, which takes multiple sub-commands. 
 - Each group/aggregator keyword can be analogous to each controller. For example, we may create a ‘sci-score’ keyword to support functionality covered in SciController.  
 - Multi-word subgroups/commands should be hyphenated (e.g. foo-resource instead of fooresource) 
-- The commands must follow a "[noun] [noun] [verb]" pattern where: 
+- The commands must follow a "[noun] [noun]" pattern where: 
     - The first ‘noun’ is the aggregator command 
-    - The second ‘noun’ is optional and if present, defines the specific functionality 
-    - The verb is the command name that is generally one of the following - 
-        - list : command to list instances of a resource, backed server-side by a GET request.    
-        - get-xxx: command to retrieve a single resource, backed server-side by a GET request.    
+    - The second ‘noun’ defines the specific functionality     
 
 Currently, the Carbonaware SDK only supports GET/POST requests. We may have to add different commands if there are any CRUD operations added to the SDK. 
 
@@ -19,11 +16,10 @@ Currently, the Carbonaware SDK only supports GET/POST requests. We may have to a
 
 | CarbonAware CLI  
 | Group (noun)   
-| | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Command (verb)   
-| |	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	 Parameter   
-| | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Argument   
-| | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|   
-$ emissions list  --locations eastus 
+| | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Command (noun)   
+| | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Argument   
+| | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|   
+$ emissions observed eastus 
 
 
 ## Command Group
@@ -34,38 +30,17 @@ The `emissions` keyword is used to invoke any commands related to getting Carbon
 
 ## Command Sub-groups
 
+### `observed`
 ### `current-forecast`
-### `batch-forecast`
 ### `average-intensity`
-### `batch-average-intensity`
-
-## Command Keywords
-
-#### `list` 
-Used when an array of instances are expected
-
-#### `show`
-Used when there a single instance is expected
 
 # Carbon Aware CLI Commands  
 
-## emissions list 
-
-**Inputs:**
-
-| Keyword       | Description                         | Optional? | Default | Example                                           |
-| ------------- | :---------------------------------- | :-------- | :------ | :------------------------------------------------ |
-| `--locations` | Space separated list of locations.  | No        | N/A     | `--locations "useast" "uswest"`                   |
-| `--startTime` | Start time for emissions data       | Yes       | `null`  | `--startTime "2022-05-17T20:45:11.5092741+00:00"` |
-| `--endTime`    | Ending time for emissions data.     | Yes       | `null`  | `--endTime "2022-05-17T20:45:11.5092741+00:00"`    |
-
-**Outputs:**
-
-Outputs a nested `JSON` object with the location, time, rating and duration of each window to `STD Out`. 
+## emissions observed 
 
 EG Input
 ```
-.\CarbonAware.CLI.exe emissions list --locations eastus
+.\CarbonAware.CLI.exe emissions observed eastus westus
 ```
 
 EG Output
@@ -86,24 +61,11 @@ EG Output
 ]
 ```
 
-## emissions current-forecast list
-
-**Inputs:**
-
-| Keyword       | Description                         | Optional? | Default | Example                                           |
-| ------------- | :---------------------------------- | :-------- | :------ | :------------------------------------------------ |
-| `--locations` | Space separated list of locations.  | No        | N/A     | `--locations "useast" "uswest"`                   |
-| `--startTime` | Start time for emissions data       | Yes       | `null`  | `--startTime "2022-05-17T20:45:11.5092741+00:00"` |
-| `--endTime`    | Ending time for emissions data.     | Yes       | `null`  | `--endTime "2022-05-17T20:45:11.5092741+00:00"`    |
-| `--windowSize`| The estimated duration (in minutes) of the workload.     | Yes       | `null`  | `--windowSize 10`    |
-
-**Outputs:**
-
-Outputs a nested `JSON` object with the location, time, rating and duration of each window to `STD Out`. 
+## emissions current-forecast
 
 EG Input
 ```
-.\CarbonAware.CLI.exe emissions current-forecast list --locations eastus
+.\CarbonAware.CLI.exe emissions current-forecast eastus
 ```
 
 EG Output
@@ -133,19 +95,11 @@ EG Output
 ]
 ```
 
-## emissions average-intensity show
-
-**Inputs:**
-
-| Keyword       | Description                         | Optional? | Default | Example                                           |
-| ------------- | :---------------------------------- | :-------- | :------ | :------------------------------------------------ |
-| `--locations` | Space separated list of locations.  | No        | N/A     | `--locations "useast" "uswest"`                   |
-| `--startTime` | Start time for emissions data       | Yes       | `null`  | `--startTime "2022-05-17T20:45:11.5092741+00:00"` |
-| `--endTime`    | Ending time for emissions data.     | Yes       | `null`  | `--toTime "2022-05-17T20:45:11.5092741+00:00"`    |
+## emissions average-intensity
 
 EG Input
 ```
-.\CarbonAware.CLI.exe emissions average-intensity show --locations eastus
+.\CarbonAware.CLI.exe emissions average-intensity eastus
 ```
 
 EG Output
