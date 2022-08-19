@@ -13,7 +13,7 @@ public static class EmissionsRootCommand
         rootCommandBase.Add(emissionsCommand);
 
 
-        emissionsCommand.AddEmissionsListCommand(aggregator);
+        emissionsCommand.AddEmissionsObservedCommand(aggregator);
 
         // Just a placeholder to show extensibility
         //emissionsCommand.AddEmissionsForecastCommand(aggregator);
