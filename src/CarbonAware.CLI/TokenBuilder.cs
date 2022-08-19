@@ -47,21 +47,4 @@ public class TokenBuilder
 
         return argument;
     }
-
-    public static Option<T?> GetOption<T>(string option)
-    {
-        var rm = new ResourceManager("CarbonAware.CLI.CommandOptions", Assembly.GetExecutingAssembly());
-
-        String? jsonString = rm.GetString(option);
-        CommandOption commandOption = JsonSerializer.Deserialize<CommandOption>(jsonString!) ?? new CommandOption();
-
-        Option<T?> resOption = new Option<T?>(commandOption.name!, getDefaultValue: () => default(T))
-        {
-            Description = commandOption.description,
-            IsRequired = commandOption.isRequired
-        };
-
-        return resOption;
-    }
-
 }
