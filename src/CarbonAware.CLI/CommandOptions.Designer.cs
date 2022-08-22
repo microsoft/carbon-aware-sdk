@@ -97,6 +97,15 @@ namespace CarbonAware.CLI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CLI for retrieving data using Carbonaware SDK.
+        /// </summary>
+        internal static string rootCommandDesc {
+            get {
+                return ResourceManager.GetString("rootCommandDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Start time of the data query.
         /// </summary>
         internal static string startTimeDescription {
