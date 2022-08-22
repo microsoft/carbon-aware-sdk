@@ -157,6 +157,12 @@ You can configure the verbosity of the application error messages by setting the
 CarbonAwareVars__VerboseApi="true"
 ```
 
+### WattTimeClient Caching BalancingAuthority
+To improve the interaction with WattTime service, the client added a setting named `BACacheExpirationInSecs` to control when a `BalancingAuthority` instance will expire from caching it in memory. This is useful for batch requests, where multiple WattTime requests can be done for the same location, improving the overall communication with the service. Default value is `60 seconds`.
+```bash
+WattTimeClient__BACacheExpirationInSecs="90"
+```
+
 ### Sample Environment Variable Configuration Using WattTime
 
 ```bash

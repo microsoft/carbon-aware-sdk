@@ -36,7 +36,6 @@ public class WattTimeClient : IWattTimeClient
     private ILogger<WattTimeClient> Log { get; }
 
     private IMemoryCache memoryCache { get; }
-    private const int CacheExpirationInSecs = 60;
 
     public WattTimeClient(IHttpClientFactory factory, IOptionsMonitor<WattTimeClientConfiguration> configurationMonitor, ILogger<WattTimeClient> log, IMemoryCache memoryCache)
     {
@@ -325,7 +324,7 @@ public class WattTimeClient : IWattTimeClient
             };
             var result = await this.MakeRequestGetStreamAsync(Paths.BalancingAuthorityFromLocation, parameters, tags);
             var baValue = await JsonSerializer.DeserializeAsync<BalancingAuthority>(result, options) ?? throw new WattTimeClientException($"Error getting Balancing Authority for latitude {latitude} and longitude {longitude}");
-            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(CacheExpirationInSecs);
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(Configuration.BACacheExpirationInSecs);
             entry.Value = baValue;
             return baValue;
         });
