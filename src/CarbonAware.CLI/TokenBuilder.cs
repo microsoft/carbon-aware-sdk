@@ -13,7 +13,7 @@ public class TokenBuilder
 
     public static Option<DateTime?> CreateStartTimeOption()
     {
-        String? name = resourceManager.GetString("startTime");
+        String? name = resourceManager.GetString("startTimeName");
 
         var startTimeOption = new Option<DateTime?>(name!, getDefaultValue: () => null)
         {
@@ -26,7 +26,7 @@ public class TokenBuilder
 
     public static Option<DateTime?> CreateEndTimeOption()
     {
-        String? name = resourceManager.GetString("endTime");
+        String? name = resourceManager.GetString("endTimeName");
 
         var endTimeOption = new Option<DateTime?>(name!, getDefaultValue: () => null)
         {

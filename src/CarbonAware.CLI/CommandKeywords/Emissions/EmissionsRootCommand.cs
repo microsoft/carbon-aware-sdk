@@ -12,9 +12,8 @@ public static class EmissionsRootCommand
         var emissionsCommand = new Command("emissions", "Main Command for all Emissions related subcommands.");
         rootCommandBase.Add(emissionsCommand);
 
-
         emissionsCommand.AddEmissionsObservedCommand(aggregator);
-
+        emissionsCommand.AddBestEmissionsCommand(aggregator);
     }
 
 }

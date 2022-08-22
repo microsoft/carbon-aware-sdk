@@ -117,11 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="endTime" xml:space="preserve">
-    <value>--endTime</value>
-  </data>
   <data name="endTimeDescription" xml:space="preserve">
     <value>End time of the data query</value>
+  </data>
+  <data name="endTimeName" xml:space="preserve">
+    <value>--endTime</value>
   </data>
   <data name="locations" xml:space="preserve">
     <value>locations</value>
@@ -129,10 +129,13 @@
   <data name="locationsDescription" xml:space="preserve">
     <value>A list of locations</value>
   </data>
-  <data name="startTime" xml:space="preserve">
-    <value>--startTime</value>
-  </data>
   <data name="startTimeDescription" xml:space="preserve">
     <value>Start time of the data query</value>
+  </data>
+  <data name="startTimeName" xml:space="preserve">
+    <value>--startTime</value>
+  </data>
+  <data name="windowSize" xml:space="preserve">
+    <value>windowSize</value>
   </data>
 </root>

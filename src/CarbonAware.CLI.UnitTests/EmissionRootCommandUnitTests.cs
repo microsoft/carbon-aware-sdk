@@ -44,4 +44,3 @@ namespace CarbonAware.CLI.UnitTests
     }
 }
 
-

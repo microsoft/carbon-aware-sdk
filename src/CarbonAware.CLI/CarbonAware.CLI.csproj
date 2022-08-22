@@ -29,9 +29,29 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="CommandOptions.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CommandOptions.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="CommandOptions.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CommandOptions.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="CarbonAware.CLI\CommandOptions.resx">
+		</Resource>
+	</ItemGroup>
 
 </Project>
