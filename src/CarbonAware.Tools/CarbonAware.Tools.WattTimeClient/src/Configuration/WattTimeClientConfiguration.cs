@@ -25,7 +25,7 @@ public class WattTimeClientConfiguration
 
     /// <summary>
     /// Gets or sets the cached expiration time (in seconds) for a BalancingAuthority instance.
-    /// It defaults to 60 secs.
+    /// It defaults to 300 secs.
     /// </summary>
     public int BACacheExpirationInSecs { get; set; } = 300;
 
