@@ -48,7 +48,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.CLI", "CarbonAw
 		{D538572C-1412-47FE-8CC3-950EF295EB7F} = {D538572C-1412-47FE-8CC3-950EF295EB7F}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.CLI.UnitTests", "CarbonAware.CLI.UnitTests\src\CarbonAware.CLI.UnitTests.csproj", "{F8B14EE4-37FB-4D99-A165-2BC1D7201640}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.CLI.UnitTests", "CarbonAware.CLI\test\CarbonAware.CLI.UnitTests.csproj", "{F8B14EE4-37FB-4D99-A165-2BC1D7201640}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
