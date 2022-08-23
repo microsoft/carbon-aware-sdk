@@ -7,6 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <AssemblyName>caw</AssemblyName>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="carbon-aware.json" />
   </ItemGroup>

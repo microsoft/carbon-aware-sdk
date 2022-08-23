@@ -1,10 +1,6 @@
 ﻿using System.CommandLine;
-using System.Globalization;
 using System.Reflection;
 using System.Resources;
-using System.Text.Json;
-
-using CarbonAware.CLI.CommandKeywords;
 
 namespace CarbonAware.CLI;
 
