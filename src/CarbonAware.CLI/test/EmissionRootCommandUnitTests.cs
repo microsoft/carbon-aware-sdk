@@ -25,10 +25,15 @@ namespace CarbonAware.CLI.UnitTests
             EmissionsRootCommand.AddEmissionsCommands(ref command, _aggregator.Object);
 
             var subCommands =  command.Subcommands.AsEnumerable();
-            var listCommand = subCommands.First().Subcommands.First();
 
+            // Find the emissions observed keyword command
+            var observedCommand = subCommands.Where(command => command.Name == "observed").First();
+
+            // We only added the emissions commands so there should be exactly one keyword off the root command
             Assert.That(command.Subcommands.Count, Is.EqualTo(1));
-            Assert.That(listCommand.Options.Count, Is.EqualTo(4));
+
+            // Options are startTime and endTime for the observed keyword
+            Assert.That(observedCommand.Options.Count, Is.EqualTo(2));
         }
 
         [Test]
