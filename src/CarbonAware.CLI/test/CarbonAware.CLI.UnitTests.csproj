@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CarbonAware.Aggregators\src\CarbonAware.Aggregators.csproj" />
-    <ProjectReference Include="..\CarbonAware.CLI\CarbonAware.CLI.csproj" />
+    <ProjectReference Include="..\..\CarbonAware.Aggregators\src\CarbonAware.Aggregators.csproj" />
+    <ProjectReference Include="..\src\CarbonAware.CLI.csproj" />
   </ItemGroup>
 
 </Project>

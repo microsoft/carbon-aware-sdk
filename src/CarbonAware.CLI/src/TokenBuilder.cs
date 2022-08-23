@@ -21,6 +21,7 @@ public sealed class TokenBuilder
         get { return _instance.Value; }
     }
 
+    #region Commands
     public Command CreateEmissionsRootCommand()
     {
         return new Command(
@@ -44,7 +45,9 @@ public sealed class TokenBuilder
             description: GetStringValueFromLibrary("CommandEmissionsObservedDescription")
         );
     }
+    #endregion
 
+    #region Options
     public Option<DateTime?> CreateStartTimeOption()
     {
         var option = new Option<DateTime?>
@@ -66,7 +69,9 @@ public sealed class TokenBuilder
         option.IsRequired = false;
         return option;
     }
+    #endregion
 
+    #region Arguments
     public Argument<string[]> CreateLocationsArgument()
     {
         var argument = new Argument<string[]>
@@ -78,6 +83,7 @@ public sealed class TokenBuilder
 
         return argument;
     }
+    #endregion
 
     /// <summary>
     /// Loads the specified string value from the resource library.
