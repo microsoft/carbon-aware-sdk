@@ -1,7 +1,8 @@
-﻿using CarbonAware.Aggregators.CarbonAware;
-using CarbonAware.Model;
-using System.CommandLine;
+﻿using System.CommandLine;
 using System.Text.Json;
+
+using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Model;
 
 namespace CarbonAware.CLI.CommandKeywords.Emissions;
 

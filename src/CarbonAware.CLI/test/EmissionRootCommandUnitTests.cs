@@ -1,8 +1,10 @@
-﻿using CarbonAware.Aggregators.CarbonAware;
-using CarbonAware.CLI.CommandKeywords.Emissions;
-using Moq;
-using System.CommandLine;
+﻿using System.CommandLine;
 using System.CommandLine.Parsing;
+
+using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.CLI.CommandKeywords.Emissions;
+
+using Moq;
 
 namespace CarbonAware.CLI.UnitTests
 {
