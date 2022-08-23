@@ -19,7 +19,7 @@ class CarbonAwareCLI
 
         var rootCommand = new RootCommand()
         {
-            Description = resourceManager.GetString("rootCommandDesc")
+            Description = resourceManager.GetString("CommandRootDescription")
         };
 
         EmissionsRootCommand.AddEmissionsCommands(ref rootCommand, serviceProvider.GetRequiredService<ICarbonAwareAggregator>());

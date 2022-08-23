@@ -9,7 +9,7 @@ public static class EmissionsRootCommand
 { 
     public static void AddEmissionsCommands(ref RootCommand rootCommandBase, ICarbonAwareAggregator aggregator)
     {
-        var emissionsCommand = new Command("emissions", "Main Command for all Emissions related subcommands.");
+        var emissionsCommand = TokenBuilder.Instance.CreateEmissionsRootCommand();
         rootCommandBase.Add(emissionsCommand);
 
         emissionsCommand.AddEmissionsObservedCommand(aggregator);

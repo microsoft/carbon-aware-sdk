@@ -7,44 +7,86 @@ using System.Text.Json;
 
 namespace CarbonAware.CLI;
 
-public class TokenBuilder
+public sealed class TokenBuilder
 {
-    static ResourceManager resourceManager = new ResourceManager("CarbonAware.CLI.CommandOptions", Assembly.GetExecutingAssembly());
-
-    public static Option<DateTime?> CreateStartTimeOption()
+    private ResourceManager resourceManager;
+    private TokenBuilder()
     {
-        String? name = resourceManager.GetString("startTimeName");
-
-        var startTimeOption = new Option<DateTime?>(name!, getDefaultValue: () => null)
-        {
-            Description = resourceManager.GetString("startTimeDescription"),
-            IsRequired = false
-        };
-
-        return startTimeOption;
+        resourceManager = new ResourceManager("CarbonAware.CLI.CommandOptions", Assembly.GetExecutingAssembly());
+    }
+    private static readonly Lazy<TokenBuilder> _instance = new Lazy<TokenBuilder> (
+        () => new TokenBuilder());
+    public static TokenBuilder Instance
+    {
+        get { return _instance.Value; }
     }
 
-    public static Option<DateTime?> CreateEndTimeOption()
+    public Command CreateEmissionsRootCommand()
     {
-        String? name = resourceManager.GetString("endTimeName");
-
-        var endTimeOption = new Option<DateTime?>(name!, getDefaultValue: () => null)
-        {
-            Description = resourceManager.GetString("endTimeDescription"),
-            IsRequired = false
-        };
-
-        return endTimeOption;
+        return new Command(
+            name: GetStringValueFromLibrary("CommandEmissionsRootName"),
+            description: GetStringValueFromLibrary("CommandEmissionsRootDescription")
+        );
     }
 
-    public static Argument<string[]> CreateLocationsArgument()
+    public Command CreateEmissionsBestCommand()
     {
-        String? name = resourceManager.GetString("locations");
-        String? description = resourceManager.GetString("locatiomsDescription");
+        return new Command(
+            name: GetStringValueFromLibrary("CommandEmissionsBestName"),
+            description: GetStringValueFromLibrary("CommandEmissionsBestDescription")
+        );
+    }
 
-        var argument = new Argument<string[]>(name: name, description);
+    public Command CreateEmissionsObservedCommand()
+    {
+        return new Command(
+            name: GetStringValueFromLibrary("CommandEmissionsObservedName"),
+            description: GetStringValueFromLibrary("CommandEmissionsObservedDescription")
+        );
+    }
+
+    public Option<DateTime?> CreateStartTimeOption()
+    {
+        var option = new Option<DateTime?>
+            (
+                name: GetStringValueFromLibrary("OptionStartTimeName"),
+                description: GetStringValueFromLibrary("OptionStartTimeDescription")
+            );
+        option.IsRequired = false;
+        return option;
+    }
+
+    public Option<DateTime?> CreateEndTimeOption()
+    {
+        var option = new Option<DateTime?>
+            (
+                name: GetStringValueFromLibrary("OptionEndTimeName"),
+                description: GetStringValueFromLibrary("OptionEndTimeDescription")
+            );
+        option.IsRequired = false;
+        return option;
+    }
+
+    public Argument<string[]> CreateLocationsArgument()
+    {
+        var argument = new Argument<string[]>
+            (
+                name: GetStringValueFromLibrary("ArgLocationsName"),
+                description: GetStringValueFromLibrary("ArgLocationsDescription")
+            );
         argument.Arity = ArgumentArity.OneOrMore;
 
         return argument;
     }
+
+    /// <summary>
+    /// Loads the specified string value from the resource library.
+    /// </summary>
+    /// <param name="key">The key into the resource library corresponding to the desired string.</param>
+    /// <returns>The corresponding string. If no string is found for the specified string, an exception will be thrown.</returns>
+    private String GetStringValueFromLibrary(string key)
+    {
+        return resourceManager.GetString(key) ?? key;
+    }
+
 }
