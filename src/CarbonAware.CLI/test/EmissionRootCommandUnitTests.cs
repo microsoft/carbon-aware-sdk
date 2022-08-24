@@ -10,7 +10,7 @@ namespace CarbonAware.CLI.UnitTests
 {
     class EmissionCommandUnitTests
     {
-        Mock<ICarbonAwareAggregator> _aggregator;
+        Mock<ICarbonAwareAggregator>? _aggregator;
 
         [SetUp]
         public void Setup()
@@ -22,7 +22,11 @@ namespace CarbonAware.CLI.UnitTests
         public void AddEmissionsCommand_CreatesCorrectSubCommandAndOptions()
         {
             var command = new RootCommand();
-            EmissionsRootCommand.AddEmissionsCommands(ref command, _aggregator.Object);
+            if (_aggregator != null)
+            {
+                EmissionsRootCommand.AddEmissionsCommands(ref command, _aggregator.Object);
+            }
+            else { Assert.NotNull(_aggregator); }
 
             var subCommands = command.Subcommands.AsEnumerable();
             Assert.That(subCommands.First().Name, Is.EqualTo("emissions"));
@@ -45,12 +49,20 @@ namespace CarbonAware.CLI.UnitTests
         public void Providing_RequiredArguments_SuccessfullyCallsAggregator()
         {
             var command = new RootCommand();
-            EmissionsRootCommand.AddEmissionsCommands(ref command, _aggregator.Object);
-            String[] args = {"emissions", "observed", "eastus"};
-            
-            var exitCode = command.Invoke(args);
-            
-            _aggregator.Verify(a => a.GetEmissionsDataAsync(It.IsAny<Dictionary<string, object>>()), Times.Once);
+            if (_aggregator != null)
+            {
+                EmissionsRootCommand.AddEmissionsCommands(ref command, _aggregator.Object);
+                String[] args = {"emissions", "observed", "eastus"};
+                
+                var exitCode = command.Invoke(args);
+                
+                _aggregator.Verify(a => a.GetEmissionsDataAsync(It.IsAny<Dictionary<string, object>>()), Times.Once);
+            }
+            else 
+            {
+                Assert.NotNull(_aggregator);
+            }
+
         }
 
     }
