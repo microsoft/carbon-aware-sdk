@@ -163,9 +163,9 @@ public class CarbonAwareControllerTests : TestsBase
         var aggregator = CreateCarbonAwareAggregatorWithAverageCI(data);
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object,aggregator.Object);
 
-        var request1 = new CarbonIntensityBatchDTO { SingleLocation = location, Start = start1, End = end1 };
-        var request2 = new CarbonIntensityBatchDTO { SingleLocation = location, Start = start2, End = end2 };
-        var requestList = new List<CarbonIntensityBatchDTO> { request1, request2 };
+        var request1 = new CarbonIntensityBatchParametersDTO { SingleLocation = location, Start = start1, End = end1 };
+        var request2 = new CarbonIntensityBatchParametersDTO { SingleLocation = location, Start = start2, End = end2 };
+        var requestList = new List<CarbonIntensityBatchParametersDTO> { request1, request2 };
         // Act
         var result = await controller.GetAverageCarbonIntensityBatch(requestList);
 

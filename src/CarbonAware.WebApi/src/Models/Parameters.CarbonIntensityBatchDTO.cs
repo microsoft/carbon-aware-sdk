@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace CarbonAware.WebApi.Models;
 
-public class CarbonIntensityBatchDTO : CarbonAwareParametersBaseDTO
+public class CarbonIntensityBatchParametersDTO : CarbonAwareParametersBaseDTO
 {
     /// <summary>The location name where workflow is run </summary>
     /// <example>eastus</example>

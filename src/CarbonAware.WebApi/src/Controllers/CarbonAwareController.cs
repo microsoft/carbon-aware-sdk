@@ -150,11 +150,12 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            var result = await Task.WhenAll(requestedForecasts.Select(async forecastParameters =>
+            var result = new List<EmissionsForecastDTO>();
+            foreach ( var forecastParameters in requestedForecasts)
             {
                 var forecast = await _aggregator.GetForecastDataAsync(forecastParameters);
-                return EmissionsForecastDTO.FromEmissionsForecast(forecast);
-            }));
+                result.Add(EmissionsForecastDTO.FromEmissionsForecast(forecast));
+            };
 
             return Ok(result);
         }
@@ -212,22 +213,23 @@ public class CarbonAwareController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ValidationProblemDetails))]
     [HttpPost("average-carbon-intensity/batch")]
-    public async Task<IActionResult> GetAverageCarbonIntensityBatch([FromBody] IEnumerable<CarbonIntensityBatchDTO> requestedCarbonIntensities)
+    public async Task<IActionResult> GetAverageCarbonIntensityBatch([FromBody] IEnumerable<CarbonIntensityBatchParametersDTO> requestedCarbonIntensities)
     {
         using (var activity = Activity.StartActivity())
         {
-            var result = await Task.WhenAll(requestedCarbonIntensities.Select(async carbonIntensityBatchDTO =>
+            var result = new List<CarbonIntensityDTO>();
+            foreach ( var carbonIntensityBatchDTO in requestedCarbonIntensities)
             {
-                var carbonIntensity = await this._aggregator.CalculateAverageCarbonIntensityAsync(carbonIntensityBatchDTO);
-                CarbonIntensityDTO carbonIntensityDTO = new CarbonIntensityDTO
+                var carbonIntensityValue = await this._aggregator.CalculateAverageCarbonIntensityAsync(carbonIntensityBatchDTO);
+                var carbonIntensityDTO = new CarbonIntensityDTO()
                 {
                     Location = carbonIntensityBatchDTO.SingleLocation,
                     StartTime = carbonIntensityBatchDTO.Start,
                     EndTime = carbonIntensityBatchDTO.End,
-                    CarbonIntensity = carbonIntensity,
+                    CarbonIntensity = carbonIntensityValue,
                 };
-                return carbonIntensityDTO;
-            }));
+                result.Add(carbonIntensityDTO);
+            }
 
             return Ok(result);
         }
