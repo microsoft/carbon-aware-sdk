@@ -1,8 +1,8 @@
-﻿using CarbonAware.Aggregators.CarbonAware;
-using CarbonAware.Model;
-using System.CommandLine;
+﻿using System.CommandLine;
 using System.Text.Json;
 
+using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Model;
 
 namespace CarbonAware.CLI.CommandKeywords.Emissions;
 
@@ -20,13 +20,13 @@ public static class EmissionsBestCommand
     {
         _aggregator = aggregator;
 
-        var command = new Command("best", "Lists best emission data for given locations and times.");
+        var command = TokenBuilder.Instance.CreateEmissionsBestCommand();
         parent.AddCommand(command);
 
         // Define options and arguments
-        var locationsArgument = TokenBuilder.CreateLocationsArgument();
-        var startTimeOption = TokenBuilder.CreateStartTimeOption();
-        var endTimeOption = TokenBuilder.CreateEndTimeOption();
+        var locationsArgument = TokenBuilder.Instance.CreateLocationsArgument();
+        var startTimeOption = TokenBuilder.Instance.CreateStartTimeOption();
+        var endTimeOption = TokenBuilder.Instance.CreateEndTimeOption();
 
         command.AddArgument(locationsArgument);
         command.AddOption(startTimeOption);

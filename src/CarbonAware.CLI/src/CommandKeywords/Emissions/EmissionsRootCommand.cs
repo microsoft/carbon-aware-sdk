@@ -1,7 +1,8 @@
-﻿using CarbonAware.Aggregators.CarbonAware;
-using CarbonAware.Model;
-using System.CommandLine;
+﻿using System.CommandLine;
 using System.Text.Json;
+
+using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Model;
 
 namespace CarbonAware.CLI.CommandKeywords.Emissions;
 
@@ -9,7 +10,7 @@ public static class EmissionsRootCommand
 { 
     public static void AddEmissionsCommands(ref RootCommand rootCommandBase, ICarbonAwareAggregator aggregator)
     {
-        var emissionsCommand = new Command("emissions", "Main Command for all Emissions related subcommands.");
+        var emissionsCommand = TokenBuilder.Instance.CreateEmissionsRootCommand();
         rootCommandBase.Add(emissionsCommand);
 
         emissionsCommand.AddEmissionsObservedCommand(aggregator);
