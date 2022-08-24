@@ -324,7 +324,7 @@ public class WattTimeClient : IWattTimeClient
             };
             var result = await this.MakeRequestGetStreamAsync(Paths.BalancingAuthorityFromLocation, parameters, tags);
             var baValue = await JsonSerializer.DeserializeAsync<BalancingAuthority>(result, options) ?? throw new WattTimeClientException($"Error getting Balancing Authority for latitude {latitude} and longitude {longitude}");
-            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(Configuration.BACacheExpirationInSecs);
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(Configuration.BalancingAuthorityCacheTTL);
             entry.Value = baValue;
             return baValue;
         });
