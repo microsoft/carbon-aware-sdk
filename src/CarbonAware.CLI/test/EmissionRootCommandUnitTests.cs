@@ -55,6 +55,7 @@ namespace CarbonAware.CLI.UnitTests
                 String[] args = {"emissions", "observed", "eastus"};
                 
                 var exitCode = command.Invoke(args);
+                Assert.AreEqual(exitCode, 0);
                 
                 _aggregator.Verify(a => a.GetEmissionsDataAsync(It.IsAny<Dictionary<string, object>>()), Times.Once);
             }
