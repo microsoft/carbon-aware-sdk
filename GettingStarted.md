@@ -158,7 +158,7 @@ CarbonAwareVars__VerboseApi="true"
 ```
 
 ### WattTimeClient Caching BalancingAuthority
-To improve the interaction with WattTime service, the client added a setting named `BACacheExpirationInSecs` to control when a `BalancingAuthority` instance will expire from caching it in memory. This is useful for batch requests, where multiple WattTime requests can be done for the same location, improving the overall communication with the service. Default value is `300 seconds`.
+To improve performance communicating with the WattTime API service, the client caches the data mapping location coordinates to balancing authorities.  By default, this data is stored in an in-memory cache for `XXXX` seconds, but expiration can be configured using the setting `BalancingAuthorityCacheTTL` (Set to "0" to not use cache).  The regional boundaries of a balancing authority tend to be stable, but as they can change, the [WattTime documentation](https://www.watttime.org/api-documentation/#determine-grid-region) recommends not caching for longer than 1 month.
 ```bash
 WattTimeClient__BalancingAuthorityCacheTTL="90"
 ```
