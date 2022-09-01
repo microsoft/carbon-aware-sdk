@@ -4,7 +4,7 @@
 Accepted
 
 ## Context
-There are currently two endpoints (`emissions/forecasts/batch` , `emissions/average-carbon-intensity/batch`) that require passing a payload as an array of items. This array can be have as many items as the user wants, and it can take sometime to be processed which incurs in a delay to the client, which might feel that the service is irresponsive. Also, since these requests return enumerable items, and those are buffered before the client gets it, it impacts the overall memory footprint of the WebApp. By changing the signature of these endpoints to return an `IAsyncEnumerable` collection, it would help to deal with these issues.
+There are currently two endpoints (`emissions/forecasts/batch` , `emissions/average-carbon-intensity/batch`) that require passing a payload as an array of items. This array can be have as many items as the user wants, and it can take sometime to be processed which incurs in a delay to the client, which might feel that the service is irresponsive. Also, since these requests return enumerable items, and those are buffered before the client gets it, it impacts the overall memory footprint of the WebApp. Changing the signature of these endpoints to return an `IAsyncEnumerable` collection streams the response and helps to deal with these memory concerns.
 
 ## Decision
 The decision is to hold this change since there are tradeoff with more weight currently than the issues mentioned:
