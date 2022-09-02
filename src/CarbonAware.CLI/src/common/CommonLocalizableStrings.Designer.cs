@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CarbonAware.CLI.options {
+namespace CarbonAware.CLI.common {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace CarbonAware.CLI.options {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class LocalizableStrings {
+    internal class CommonLocalizableStrings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal LocalizableStrings() {
+        internal CommonLocalizableStrings() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace CarbonAware.CLI.options {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CarbonAware.CLI.options.LocalizableStrings", typeof(LocalizableStrings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CarbonAware.CLI.common.CommonLocalizableStrings", typeof(CommonLocalizableStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -70,24 +70,6 @@ namespace CarbonAware.CLI.options {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to --endTime.
-        /// </summary>
-        internal static string endTimeName {
-            get {
-                return ResourceManager.GetString("endTimeName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to --l.
-        /// </summary>
-        internal static string locationAlias {
-            get {
-                return ResourceManager.GetString("locationAlias", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to A list of locations.
         /// </summary>
         internal static string locationDescription {
@@ -97,29 +79,11 @@ namespace CarbonAware.CLI.options {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to --location.
-        /// </summary>
-        internal static string locationName {
-            get {
-                return ResourceManager.GetString("locationName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Start time of emissions data.
         /// </summary>
         internal static string startTimeDescription {
             get {
                 return ResourceManager.GetString("startTimeDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to --startTime.
-        /// </summary>
-        internal static string startTimeName {
-            get {
-                return ResourceManager.GetString("startTimeName", resourceCulture);
             }
         }
     }

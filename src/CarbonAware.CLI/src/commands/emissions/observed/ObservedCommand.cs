@@ -1,7 +1,7 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using CarbonAware.Aggregators.CarbonAware;
-using CarbonAware.CLI.options;
+using CarbonAware.CLI.Common;
 
 namespace CarbonAware.CLI.Commands;
 

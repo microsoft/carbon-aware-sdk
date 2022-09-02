@@ -30,21 +30,21 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>LocalizableStrings.resx</DependentUpon>
     </Compile>
-    <Compile Update="options\LocalizableStrings.Designer.cs">
+    <Compile Update="common\CommonLocalizableStrings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>LocalizableStrings.resx</DependentUpon>
+      <DependentUpon>CommonLocalizableStrings.resx</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="commands\emissions\LocalizableStrings.resx">
+    <EmbeddedResource Update="commands\emissions\LocalizableStrings.resx" Namespace="CarbonAware.CLI.Commands.Emissions">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>LocalizableStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="options\LocalizableStrings.resx">
+    <EmbeddedResource Update="common\CommonLocalizableStrings.resx" Namespace="CarbonAware.CLI.Common">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>LocalizableStrings.Designer.cs</LastGenOutput>
+      <LastGenOutput>CommonLocalizableStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

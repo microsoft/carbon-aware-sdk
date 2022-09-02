@@ -1,4 +1,4 @@
-using CarbonAware.CLI.options;
+using CarbonAware.CLI.Common;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 
