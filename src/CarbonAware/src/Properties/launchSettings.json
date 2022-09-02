@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CarbonAware": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\apps\\carbon-aware-sdk\\src\\CarbonAware.CLI\\src\\bin\\Debug\\net6.0"
+    }
+  }
+}
