@@ -1,11 +1,10 @@
-﻿using CarbonAware.CLI.common;
-using System.CommandLine;
-
+﻿using System.CommandLine;
 
 namespace CarbonAware.CLI.Common
 {
     internal class CommonOptions
     {
+        public static readonly Option<bool> VerbosityOption = new Option<bool>("--verbosity", CommonLocalizableStrings.verbosityDescription);
         public static readonly Option<string> RequiredLocationOption = new Option<string>(
             new string[] { "--location", "-l" }, 
             CommonLocalizableStrings.locationDescription)

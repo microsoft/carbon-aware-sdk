@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CarbonAware.CLI.commands.emissions {
+namespace CarbonAware.CLI.Commands.emissions {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace CarbonAware.CLI.commands.emissions {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CarbonAware.CLI.commands.emissions.LocalizableStrings", typeof(LocalizableStrings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CarbonAware.CLI.Commands.emissions.LocalizableStrings", typeof(LocalizableStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,24 @@ namespace CarbonAware.CLI.commands.emissions {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A list of locations.
+        /// </summary>
+        internal static string locationDescription {
+            get {
+                return ResourceManager.GetString("locationDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to location.
+        /// </summary>
+        internal static string locationName {
+            get {
+                return ResourceManager.GetString("locationName", resourceCulture);
             }
         }
     }

@@ -19,7 +19,13 @@ class EmissionsCommand : Command
     private void Run(InvocationContext context)
     {
         var startTime = context.ParseResult.GetValueForOption(_startTimeOption);
+        var isVerbose = context.ParseResult.GetValueForOption(CommonOptions.VerbosityOption);
         context.Console.Out.Write($"Emissions: {startTime}");
+        if (isVerbose)
+        {
+            context.Console.WriteLine($"VERBOSITY IS ON!");
+
+        }
         context.ExitCode = 0;
     }
 }

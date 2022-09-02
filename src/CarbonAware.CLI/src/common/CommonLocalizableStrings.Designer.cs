@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CarbonAware.CLI.common {
+namespace CarbonAware.CLI.Common {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace CarbonAware.CLI.common {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CarbonAware.CLI.common.CommonLocalizableStrings", typeof(CommonLocalizableStrings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CarbonAware.CLI.Common.CommonLocalizableStrings", typeof(CommonLocalizableStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -84,6 +84,15 @@ namespace CarbonAware.CLI.common {
         internal static string startTimeDescription {
             get {
                 return ResourceManager.GetString("startTimeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verbose output flag.
+        /// </summary>
+        internal static string verbosityDescription {
+            get {
+                return ResourceManager.GetString("verbosityDescription", resourceCulture);
             }
         }
     }
