@@ -1,4 +1,5 @@
-﻿using System.CommandLine;
+﻿using CarbonAware.CLI.common;
+using System.CommandLine;
 
 namespace CarbonAware.CLI.Common
 {
@@ -13,5 +14,12 @@ namespace CarbonAware.CLI.Common
             };
         public static readonly Option<DateTimeOffset> startTimeOption = new Option<DateTimeOffset>("--startTime", CommonLocalizableStrings.startTimeDescription);
         public static readonly Option<DateTimeOffset> endTimeOption = new Option<DateTimeOffset>("--endTime", CommonLocalizableStrings.endTimeDescription);
+    
+        public static void AddAllOptionsToCommand(Command command) 
+        {
+            command.AddOption(RequiredLocationOption);
+            command.AddOption(startTimeOption);
+            command.AddOption(endTimeOption);
+        }
     }
 }
