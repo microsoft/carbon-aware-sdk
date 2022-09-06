@@ -1,16 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <AssemblyName>caw</AssemblyName>
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <!-- <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers> -->
+    <SelfContained>true</SelfContained>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
-    <AssemblyName>CarbonAware.CLI</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UserSecretsId>34d82203-20b1-4fcd-9bd4-3b247f13bad7</UserSecretsId>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <AssemblyName>caw</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

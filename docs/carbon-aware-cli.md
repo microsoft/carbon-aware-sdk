@@ -2,97 +2,83 @@
 
 The following is the documentation for the Carbon Aware CLI
 
-## Format
+- [Carbon Aware CLI Reference](#carbon-aware-cli-reference)
+  - [Build and Install](#build-and-install)
+  - [Using the CLI](#using-the-cli)
+    - [emissions](#emissions)
+      - [Description](#description)
+      - [Usage](#usage)
+      - [Options](#options)
+      - [Example](#example)
 
-`$ CarbonAwareCLI -t <time> -l <location 1> <location 2> -d <path to data file>`
+## Build and Install
 
+Build the CLI using the `dotnet publish` command:
 
-## Parameters
+```bash
+dotnet publish ./src/CarbonAware.CLI/src/CarbonAware.CLI.csproj -c Release -o <path to your desired installation target>
+```
 
-| Short  | Long         | Required / Optional | Description | 
-|--------|--------------|---------------------|-------------|
-| -l     | --location   | Required            |  The location is a comma seperated list of named locations or regions specific to the emissions data provided.           |
-| -d     | --data-file  | Required            | Path to the emissions source data file | 
-| -t     | --fromTime   | Optional            |  The desired date and time to retrieve the emissions for.  Defaults to 'now'. |
-| -o     | --output     | Optional            | Output format.  Options: console, json.  Default is `json` | 
-| -v     | --verbose    | Optional            | Verbose output | 
-|        | --lowest     | Optional            | Only return the results with the lowest emissions.  |
+By default this will target `linux-x64` operating systems.  To build for another platform, like Windows or MacOS you can specify like this:
 
-## Examples
+```bash
+dotnet publish .\src\CarbonAware.CLI\src\CarbonAware.CLI.csproj -c Release -r win-x64 --self-contained -o <path to your desired installation target>
+```
 
-### Example 1 - Get the current emissions data for a specified location
-`$ ./CarbonAwareCLI -l westus -d "azure-emissions-data.json"`
-#### Response
-<pre>
-[
-  {
-    "Location": "westus",
-    "Time": "2021-11-17T04:45:11.5104572+00:00",
-    "Rating": 31.0
-  }
-]
-</pre>
+## Using the CLI
 
-### Example 2 - Get the current emissions for multiple locations
- `$ ./CarbonAwareCLI -l westus eastus -d "azure-emissions-data.json"`
-#### Response
-<pre>
-[
-  {
-    "Location": "westus",
-    "Time": "2021-11-17T04:45:11.5104572+00:00",
-    "Rating": 31.0
-  },
-  {
-    "Location": "eastus",
-    "Time": "2021-11-17T04:45:11.509182+00:00",
-    "Rating": 59.0
-  }
-]
-</pre>
+To use the CLI for the first time, navigate to your installation directory and run the binary with the `-h` flag to see the help menu.
 
+On Windows: `.\caw.exe -h`
+On MacOS/Linux: `.\caw -h`
 
-### Example 3 - Get the emissions for multiple locations at a specified time
-`$ ./CarbonAwareCLI -l westus eastus -t 2021-11-28 -d "azure-emissions-data.json"`
-#### Response
-<pre>
-[
-  {
-    "Location": "westus",
-    "Time": "2021-11-27T20:45:11.5104595+00:00",
-    "Rating": 14.0
-  },
-  {
-    "Location": "eastus",
-    "Time": "2021-11-27T20:45:11.5092264+00:00",
-    "Rating": 17.0
-  }
-]
-</pre>
+### emissions
 
-### Example 4 - Get the lowest emissions for multiple locations at a specified time 
-`$ ./CarbonAwareCLI -l westus eastus -t 2021-11-28 --lowest -d "azure-emissions-data.json"`
-#### Response
-<pre>
-[
-  {
-    "Location": "westus",
-    "Time": "2021-11-27T20:45:11.5104595+00:00",
-    "Rating": 14.0
-  }
-]
-</pre>
+#### Description
 
-### Example 5 - Get the lowest emissions for multiple locations at a specified time window
-`$ ./CarbonAwareCLI -l westus eastus -t 2021-11-27 --toTime 2021-11-29 --lowest -d "azure-emissions-data.json"`
-#### Response
-<pre>
-[
-  {
-    "Location": "eastus",
-    "Time": "2021-11-27T12:45:11.5092264+00:00",
-    "Rating": 5.0
-  }
-]
-</pre>
+emissions keyword
 
+#### Usage
+
+caw emissions [options]
+
+#### Options
+
+```text
+  -l, --location <location> (REQUIRED)  A list of locations
+  --startTime <startTime>               Start time of emissions data
+  --endTime <endTime>                   End time of emissions data
+  --verbosity                           Verbose output flag
+  -?, -h, --help                        Show help and usage information
+```
+
+#### Example
+
+command: `.\caw.exe emissions -l eastus`
+
+output:
+
+```text
+EmissionsData { Location = eastus, Time = 8/30/2022 12:45:11 PM +00:00, Rating = 65, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 8/30/2022 8:45:11 PM +00:00, Rating = 65, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 8/31/2022 4:45:11 AM +00:00, Rating = 4, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 8/31/2022 12:45:11 PM +00:00, Rating = 53, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 8/31/2022 8:45:11 PM +00:00, Rating = 49, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/1/2022 4:45:11 AM +00:00, Rating = 81, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/1/2022 12:45:11 PM +00:00, Rating = 30, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/1/2022 8:45:11 PM +00:00, Rating = 38, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/2/2022 4:45:11 AM +00:00, Rating = 19, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/2/2022 12:45:11 PM +00:00, Rating = 54, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/2/2022 8:45:11 PM +00:00, Rating = 55, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/3/2022 4:45:11 AM +00:00, Rating = 5, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/3/2022 12:45:11 PM +00:00, Rating = 22, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/3/2022 8:45:11 PM +00:00, Rating = 84, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/4/2022 4:45:11 AM +00:00, Rating = 30, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/4/2022 12:45:11 PM +00:00, Rating = 16, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/4/2022 8:45:11 PM +00:00, Rating = 60, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/5/2022 4:45:11 AM +00:00, Rating = 90, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/5/2022 12:45:11 PM +00:00, Rating = 16, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/5/2022 8:45:11 PM +00:00, Rating = 83, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/6/2022 4:45:11 AM +00:00, Rating = 73, Duration = 08:00:00 }
+EmissionsData { Location = eastus, Time = 9/6/2022 12:45:11 PM +00:00, Rating = 84, Duration = 08:00:00 }
+```
