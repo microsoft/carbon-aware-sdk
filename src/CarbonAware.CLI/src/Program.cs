@@ -23,8 +23,7 @@ var serviceProvider = new ServiceCollection()
     .BuildServiceProvider();
 
 
-var rootCommand = new RootCommand(description: "Console App to execute commands for obtaining carbon intensity data for a given location and time period");
-rootCommand.AddGlobalOption(CommonOptions.VerbosityOption);
+var rootCommand = new RootCommand(description: CommonLocalizableStrings.RootCommandDescription);
 rootCommand.AddCommand(new EmissionsCommand());
 
 var parser = new CommandLineBuilder(rootCommand)

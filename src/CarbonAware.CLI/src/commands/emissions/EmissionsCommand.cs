@@ -1,15 +1,22 @@
 using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.CLI.Commands.Emissions;
 using CarbonAware.CLI.Common;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Text.Json;
 
 namespace CarbonAware.CLI.Commands;
 
 class EmissionsCommand : Command
 {
-    public EmissionsCommand() : base("emissions", "emissions keyword")
+    private Option<string> _requiredLocationOption = CommonOptions.RequiredLocationOption;
+    private Option<DateTimeOffset?> _startTimeOption = CommonOptions.StartTimeOption;
+    private Option<DateTimeOffset?> _endTimeOption = CommonOptions.EndTimeOption;
+    public EmissionsCommand() : base("emissions", LocalizableStrings.EmissionsCommandDescription)
     {
-        CommonOptions.AddAllOptionsToCommand(this);
+        AddOption(_requiredLocationOption);
+        AddOption(_startTimeOption);
+        AddOption(_endTimeOption);
         this.SetHandler(this.Run);
     }
 
@@ -21,13 +28,20 @@ class EmissionsCommand : Command
 
         // Get the arguments and options to build the parameters.
         var location = context.ParseResult.GetValueForOption<string>(CommonOptions.RequiredLocationOption) ?? "";
-        var parameters = new CarbonAwareParametersBaseDTO() { MultipleLocations = new string[] { location } };
+        var startTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(CommonOptions.StartTimeOption);
+        var endTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(CommonOptions.EndTimeOption);
+        
+        var parameters = new CarbonAwareParametersBaseDTO() { 
+            MultipleLocations = new string[] { location },
+            Start = startTime,
+            End = endTime
+        };
 
         // Call the aggregator.
         var results = await aggregator.GetEmissionsDataAsync(parameters);
         foreach (var result in results)
         {
-            context.Console.WriteLine(result.ToString());
+            context.Console.WriteLine(JsonSerializer.Serialize(result));
         }
         context.ExitCode = 0;
     }

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CarbonAware.CLI.common {
+namespace CarbonAware.CLI.Common {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace CarbonAware.CLI.common {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CarbonAware.CLI.common.CommonLocalizableStrings", typeof(CommonLocalizableStrings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CarbonAware.CLI.Common.CommonLocalizableStrings", typeof(CommonLocalizableStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,36 +63,36 @@ namespace CarbonAware.CLI.common {
         /// <summary>
         ///   Looks up a localized string similar to End time of emissions data.
         /// </summary>
-        internal static string endTimeDescription {
+        internal static string EndTimeDescription {
             get {
-                return ResourceManager.GetString("endTimeDescription", resourceCulture);
+                return ResourceManager.GetString("EndTimeDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to A list of locations.
         /// </summary>
-        internal static string locationDescription {
+        internal static string LocationDescription {
             get {
-                return ResourceManager.GetString("locationDescription", resourceCulture);
+                return ResourceManager.GetString("LocationDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Console App to execute commands for obtaining carbon intensity data for a given location and time period.
+        /// </summary>
+        internal static string RootCommandDescription {
+            get {
+                return ResourceManager.GetString("RootCommandDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Start time of emissions data.
         /// </summary>
-        internal static string startTimeDescription {
+        internal static string StartTimeDescription {
             get {
-                return ResourceManager.GetString("startTimeDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Verbose output flag.
-        /// </summary>
-        internal static string verbosityDescription {
-            get {
-                return ResourceManager.GetString("verbosityDescription", resourceCulture);
+                return ResourceManager.GetString("StartTimeDescription", resourceCulture);
             }
         }
     }

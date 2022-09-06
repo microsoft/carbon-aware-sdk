@@ -38,11 +38,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Commands\emissions\LocalizableStrings.resx" Namespace="CarbonAware.CLI.Commands.Emissions">
+    <EmbeddedResource Update="Commands\emissions\LocalizableStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>LocalizableStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Common\CommonLocalizableStrings.resx" Namespace="CarbonAware.CLI.Common">
+    <EmbeddedResource Update="Common\CommonLocalizableStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CommonLocalizableStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
