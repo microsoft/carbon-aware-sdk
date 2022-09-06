@@ -58,26 +58,26 @@ command: `.\caw.exe emissions -l eastus`
 output:
 
 ```text
-EmissionsData { Location = eastus, Time = 8/30/2022 12:45:11 PM +00:00, Rating = 65, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 8/30/2022 8:45:11 PM +00:00, Rating = 65, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 8/31/2022 4:45:11 AM +00:00, Rating = 4, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 8/31/2022 12:45:11 PM +00:00, Rating = 53, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 8/31/2022 8:45:11 PM +00:00, Rating = 49, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/1/2022 4:45:11 AM +00:00, Rating = 81, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/1/2022 12:45:11 PM +00:00, Rating = 30, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/1/2022 8:45:11 PM +00:00, Rating = 38, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/2/2022 4:45:11 AM +00:00, Rating = 19, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/2/2022 12:45:11 PM +00:00, Rating = 54, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/2/2022 8:45:11 PM +00:00, Rating = 55, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/3/2022 4:45:11 AM +00:00, Rating = 5, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/3/2022 12:45:11 PM +00:00, Rating = 22, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/3/2022 8:45:11 PM +00:00, Rating = 84, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/4/2022 4:45:11 AM +00:00, Rating = 30, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/4/2022 12:45:11 PM +00:00, Rating = 16, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/4/2022 8:45:11 PM +00:00, Rating = 60, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/5/2022 4:45:11 AM +00:00, Rating = 90, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/5/2022 12:45:11 PM +00:00, Rating = 16, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/5/2022 8:45:11 PM +00:00, Rating = 83, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/6/2022 4:45:11 AM +00:00, Rating = 73, Duration = 08:00:00 }
-EmissionsData { Location = eastus, Time = 9/6/2022 12:45:11 PM +00:00, Rating = 84, Duration = 08:00:00 }
+[{"Location":"eastus","Time":"2022-08-30T12:45:11+00:00","Rating":65,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-08-30T20:45:11+00:00","Rating":65,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-08-31T04:45:11+00:00","Rating":4,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-08-31T12:45:11+00:00","Rating":53,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-08-31T20:45:11+00:00","Rating":49,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-01T04:45:11+00:00","Rating":81,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-01T12:45:11+00:00","Rating":30,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-01T20:45:11+00:00","Rating":38,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-02T04:45:11+00:00","Rating":19,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-02T12:45:11+00:00","Rating":54,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-02T20:45:11+00:00","Rating":55,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-03T04:45:11+00:00","Rating":5,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-03T12:45:11+00:00","Rating":22,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-03T20:45:11+00:00","Rating":84,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-04T04:45:11+00:00","Rating":30,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-04T12:45:11+00:00","Rating":16,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-04T20:45:11+00:00","Rating":60,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-05T04:45:11+00:00","Rating":90,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-05T12:45:11+00:00","Rating":16,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-05T20:45:11+00:00","Rating":83,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-06T04:45:11+00:00","Rating":73,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-09-06T12:45:11+00:00","Rating":84,"Duration":"08:00:00"}]
 ```
