@@ -29,11 +29,8 @@
   </ItemGroup>
   
   <Target Name="CopyDataFiles" AfterTargets="Build">
-    <ItemGroup>
-      <DataFiles Include="$(ProjectDir)..\..\..\data\data-files\test-data-azure-emissions.json" />
-    </ItemGroup>
-
-    <Copy SourceFiles="@(DataFiles)" DestinationFolder="$(TargetDir)\data-files" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(ProjectDir)..\..\..\data\data-files\test-data-azure-emissions.json" DestinationFiles="$(ProjectDir)..\..\..\data\data-files\demo.json" SkipUnchangedFiles="true" />
+    <Move SourceFiles="$(ProjectDir)..\..\..\data\data-files\demo.json" DestinationFolder="$(TargetDir)\data-files\" />
 	</Target>
 
 </Project>
