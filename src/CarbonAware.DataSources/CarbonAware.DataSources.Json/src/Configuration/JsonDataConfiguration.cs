@@ -10,7 +10,7 @@ public class JsonDataConfiguration
 {
     private const string BaseDir = "data-files";
     private const string DefaultDataFile = "test-data-azure-emissions.json";
-    private const string RegExDir = "[^a-zA-Z0-9_]+";
+    private const string RegExDir = @"^[-/a-zA-Z_\d ]*$";
     private string? dataFileLocation;
     private string assemblyDirectory;
 
@@ -34,7 +34,7 @@ public class JsonDataConfiguration
         {
             if (!IsValidDirPath(value))
             {
-                throw new ArgumentException("File path {value} contains invalid characters.", value);
+                throw new ArgumentException($"File path '{value}' contains not supported characters.");
             }
             dataFileLocation = Path.Combine(assemblyDirectory, BaseDir, value);
         }
@@ -43,8 +43,7 @@ public class JsonDataConfiguration
     private static bool IsValidDirPath(string fileName)
     {
         var dirName = Path.GetDirectoryName(fileName);
-        var rgex = new Regex(RegExDir);
-        var matched = rgex.Matches(dirName!);
-        return matched.Count == 0;
+        var match = Regex.Match(dirName!, RegExDir);
+        return match.Success;
     }
 }

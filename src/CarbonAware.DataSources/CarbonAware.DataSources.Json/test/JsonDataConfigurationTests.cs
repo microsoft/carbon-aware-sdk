@@ -37,15 +37,17 @@ public class JsonDataConfigurationTests
     public void SetDataFileLocation_ThrowsArgumentException(string filePath)
     {
         var ex = Assert.Throws<ArgumentException>(() => Config.DataFileLocation = filePath);
-        Assert.That(ex!.Message, Contains.Substring("invalid characters"));
+        Assert.That(ex!.Message, Contains.Substring("not supported characters"));
     }
 
-    [TestCase("newfile.json", TestName = "same location as basedir")]
-    [TestCase("another_dir/anotherfile.json", TestName = "different location under basedir")]
+    [TestCase("newfile.json", TestName = "same location as base dir")]
+    [TestCase("/file1.json", TestName = "setting root dir")]
+    [TestCase("another_dir/anotherfile.json", TestName = "subdir under base dir")]
+    [TestCase("new-dir 123/Sub_Dir/anotherfile.json", TestName = "subdirs with numbers and upper case chars under base dir")]
     public void SetDataFileLocation_Success(string filePath)
     {
         Config.DataFileLocation = filePath;
-        var expectedLocation = Path.Combine(Path.GetDirectoryName(AssemblyPath)!, BaseDir, filePath);
-        Assert.That(Config.DataFileLocation, Is.EqualTo(expectedLocation));
+        var expected = Path.Combine(Path.GetDirectoryName(AssemblyPath)!, BaseDir, filePath);
+        Assert.That(Config.DataFileLocation, Is.EqualTo(expected));
     }
 }
