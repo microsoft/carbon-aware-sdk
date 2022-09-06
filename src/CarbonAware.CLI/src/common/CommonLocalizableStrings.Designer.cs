@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CarbonAware.CLI.Common {
+namespace CarbonAware.CLI.common {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace CarbonAware.CLI.Common {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CarbonAware.CLI.Common.CommonLocalizableStrings", typeof(CommonLocalizableStrings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CarbonAware.CLI.common.CommonLocalizableStrings", typeof(CommonLocalizableStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
