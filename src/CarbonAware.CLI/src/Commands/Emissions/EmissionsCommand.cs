@@ -9,7 +9,7 @@ namespace CarbonAware.CLI.Commands;
 
 class EmissionsCommand : Command
 {
-    private Option<string> _requiredLocationOption = CommonOptions.RequiredLocationOption;
+    private Option<string[]> _requiredLocationOption = CommonOptions.RequiredLocationOption;
     private Option<DateTimeOffset?> _startTimeOption = CommonOptions.StartTimeOption;
     private Option<DateTimeOffset?> _endTimeOption = CommonOptions.EndTimeOption;
     public EmissionsCommand() : base("emissions", LocalizableStrings.EmissionsCommandDescription)
@@ -27,12 +27,12 @@ class EmissionsCommand : Command
         var aggregator = serviceProvider.GetService(typeof(ICarbonAwareAggregator)) as ICarbonAwareAggregator ?? throw new NullReferenceException("CarbonAwareAggregator not found");
 
         // Get the arguments and options to build the parameters.
-        var location = context.ParseResult.GetValueForOption<string>(CommonOptions.RequiredLocationOption) ?? "";
+        var location = context.ParseResult.GetValueForOption<string[]>(CommonOptions.RequiredLocationOption) ?? null;
         var startTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(CommonOptions.StartTimeOption);
         var endTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(CommonOptions.EndTimeOption);
         
         var parameters = new CarbonAwareParametersBaseDTO() { 
-            MultipleLocations = new string[] { location },
+            MultipleLocations = location,
             Start = startTime,
             End = endTime
         };
