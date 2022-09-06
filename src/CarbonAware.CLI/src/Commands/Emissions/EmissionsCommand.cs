@@ -1,11 +1,10 @@
 using CarbonAware.Aggregators.CarbonAware;
-using CarbonAware.CLI.Commands.Emissions;
 using CarbonAware.CLI.Common;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Text.Json;
 
-namespace CarbonAware.CLI.Commands;
+namespace CarbonAware.CLI.Commands.Emissions;
 
 class EmissionsCommand : Command
 {
@@ -27,22 +26,20 @@ class EmissionsCommand : Command
         var aggregator = serviceProvider.GetService(typeof(ICarbonAwareAggregator)) as ICarbonAwareAggregator ?? throw new NullReferenceException("CarbonAwareAggregator not found");
 
         // Get the arguments and options to build the parameters.
-        var location = context.ParseResult.GetValueForOption<string[]>(CommonOptions.RequiredLocationOption) ?? null;
-        var startTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(CommonOptions.StartTimeOption);
-        var endTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(CommonOptions.EndTimeOption);
+        var locations = context.ParseResult.GetValueForOption<string[]>(_requiredLocationOption);
+        var startTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_startTimeOption);
+        var endTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_endTimeOption);
         
         var parameters = new CarbonAwareParametersBaseDTO() { 
-            MultipleLocations = location,
+            MultipleLocations = locations,
             Start = startTime,
             End = endTime
         };
 
         // Call the aggregator.
         var results = await aggregator.GetEmissionsDataAsync(parameters);
-        foreach (var result in results)
-        {
-            context.Console.WriteLine(JsonSerializer.Serialize(result));
-        }
+
+        context.Console.WriteLine(JsonSerializer.Serialize(results));
         context.ExitCode = 0;
     }
 }

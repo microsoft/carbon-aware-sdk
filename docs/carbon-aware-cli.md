@@ -36,11 +36,11 @@ On MacOS/Linux: `.\caw -h`
 
 #### Description
 
-emissions keyword
+Emissions command keyword to retrieve emissions data
 
 #### Usage
 
-caw emissions [options]
+`caw emissions [options]`
 
 #### Options
 
@@ -48,7 +48,6 @@ caw emissions [options]
   -l, --location <location> (REQUIRED)  A list of locations
   --startTime <startTime>               Start time of emissions data
   --endTime <endTime>                   End time of emissions data
-  --verbosity                           Verbose output flag
   -?, -h, --help                        Show help and usage information
 ```
 

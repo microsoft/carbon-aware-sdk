@@ -8,9 +8,23 @@ namespace CarbonAware.CLI.Common
             new string[] { "--location", "-l" }, 
             CommonLocalizableStrings.LocationDescription)
             {
-                IsRequired = true
+                IsRequired = true,
+                Arity = ArgumentArity.OneOrMore,
+                AllowMultipleArgumentsPerToken = true,
             };
-        public static readonly Option<DateTimeOffset?> StartTimeOption = new Option<DateTimeOffset?>("--startTime", CommonLocalizableStrings.StartTimeDescription);
-        public static readonly Option<DateTimeOffset?> EndTimeOption = new Option<DateTimeOffset?>("--endTime", CommonLocalizableStrings.EndTimeDescription);
+        public static readonly Option<DateTimeOffset?> StartTimeOption = new Option<DateTimeOffset?>(
+            "--startTime", 
+            CommonLocalizableStrings.StartTimeDescription)
+            {
+                IsRequired = false,
+                Arity = ArgumentArity.ExactlyOne,
+            };
+        public static readonly Option<DateTimeOffset?> EndTimeOption = new Option<DateTimeOffset?>(
+            "--endTime",
+            CommonLocalizableStrings.EndTimeDescription)
+            {
+                IsRequired = false,
+                Arity = ArgumentArity.ExactlyOne,
+            };
     }
 }

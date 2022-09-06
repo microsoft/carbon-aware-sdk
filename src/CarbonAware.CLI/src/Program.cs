@@ -1,6 +1,6 @@
 ﻿using CarbonAware;
 using CarbonAware.Aggregators.Configuration;
-using CarbonAware.CLI.Commands;
+using CarbonAware.CLI.Commands.Emissions;
 using CarbonAware.CLI.Common;
 using CarbonAware.CLI.Extensions;
 using Microsoft.Extensions.Configuration;

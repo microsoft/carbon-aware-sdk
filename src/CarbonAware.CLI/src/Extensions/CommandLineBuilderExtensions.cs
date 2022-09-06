@@ -1,10 +1,5 @@
 using CarbonAware.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Options;
 using System.Collections;
-using System.Diagnostics;
-using System.Net;
 using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
 

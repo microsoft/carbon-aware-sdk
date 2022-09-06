@@ -13,8 +13,7 @@
       "program": "${workspaceFolder}/src/CarbonAware.CLI/src/bin/Debug/net6.0/caw.dll",
       "args": [
         "emissions",
-        "--start-time", "${input:caw_location}",
-        "--verbosity",
+        "--location", "${input:caw_location}"
       ],
       "cwd": "${workspaceFolder}/src/CarbonAware.CLI/",
       "stopAtEntry": true,
