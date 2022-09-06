@@ -16,14 +16,14 @@ The following is the documentation for the Carbon Aware CLI
 Build the CLI using the `dotnet publish` command:
 
 ```bash
-dotnet publish ./src/CarbonAware.CLI/src/CarbonAware.CLI.csproj -c Release -o <path to your desired installation target>
+dotnet publish ./src/CarbonAware.CLI/src/CarbonAware.CLI.csproj -c Release -o <your desired installation path>
 ```
 
-By default this will target `linux-x64` operating systems.  To build for another platform, like Windows or MacOS you can specify like this:
-
-```bash
-dotnet publish .\src\CarbonAware.CLI\src\CarbonAware.CLI.csproj -c Release -r win-x64 --self-contained -o <path to your desired installation target>
-```
+> By default this will build for your host operating system.  To build for a platform other than your host platform you can specify the target runtime like this, using any valid [Runtime ID](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog#using-rids) (EG `win-x64`, `linux-x64`, `osx-x64`):
+>
+> ```bash
+> dotnet publish .\src\CarbonAware.CLI\src\CarbonAware.CLI.csproj -c Release -r <RuntimeID> --self-contained -o <your desired installation path>
+> ```
 
 ## Using the CLI
 

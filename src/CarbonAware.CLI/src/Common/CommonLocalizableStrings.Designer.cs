@@ -61,7 +61,7 @@ namespace CarbonAware.CLI.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to End time of emissions data.
+        ///   Looks up a localized string similar to End time of emissions data..
         /// </summary>
         internal static string EndTimeDescription {
             get {
@@ -70,7 +70,7 @@ namespace CarbonAware.CLI.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A list of locations.
+        ///   Looks up a localized string similar to One or more named locations..
         /// </summary>
         internal static string LocationDescription {
             get {
@@ -79,7 +79,7 @@ namespace CarbonAware.CLI.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Console App to execute commands for obtaining carbon intensity data for a given location and time period.
+        ///   Looks up a localized string similar to A command line tool for accessing data relevant to carbon awareness..
         /// </summary>
         internal static string RootCommandDescription {
             get {
@@ -88,7 +88,7 @@ namespace CarbonAware.CLI.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start time of emissions data.
+        ///   Looks up a localized string similar to Start time of emissions data..
         /// </summary>
         internal static string StartTimeDescription {
             get {

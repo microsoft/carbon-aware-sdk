@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EndTimeDescription" xml:space="preserve">
-    <value>End time of emissions data</value>
+    <value>End time of emissions data.</value>
   </data>
   <data name="LocationDescription" xml:space="preserve">
-    <value>A list of locations</value>
+    <value>One or more named locations.</value>
   </data>
   <data name="RootCommandDescription" xml:space="preserve">
-    <value>Console App to execute commands for obtaining carbon intensity data for a given location and time period</value>
+    <value>A command line tool for accessing data relevant to carbon awareness.</value>
   </data>
   <data name="StartTimeDescription" xml:space="preserve">
-    <value>Start time of emissions data</value>
+    <value>Start time of emissions data.</value>
   </data>
 </root>
