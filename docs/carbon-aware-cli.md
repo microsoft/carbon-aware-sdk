@@ -22,7 +22,7 @@ The following is the documentation for the Carbon Aware CLI
       - [Examples](#examples-1)
         - [Single Location Current Forecast](#single-location-current-forecast)
         - [Multiple Location Current Forecasts](#multiple-location-current-forecasts)
-        - [Filtered Data Forecast](#filtered-data-forecast)
+        - [Filtered Data and Window Size Forecast](#filtered-data-and-window-size-forecast)
         - [Historical Forecast (Single Location Only)](#historical-forecast-single-location-only)
 
 ## Build and Install
@@ -147,6 +147,7 @@ Forecasted emissions
   -l, --location <location> (REQUIRED)  A list of locations
   --data-start-at <startTime>           Filter out forecasted data points before start at time.
   --data-end-at <endTime>               Filter out forecasted data points after end at time.
+  -w, --window-size <INT>                   The estimated duration (in minutes) of the workload being forecasted. Defaults to the duration of a single forecast data point
   --requested-at                        Datetime of a previously generated forecast.  Returns the most current forecast if not provided.
   -?, -h, --help                        Show help and usage information
 ```
@@ -155,9 +156,41 @@ Forecasted emissions
 
 ##### Single Location Current Forecast
 
-command: `.\caw emissions forecasts -l eastus`
+command: `.\caw emissions forecasts -l northeurope`
 
 output:
+
+```text
+[{
+  "requestedAt": "2022-07-19T13:37:49+00:00",
+  "generatedAt": "2022-07-19T13:35:00+00:00",
+  "location": "northeurope",
+  "dataStartAt": "2022-07-19T14:00:00Z",
+  "dataEndAt": "2022-07-20T04:38:00Z",
+  "windowSize": 5,
+  "optimalDataPoint": {
+    "location": "IE",
+    "timestamp": "2022-07-19T18:45:00+00:00",
+    "duration": 5,
+    "value": 448.4451043375
+  },
+  "forecastData": [
+    {
+      "location": "IE",
+      "timestamp": "2022-07-19T14:00:00+00:00",
+      "duration": 5,
+      "value": 532.02293146
+    },
+    ...
+    {
+      "location": "IE",
+      "timestamp": "2022-07-20T04:30:00+00:00",
+      "duration": 5,
+      "value": 535.7318741001667
+    }
+  ]
+}]
+```
 
 ##### Multiple Location Current Forecasts
 
@@ -165,18 +198,117 @@ command: `.\caw emissions forecasts -l eastus -l westus`
 
 output:
 
-##### Filtered Data Forecast
+```text
+[
+  {
+    "requestedAt": "2022-06-01T12:01:00+00:00"
+    "generatedAt": "2022-06-01T12:00:00+00:00",
+    "optimalDataPoint": {
+      "location": "PJM_ROANOKE",
+      "timestamp": "2022-06-01T16:45:00+00:00",
+      "duration": 5,
+      "value": 448.4451043375
+    },
+    "forecastData": [ ... ] // all relevant forecast data points
+    "location": "eastus",
+    "dataStartAt": "2022-06-01T14:05:00+00:00",
+    "dataEndAt": "2022-06-02T14:00:00+00:00",
+    "windowSize": 5,
+  },
+  {
+    "requestedAt": "2022-06-01T12:01:00+00:00"
+    "generatedAt": "2022-06-01T12:00:00+00:00",
+    "optimalDataPoint": {
+      "location": "CAISO_NORTH",
+      "timestamp": "2022-06-13T09:25:00+00:00",
+      "duration": 5,
+      "value": 328.178478
+    },
+    "forecastData": [ ... ] // all relevant forecast data points
+    "location": "westus",
+    "dataStartAt": "2022-06-01T14:05:00+00:00",
+    "dataEndAt": "2022-06-02T14:00:00+00:00",
+    "windowSize": 5,
+  }
+]
+```
+
+##### Filtered Data and Window Size Forecast
 
 > Note: For current forecasts, since the data filters must fall within the forecasted data points, it is advisable to create them dynamically.
 > `TIME_TWO_HOURS_FROM_NOW=$(date --date='2 hours' --utc --iso-8601='seconds')`
 > `TIME_NINETEEN_HOURS_FROM_NOW=$(date --date='19 hours' --utc --iso-8601='seconds')`
 
-command: `.\caw emissions forecasts -l eastus --data-start-at TIME_TWO_HOURS_FROM_NOW --data-end-at TIME_NINETEEN_HOURS_FROM_NOW`
+command: `.\caw emissions forecasts -l northeurope --data-start-at TIME_TWO_HOURS_FROM_NOW --data-end-at TIME_NINETEEN_HOURS_FROM_NOW -w 10`
 
 output:
+
+```text
+[{
+  "requestedAt": "2022-07-19T13:37:49+00:00",
+  "generatedAt": "2022-07-19T13:35:00+00:00",
+  "location": "northeurope",
+  "dataStartAt": "2022-07-19T15:37:49+00:00",
+  "dataEndAt": "2022-07-20T08:37:49+00:00",
+  "windowSize": 10,
+  "optimalDataPoint": {
+    "location": "IE",
+    "timestamp": "2022-07-19T18:45:00+00:00",
+    "duration": 10,
+    "value": 448.4451043375
+  },
+  "forecastData": [
+    {
+      "location": "IE",
+      "timestamp": "2022-07-19T15:40:00+00:00",
+      "duration": 10,
+      "value": 532.02293146
+    },
+    ...
+    {
+      "location": "IE",
+      "timestamp": "2022-07-20T08:30:00+00:00",
+      "duration": 10,
+      "value": 535.7318741001667
+    }
+  ]
+}]
+```
 
 ##### Historical Forecast (Single Location Only)
 
-command: `.\caw emissions forecasts -l eastus --requested-at 2022-06-15T18:30:00Z`
+command: `.\caw emissions forecasts -l northeurope --requested-at 2022-06-15T18:31:00Z`
 
 output:
+
+```text
+{
+  "requestedAt": "2022-06-15T18:31:00+00:00",
+  "generatedAt": "2022-06-15T18:30:00+00:00",
+  "location": "northeurope",
+  "dataStartAt": "2022-06-15T18:35:00+00:00",
+  "dataEndAt": "2022-06-16T18:30:00+00:00",
+  "windowSize": 5,
+  "optimalDataPoint": {
+    "location": "IE",
+    "timestamp": "2022-06-15T23:40:00+00:00",
+    "duration": 5,
+    "value": 448.4451043375
+  },
+  "forecastData": [
+    {
+      "location": "IE",
+      "timestamp": "2022-06-15T18:35:00+00:00",
+      "duration": 5,
+      "value": 532.02293146
+    },
+    ...
+    {
+      "location": "IE",
+      "timestamp": "2022-06-16T18:25:00+00:00",
+      "duration": 5,
+      "value": 535.7318741001667
+    }
+  ]
+}
+```
