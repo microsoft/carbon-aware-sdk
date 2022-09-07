@@ -9,8 +9,7 @@ namespace CarbonAware.CLI.Common
             CommonLocalizableStrings.LocationDescription)
             {
                 IsRequired = true,
-                Arity = ArgumentArity.OneOrMore,
-                AllowMultipleArgumentsPerToken = true,
+                Arity = ArgumentArity.OneOrMore
             };
     }
 }

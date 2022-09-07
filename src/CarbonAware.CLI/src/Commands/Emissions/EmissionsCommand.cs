@@ -10,14 +10,14 @@ class EmissionsCommand : Command
 {
     private readonly Option<string[]> _requiredLocation = CommonOptions.RequiredLocationOption;
     private readonly Option<DateTimeOffset?> _startTime = new Option<DateTimeOffset?>(
-            new string[] { "--startTime", "-s" },
+            new string[] { "--start-time", "-s" },
             LocalizableStrings.StartTimeDescription)
             {
                 IsRequired = false,
                 Arity = ArgumentArity.ExactlyOne,
             };
     private readonly Option<DateTimeOffset?> _endTime = new Option<DateTimeOffset?>(
-             new string[] { "--endTime", "-e" },
+             new string[] { "--end-time", "-e" },
             LocalizableStrings.EndTimeDescription)
             {
                 IsRequired = false,

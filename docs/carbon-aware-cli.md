@@ -9,7 +9,10 @@ The following is the documentation for the Carbon Aware CLI
       - [Description](#description)
       - [Usage](#usage)
       - [Options](#options)
-      - [Example](#example)
+      - [Examples](#examples)
+        - [Single Location Emissions](#single-location-emissions)
+        - [Multiple Location Emissions](#multiple-location-emissions)
+        - [Emissions with Start and End Times](#emissions-with-start-and-end-times)
 
 ## Build and Install
 
@@ -36,7 +39,7 @@ On MacOS/Linux: `.\caw -h`
 
 #### Description
 
-Emissions command keyword to retrieve emissions data
+Retrieve emissions data from specified locations and time periods.
 
 #### Usage
 
@@ -45,13 +48,15 @@ Emissions command keyword to retrieve emissions data
 #### Options
 
 ```text
-  -l, --location <location> (REQUIRED)  A list of locations
-  --startTime <startTime>               Start time of emissions data
-  --endTime <endTime>                   End time of emissions data
+  -l, --location <location> (REQUIRED)  A named location
+  --start-time <startTime>              Start time of emissions data
+  --end-time <endTime>                  End time of emissions data
   -?, -h, --help                        Show help and usage information
 ```
 
-#### Example
+#### Examples
+
+##### Single Location Emissions
 
 command: `.\caw.exe emissions -l eastus`
 
@@ -60,24 +65,35 @@ output:
 ```text
 [{"Location":"eastus","Time":"2022-08-30T12:45:11+00:00","Rating":65,"Duration":"08:00:00"},
 {"Location":"eastus","Time":"2022-08-30T20:45:11+00:00","Rating":65,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-08-31T04:45:11+00:00","Rating":4,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-08-31T12:45:11+00:00","Rating":53,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-08-31T20:45:11+00:00","Rating":49,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-01T04:45:11+00:00","Rating":81,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-01T12:45:11+00:00","Rating":30,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-01T20:45:11+00:00","Rating":38,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-02T04:45:11+00:00","Rating":19,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-02T12:45:11+00:00","Rating":54,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-02T20:45:11+00:00","Rating":55,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-03T04:45:11+00:00","Rating":5,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-03T12:45:11+00:00","Rating":22,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-03T20:45:11+00:00","Rating":84,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-04T04:45:11+00:00","Rating":30,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-04T12:45:11+00:00","Rating":16,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-04T20:45:11+00:00","Rating":60,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-05T04:45:11+00:00","Rating":90,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-05T12:45:11+00:00","Rating":16,"Duration":"08:00:00"},
-{"Location":"eastus","Time":"2022-09-05T20:45:11+00:00","Rating":83,"Duration":"08:00:00"},
+// ...
 {"Location":"eastus","Time":"2022-09-06T04:45:11+00:00","Rating":73,"Duration":"08:00:00"},
 {"Location":"eastus","Time":"2022-09-06T12:45:11+00:00","Rating":84,"Duration":"08:00:00"}]
+```
+
+##### Multiple Location Emissions
+
+command: `.\caw emissions -l eastus -l westus`
+
+output:
+
+```text
+[{"Location":"eastus","Time":"2022-08-30T12:45:11+00:00","Rating":65,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-08-30T20:45:11+00:00","Rating":65,"Duration":"08:00:00"},
+// ...
+{"Location":"westus","Time":"2022-09-06T04:45:11+00:00","Rating":73,"Duration":"08:00:00"},
+{"Location":"westus","Time":"2022-09-06T12:45:11+00:00","Rating":84,"Duration":"08:00:00"}]
+```
+
+##### Emissions with Start and End Times
+
+command: `.\caw emissions -l eastus --start-time 2022-07-01T00:00:00Z --end-time 2022-07-31T23:59:59Z --best`
+
+output:
+
+```text
+[{"Location":"eastus","Time":"2022-07-01T04:45:11+00:00","Rating":65,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-07-01T12:45:11+00:00","Rating":65,"Duration":"08:00:00"},
+// ...
+{"Location":"eastus","Time":"2022-07-31T12:45:11+00:00","Rating":73,"Duration":"08:00:00"},
+{"Location":"eastus","Time":"2022-07-31T20:45:11+00:00","Rating":84,"Duration":"08:00:00"}]
 ```
