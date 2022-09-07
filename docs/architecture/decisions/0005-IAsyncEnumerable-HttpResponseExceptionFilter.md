@@ -4,7 +4,7 @@
 Denied
 
 ## Context
-There are currently two endpoints (`emissions/forecasts/batch`, `emissions/average-carbon-intensity/batch`) that require passing a payload as an array of items. This array can have as many items as the user wants, and it can take sometime to be processed which incurs in a delay to the client, which might feel that the service is irresponsive. Also, since these requests return enumerable items, and those are buffered before the client gets it, it impacts the overall memory footprint of the WebApp. Changing the signature of these endpoints to return an `IAsyncEnumerable` collection streams the response and helps to deal with these memory concerns.
+There are currently two endpoints (`emissions/forecasts/batch`, `emissions/average-carbon-intensity/batch`) that require passing a payload as an array of items. This array can have as many items as the user wants, and it can take some time to be processed which creates a delay to the client, which might feel that the service is irresponsive. Also, since these requests return enumerable items, and those are buffered before the client gets it, it impacts the overall memory footprint of the WebApp. Changing the signature of these endpoints to return an `IAsyncEnumerable` collection streams the response and helps to deal with these memory concerns.
 
 ## Decision
 - Using IAsyncEnumerable return type for a controller helps to stream large content to a client when the request is large. Allowing the client to get a flow of continue content without the need to wait until the entire request is processed. (for instance forecast batch with 50 entries)
