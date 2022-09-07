@@ -8,14 +8,26 @@ namespace CarbonAware.CLI.Commands.Emissions;
 
 class EmissionsCommand : Command
 {
-    private Option<string[]> _requiredLocationOption = CommonOptions.RequiredLocationOption;
-    private Option<DateTimeOffset?> _startTimeOption = CommonOptions.StartTimeOption;
-    private Option<DateTimeOffset?> _endTimeOption = CommonOptions.EndTimeOption;
+    private readonly Option<string[]> _requiredLocation = CommonOptions.RequiredLocationOption;
+    private readonly Option<DateTimeOffset?> _startTime = new Option<DateTimeOffset?>(
+            new string[] { "--startTime", "-s" },
+            LocalizableStrings.StartTimeDescription)
+            {
+                IsRequired = false,
+                Arity = ArgumentArity.ExactlyOne,
+            };
+    private readonly Option<DateTimeOffset?> _endTime = new Option<DateTimeOffset?>(
+             new string[] { "--endTime", "-e" },
+            LocalizableStrings.EndTimeDescription)
+            {
+                IsRequired = false,
+                Arity = ArgumentArity.ExactlyOne,
+            };
     public EmissionsCommand() : base("emissions", LocalizableStrings.EmissionsCommandDescription)
     {
-        AddOption(_requiredLocationOption);
-        AddOption(_startTimeOption);
-        AddOption(_endTimeOption);
+        AddOption(_requiredLocation);
+        AddOption(_startTime);
+        AddOption(_endTime);
         this.SetHandler(this.Run);
     }
 
@@ -26,9 +38,9 @@ class EmissionsCommand : Command
         var aggregator = serviceProvider.GetService(typeof(ICarbonAwareAggregator)) as ICarbonAwareAggregator ?? throw new NullReferenceException("CarbonAwareAggregator not found");
 
         // Get the arguments and options to build the parameters.
-        var locations = context.ParseResult.GetValueForOption<string[]>(_requiredLocationOption);
-        var startTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_startTimeOption);
-        var endTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_endTimeOption);
+        var locations = context.ParseResult.GetValueForOption<string[]>(_requiredLocation);
+        var startTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_startTime);
+        var endTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_endTime);
         
         var parameters = new CarbonAwareParametersBaseDTO() { 
             MultipleLocations = locations,

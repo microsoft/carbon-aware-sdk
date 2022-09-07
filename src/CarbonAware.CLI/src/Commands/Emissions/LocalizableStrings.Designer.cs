@@ -68,5 +68,23 @@ namespace CarbonAware.CLI.Commands.Emissions {
                 return ResourceManager.GetString("EmissionsCommandDescription", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End time of emissions data..
+        /// </summary>
+        internal static string EndTimeDescription {
+            get {
+                return ResourceManager.GetString("EndTimeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start time of emissions data..
+        /// </summary>
+        internal static string StartTimeDescription {
+            get {
+                return ResourceManager.GetString("StartTimeDescription", resourceCulture);
+            }
+        }
     }
 }

@@ -61,15 +61,6 @@ namespace CarbonAware.CLI.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to End time of emissions data..
-        /// </summary>
-        internal static string EndTimeDescription {
-            get {
-                return ResourceManager.GetString("EndTimeDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to One or more named locations..
         /// </summary>
         internal static string LocationDescription {
@@ -84,15 +75,6 @@ namespace CarbonAware.CLI.Common {
         internal static string RootCommandDescription {
             get {
                 return ResourceManager.GetString("RootCommandDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Start time of emissions data..
-        /// </summary>
-        internal static string StartTimeDescription {
-            get {
-                return ResourceManager.GetString("StartTimeDescription", resourceCulture);
             }
         }
     }

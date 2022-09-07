@@ -120,4 +120,10 @@
   <data name="EmissionsCommandDescription" xml:space="preserve">
     <value>Emissions command keyword to retrieve emissions data</value>
   </data>
+  <data name="EndTimeDescription" xml:space="preserve">
+    <value>End time of emissions data.</value>
+  </data>
+  <data name="StartTimeDescription" xml:space="preserve">
+    <value>Start time of emissions data.</value>
+  </data>
 </root>
