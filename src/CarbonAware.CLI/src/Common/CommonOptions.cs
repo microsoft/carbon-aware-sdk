@@ -9,18 +9,17 @@ namespace CarbonAware.CLI.Common
             CommonLocalizableStrings.LocationDescription)
             {
                 IsRequired = true,
-                Arity = ArgumentArity.OneOrMore,
-                AllowMultipleArgumentsPerToken = true,
+                Arity = ArgumentArity.OneOrMore
             };
         public static readonly Option<DateTimeOffset?> StartTimeOption = new Option<DateTimeOffset?>(
-            "--startTime", 
+            "--start-time", 
             CommonLocalizableStrings.StartTimeDescription)
             {
                 IsRequired = false,
                 Arity = ArgumentArity.ExactlyOne,
             };
         public static readonly Option<DateTimeOffset?> EndTimeOption = new Option<DateTimeOffset?>(
-            "--endTime",
+            "--end-time",
             CommonLocalizableStrings.EndTimeDescription)
             {
                 IsRequired = false,
