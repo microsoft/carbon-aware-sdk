@@ -17,6 +17,8 @@ class EmissionsCommand : Command
         AddOption(_startTimeOption);
         AddOption(_endTimeOption);
         this.SetHandler(this.Run);
+
+        AddCommand(new EmissionsForecastCommand());
     }
 
     private async Task Run(InvocationContext context)

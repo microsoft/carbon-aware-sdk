@@ -117,7 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DataEndAtDescription" xml:space="preserve">
+    <value>End time of the requested data</value>
+  </data>
+  <data name="DataStartAtDescription" xml:space="preserve">
+    <value>Start time of the requested data</value>
+  </data>
   <data name="EmissionsCommandDescription" xml:space="preserve">
     <value>Emissions command keyword to retrieve emissions data</value>
+  </data>
+  <data name="RequestedAtDescription" xml:space="preserve">
+    <value>RequestAt time for data</value>
   </data>
 </root>
