@@ -64,6 +64,8 @@ Retrieve emissions data from specified locations and time periods.
   -e, --end-time <endTime>              End time of emissions data
   -b, --best                            Filter results down to the best (typically lowest) data point.
   -a, --average                         Outputs the weighted average of all data points within the start and end time boundaries.
+  -f, --format <json|text|xml> (GLOBAL) The format of the output. Default: `json`
+  --no-color                   (GLOBAL) Turn off ANSI colors for error output
   -?, -h, --help                        Show help and usage information
 ```
 
@@ -149,6 +151,8 @@ Forecasted emissions
   --data-end-at <endTime>               Filter out forecasted data points after end at time.
   -w, --window-size <INT>                   The estimated duration (in minutes) of the workload being forecasted. Defaults to the duration of a single forecast data point
   --requested-at                        Datetime of a previously generated forecast.  Returns the most current forecast if not provided.
+  -f, --format <json|text|xml> (GLOBAL) The format of the output. Default: `json`
+  --no-color                   (GLOBAL) Turn off ANSI colors for error output. Defaults on/off based on the local `NO_COLOR` env var.
   -?, -h, --help                        Show help and usage information
 ```
 
