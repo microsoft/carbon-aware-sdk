@@ -15,7 +15,7 @@ The following is the documentation for the Carbon Aware CLI
         - [Emissions with Start and End Times](#emissions-with-start-and-end-times)
         - [Best Emissions](#best-emissions)
         - [Average Emissions](#average-emissions)
-    - [`emissions forecasts` Command](#emissions-forecasts-command)
+    - [Command `emissions-forecasts`](#command-emissions-forecasts)
       - [Description](#description-1)
       - [Usage](#usage-1)
       - [Options](#options-1)
@@ -23,7 +23,8 @@ The following is the documentation for the Carbon Aware CLI
         - [Single Location Current Forecast](#single-location-current-forecast)
         - [Multiple Location Current Forecasts](#multiple-location-current-forecasts)
         - [Filtered Data and Window Size Forecast](#filtered-data-and-window-size-forecast)
-        - [Historical Forecast (Single Location Only)](#historical-forecast-single-location-only)
+        - [Historical Forecast](#historical-forecast)
+    - [Advanced Usage](#advanced-usage)
 
 ## Build and Install
 
@@ -69,6 +70,8 @@ Retrieve emissions data from specified locations and time periods.
   -?, -h, --help                        Show help and usage information
 ```
 
+> NOTE: `--best` and `--average` cannot be used together.
+> 
 #### Examples
 
 ##### Single Location Emissions
@@ -115,7 +118,7 @@ output:
 
 ##### Best Emissions
 
-command: `.\caw emissions -l eastus --start-time 2022-07-01T00:00:00Z --end-time 2022-07-31T23:59:59Z --best`
+command: `.\caw emissions -l eastus -l westus --start-time 2022-07-01T00:00:00Z --end-time 2022-07-31T23:59:59Z --best`
 
 output:
 
@@ -125,15 +128,16 @@ output:
 
 ##### Average Emissions
 
-command: `.\caw emissions -l eastus --start-time 2022-07-09T00:00:00Z --end-time 2022-07-09T12:00:00Z --average`
+command: `.\caw emissions -l eastus -l westus --start-time 2022-07-09T00:00:00Z --end-time 2022-07-09T12:00:00Z --average`
 
 output:
 
 ```text
-79.256
+[{"Location":"eastus","Time":"2022-07-09T00:00:00+00:00","Rating":79.357,"Duration":"12:00:00"},
+{"Location":"westus","Time":"2022-07-09T00:00:00+00:00","Rating":86.91243,"Duration":"12:00:00"}]
 ```
 
-### `emissions forecasts` Command
+### Command `emissions-forecasts`
 
 #### Description
 
@@ -141,7 +145,7 @@ Forecasted emissions
 
 #### Usage
 
-`caw emissions forecasts [options]`
+`caw emissions-forecasts [options]`
 
 #### Options
 
@@ -160,7 +164,7 @@ Forecasted emissions
 
 ##### Single Location Current Forecast
 
-command: `.\caw emissions forecasts -l northeurope`
+command: `.\caw emissions-forecasts -l northeurope`
 
 output:
 
@@ -198,7 +202,7 @@ output:
 
 ##### Multiple Location Current Forecasts
 
-command: `.\caw emissions forecasts -l eastus -l westus`
+command: `.\caw emissions-forecasts -l eastus -l westus`
 
 output:
 
@@ -243,7 +247,7 @@ output:
 > `TIME_TWO_HOURS_FROM_NOW=$(date --date='2 hours' --utc --iso-8601='seconds')`
 > `TIME_NINETEEN_HOURS_FROM_NOW=$(date --date='19 hours' --utc --iso-8601='seconds')`
 
-command: `.\caw emissions forecasts -l northeurope --data-start-at TIME_TWO_HOURS_FROM_NOW --data-end-at TIME_NINETEEN_HOURS_FROM_NOW -w 10`
+command: `.\caw emissions-forecasts -l northeurope -l westus --data-start-at TIME_TWO_HOURS_FROM_NOW --data-end-at TIME_NINETEEN_HOURS_FROM_NOW -w 10`
 
 output:
 
@@ -276,17 +280,46 @@ output:
       "value": 535.7318741001667
     }
   ]
+},
+{
+  "requestedAt": "2022-07-19T13:37:49+00:00",
+  "generatedAt": "2022-07-19T13:35:00+00:00",
+  "location": "westus",
+  "dataStartAt": "2022-07-19T15:37:49+00:00",
+  "dataEndAt": "2022-07-20T08:37:49+00:00",
+  "windowSize": 10,
+  "optimalDataPoint": {
+    "location": "CAISO_NORTH",
+    "timestamp": "2022-07-19T18:45:00+00:00",
+    "duration": 10,
+    "value": 502.02293146
+  },
+  "forecastData": [
+    {
+      "location": "CAISO_NORTH",
+      "timestamp": "2022-07-19T15:40:00+00:00",
+      "duration": 10,
+      "value": 612.9132146
+    },
+    ...
+    {
+      "location": "CAISO_NORTH",
+      "timestamp": "2022-07-20T08:30:00+00:00",
+      "duration": 10,
+      "value": 523.172030157
+    }
+  ]
 }]
 ```
 
-##### Historical Forecast (Single Location Only)
+##### Historical Forecast
 
-command: `.\caw emissions forecasts -l northeurope --requested-at 2022-06-15T18:31:00Z`
+command: `.\caw emissions-forecasts -l northeurope -l westus --requested-at 2022-06-15T18:31:00Z`
 
 output:
 
 ```text
-{
+[{
   "requestedAt": "2022-06-15T18:31:00+00:00",
   "generatedAt": "2022-06-15T18:30:00+00:00",
   "location": "northeurope",
@@ -314,5 +347,56 @@ output:
       "value": 535.7318741001667
     }
   ]
-}
+},
+{
+  "requestedAt": "2022-06-15T18:31:00+00:00",
+  "generatedAt": "2022-06-15T18:30:00+00:00",
+  "location": "westus",
+  "dataStartAt": "2022-06-15T18:35:00+00:00",
+  "dataEndAt": "2022-06-16T18:30:00+00:00",
+  "windowSize": 5,
+  "optimalDataPoint": {
+    "location": "CAISO_NORTH",
+    "timestamp": "2022-06-15T23:40:00+00:00",
+    "duration": 5,
+    "value": 423.4451043375
+  },
+  "forecastData": [
+    {
+      "location": "CAISO_NORTH",
+      "timestamp": "2022-06-15T18:35:00+00:00",
+      "duration": 5,
+      "value": 482.02293146
+    },
+    ...
+    {
+      "location": "CAISO_NORTH",
+      "timestamp": "2022-06-16T18:25:00+00:00",
+      "duration": 5,
+      "value": 576.7318741008
+    }
+  ]
+}]
+```
+
+### Advanced Usage
+
+For features like `emissions --best`, the single best data point out of all requested location data is returned.  If instead you want to see each best data point from each location separately, the recommended approach is to loop the command.  This approach is relevant for any commands where multiple values are desired for options that only accept a single value, such as date options like `--start-time`, `--end-time`, or `--requested-at`.
+
+```sh
+#!/bin/bash
+locations=( eastus westus northeurope )
+for location in "${locations[@]}"
+do
+  caw emissions -l "$location" -s "2022-07-01T00:00:00Z" -e "2022-07-01T23:59:59Z" --best
+done
+```
+
+```sh
+#!/bin/bash
+historical_forecast_requests=( "2022-07-01T00:00:00Z" "2022-08-01T00:00:00Z" "2022-09-01T00:00:00Z" )
+for requested_at in "${historical_forecast_requests[@]}"
+do
+  caw emissions-forecasts -l "eastus" --requested-at "$requested_at"
+done
 ```
