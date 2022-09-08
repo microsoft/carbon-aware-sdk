@@ -49,8 +49,8 @@ Retrieve emissions data from specified locations and time periods.
 
 ```text
   -l, --location <location> (REQUIRED)  A named location
-  --start-time <startTime>              Start time of emissions data
-  --end-time <endTime>                  End time of emissions data
+  -s, --start-time <startTime>          Start time of emissions data
+  -e, --end-time <endTime>              End time of emissions data
   -?, -h, --help                        Show help and usage information
 ```
 
