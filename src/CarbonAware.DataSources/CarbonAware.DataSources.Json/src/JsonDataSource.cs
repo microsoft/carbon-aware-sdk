@@ -24,7 +24,7 @@ public class JsonDataSource : ICarbonIntensityDataSource
 
     private List<EmissionsData>? emissionsData;
 
-    private readonly ILogger<JsonDataSource> Logger;
+    private readonly ILogger<JsonDataSource> _logger;
 
     private const double DURATION = 8; // 8 hrs
 
@@ -40,7 +40,7 @@ public class JsonDataSource : ICarbonIntensityDataSource
     /// <param name="logger">The logger for the datasource</param>
     public JsonDataSource(ILogger<JsonDataSource> logger, IOptionsMonitor<JsonDataConfiguration> monitor)
     {
-        Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         ConfigurationMonitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
     }
 
@@ -53,22 +53,22 @@ public class JsonDataSource : ICarbonIntensityDataSource
     /// <inheritdoc />
     public async Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(IEnumerable<Location> locations, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
     {
-        Logger.LogInformation("JSON data source getting carbon intensity for locations {locations} for period {periodStartTime} to {periodEndTime}.", locations, periodStartTime, periodEndTime);
+        _logger.LogInformation("JSON data source getting carbon intensity for locations {locations} for period {periodStartTime} to {periodEndTime}.", locations, periodStartTime, periodEndTime);
 
         IEnumerable<EmissionsData>? emissionsData = await GetSampleJsonAsync();
-        if (emissionsData == null) {
-            Logger.LogDebug("Emission data list is empty");
+        if (emissionsData == null || !emissionsData.Any()) {
+            _logger.LogDebug("Emission data list is empty");
             return Enumerable.Empty<EmissionsData>();
         }
-        Logger.LogDebug($"Total emission records retrieved {emissionsData.Count()}");
+        _logger.LogDebug($"Total emission records retrieved {emissionsData.Count()}");
         var stringLocations = locations.Select(loc => loc.RegionName);
             
         emissionsData = FilterByLocation(emissionsData, stringLocations);
         emissionsData = FilterByDateRange(emissionsData, periodStartTime, periodEndTime);
 
-        if (Logger.IsEnabled(LogLevel.Debug))
+        if (_logger.IsEnabled(LogLevel.Debug))
         {
-            Logger.LogDebug("Found {count} total emissions data records for locations {stringLocations} for period {periodStartTime} to {periodEndTime}.", emissionsData.Count(), stringLocations, periodStartTime, periodEndTime);
+            _logger.LogDebug("Found {count} total emissions data records for locations {stringLocations} for period {periodStartTime} to {periodEndTime}.", emissionsData.Count(), stringLocations, periodStartTime, periodEndTime);
         }
 
         return emissionsData;
@@ -92,7 +92,7 @@ public class JsonDataSource : ICarbonIntensityDataSource
 
         if (!filteredData.Any())
         {
-            Logger.LogInformation($"Not enough data with {MinSamplingWindow} window");
+            _logger.LogInformation($"Not enough data with {MinSamplingWindow} window");
         }
         return filteredData;
     }
@@ -123,7 +123,7 @@ public class JsonDataSource : ICarbonIntensityDataSource
 
     private Stream GetStreamFromFileLocation()
     {
-        Logger.LogInformation($"Reading Json data from {Configuration.DataFileLocation}");
+        _logger.LogInformation($"Reading Json data from {Configuration.DataFileLocation}");
         return File.OpenRead(Configuration.DataFileLocation!);
     }
 }
