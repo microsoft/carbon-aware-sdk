@@ -6,18 +6,18 @@ namespace CarbonAware.DataSources.Json.Configuration;
 /// <summary>
 /// A configuration class for holding Json Data config values.
 /// </summary>
-public class JsonDataConfiguration
+public class JsonDataSourceConfiguration
 {
-    private const string BaseDir = "data-files";
+    private const string BaseDir = "data-sources/json";
     private const string DefaultDataFile = "test-data-azure-emissions.json";
-    private const string RegExDir = @"^[-/a-zA-Z_\d ]*$";
+    private const string DirectoryRegExPattern = @"^[-/a-zA-Z_\d ]*$";
     private string? dataFileLocation;
     private string assemblyDirectory;
 
-    public const string Key = "JsonData";
+    public const string Key = "JsonDataSourceConfiguration";
 
 
-    public JsonDataConfiguration()
+    public JsonDataSourceConfiguration()
     {
         var assemblyPath = Assembly.GetExecutingAssembly().Location;
         assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
@@ -42,8 +42,12 @@ public class JsonDataConfiguration
 
     private static bool IsValidDirPath(string fileName)
     {
+        if (String.IsNullOrEmpty(fileName))
+        {
+            return false;
+        }
         var dirName = Path.GetDirectoryName(fileName);
-        var match = Regex.Match(dirName!, RegExDir);
+        var match = Regex.Match(dirName!, DirectoryRegExPattern);
         return match.Success;
     }
 }

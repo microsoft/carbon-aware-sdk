@@ -28,9 +28,9 @@ public class JsonDataSource : ICarbonIntensityDataSource
 
     private const double DURATION = 8; // 8 hrs
 
-    private IOptionsMonitor<JsonDataConfiguration> ConfigurationMonitor { get; }
+    private IOptionsMonitor<JsonDataSourceConfiguration> _configurationMonitor { get; }
 
-    private JsonDataConfiguration Configuration => ConfigurationMonitor.CurrentValue;
+    private JsonDataSourceConfiguration _configuration => _configurationMonitor.CurrentValue;
 
 
 
@@ -38,10 +38,10 @@ public class JsonDataSource : ICarbonIntensityDataSource
     /// Creates a new instance of the <see cref="JsonDataSource"/> class.
     /// </summary>
     /// <param name="logger">The logger for the datasource</param>
-    public JsonDataSource(ILogger<JsonDataSource> logger, IOptionsMonitor<JsonDataConfiguration> monitor)
+    public JsonDataSource(ILogger<JsonDataSource> logger, IOptionsMonitor<JsonDataSourceConfiguration> monitor)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        ConfigurationMonitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
+        _configurationMonitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
     }
 
     /// <inheritdoc />
@@ -55,10 +55,10 @@ public class JsonDataSource : ICarbonIntensityDataSource
     {
         _logger.LogInformation("JSON data source getting carbon intensity for locations {locations} for period {periodStartTime} to {periodEndTime}.", locations, periodStartTime, periodEndTime);
 
-        IEnumerable<EmissionsData>? emissionsData = await GetSampleJsonAsync();
+        IEnumerable<EmissionsData>? emissionsData = await GetJsonDataAsync();
         if (emissionsData == null || !emissionsData.Any()) {
             _logger.LogDebug("Emission data list is empty");
-            return Enumerable.Empty<EmissionsData>();
+            return Array.Empty<EmissionsData>();
         }
         _logger.LogDebug($"Total emission records retrieved {emissionsData.Count()}");
         var stringLocations = locations.Select(loc => loc.RegionName);
@@ -107,7 +107,7 @@ public class JsonDataSource : ICarbonIntensityDataSource
         return data;
     }
 
-    protected virtual async Task<List<EmissionsData>?> GetSampleJsonAsync()
+    protected virtual async Task<List<EmissionsData>?> GetJsonDataAsync()
     {
         if (emissionsData is not null)
         {
@@ -123,7 +123,7 @@ public class JsonDataSource : ICarbonIntensityDataSource
 
     private Stream GetStreamFromFileLocation()
     {
-        _logger.LogInformation($"Reading Json data from {Configuration.DataFileLocation}");
-        return File.OpenRead(Configuration.DataFileLocation!);
+        _logger.LogInformation($"Reading Json data from {_configuration.DataFileLocation}");
+        return File.OpenRead(_configuration.DataFileLocation!);
     }
 }

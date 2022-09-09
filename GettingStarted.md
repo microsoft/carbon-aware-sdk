@@ -164,17 +164,17 @@ WattTimeClient__BalancingAuthorityCacheTTL="90"
 ```
 
 ### JsonDataConfiguration data file location
-By setting `JsonData__DataFileLocation=newdataset.json` property when `CarbonAwareVars__CarbonIntensityDataSource=JSON` is set or there is not data source defined (`JSON` is by default), the user can specify a file that can contains custom `EmissionsData` sets. The file should be located under the `data-files` directory that is part of the repository. (i.e. <user's repo>/src/data/data-files). At build time, all the data files are copied over the `data-files` directory that is part of the `CarbonAware.WebApi` assembly. Also the file can be placed where the assembly `CarbonAware.WebApi.dll` is located under `data-files` directory. This can be done before the application starts by setting `JsonData__DataFileLocation` environment variable.
+By setting `JsonDataSourceConfiguration__DataFileLocation=newdataset.json` property when `CarbonAwareVars__CarbonIntensityDataSource=JSON` is set or there is not data source defined (`JSON` is by default), the user can specify a file that can contains custom `EmissionsData` sets. The file should be located under the `data-files` directory that is part of the repository. (i.e. <user's repo>/src/data/data-files). At build time, all the data files are copied over the `data-sources/json` directory that is part of the `CarbonAware.WebApi` assembly. Also the file can be placed where the assembly `CarbonAware.WebApi.dll` is located under `data-sources/json` directory. This can be done before the application starts by setting `JsonDataSourceConfiguration__DataFileLocation` environment variable.
 ```sh
-cp <mydir>/newdataset.json /app/data-files
+cp <mydir>/newdataset.json /app/data-sources/json
 export CarbonAwareVars__CarbonIntensityDataSource=JSON
-export JsonData__DataFileLocation=newdataset.json
+export JsonDataSourceConfiguration__DataFileLocation=newdataset.json
 dotnet /app/CarbonAware.WebApi.dll
 ```
 As soon a first request is performed, a log entry shows:
 ```sh
 info: CarbonAware.DataSources.Json.JsonDataSource[0]
-    Reading Json data from /app/data-files/newdataset.json
+    Reading Json data from /app/data-sources/json/newdataset.json
 ```
 
 ### Sample Environment Variable Configuration Using WattTime

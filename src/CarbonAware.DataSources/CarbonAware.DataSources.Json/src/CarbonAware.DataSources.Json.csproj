@@ -10,12 +10,4 @@
     <Nullable>enable</Nullable>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <None Remove="sample-emissions-data.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="..\..\..\data\data-files\sample-emissions-data.json" />
-  </ItemGroup>
 </Project>

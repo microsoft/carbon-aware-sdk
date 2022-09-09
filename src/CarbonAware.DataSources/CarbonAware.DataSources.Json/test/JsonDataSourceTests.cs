@@ -76,11 +76,11 @@ public class JsonDataSourceTests
 
     private Mock<JsonDataSource> SetupMockDataSource() {
         var logger = Mock.Of<ILogger<JsonDataSource>>();
-        var monitor = Mock.Of<IOptionsMonitor<JsonDataConfiguration>>();
+        var monitor = Mock.Of<IOptionsMonitor<JsonDataSourceConfiguration>>();
         var mockDataSource = new Mock<JsonDataSource>(logger, monitor);
         
         mockDataSource.Protected()
-            .Setup<Task<List<EmissionsData>?>>("GetSampleJsonAsync")
+            .Setup<Task<List<EmissionsData>?>>("GetJsonDataAsync")
             .ReturnsAsync(GetTestEmissionData)
             .Verifiable();
 

@@ -10,9 +10,9 @@ public static class ServiceCollectionExtensions
     public static void AddJsonDataSourceService(this IServiceCollection services, IConfiguration configuration)
     {
         // configuring dependency injection to have config.
-        services.Configure<JsonDataConfiguration>(c =>
+        services.Configure<JsonDataSourceConfiguration>(c =>
         {
-            configuration.GetSection(JsonDataConfiguration.Key).Bind(c);
+            configuration.GetSection(JsonDataSourceConfiguration.Key).Bind(c);
         });
         services.TryAddSingleton<ICarbonIntensityDataSource, JsonDataSource>();
     }
