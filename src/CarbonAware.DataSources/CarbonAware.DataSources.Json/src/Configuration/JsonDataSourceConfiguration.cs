@@ -11,18 +11,8 @@ public class JsonDataSourceConfiguration
     private const string BaseDir = "data-sources/json";
     private const string DefaultDataFile = "test-data-azure-emissions.json";
     private const string DirectoryRegExPattern = @"^[-/a-zA-Z_\d ]*$";
-    private string? dataFileLocation;
     private string assemblyDirectory;
-
-    public const string Key = "JsonDataSourceConfiguration";
-
-
-    public JsonDataSourceConfiguration()
-    {
-        var assemblyPath = Assembly.GetExecutingAssembly().Location;
-        assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
-        DataFileLocation = DefaultDataFile;
-    }
+    private string? dataFileLocation;
 
     /// <summary>
     /// Json data file location
@@ -38,6 +28,15 @@ public class JsonDataSourceConfiguration
             }
             dataFileLocation = Path.Combine(assemblyDirectory, BaseDir, value);
         }
+    }
+
+    public const string Key = "JsonDataSourceConfiguration";
+
+    public JsonDataSourceConfiguration()
+    {
+        var assemblyPath = Assembly.GetExecutingAssembly().Location;
+        assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
+        DataFileLocation = DefaultDataFile;
     }
 
     private static bool IsValidDirPath(string fileName)
