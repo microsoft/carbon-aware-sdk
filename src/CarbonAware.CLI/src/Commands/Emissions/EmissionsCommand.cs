@@ -58,7 +58,7 @@ class EmissionsCommand : Command
         });
     }
 
-    private async Task Run(InvocationContext context)
+    internal async Task Run(InvocationContext context)
     {
         // Get aggregator via DI.
         var serviceProvider = context.BindingContext.GetService(typeof(IServiceProvider)) as IServiceProvider ?? throw new NullReferenceException("ServiceProvider not found");
