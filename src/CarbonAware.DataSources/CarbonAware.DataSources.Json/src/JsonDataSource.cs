@@ -22,7 +22,7 @@ public class JsonDataSource : ICarbonIntensityDataSource
 
     public double MinSamplingWindow => 1440;  // 24 hrs
 
-    private List<EmissionsData>? emissionsData;
+    private List<EmissionsData>? _emissionsData;
 
     private readonly ILogger<JsonDataSource> _logger;
 
@@ -109,16 +109,16 @@ public class JsonDataSource : ICarbonIntensityDataSource
 
     protected virtual async Task<List<EmissionsData>?> GetJsonDataAsync()
     {
-        if (emissionsData is not null)
+        if (_emissionsData is not null)
         {
-            return emissionsData;
+            return _emissionsData;
         }
         using Stream stream = GetStreamFromFileLocation();
         var jsonObject = await JsonSerializer.DeserializeAsync<EmissionsJsonFile>(stream);
-        if (emissionsData is null || !emissionsData.Any()) {
-            emissionsData = jsonObject?.Emissions;
+        if (_emissionsData is null || !_emissionsData.Any()) {
+            _emissionsData = jsonObject?.Emissions;
         }
-        return emissionsData;
+        return _emissionsData;
     }
 
     private Stream GetStreamFromFileLocation()
