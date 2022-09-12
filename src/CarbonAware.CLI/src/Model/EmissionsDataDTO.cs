@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CarbonAware.Model;
 
 namespace CarbonAware.CLI.Model
 {
-    class EmissionsDataDTO
+    public class EmissionsDataDTO
     {
         public string? Location { get; set; }
         ///<example> 01-01-2022 </example>   
@@ -16,5 +12,16 @@ namespace CarbonAware.CLI.Model
         ///<example>1.12:24:02 </example>
         public TimeSpan? Duration { get; set; }
 
+
+
+        public static implicit operator EmissionsDataDTO(EmissionsData emissions)
+        {
+            EmissionsDataDTO emissionsDTO = new EmissionsDataDTO();
+            emissionsDTO.Location = emissions.Location;
+            emissionsDTO.Time = emissions.Time;
+            emissionsDTO.Duration = emissions.Duration;
+            emissionsDTO.Rating = emissions.Rating;
+            return emissionsDTO;
+        }
     }
 }

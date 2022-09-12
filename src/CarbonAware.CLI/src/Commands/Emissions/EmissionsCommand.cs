@@ -4,7 +4,7 @@ using CarbonAware.CLI.Model;
 using CarbonAware.Model;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Linq;
+using System.CommandLine.Parsing;
 using System.Text.Json;
 
 namespace CarbonAware.CLI.Commands.Emissions;
@@ -24,13 +24,13 @@ class EmissionsCommand : Command
             {
                 Arity = ArgumentArity.ZeroOrOne,
             };
-    private readonly Option<bool?> _best = new Option<bool?>(
+    private readonly Option<bool> _best = new Option<bool>(
             new string[] { "--best", "-b" },
             LocalizableStrings.BestDescription)
             {
                 Arity = ArgumentArity.ZeroOrOne,
             };
-    private readonly Option<bool?> _average = new Option<bool?>(
+    private readonly Option<bool> _average = new Option<bool>(
             new string[] { "--average", "-a" },
            LocalizableStrings.AverageDescription)
             {
@@ -44,20 +44,20 @@ class EmissionsCommand : Command
         AddOption(_best);
         AddOption(_average);
 
-        ValidateMutuallyExclusiveOptions();
+        AddValidator(ValidateOptions);
 
         this.SetHandler(this.Run);
     }
 
-    private void ValidateMutuallyExclusiveOptions()
+    private void ValidateOptions(CommandResult commandResult)
     {
-        _average.AddValidator(r =>
+        // Validate mutually exclusive options 
+        var average = commandResult.GetValueForOption<bool>(_average);
+        var best = commandResult.GetValueForOption<bool>(_best);
+        if (average && best)
         {
-            if (r.FindResultFor(_best) is not null)
-            {
-                r.ErrorMessage = "Options --average and --best cannot be used together";
-            }
-        });
+            commandResult.ErrorMessage = "Options --average and --best cannot be used together";
+        }
     }
 
     internal async Task Run(InvocationContext context)
@@ -70,36 +70,36 @@ class EmissionsCommand : Command
         var locations = context.ParseResult.GetValueForOption<string[]>(_requiredLocation);
         var startTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_startTime);
         var endTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_endTime);
-        var best = context.ParseResult.GetValueForOption<bool?>(_best);
-        var average = context.ParseResult.GetValueForOption<bool?>(_average);
+        var best = context.ParseResult.GetValueForOption<bool>(_best);
+        var average = context.ParseResult.GetValueForOption<bool>(_average);
 
-
-        // Call the aggregator.
-        if (best == true)
+        var parameters = new CarbonAwareParametersBaseDTO()
         {
-            var parameters = new CarbonAwareParametersBaseDTO()
-            {
-                MultipleLocations = locations,
-                Start = startTime,
-                End = endTime
-            };
-            var result = await aggregator.GetBestEmissionsDataAsync(parameters);
+            Start = startTime,
+            End = endTime
+        };
+        // Call the aggregator.
+        if (best)
+        {
+            parameters.MultipleLocations = locations;
 
-            var serializedOuput = JsonSerializer.Serialize(ConvertToEmissionsDTO(result!));
+            var result = await aggregator.GetBestEmissionsDataAsync(parameters);
+            EmissionsDataDTO emission = result;
+
+            var serializedOuput = JsonSerializer.Serialize(emission);
             context.Console.WriteLine(serializedOuput);
         }
-        else if (average == true) 
+        else if (average) 
         {
-            List<EmissionsDataDTO> emissions = new(); 
+            List<EmissionsDataDTO> emissions = new();
+
             foreach (var location in locations!)
             {
-                var parameters = new CarbonAwareParametersBaseDTO()
-                {
-                    SingleLocation = location,
-                    Start = startTime,
-                    End = endTime
-                };
+                parameters.SingleLocation = location;
+
                 var averageCarbonIntensity = await aggregator.CalculateAverageCarbonIntensityAsync(parameters);
+                
+                // If startTime or endTime were not provided, the aggregator would have thrwon an error. So, at this point it is safe to assume that the start/end values are not null. 
                 var emissionData = new EmissionsDataDTO()
                 {
                     Location = location,
@@ -116,31 +116,13 @@ class EmissionsCommand : Command
         }
         else
         {
-            var parameters = new CarbonAwareParametersBaseDTO()
-            {
-                MultipleLocations = locations,
-                Start = startTime,
-                End = endTime
-            };
+            parameters.MultipleLocations = locations;
             var results = await aggregator.GetEmissionsDataAsync(parameters);
-            
-            var emissions = results.AsEnumerable<EmissionsData>().Select(e => ConvertToEmissionsDTO(e));
-
-
-            context.Console.WriteLine(JsonSerializer.Serialize(emissions));
+            //TODO: Need to use implict conversion to EmissionsDataDTO
+            context.Console.WriteLine(JsonSerializer.Serialize(results));
         }
 
         context.ExitCode = 0;
     }
 
-    private EmissionsDataDTO ConvertToEmissionsDTO(EmissionsData emissionsData)
-    {
-        return new EmissionsDataDTO()
-        {
-            Location = emissionsData.Location,
-            Time = emissionsData.Time,
-            Rating =  emissionsData.Rating,
-            Duration = emissionsData.Duration
-        };
-    }
 }
