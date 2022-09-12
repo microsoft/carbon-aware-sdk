@@ -34,6 +34,8 @@ public class JsonDataSourceConfigurationTests
 
     [TestCase("../newfile.json", TestName = "setting parent's dir")]
     [TestCase("~/newfile.json", TestName = "setting user's home dir")]
+    [TestCase(null, TestName = "setting null filepath")]
+    [TestCase("", TestName = "setting empty filepath")]
     public void SetDataFileLocation_ThrowsArgumentException(string filePath)
     {
         var ex = Assert.Throws<ArgumentException>(() => _configuration.DataFileLocation = filePath);
