@@ -10,11 +10,11 @@ namespace CarbonAware.CLI.Model
     {
         public string? Location { get; set; }
         ///<example> 01-01-2022 </example>   
-        public DateTimeOffset Time { get; set; }
+        public DateTimeOffset? Time { get; set; }
         ///<example> 140.5 </example>
         public double Rating { get; set; }
         ///<example>1.12:24:02 </example>
-        public TimeSpan Duration { get; set; }
+        public TimeSpan? Duration { get; set; }
 
     }
 }

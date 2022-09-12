@@ -24,12 +24,14 @@ class EmissionsCommand : Command
             {
                 Arity = ArgumentArity.ZeroOrOne,
             };
-    private readonly Option<bool?> _best = new Option<bool?>(new string[] { "--best", "-b" },
+    private readonly Option<bool?> _best = new Option<bool?>(
+            new string[] { "--best", "-b" },
             LocalizableStrings.BestDescription)
             {
                 Arity = ArgumentArity.ZeroOrOne,
             };
-    private readonly Option<bool?> _average = new Option<bool?>(new string[] { "--average", "-a" },
+    private readonly Option<bool?> _average = new Option<bool?>(
+            new string[] { "--average", "-a" },
            LocalizableStrings.AverageDescription)
             {
                 Arity = ArgumentArity.ZeroOrOne,
@@ -42,18 +44,18 @@ class EmissionsCommand : Command
         AddOption(_best);
         AddOption(_average);
 
-        ValidateMutuallyExclusiveOptions(_average, _best);
+        ValidateMutuallyExclusiveOptions();
 
         this.SetHandler(this.Run);
     }
 
-    private void ValidateMutuallyExclusiveOptions(Option<bool?> average, Option<bool?> best)
+    private void ValidateMutuallyExclusiveOptions()
     {
         _average.AddValidator(r =>
         {
             if (r.FindResultFor(_best) is not null)
             {
-                r.ErrorMessage = "Cannot have both options***********";
+                r.ErrorMessage = "Options --average and --best cannot be used together";
             }
         });
     }
@@ -82,8 +84,9 @@ class EmissionsCommand : Command
                 End = endTime
             };
             var result = await aggregator.GetBestEmissionsDataAsync(parameters);
-            
-            context.Console.WriteLine(JsonSerializer.Serialize(ConvertToEmissionsDTO(result!)));
+
+            var serializedOuput = JsonSerializer.Serialize(ConvertToEmissionsDTO(result!));
+            context.Console.WriteLine(serializedOuput);
         }
         else if (average == true) 
         {
@@ -100,13 +103,16 @@ class EmissionsCommand : Command
                 var emissionData = new EmissionsDataDTO()
                 {
                     Location = location,
+                    Time = startTime,
+                    Duration = endTime - startTime,
                     Rating = averageCarbonIntensity
                 };
 
                 emissions.Add(emissionData);
             }
-           
-            context.Console.WriteLine(JsonSerializer.Serialize(emissions));
+            
+            var serializedOuput = JsonSerializer.Serialize(emissions);
+            context.Console.WriteLine(serializedOuput);
         }
         else
         {
@@ -117,7 +123,10 @@ class EmissionsCommand : Command
                 End = endTime
             };
             var results = await aggregator.GetEmissionsDataAsync(parameters);
+            
             var emissions = results.AsEnumerable<EmissionsData>().Select(e => ConvertToEmissionsDTO(e));
+
+
             context.Console.WriteLine(JsonSerializer.Serialize(emissions));
         }
 
@@ -130,7 +139,8 @@ class EmissionsCommand : Command
         {
             Location = emissionsData.Location,
             Time = emissionsData.Time,
-            Rating =  emissionsData.Rating
+            Rating =  emissionsData.Rating,
+            Duration = emissionsData.Duration
         };
     }
 }
