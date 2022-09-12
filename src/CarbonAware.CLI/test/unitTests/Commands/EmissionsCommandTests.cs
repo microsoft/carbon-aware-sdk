@@ -1,8 +1,10 @@
 using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.CLI.Commands.Emissions;
 using CarbonAware.Model;
+using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using System.Text.Json;
 
 namespace CarbonAware.CLI.UnitTests;
@@ -106,5 +108,60 @@ public class EmissionsCommandTests : TestBase
         // Assert
         _mockCarbonAwareAggregator.Verify(agg => agg.GetEmissionsDataAsync(It.IsAny<CarbonAwareParameters>()), Times.Once);
         Assert.AreEqual(expectedEndTime, actualEndTime);
+    }
+
+    [TestCase("--best", TestName = "EmissionsCommandTests.Run BestOption: long alias")]
+    [TestCase("-b", TestName = "EmissionsCommandTests.Run BestOption: short alias")]
+    public async Task Run_CallsAggregatorWithBestOption(string alias)
+    {
+        // Arrange
+        var emissionsCommand = new EmissionsCommand();
+        var invocationContext = SetupInvocationContext(emissionsCommand, $"emissions {alias}");
+
+        _mockCarbonAwareAggregator.Setup(agg => agg.GetBestEmissionsDataAsync(It.IsAny<CarbonAwareParameters>()))
+            .ReturnsAsync( new EmissionsData() ); ;
+
+        // Act
+        await emissionsCommand.Run(invocationContext);
+
+        // Assert
+        _mockCarbonAwareAggregator.Verify(agg => agg.GetBestEmissionsDataAsync(It.IsAny<CarbonAwareParameters>()), Times.Once);
+    }
+
+    [TestCase("--average", 1, TestName = "EmissionsCommandTests.Run AverageOption: long alias, single location")]
+    [TestCase("-a", 1, TestName = "EmissionsCommandTests.Run AverageOption: short alias, single location")]
+    [TestCase("--average", 2, TestName = "EmissionsCommandTests.Run AverageOption: long alias, multiple locations")]
+    public async Task Run_CallsAggregatorWithAverageOption(string alias, int locationCount)
+    {
+        // Arrange
+        var emissionsCommand = new EmissionsCommand();
+        var testLocations = new[] { "-l eastus", "-l westus" };
+        string locationArgs = string.Join(" ", testLocations.Take(locationCount));
+        var invocationContext = SetupInvocationContext(emissionsCommand, $"emissions {locationArgs} {alias}");
+
+        _mockCarbonAwareAggregator.Setup(agg => agg.CalculateAverageCarbonIntensityAsync(It.IsAny<CarbonAwareParameters>()));
+
+        // Act
+        await emissionsCommand.Run(invocationContext);
+
+        // Assert
+        _mockCarbonAwareAggregator.Verify(agg => agg.CalculateAverageCarbonIntensityAsync(It.IsAny<CarbonAwareParameters>()), Times.Exactly(locationCount));
+    }
+
+    [TestCase("--best --average", TestName = "EmissionsCommandTests.Run MutuallyExclusiveOptions: --best --average")]
+    [TestCase("-b --average", TestName = "EmissionsCommandTests.Run MutuallyExclusiveOptions: -b --average")]
+    [TestCase("--best -a", TestName = "EmissionsCommandTests.Run MutuallyExclusiveOptions: --best -a")]
+    [TestCase("-b -a", TestName = "EmissionsCommandTests.Run MutuallyExclusiveOptions: -b -a")]
+    public void Run_ValidateMutuallyExclusiveOptionsBestAndAverage(string commandArgs)
+    {
+        // Arrange
+        var emissionsCommand = new EmissionsCommand();
+        var expectedErrorMessage = "Options --average and --best cannot be used together";
+
+        // Act
+        var invocationContext = SetupInvocationContext(emissionsCommand, $"emissions -l eastus {commandArgs}");
+
+        // Assert
+        CollectionAssert.Contains(invocationContext.ParseResult.Errors.Select(e => e.Message), expectedErrorMessage);
     }
 }
