@@ -49,8 +49,10 @@ Retrieve emissions data from specified locations and time periods.
 
 ```text
   -l, --location <location> (REQUIRED)  A named location
-  --start-time <startTime>              Start time of emissions data
-  --end-time <endTime>                  End time of emissions data
+  -s, --start-time <startTime>          Start time of emissions data
+  -e, --end-time <endTime>              End time of emissions data
+  -b, --best                            Filter results down to the best (typically lowest) data point.
+  -a, --average                         Outputs the weighted average of all data points within the start and end time boundaries.
   -?, -h, --help                        Show help and usage information
 ```
 
