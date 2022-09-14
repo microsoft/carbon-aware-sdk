@@ -5,6 +5,7 @@ using CarbonAware.Model;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
+
 using System.Text.Json;
 
 namespace CarbonAware.CLI.Commands.Emissions;
@@ -59,8 +60,7 @@ class EmissionsCommand : Command
             commandResult.ErrorMessage = "Options --average and --best cannot be used together";
         }
     }
-
-    internal async Task Run(InvocationContext context)
+    private async Task Run(InvocationContext context)
     {
         // Get aggregator via DI.
         var serviceProvider = context.BindingContext.GetService(typeof(IServiceProvider)) as IServiceProvider ?? throw new NullReferenceException("ServiceProvider not found");
@@ -90,7 +90,6 @@ class EmissionsCommand : Command
                 var serializedOuput = JsonSerializer.Serialize((EmissionsDataDTO)result);
                 context.Console.WriteLine(serializedOuput);
             }
-           
         }
         else if (average) 
         {
@@ -113,7 +112,6 @@ class EmissionsCommand : Command
 
                 emissions.Add(emissionData);
             }
-            
             var serializedOuput = JsonSerializer.Serialize(emissions);
             context.Console.WriteLine(serializedOuput);
         }
@@ -126,8 +124,6 @@ class EmissionsCommand : Command
                 context.Console.WriteLine(JsonSerializer.Serialize(results.Select(emission => (EmissionsDataDTO) emission)));
             }
         }
-
         context.ExitCode = 0;
     }
-
 }
