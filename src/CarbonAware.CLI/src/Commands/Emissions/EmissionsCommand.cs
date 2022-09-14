@@ -60,7 +60,7 @@ class EmissionsCommand : Command
             commandResult.ErrorMessage = "Options --average and --best cannot be used together";
         }
     }
-    private async Task Run(InvocationContext context)
+    internal async Task Run(InvocationContext context)
     {
         // Get aggregator via DI.
         var serviceProvider = context.BindingContext.GetService(typeof(IServiceProvider)) as IServiceProvider ?? throw new NullReferenceException("ServiceProvider not found");
