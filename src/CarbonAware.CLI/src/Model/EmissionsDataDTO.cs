@@ -4,6 +4,7 @@ namespace CarbonAware.CLI.Model
 {
     public class EmissionsDataDTO
     {
+        ///<example> eastus </example>
         public string? Location { get; set; }
         ///<example> 01-01-2022 </example>   
         public DateTimeOffset? Time { get; set; }
@@ -12,9 +13,7 @@ namespace CarbonAware.CLI.Model
         ///<example>1.12:24:02 </example>
         public TimeSpan? Duration { get; set; }
 
-
-
-        public static implicit operator EmissionsDataDTO(EmissionsData emissions)
+        public static explicit operator EmissionsDataDTO(EmissionsData emissions)
         {
             EmissionsDataDTO emissionsDTO = new EmissionsDataDTO();
             emissionsDTO.Location = emissions.Location;

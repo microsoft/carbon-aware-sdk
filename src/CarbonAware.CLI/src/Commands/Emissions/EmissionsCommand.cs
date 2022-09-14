@@ -84,10 +84,13 @@ class EmissionsCommand : Command
             parameters.MultipleLocations = locations;
 
             var result = await aggregator.GetBestEmissionsDataAsync(parameters);
-            EmissionsDataDTO emission = result;
-
-            var serializedOuput = JsonSerializer.Serialize(emission);
-            context.Console.WriteLine(serializedOuput);
+           
+            if(result != null)
+            {
+                var serializedOuput = JsonSerializer.Serialize((EmissionsDataDTO)result);
+                context.Console.WriteLine(serializedOuput);
+            }
+           
         }
         else if (average) 
         {
@@ -118,8 +121,10 @@ class EmissionsCommand : Command
         {
             parameters.MultipleLocations = locations;
             var results = await aggregator.GetEmissionsDataAsync(parameters);
-            //TODO: Need to use implict conversion to EmissionsDataDTO
-            context.Console.WriteLine(JsonSerializer.Serialize(results));
+            if (results != null)
+            {
+                context.Console.WriteLine(JsonSerializer.Serialize(results.Select(emission => (EmissionsDataDTO) emission)));
+            }
         }
 
         context.ExitCode = 0;
