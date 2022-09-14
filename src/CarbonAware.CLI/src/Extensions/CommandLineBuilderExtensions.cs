@@ -24,22 +24,22 @@ public static class CommandLineBuilderExtensions
         var exitCode = ExitCode.Failure;
         if (exception is IHttpResponseException httpResponseException)
         {
-            context.Console.Error.Write($"{httpResponseException.Title}\n".Red().Bold());
-            context.Console.Error.Write($"{httpResponseException.Status}\n".Red());
-            context.Console.Error.Write($"{httpResponseException.Detail}\n".Red());
+            context.Console.Error.Write($"{httpResponseException.Title}\n");
+            context.Console.Error.Write($"{httpResponseException.Status}\n");
+            context.Console.Error.Write($"{httpResponseException.Detail}\n");
             exitCode = ExitCode.DataSourceError;
         }
         else if (exception is ArgumentException)
         {
-            context.Console.Error.Write($"{exception.Message}\n".Red().Bold());
+            context.Console.Error.Write($"{exception.Message}\n");
             foreach (DictionaryEntry entry in exception.Data)
             {
                 if (entry.Value is string[] messages && entry.Key is string key)
                 {
-                    context.Console.Error.Write($"{key}: ".Red().Bold());
+                    context.Console.Error.Write($"{key}: ");
                     foreach (var message in messages)
                     {
-                        context.Console.Error.Write($"{message}\n".Red());
+                        context.Console.Error.Write($"{message}\n");
                     }
                 }
             }
@@ -47,7 +47,7 @@ public static class CommandLineBuilderExtensions
         }
         else
         {
-            context.Console.Error.Write($"{exception.Message}\n".Red());
+            context.Console.Error.Write($"{exception.Message}\n");
         }
         context.ExitCode = (int)exitCode;
     }
