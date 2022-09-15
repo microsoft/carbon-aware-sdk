@@ -18,25 +18,29 @@ public class EmissionsCommandTests : TestBase
         // Arrange
         var emissionsCommand = new EmissionsCommand();
         var invocationContext = SetupInvocationContext(emissionsCommand, "emissions");
-        var expectedLocationJSON = "\"Location\":\"eastus\"";
-        var expectedTimeJSON = "\"Time\":\"2022-01-01T00:00:00+00:00\"";
-        var expectedDurationJSON = "\"Duration\":\"01:00:00\"";
-        var expectedRatingJSON = "\"Rating\":100.7";
 
-        var emissionsData = JsonSerializer.Deserialize<EmissionsData>(
-            "{" + $"{expectedLocationJSON},{expectedTimeJSON},{expectedDurationJSON},{expectedRatingJSON}" + "}")!;
-
+        var expectedEmissions = new EmissionsData()
+        {
+            Location = "eastus",
+            Time = DateTimeOffset.Parse("2022-01-01T00:00:00+00:00"),
+            Duration = TimeSpan.Parse("01:00:00"),
+            Rating = 100.7
+        };
+      
         _mockCarbonAwareAggregator.Setup(agg => agg.GetEmissionsDataAsync(It.IsAny<CarbonAwareParameters>()))
-            .ReturnsAsync(new List<EmissionsData>() { emissionsData });
+            .ReturnsAsync(new List<EmissionsData>() { expectedEmissions });
 
         // Act
         await emissionsCommand.Run(invocationContext);
 
         // Assert
-        StringAssert.Contains(expectedLocationJSON, _console.Out.ToString());
-        StringAssert.Contains(expectedTimeJSON, _console.Out.ToString());
-        StringAssert.Contains(expectedDurationJSON, _console.Out.ToString());
-        StringAssert.Contains(expectedRatingJSON, _console.Out.ToString());
+        string? consoleOutput = _console.Out.ToString();
+        StringAssert.Contains(expectedEmissions.Location, consoleOutput);
+        StringAssert.Contains(expectedEmissions.Rating.ToString(), consoleOutput);
+        StringAssert.Contains(expectedEmissions.Time.ToString(), consoleOutput);
+        StringAssert.Contains(expectedEmissions.Duration.ToString(), consoleOutput);
+       
+
         _mockCarbonAwareAggregator.Verify(agg => agg.GetEmissionsDataAsync(It.IsAny<CarbonAwareParameters>()), Times.Once);
     }
 
