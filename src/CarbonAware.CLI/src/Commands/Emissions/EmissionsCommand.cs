@@ -2,6 +2,7 @@ using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.CLI.Common;
 using CarbonAware.CLI.Model;
 using CarbonAware.Model;
+using System.Collections;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
@@ -72,7 +73,6 @@ class EmissionsCommand : Command
         var endTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_endTime);
         var best = context.ParseResult.GetValueForOption<bool>(_best);
         var average = context.ParseResult.GetValueForOption<bool>(_average);
-
         var parameters = new CarbonAwareParametersBaseDTO()
         {
             Start = startTime,
@@ -121,7 +121,8 @@ class EmissionsCommand : Command
             var results = await aggregator.GetEmissionsDataAsync(parameters);
             if (results != null)
             {
-                context.Console.WriteLine(JsonSerializer.Serialize(results.Select(emission => (EmissionsDataDTO) emission)));
+                var serializedOuput = JsonSerializer.Serialize((results.Select(emission => (EmissionsDataDTO)emission)));
+                context.Console.WriteLine(serializedOuput);
             }
         }
         context.ExitCode = 0;
