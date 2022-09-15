@@ -5,6 +5,7 @@ using CarbonAware.DataSources.WattTime.Mocks;
 using NUnit.Framework;
 using System.CommandLine.IO;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace CarbonAware.CLI.IntegrationTests;
 
@@ -14,6 +15,7 @@ namespace CarbonAware.CLI.IntegrationTests;
 /// </summary>
 public abstract class IntegrationTestingBase
 {
+    private string _executableName = "caw";
     internal DataSourceType _dataSource;
     internal string? _dataSourceEnv;
     protected IDataSourceMocker _dataSourceMocker;
@@ -32,7 +34,7 @@ public abstract class IntegrationTestingBase
     {
         // Initialize process here
         Process proc = new Process();
-        proc.StartInfo.FileName = "caw.exe";
+        proc.StartInfo.FileName = _executableName;
         // add arguments as whole string
         proc.StartInfo.Arguments = arguments;
 
@@ -106,6 +108,9 @@ public abstract class IntegrationTestingBase
 
         // set current folder
         Environment.CurrentDirectory = dirName;
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            _executableName += ".exe";
     }
 
     [SetUp]

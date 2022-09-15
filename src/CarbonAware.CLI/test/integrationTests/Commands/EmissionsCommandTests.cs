@@ -68,16 +68,19 @@ public class EmissionsCommandTests : IntegrationTestingBase
         var end = DateTimeOffset.Parse("2022-09-01T03:00:00Z");
         var location = "eastus";
         _dataSourceMocker.SetupDataMock(start, end, location);
-        var expectedTime = DateTimeOffset.Parse("2022-09-01T02:00:00Z");
 
         // Act
-        var exitCode = InvokeCLI($"emissions -l {location} -s 2022-09-01T02:00:00Z -e 2022-09-01T02:04:00Z");
+        var exitCode = InvokeCLI($"emissions -l {location} -s 2022-09-01T02:01:00Z -e 2022-09-01T02:04:00Z");
 
         // Assert
         var jsonResults = JsonNode.Parse(_console.Out.ToString()!)!.AsArray()!;
-        var firstResult = jsonResults.Last()!.AsObject();
+        var firstResult = jsonResults.First()!.AsObject();
 
         Assert.AreEqual(0, exitCode);
-        Assert.AreEqual(expectedTime, (DateTimeOffset?)firstResult["Time"]);
+        Assert.AreEqual(1, jsonResults.Count);
+        Assert.IsNotNull(firstResult["Location"]);
+        Assert.IsNotNull(firstResult["Time"]);
+        Assert.IsNotNull(firstResult["Rating"]);
+        Assert.IsNotNull(firstResult["Duration"]);
     }
 }
