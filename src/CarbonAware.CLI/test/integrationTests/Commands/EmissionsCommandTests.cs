@@ -50,10 +50,10 @@ public class EmissionsCommandTests : IntegrationTestingBase
         var exitCode = await InvokeCliAsync($"emissions -l {location}");
 
         // Assert
+        Assert.AreEqual(0, exitCode);
+        
         var jsonResults = JsonNode.Parse(_console.Out.ToString()!)!.AsArray()!;
         var firstResult = jsonResults.First()!;
-        
-        Assert.AreEqual(0, exitCode);
         Assert.IsNotNull(firstResult["Location"]);
         Assert.IsNotNull(firstResult["Time"]);
         Assert.IsNotNull(firstResult["Rating"]);
@@ -73,10 +73,10 @@ public class EmissionsCommandTests : IntegrationTestingBase
         var exitCode = await InvokeCliAsync($"emissions -l {location} -s 2022-09-01T02:01:00Z -e 2022-09-01T02:04:00Z");
 
         // Assert
+        Assert.AreEqual(0, exitCode);
+
         var jsonResults = JsonNode.Parse(_console.Out.ToString()!)!.AsArray()!;
         var firstResult = jsonResults.First()!.AsObject();
-
-        Assert.AreEqual(0, exitCode);
         Assert.AreEqual(1, jsonResults.Count);
         Assert.IsNotNull(firstResult["Location"]);
         Assert.IsNotNull(firstResult["Time"]);
