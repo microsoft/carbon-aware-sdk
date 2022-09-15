@@ -6,6 +6,7 @@ using NUnit.Framework;
 using System.CommandLine.IO;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace CarbonAware.CLI.IntegrationTests;
 
@@ -30,10 +31,11 @@ public abstract class IntegrationTestingBase
         _dataSourceEnv = Environment.GetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource");
     }
 
-    protected int InvokeCLI(string arguments)
+    protected async Task<int> InvokeCliAsync(string arguments)
     {
         // Initialize process here
-        Process proc = new Process();
+        using var proc = new Process();
+        
         proc.StartInfo.FileName = _executableName;
         // add arguments as whole string
         proc.StartInfo.Arguments = arguments;
@@ -48,16 +50,24 @@ public abstract class IntegrationTestingBase
         // set working directory
         proc.StartInfo.WorkingDirectory = Environment.CurrentDirectory;
 
+        // Set the console to use the TestConsole for standard output and error.
         Console.SetOut(_console.Out.CreateTextWriter());
         Console.SetError(_console.Error.CreateTextWriter());
 
-        // start and wait for exit
+        // start the process
         proc.Start();
-        proc.WaitForExit();
 
         // get output to testing console.
-        Console.WriteLine(proc.StandardOutput.ReadToEnd());
-        Console.Write(proc.StandardError.ReadToEnd());
+        Console.Out.WriteLine(proc.StandardOutput.ReadToEnd());
+        Console.Error.WriteLine(proc.StandardError.ReadToEnd());
+        
+        await proc.WaitForExitAsync();
+
+        // Kill the process if WaitForExitAsync times out or is cancelled.
+        if (!proc.HasExited)
+        {
+            proc.Kill();
+        }
 
         // reset Console Streams
         var standardOutput = new StreamWriter(Console.OpenStandardOutput());

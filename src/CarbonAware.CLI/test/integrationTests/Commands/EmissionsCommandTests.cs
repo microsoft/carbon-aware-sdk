@@ -15,7 +15,7 @@ public class EmissionsCommandTests : IntegrationTestingBase
     public EmissionsCommandTests(DataSourceType dataSource) : base(dataSource) { }
 
     [Test]
-    public void Emissions_Help_ReturnsHelpText()
+    public async Task Emissions_Help_ReturnsHelpText()
     {
         // Arrange
         var expectedAliases = new[]
@@ -26,7 +26,7 @@ public class EmissionsCommandTests : IntegrationTestingBase
         };
         
         // Act
-        var exitCode = InvokeCLI("emissions -h");
+        var exitCode = await InvokeCliAsync("emissions -h");
         var output = _console.Out.ToString()!;
 
         // Assert
@@ -38,7 +38,7 @@ public class EmissionsCommandTests : IntegrationTestingBase
     }
 
     [Test]
-    public void Emissions_OnlyRequiredOptions_ReturnsExpectedData()
+    public async Task Emissions_OnlyRequiredOptions_ReturnsExpectedData()
     {
         // Arrange
         var end = DateTimeOffset.UtcNow;
@@ -47,7 +47,7 @@ public class EmissionsCommandTests : IntegrationTestingBase
         _dataSourceMocker.SetupDataMock(start, end, location);
 
         // Act
-        var exitCode = InvokeCLI($"emissions -l {location}");
+        var exitCode = await InvokeCliAsync($"emissions -l {location}");
 
         // Assert
         var jsonResults = JsonNode.Parse(_console.Out.ToString()!)!.AsArray()!;
@@ -61,7 +61,7 @@ public class EmissionsCommandTests : IntegrationTestingBase
     }
 
     [Test]
-    public void Emissions_StartAndEndOptions_ReturnsExpectedData()
+    public async Task Emissions_StartAndEndOptions_ReturnsExpectedData()
     {
         // Arrange
         var start = DateTimeOffset.Parse("2022-09-01T00:00:00Z");
@@ -70,7 +70,7 @@ public class EmissionsCommandTests : IntegrationTestingBase
         _dataSourceMocker.SetupDataMock(start, end, location);
 
         // Act
-        var exitCode = InvokeCLI($"emissions -l {location} -s 2022-09-01T02:01:00Z -e 2022-09-01T02:04:00Z");
+        var exitCode = await InvokeCliAsync($"emissions -l {location} -s 2022-09-01T02:01:00Z -e 2022-09-01T02:04:00Z");
 
         // Assert
         var jsonResults = JsonNode.Parse(_console.Out.ToString()!)!.AsArray()!;
