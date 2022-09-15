@@ -61,6 +61,42 @@ namespace CarbonAware.CLI.Commands.Emissions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to End time boundary of forecasted data points. Ignores current forecast data points after this time..
+        /// </summary>
+        internal static string DataEndTimeDescription {
+            get {
+                return ResourceManager.GetString("DataEndTimeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The timestamp used to access the most recently generated forecast as of that time. If not provided, current forecast is requested..
+        /// </summary>
+        internal static string DataRequestedAtDescription {
+            get {
+                return ResourceManager.GetString("DataRequestedAtDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start time boundary of forecasted data points.Ignores current forecast data points before this time..
+        /// </summary>
+        internal static string DataStartTimeDescription {
+            get {
+                return ResourceManager.GetString("DataStartTimeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The estimated duration (in minutes) of the workload..
+        /// </summary>
+        internal static string DurationDescription {
+            get {
+                return ResourceManager.GetString("DurationDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emissions command keyword to retrieve emissions data.
         /// </summary>
         internal static string EmissionsCommandDescription {
