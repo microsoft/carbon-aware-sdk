@@ -44,12 +44,12 @@ class EmissionsCommand : Command
         AddOption(_best);
         AddOption(_average);
 
-        AddValidator(ValidateOptions);
+        AddValidator(ValidateMutuallyExclusiveOptions);
 
         this.SetHandler(this.Run);
     }
 
-    private void ValidateOptions(CommandResult commandResult)
+    private void ValidateMutuallyExclusiveOptions(CommandResult commandResult)
     {
         // Validate mutually exclusive options 
         var average = commandResult.GetValueForOption<bool>(_average);

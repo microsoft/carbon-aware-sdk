@@ -99,3 +99,25 @@ output:
 {"Location":"eastus","Time":"2022-07-31T12:45:11+00:00","Rating":73,"Duration":"08:00:00"},
 {"Location":"eastus","Time":"2022-07-31T20:45:11+00:00","Rating":84,"Duration":"08:00:00"}]
 ```
+
+
+##### Best Emissions
+
+command: `.\caw emissions -l eastus -l westus --start-time 2022-07-01T00:00:00Z --end-time 2022-07-31T23:59:59Z --best`
+
+output:
+
+```text
+[{"Location":"eastus","Time":"2022-07-08T04:45:11+00:00","Rating":48,"Duration":"08:00:00"}]
+```
+
+##### Average Emissions
+
+command: `.\caw emissions -l eastus -l westus --start-time 2022-07-09T00:00:00Z --end-time 2022-07-09T12:00:00Z --average`
+
+output:
+
+```text
+[{"Location":"eastus","Time":"2022-07-09T00:00:00+00:00","Rating":79.357,"Duration":"12:00:00"},
+{"Location":"westus","Time":"2022-07-09T00:00:00+00:00","Rating":86.91243,"Duration":"12:00:00"}]
+```
