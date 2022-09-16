@@ -37,7 +37,7 @@ public class EmissionsCommandTests : TestBase
         string? consoleOutput = _console.Out.ToString();
         StringAssert.Contains(expectedEmissions.Location, consoleOutput);
         StringAssert.Contains(expectedEmissions.Rating.ToString(), consoleOutput);
-        StringAssert.Contains(expectedEmissions.Time.ToString(), consoleOutput);
+        StringAssert.Contains(expectedEmissions.Time.ToString("yyyy-MM-ddTHH:mm:sszzz"), consoleOutput);
         StringAssert.Contains(expectedEmissions.Duration.ToString(), consoleOutput);
        
 

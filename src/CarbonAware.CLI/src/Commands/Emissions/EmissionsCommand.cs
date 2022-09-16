@@ -1,8 +1,6 @@
 using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.CLI.Common;
 using CarbonAware.CLI.Model;
-using CarbonAware.Model;
-using System.Collections;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
@@ -79,6 +77,8 @@ class EmissionsCommand : Command
             End = endTime
         };
         // Call the aggregator.
+        List<EmissionsDataDTO> emissions = new();
+        
         if (best)
         {
             parameters.MultipleLocations = locations;
@@ -87,21 +87,18 @@ class EmissionsCommand : Command
            
             if(result != null)
             {
-                var serializedOuput = JsonSerializer.Serialize((EmissionsDataDTO)result);
-                context.Console.WriteLine(serializedOuput);
+                emissions.Add((EmissionsDataDTO) result);
             }
         }
         else if (average) 
         {
-            List<EmissionsDataDTO> emissions = new();
-
             foreach (var location in locations!)
             {
                 parameters.SingleLocation = location;
 
                 var averageCarbonIntensity = await aggregator.CalculateAverageCarbonIntensityAsync(parameters);
                 
-                // If startTime or endTime were not provided, the aggregator would have thrwon an error. So, at this point it is safe to assume that the start/end values are not null. 
+                // If startTime or endTime were not provided, the aggregator would have thrown an error. So, at this point it is safe to assume that the start/end values are not null. 
                 var emissionData = new EmissionsDataDTO()
                 {
                     Location = location,
@@ -109,11 +106,8 @@ class EmissionsCommand : Command
                     Duration = endTime - startTime,
                     Rating = averageCarbonIntensity
                 };
-
                 emissions.Add(emissionData);
             }
-            var serializedOuput = JsonSerializer.Serialize(emissions);
-            context.Console.WriteLine(serializedOuput);
         }
         else
         {
@@ -121,10 +115,12 @@ class EmissionsCommand : Command
             var results = await aggregator.GetEmissionsDataAsync(parameters);
             if (results != null)
             {
-                var serializedOuput = JsonSerializer.Serialize((results.Select(emission => (EmissionsDataDTO)emission)));
-                context.Console.WriteLine(serializedOuput);
+                emissions = results.Select(emission => (EmissionsDataDTO)emission).ToList();
             }
         }
+       
+        var serializedOuput = JsonSerializer.Serialize(emissions);
+        context.Console.WriteLine(serializedOuput);
         context.ExitCode = 0;
     }
 }
