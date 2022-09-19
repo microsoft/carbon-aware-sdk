@@ -1,6 +1,7 @@
 ﻿using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.CLI.Common;
 using CarbonAware.CLI.Model;
+using CarbonAware.Tools.WattTimeClient.Model;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Text.Json;
@@ -11,7 +12,7 @@ class EmissionsForecastCommand : Command
 {
     private readonly Option<string[]> _requiredLocation = CommonOptions.RequiredLocationOption;
     private readonly Option<DateTimeOffset?> _dataStartTime = new Option<DateTimeOffset?>(
-            new string[] { "data-start-time", "-s" },
+            new string[] { "--data-start-time", "-s" },
             LocalizableStrings.DataStartAtDescription)
     {
         Arity = ArgumentArity.ZeroOrOne,
@@ -24,7 +25,7 @@ class EmissionsForecastCommand : Command
         Arity = ArgumentArity.ZeroOrOne,
     };
     private readonly Option<DateTimeOffset?> _dataRequestedAt = new Option<DateTimeOffset?>(
-                new string[] { "--data-requested-at", "-dr" },
+                new string[] { "--data-requested-at", "-r" },
             LocalizableStrings.DataRequestedAtDescription)
     {
         Arity = ArgumentArity.ZeroOrOne,
@@ -47,7 +48,7 @@ class EmissionsForecastCommand : Command
         this.SetHandler(this.Run);
     }
 
-    private async Task Run(InvocationContext context)
+    internal async Task Run(InvocationContext context)
     {
         // Get aggregator via DI.
         var serviceProvider = context.BindingContext.GetService(typeof(IServiceProvider)) as IServiceProvider ?? throw new NullReferenceException("ServiceProvider not found");
@@ -73,13 +74,17 @@ class EmissionsForecastCommand : Command
         // If requestedAt is not provided, fetch the current forecast
         if (requestedAt != null)
         {
+            forecastParameters.Requested = requestedAt;
             foreach (var location in locations!)
             {
                 forecastParameters.SingleLocation = location;
 
                 var forecast = await aggregator.GetForecastDataAsync(forecastParameters);
 
-                emissionsForecast.Add((EmissionsForecastDTO) forecast);
+                if (forecast != null)
+                {
+                    emissionsForecast.Add((EmissionsForecastDTO)forecast);
+                }
             }
         }
         else
