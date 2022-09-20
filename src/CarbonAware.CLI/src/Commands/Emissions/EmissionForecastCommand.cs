@@ -78,9 +78,7 @@ class EmissionsForecastCommand : Command
             foreach (var location in locations!)
             {
                 forecastParameters.SingleLocation = location;
-
                 var forecast = await aggregator.GetForecastDataAsync(forecastParameters);
-
                 if (forecast != null)
                 {
                     emissionsForecast.Add((EmissionsForecastDTO)forecast);
