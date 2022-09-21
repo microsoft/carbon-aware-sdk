@@ -17,7 +17,7 @@ public class LocationSourceTest
         var mockLocationSource = SetupMockLocationSource().Object;
         Location inputLocation = new Location {
             LocationType = LocationType.CloudProvider,
-            CloudProvider = CloudProvider.Azure,
+            // CloudProvider = CloudProvider.Azure,
             RegionName = "eastus"
         };
 
@@ -26,7 +26,7 @@ public class LocationSourceTest
 
         inputLocation = new Location {
             LocationType = LocationType.CloudProvider,
-            CloudProvider = CloudProvider.Azure,
+            // CloudProvider = CloudProvider.Azure,
             RegionName = "westus"
         };
 

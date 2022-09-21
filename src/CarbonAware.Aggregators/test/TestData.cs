@@ -87,7 +87,7 @@ public static class TestData
             GeneratedAt = DateTimeOffset.Parse("2022-01-01T00:00:00Z"),
             Location = new Location() {
                 RegionName = "westus",
-                CloudProvider = CloudProvider.Azure
+                // CloudProvider = CloudProvider.Azure
             },
             ForecastData = forecastData
         };

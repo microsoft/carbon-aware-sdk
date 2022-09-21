@@ -18,11 +18,11 @@ public enum LocationType
 /// <summary>
 /// The cloud provider type for the location.
 /// </summary>
-public enum CloudProvider
-{
-    // Azure location.  Region is expected to be set to an Azure region name.
-    Azure,
+// public enum CloudProvider
+// {
+//     // Azure location.  Region is expected to be set to an Azure region name.
+//     Azure,
 
-    // Aws location.  Region is expected to be set to an AWS region.
-    AWS
-}
+//     // Aws location.  Region is expected to be set to an AWS region.
+//     AWS
+// }

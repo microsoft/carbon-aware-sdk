@@ -1,11 +1,10 @@
-using System.Globalization;
-using System.Reflection;
 using CarbonAware.Model;
 using CarbonAware.Interfaces;
 using CarbonAware.Exceptions;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
-
+using Microsoft.Extensions.Options;
+using CarbonAware.LocationSources.Configuration;
 
 namespace CarbonAware.LocationSources;
 
@@ -14,9 +13,9 @@ namespace CarbonAware.LocationSources;
 /// </summary>
 public class LocationSource : ILocationSource
 {
-    public string Name => "Azure Location Source";
+    public string Name => "Location Source";
 
-    public string Description => "Location source that knows how to get and work with Azure location information.";
+    public string Description => "Location source that knows how to get and work with location information.";
 
     private readonly ILogger<LocationSource> _logger;
 
@@ -24,13 +23,19 @@ public class LocationSource : ILocationSource
 
     private static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
+    private IOptionsMonitor<LocationDataSourceConfiguration> _configurationMonitor { get; }
+
+    private LocationDataSourceConfiguration _configuration => _configurationMonitor.CurrentValue;
+
+
     /// <summary>
     /// Creates a new instance of the <see cref="LocationSource"/> class.
     /// </summary>
     /// <param name="logger">The logger for the LocationSource</param>
-    public LocationSource(ILogger<LocationSource> logger)
+    public LocationSource(ILogger<LocationSource> logger, IOptionsMonitor<LocationDataSourceConfiguration> monitor)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _configurationMonitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
     }
 
     public async Task<Location> ToGeopositionLocationAsync(Location location)
@@ -43,16 +48,11 @@ public class LocationSource : ILocationSource
             }
             case LocationType.CloudProvider: 
             {
-                if (location.CloudProvider != null && location.CloudProvider != CloudProvider.Azure ) 
-                {
-                    throw new LocationConversionException($"Incorrect Cloud provider region. Expected Azure but found '{ location.CloudProvider }'");
-                }
                 var geoPositionLocation = await GetGeoPositionLocationOrThrowAsync(location);
                 return geoPositionLocation;
             }
         }
-        
-        throw new LocationConversionException($"Location '{ location.CloudProvider }' cannot be converted to Geoposition. ");
+        throw new LocationConversionException($"Location '{ location.LocationType }' cannot be converted to Geoposition. ");
     }
 
     private Task<Location> GetGeoPositionLocationOrThrowAsync(Location location)
@@ -85,17 +85,17 @@ public class LocationSource : ILocationSource
         return Task.FromResult(geoPosistionLocation);        
     }
 
-    protected virtual Task<Dictionary<String, NamedGeoposition>> LoadRegionsFromJsonAsync()
+    protected virtual async Task<Dictionary<String, NamedGeoposition>> LoadRegionsFromJsonAsync()
     {
-        var data = ReadFromResource("CarbonAware.LocationSources.Azure.azure-regions.json");
-        List<NamedGeoposition> regionList = JsonSerializer.Deserialize<List<NamedGeoposition>>(data, options) ?? new List<NamedGeoposition>();
+        using Stream stream = GetStreamFromFileLocation();
+        List<NamedGeoposition> regionList = await JsonSerializer.DeserializeAsync<List<NamedGeoposition>>(stream, options) ?? new List<NamedGeoposition>();
         Dictionary<String, NamedGeoposition> regionGeopositionMapping = new Dictionary<String, NamedGeoposition>();
         foreach (NamedGeoposition region in regionList) 
         {
             regionGeopositionMapping.Add(region.RegionName, region);
         }
 
-        return Task.FromResult(regionGeopositionMapping);
+        return regionGeopositionMapping;
     }
 
     private async void LoadRegionsFromFileIfNotPresentAsync() {
@@ -104,12 +104,10 @@ public class LocationSource : ILocationSource
             namedGeopositions = await LoadRegionsFromJsonAsync();
         }
     }
-    private string ReadFromResource(string key)
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-        using Stream streamMetaData = assembly.GetManifestResourceStream(key) ?? throw new NullReferenceException("StreamMedataData is null");
-        using StreamReader readerMetaData = new StreamReader(streamMetaData);
-        return readerMetaData.ReadToEnd();
-    }
 
+    private Stream GetStreamFromFileLocation()
+    {
+        _logger.LogInformation($"Reading Location data from {_configuration.DataFileLocation}");
+        return File.OpenRead(_configuration.DataFileLocation!);
+    }
 }
