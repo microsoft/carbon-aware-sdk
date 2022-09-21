@@ -1,24 +1,24 @@
 # Data Sources
 
-Data sources allow developers easily integrate different data providers into the carbon aware SDK ([WattTime](https://www.wattime.org), [ElectricityMap](https://static.electricitymap.org), etc) to be made available to all higher level user-interfaces (WebAPI, CLI, etc), while avoiding the details of how to interact with any specific provider.
+Data sources allow developers easily integrate different data providers into the carbon aware SDK ([WattTime](https://www.wattime.org), [ElectricityMaps](https://www.electricitymaps.com/g), etc) to be made available to all higher level user-interfaces (WebAPI, CLI, etc), while avoiding the details of how to interact with any specific provider.
 
 ## Data Sources' Responsibility
-Data sources act as the data ingestion layer for the SDK, handling the retrieval of data from a given data provider. They contain specific knowledge about the data provider they access, such as flags used in requests, fields that come back in responses, special use cases etc. They also handle any external calls that must be made to access the data provider. While helper clients can be built to handle the these calls, only the data source should have access to, and knowledge of, that client.
+Data sources act as the data ingestion layer for the SDK, handling the retrieval of data from a given data provider. They contain specific knowledge about the data provider they access, such as flags used in requests, fields that come back in responses, special use cases etc. They also handle any external calls that must be made to access the data provider. While helper clients can be built to handle these calls, only the data source should have access to, and knowledge of, that client.
 - For example, the WattTimeDataSource has a reference to a private WattTimeClient within it's implementation. The WattTimeClient handles the HTTP GET/POST calls to WattTime and the data source invokes the client once it has processed the request, and then processes the response before returning a final result.
 
 ### Aggregator <-> Data Source Contract
-In order for the SDK to support different data sources, there is a defined contract between the Aggregator layer and the DataSource layer. This contract defines what a request from the Aggregator to the DataSource must contain, and what type of response the Aggregator expects from the DataSource. This means that each data source is responsible for: 
-- Pre-processing the Aggregator request must to create the expected request for the data provider.
-- Post-processing the data provider result to create the expected response type for the Aggregator
+In order for the SDK to support different data sources, there is a defined contract between the Aggregator layer and the Data layer. The Aggregator acts as the "Business Logic" of the application so it needs a standard way of requesting data from the data source and a standard response in return. This means that each data source is responsible for: 
+- Pre-processing any arguments passed to it from the Aggregator to create the expected request for the data provider.
+- Post-processing the data provider result to create the expected return type for the Aggregator
 
-### Post-Processing Caveat
+#### Post-Processing Caveat
 Post-processing should only ensure the types are what is expected and to fix any inconsistencies or issues that may be known to that specific data source. This post-processing **should not** do any extra data operations beyond those required to fulfill the Aggregator request ( i.e., averaging, min/max ops etc.). In other words, the data source should only manipulate data for the aim of returning _valid*_ data in the boundaries requested by the Aggregator
 
 \* What constitutes _valid_ data varies between data sources. It may be the case that some data sources don't handle time boundaries well so  extra processing may be required to ensure the data returned is what the aggregator expects assuming it was any data source and that those edge cases would be handled properly.
 
 ## Creating a New Data Source
 
-Each new data source should be a new dotnet project under the `CarbonAware.DataSources` namespace. This project should have a reference to the `CarbonAware` project, and include the `Microsoft.Extensions.DependencyInjection` package. It should also be added to the solution. We have provided a command snippet below:
+Each new data source should be a new dotnet project under the `CarbonAware.DataSources` namespace and corresponding directory. This project should have a reference to the `CarbonAware` project, and include the `Microsoft.Extensions.DependencyInjection` package. It should also be added to the solution. We have provided a command snippet below:
 
 ```sh
 cd src
@@ -102,10 +102,11 @@ cd src
 dotnet new nunit --name CarbonAware.DataSources.MyNewDataSource.Tests -o CarbonAware.DataSources/CarbonAware.DataSources.MyNewDataSource/test
 dotnet sln CarbonAwareSDK.sln add CarbonAware.DataSources/CarbonAware.DataSources.MyNewDataSource/test/CarbonAware.DataSources.MyNewDataSource.Tests.csproj
 cd CarbonAware.DataSources/CarbonAware.DataSources.MyNewDataSource
-dotnet add tests/CarbonAware.DataSources.MyNewDataSource.Tests.csproj reference src/CarbonAware.DataSources.MyNewDataSource.csproj
+dotnet add test/CarbonAware.DataSources.MyNewDataSource.Tests.csproj reference src/CarbonAware.DataSources.MyNewDataSource.csproj
 ```
 ### Try it Out!
-You are now ready to try out your new data source! Add a new environment variable that sets the data source and make sure to read it into the DataSource.Registration project. If you added a new CarbonIntensity data source, you can set the `CarbonIntensityDataSource` env variable:
+You are now ready to try out your new data source!  If you added a new `ICarbonIntensityDataSource`, you can configure it using the `CarbonIntensityDataSource` setting:
+
 ```bash
   CarbonAwareVars__CarbonIntensityDataSource="MyNewDataSource"
 ```
