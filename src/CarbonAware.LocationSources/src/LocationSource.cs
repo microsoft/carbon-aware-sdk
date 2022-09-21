@@ -91,29 +91,29 @@ public class LocationSource : ILocationSource
         if (_configuration.LocationDataSources is null || !_configuration.LocationDataSources.Any())
         {
             _logger.LogInformation($"Loading default location data configuration");
-            await PopulateRegionMap(regionGeopositionMapping, LocationDataSourcesConfiguration.GetDefaultAzureDataSourceLocation());
+            await PopulateRegionMap(regionGeopositionMapping, LocationDataSource.GetDefaultAzureDataSourceLocation());
         }
         else
         {
-            await PopulateRegionMap(regionGeopositionMapping, _configuration.LocationDataSources!);
+            foreach (var data in _configuration.LocationDataSources!)
+            {
+                await PopulateRegionMap(regionGeopositionMapping, data);
+            }
         }
         return regionGeopositionMapping;
     }
 
-    private async Task PopulateRegionMap(Dictionary<String, NamedGeoposition> map, List<LocationDataSource> sources)
+    private async Task PopulateRegionMap(Dictionary<String, NamedGeoposition> map, LocationDataSource data)
     {
-        foreach (var locationData in sources)
+        using Stream stream = GetStreamFromFileLocation(data);
+        var regionList = await JsonSerializer.DeserializeAsync<List<NamedGeoposition>>(stream, options) ?? new List<NamedGeoposition>();
+        foreach (var region in regionList) 
         {
-            using Stream stream = GetStreamFromFileLocation(locationData);
-            var regionList = await JsonSerializer.DeserializeAsync<List<NamedGeoposition>>(stream, options) ?? new List<NamedGeoposition>();
-            foreach (var region in regionList) 
-            {
-                map.Add(BuildRegionPrefix(locationData, region), region);
-            }
+            map.Add(BuildRegionPrefix(data, region), region);
         }
     }
 
-    private string BuildRegionPrefix(LocationDataSource locationData, NamedGeoposition region)
+    private String BuildRegionPrefix(LocationDataSource locationData, NamedGeoposition region)
     {
         if (String.IsNullOrEmpty(locationData.Prefix) || locationData.Delimiter == null)
         {
@@ -131,7 +131,11 @@ public class LocationSource : ILocationSource
 
     private Stream GetStreamFromFileLocation(LocationDataSource locationData)
     {
-        _logger.LogInformation($"Reading Location data from {locationData.DataFileLocation} with Prefix {locationData.Prefix} and Delimiter {locationData.Delimiter}");
+        _logger.LogInformation($"Reading Location data from {locationData.DataFileLocation}");
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+            _logger.LogDebug($"Location Data Prefix {locationData.Prefix} and Delimiter {locationData.Delimiter}");
+        }
         return File.OpenRead(locationData.DataFileLocation!);
     }
 }

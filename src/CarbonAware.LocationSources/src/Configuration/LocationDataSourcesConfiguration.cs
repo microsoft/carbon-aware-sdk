@@ -8,26 +8,17 @@ namespace CarbonAware.LocationSources.Configuration;
 /// </summary>
 public class LocationDataSourcesConfiguration
 {
-    private const string DefaultDataFile = "azure-regions.json";
 
     public const string Key = "LocationDataSourcesConfiguration";
 
     public List<LocationDataSource>? LocationDataSources { get; set; }
 
-    public static List<LocationDataSource> GetDefaultAzureDataSourceLocation()
-    {
-        return new List<LocationDataSource>() {
-            new LocationDataSource() {
-                Prefix = "",
-                DataFileLocation = DefaultDataFile
-            }
-        };
-    }
 }
 
 public class LocationDataSource
 {
 
+    private const string DefaultAzureLocationDataFile = "azure-regions.json";
     private const string BaseDirectory = "location-sources/json";
     private const string DirectoryRegExPattern = @"^[-\\/a-zA-Z_\d ]*$";
     private const char DefaultDelimiter = '-';
@@ -74,5 +65,12 @@ public class LocationDataSource
         }
         var match = Regex.Match(dirName, DirectoryRegExPattern);
         return match.Success;
+    }
+
+    public static LocationDataSource GetDefaultAzureDataSourceLocation()
+    {
+        return new LocationDataSource() {
+            DataFileLocation = DefaultAzureLocationDataFile
+        };
     }
 }
