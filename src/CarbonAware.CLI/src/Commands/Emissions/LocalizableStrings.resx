@@ -132,16 +132,16 @@
   <data name="StartTimeDescription" xml:space="preserve">
     <value>Start time of emissions data.</value>
   </data>
- <data name="DataEndAtDecsription" xml:space="preserve">
+  <data name="DataEndAtDecsription" xml:space="preserve">
     <value>End time boundary of forecasted data points. Ignores current forecast data points after this time.</value>
   </data>
   <data name="DataRequestedAtDescription" xml:space="preserve">
-    <value>The timestamp used to access the most recently generated forecast as of that time. If not provided, current forecast is requested.</value>
+    <value>The timestamp used to access the most recently generated forecast as of that time. If not provided, the current forecast is requested.</value>
   </data>
   <data name="DataStartAtDescription" xml:space="preserve">
-    <value>Start time boundary of forecasted data points.Ignores current forecast data points before this time.</value>
+    <value>Start time boundary of forecasted data points. Ignores current forecast data points before this time.</value>
   </data>
   <data name="DurationDescription" xml:space="preserve">
     <value>The estimated duration (in minutes) of the workload.</value>
   </data>
- </root>
+</root>

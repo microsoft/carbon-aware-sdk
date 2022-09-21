@@ -88,7 +88,7 @@ namespace CarbonAware.CLI.Commands.Emissions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The timestamp used to access the most recently generated forecast as of that time. If not provided, current forecast is requested..
+        ///   Looks up a localized string similar to The timestamp used to access the most recently generated forecast as of that time. If not provided, the current forecast is requested..
         /// </summary>
         internal static string DataRequestedAtDescription {
             get {
@@ -97,7 +97,7 @@ namespace CarbonAware.CLI.Commands.Emissions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start time boundary of forecasted data points.Ignores current forecast data points before this time..
+        ///   Looks up a localized string similar to Start time boundary of forecasted data points. Ignores current forecast data points before this time..
         /// </summary>
         internal static string DataStartAtDescription {
             get {

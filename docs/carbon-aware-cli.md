@@ -136,10 +136,10 @@ Forecasted emissions
 
 ```text
   -l, --location <location> (REQUIRED)  A list of locations
-  --data-start-at <startTime>           Filter out forecasted data points before start at time.
-  --data-end-at <endTime>               Filter out forecasted data points after end at time.
+  --data-start-time <startTime>           Filter out forecasted data points before start at time.
+  --data-end-time <endTime>               Filter out forecasted data points after end at time.
   -w, --window-size <INT>                   The estimated duration (in minutes) of the workload being forecasted. Defaults to the duration of a single forecast data point
-  --requested-at                        Datetime of a previously generated forecast.  Returns the most current forecast if not provided.
+  --data-requested-at                        Datetime of a previously generated forecast.  Returns the most current forecast if not provided.
   -?, -h, --help                        Show help and usage information
 ```
 
@@ -229,7 +229,7 @@ output:
 > Note: For current forecasts, since the data filters must fall within the forecasted data points, it is advisable to create them dynamically.
 > `TIME_TWO_HOURS_FROM_NOW=$(date --date='2 hours' --utc --iso-8601='seconds')`
 > `TIME_NINETEEN_HOURS_FROM_NOW=$(date --date='19 hours' --utc --iso-8601='seconds')`
-command: `.\caw emissions-forecasts -l northeurope -l westus --data-start-at TIME_TWO_HOURS_FROM_NOW --data-end-at TIME_NINETEEN_HOURS_FROM_NOW -w 10`
+command: `.\caw emissions-forecasts -l northeurope -l westus --data-start-time TIME_TWO_HOURS_FROM_NOW --data-end-time TIME_NINETEEN_HOURS_FROM_NOW -w 10`
 
 output:
 

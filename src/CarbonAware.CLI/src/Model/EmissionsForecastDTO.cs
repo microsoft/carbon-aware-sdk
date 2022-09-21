@@ -9,16 +9,12 @@ namespace CarbonAware.CLI.Model;
 class EmissionsForecastDTO
 {
     public DateTimeOffset GeneratedAt { get; set; }
-
     public DateTimeOffset RequestedAt { get; set; } = DateTimeOffset.UtcNow;
-
     public string Location { get; set; } = string.Empty;
-
     public DateTimeOffset DataStartAt { get; set; }
     public DateTimeOffset DataEndAt { get; set; }
     public int WindowSize { get; set; }
     public EmissionsDataDTO? OptimalDataPoint { get; set; }
-
     public IEnumerable<EmissionsDataDTO>? ForecastData { get; set; }
 
     public static explicit operator EmissionsForecastDTO(EmissionsForecast emissionsForecast)

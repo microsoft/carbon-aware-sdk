@@ -30,8 +30,8 @@ class EmissionsForecastCommand : Command
     {
         Arity = ArgumentArity.ZeroOrOne,
     };
-    private readonly Option<int?> _duration = new Option<int?>(
-                new string[] { "--duration", "-d" },
+    private readonly Option<int?> _windowSize = new Option<int?>(
+                new string[] { "--window-size", "-w" },
             LocalizableStrings.DurationDescription)
     {
         Arity = ArgumentArity.ZeroOrOne,
@@ -42,7 +42,7 @@ class EmissionsForecastCommand : Command
         AddOption(_requiredLocation);
         AddOption(_dataStartTime);
         AddOption(_dataEndTime);
-        AddOption(_duration);
+        AddOption(_windowSize);
         AddOption(_dataRequestedAt);
 
         this.SetHandler(this.Run);
@@ -51,30 +51,30 @@ class EmissionsForecastCommand : Command
     internal async Task Run(InvocationContext context)
     {
         // Get aggregator via DI.
-        var serviceProvider = context.BindingContext.GetService(typeof(IServiceProvider)) as IServiceProvider ?? throw new NullReferenceException("ServiceProvider not found");
-        var aggregator = serviceProvider.GetService(typeof(ICarbonAwareAggregator)) as ICarbonAwareAggregator ?? throw new NullReferenceException("CarbonAwareAggregator not found");
+        var serviceProvider = context.BindingContext.GetService(typeof(IServiceProvider)) as IServiceProvider ?? throw new NullReferenceException(nameof(IServiceProvider)); 
+        var aggregator = serviceProvider.GetService(typeof(ICarbonAwareAggregator)) as ICarbonAwareAggregator ?? throw new NullReferenceException(nameof(ICarbonAwareAggregator));
 
         // Get the arguments and options to build the parameters.
         var locations = context.ParseResult.GetValueForOption<string[]>(_requiredLocation);
         var startTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_dataStartTime);
         var endTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_dataEndTime);
         var requestedAt = context.ParseResult.GetValueForOption<DateTimeOffset?>(_dataRequestedAt);
-        var duration = context.ParseResult.GetValueForOption<int?>(_duration);
+        var duration = context.ParseResult.GetValueForOption<int?>(_windowSize);
 
         // Call the aggregator
         var forecastParameters = new CarbonAwareParametersBaseDTO()
         {
             Start = startTime,
             End = endTime,
-            Duration = duration
-        };
+            Duration = duration,
+            Requested = requestedAt
+    };
 
         List<EmissionsForecastDTO> emissionsForecast = new();
 
         // If requestedAt is not provided, fetch the current forecast
         if (requestedAt != null)
         {
-            forecastParameters.Requested = requestedAt;
             foreach (var location in locations!)
             {
                 forecastParameters.SingleLocation = location;
