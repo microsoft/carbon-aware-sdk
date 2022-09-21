@@ -12,11 +12,20 @@ public class LocationDataSourcesConfiguration
 
     public const string Key = "LocationDataSourcesConfiguration";
 
-    public List<LocationDataSourceConfiguration>? LocationSources { get; set; }
+    public List<LocationDataSource>? LocationDataSources { get; set; }
 
+    public static List<LocationDataSource> GetDefaultAzureDataSourceLocation()
+    {
+        return new List<LocationDataSource>() {
+            new LocationDataSource() {
+                Prefix = "",
+                DataFileLocation = DefaultDataFile
+            }
+        };
+    }
 }
 
-public class LocationDataSourceConfiguration
+public class LocationDataSource
 {
 
     private const string BaseDirectory = "location-sources/json";
@@ -45,7 +54,7 @@ public class LocationDataSourceConfiguration
     public string? Prefix { get ; set; }
     public char? Delimiter { get;  set; }
 
-    public LocationDataSourceConfiguration()
+    public LocationDataSource()
     {
         var assemblyPath = Assembly.GetExecutingAssembly().Location;
         assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
