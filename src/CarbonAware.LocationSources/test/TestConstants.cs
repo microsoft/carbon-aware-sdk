@@ -1,6 +1,6 @@
 using CarbonAware.Model;
 
-namespace CarbonAware.LocationSources.Azure.Test;
+namespace CarbonAware.LocationSources.Test;
 
 public static class Constants
 {

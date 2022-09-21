@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\CarbonAware.LocationSources.Azure.csproj" />
+    <ProjectReference Include="..\src\CarbonAware.LocationSources.csproj" />
   </ItemGroup>
   
 

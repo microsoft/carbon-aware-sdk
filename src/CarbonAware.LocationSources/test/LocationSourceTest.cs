@@ -5,14 +5,14 @@ using Moq;
 using Moq.Protected;
 using CarbonAware.Exceptions;
 
-namespace CarbonAware.LocationSources.Azure.Test;
+namespace CarbonAware.LocationSources.Test;
 
-public class AzureLocationSourceTest
+public class LocationSourceTest
 {   
     [Test]
     public async Task TestToGeopositionLocation_ValidLocation()
     {
-        var logger = Mock.Of<ILogger<AzureLocationSource>>();
+        var logger = Mock.Of<ILogger<LocationSource>>();
 
         var mockLocationSource = SetupMockLocationSource().Object;
         Location inputLocation = new Location {
@@ -85,9 +85,9 @@ public class AzureLocationSourceTest
         Assert.AreEqual(location, result);
     }
 
-    private static Mock<AzureLocationSource> SetupMockLocationSource() {
-        var logger = Mock.Of<ILogger<AzureLocationSource>>();
-        var mockLocationSource = new Mock<AzureLocationSource>(logger);
+    private static Mock<LocationSource> SetupMockLocationSource() {
+        var logger = Mock.Of<ILogger<LocationSource>>();
+        var mockLocationSource = new Mock<LocationSource>(logger);
         
         mockLocationSource.Protected()
             .Setup<Task<Dictionary<string, NamedGeoposition>>>("LoadRegionsFromJsonAsync")

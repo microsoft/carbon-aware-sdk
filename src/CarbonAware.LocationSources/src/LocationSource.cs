@@ -5,30 +5,30 @@ using CarbonAware.Interfaces;
 using CarbonAware.Exceptions;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using CarbonAware.LocationSources.Azure;
 
-namespace CarbonAware.LocationSources.Azure;
+
+namespace CarbonAware.LocationSources;
 
 /// <summary>
 /// Reprsents an azure location source.
 /// </summary>
-public class AzureLocationSource : ILocationSource
+public class LocationSource : ILocationSource
 {
     public string Name => "Azure Location Source";
 
     public string Description => "Location source that knows how to get and work with Azure location information.";
 
-    private readonly ILogger<AzureLocationSource> _logger;
+    private readonly ILogger<LocationSource> _logger;
 
     private IDictionary<string, NamedGeoposition>? namedGeopositions;
 
     private static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
     /// <summary>
-    /// Creates a new instance of the <see cref="AzureLocationSource"/> class.
+    /// Creates a new instance of the <see cref="LocationSource"/> class.
     /// </summary>
     /// <param name="logger">The logger for the LocationSource</param>
-    public AzureLocationSource(ILogger<AzureLocationSource> logger)
+    public LocationSource(ILogger<LocationSource> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
