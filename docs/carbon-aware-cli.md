@@ -64,7 +64,7 @@ command: `.\caw.exe emissions -l eastus`
 
 output:
 
-```text
+```json
 [{"Location":"eastus","Time":"2022-08-30T12:45:11+00:00","Rating":65,"Duration":"08:00:00"},
 {"Location":"eastus","Time":"2022-08-30T20:45:11+00:00","Rating":65,"Duration":"08:00:00"},
 // ...
@@ -78,7 +78,7 @@ command: `.\caw emissions -l eastus -l westus`
 
 output:
 
-```text
+```json
 [{"Location":"eastus","Time":"2022-08-30T12:45:11+00:00","Rating":65,"Duration":"08:00:00"},
 {"Location":"eastus","Time":"2022-08-30T20:45:11+00:00","Rating":65,"Duration":"08:00:00"},
 // ...
@@ -92,7 +92,7 @@ command: `.\caw emissions -l eastus --start-time 2022-07-01T00:00:00Z --end-time
 
 output:
 
-```text
+```json
 [{"Location":"eastus","Time":"2022-07-01T04:45:11+00:00","Rating":65,"Duration":"08:00:00"},
 {"Location":"eastus","Time":"2022-07-01T12:45:11+00:00","Rating":65,"Duration":"08:00:00"},
 // ...
@@ -107,7 +107,7 @@ command: `.\caw emissions -l eastus -l westus --start-time 2022-07-01T00:00:00Z 
 
 output:
 
-```text
+```json
 [{"Location":"eastus","Time":"2022-07-08T04:45:11+00:00","Rating":48,"Duration":"08:00:00"}]
 ```
 
@@ -117,7 +117,7 @@ command: `.\caw emissions -l eastus -l westus --start-time 2022-07-09T00:00:00Z 
 
 output:
 
-```text
+```json
 [{"Location":"eastus","Time":"2022-07-09T00:00:00+00:00","Rating":79.357,"Duration":"12:00:00"},
 {"Location":"westus","Time":"2022-07-09T00:00:00+00:00","Rating":86.91243,"Duration":"12:00:00"}]
 ```
@@ -151,7 +151,7 @@ command: `.\caw emissions-forecasts -l northeurope`
 
 output:
 
-```text
+```json
 [{
   "requestedAt": "2022-07-19T13:37:49+00:00",
   "generatedAt": "2022-07-19T13:35:00+00:00",
@@ -189,7 +189,7 @@ command: `.\caw emissions-forecasts -l eastus -l westus`
 
 output:
 
-```text
+```json
 [
   {
     "requestedAt": "2022-06-01T12:01:00+00:00"
@@ -233,7 +233,7 @@ command: `.\caw emissions-forecasts -l northeurope -l westus --data-start-at TIM
 
 output:
 
-```text
+```json
 [{
   "requestedAt": "2022-07-19T13:37:49+00:00",
   "generatedAt": "2022-07-19T13:35:00+00:00",
@@ -300,7 +300,7 @@ command: `.\caw emissions-forecasts -l northeurope -l westus --requested-at 2022
 
 output:
 
-```text
+```json
 [{
   "requestedAt": "2022-06-15T18:31:00+00:00",
   "generatedAt": "2022-06-15T18:30:00+00:00",

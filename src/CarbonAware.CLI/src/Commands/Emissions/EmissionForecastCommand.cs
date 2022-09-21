@@ -11,12 +11,6 @@ namespace CarbonAware.CLI.Commands.Emissions;
 class EmissionsForecastCommand : Command
 {
     private readonly Option<string[]> _requiredLocation = CommonOptions.RequiredLocationOption;
-    private readonly Option<DateTimeOffset?> _dataStartTime = new Option<DateTimeOffset?>(
-            new string[] { "--data-start-time", "-s" },
-            LocalizableStrings.DataStartAtDescription)
-    {
-        Arity = ArgumentArity.ZeroOrOne,
-    };
     
     private readonly Option<DateTimeOffset?> _dataEndTime = new Option<DateTimeOffset?>(
                 new string[] { "--data-end-time", "-e" },
@@ -27,6 +21,12 @@ class EmissionsForecastCommand : Command
     private readonly Option<DateTimeOffset?> _dataRequestedAt = new Option<DateTimeOffset?>(
                 new string[] { "--data-requested-at", "-r" },
             LocalizableStrings.DataRequestedAtDescription)
+    {
+        Arity = ArgumentArity.ZeroOrOne,
+    };
+    private readonly Option<DateTimeOffset?> _dataStartTime = new Option<DateTimeOffset?>(
+            new string[] { "--data-start-time", "-s" },
+            LocalizableStrings.DataStartAtDescription)
     {
         Arity = ArgumentArity.ZeroOrOne,
     };
@@ -96,7 +96,5 @@ class EmissionsForecastCommand : Command
         }
         var serializedOuput = JsonSerializer.Serialize(emissionsForecast);
         context.Console.WriteLine(serializedOuput);
-
-        context.ExitCode = 0;
     }
 }
