@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
 using CarbonAware.Exceptions;
+using Microsoft.Extensions.Options;
+using CarbonAware.LocationSources.Configuration;
 
 namespace CarbonAware.LocationSources.Test;
 
@@ -87,11 +89,12 @@ public class LocationSourceTest
 
     private static Mock<LocationSource> SetupMockLocationSource() {
         var logger = Mock.Of<ILogger<LocationSource>>();
-        var mockLocationSource = new Mock<LocationSource>(logger);
-        
+        var monitor = Mock.Of<IOptionsMonitor<LocationDataSourcesConfiguration>>();
+        var mockLocationSource = new Mock<LocationSource>(logger, monitor);
+                
         mockLocationSource.Protected()
             .Setup<Task<Dictionary<string, NamedGeoposition>>>("LoadRegionsFromJsonAsync")
-            .Returns(Task.FromResult(GetTestDataRegions()))
+            .ReturnsAsync(GetTestDataRegions())
             .Verifiable();
 
         return mockLocationSource;

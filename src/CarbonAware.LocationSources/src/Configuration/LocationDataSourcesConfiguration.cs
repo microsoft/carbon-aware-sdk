@@ -6,11 +6,23 @@ namespace CarbonAware.LocationSources.Configuration;
 /// <summary>
 /// A configuration class for holding Location Data config values.
 /// </summary>
+public class LocationDataSourcesConfiguration
+{
+    private const string DefaultDataFile = "azure-regions.json";
+
+    public const string Key = "LocationDataSourcesConfiguration";
+
+    public List<LocationDataSourceConfiguration>? LocationSources { get; set; }
+
+}
+
 public class LocationDataSourceConfiguration
 {
+
     private const string BaseDirectory = "location-sources/json";
-    private const string DefaultDataFile = "azure-regions.json";
     private const string DirectoryRegExPattern = @"^[-\\/a-zA-Z_\d ]*$";
+    private const char DefaultDelimiter = '-';
+
     private string assemblyDirectory;
     private string? dataFileLocation;
 
@@ -30,13 +42,14 @@ public class LocationDataSourceConfiguration
         }
     }
 
-    public const string Key = "LocationDataSourceConfiguration";
+    public string? Prefix { get ; set; }
+    public char? Delimiter { get;  set; }
 
     public LocationDataSourceConfiguration()
     {
         var assemblyPath = Assembly.GetExecutingAssembly().Location;
         assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
-        DataFileLocation = DefaultDataFile;
+        Delimiter = DefaultDelimiter;
     }
 
     private static bool IsValidDirPath(string fileName)

@@ -12,7 +12,7 @@
 	</PropertyGroup>
 
   <ItemGroup>
-    <Content Include="$(ProjectDir)..\..\..\data\data-files\**\*.*" Link="\location-sources\json\%(RecursiveDir)%(Filename)%(Extension)">
+    <Content Include="$(ProjectDir)..\..\data\data-files\**\*.*" Link="\location-sources\json\%(RecursiveDir)%(Filename)%(Extension)">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

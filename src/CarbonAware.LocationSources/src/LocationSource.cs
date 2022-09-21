@@ -9,7 +9,7 @@ using CarbonAware.LocationSources.Configuration;
 namespace CarbonAware.LocationSources;
 
 /// <summary>
-/// Reprsents an azure location source.
+/// Represents a location source.
 /// </summary>
 public class LocationSource : ILocationSource
 {
@@ -23,16 +23,16 @@ public class LocationSource : ILocationSource
 
     private static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
-    private IOptionsMonitor<LocationDataSourceConfiguration> _configurationMonitor { get; }
+    private IOptionsMonitor<LocationDataSourcesConfiguration> _configurationMonitor { get; }
 
-    private LocationDataSourceConfiguration _configuration => _configurationMonitor.CurrentValue;
+    private LocationDataSourcesConfiguration _configuration => _configurationMonitor.CurrentValue;
 
 
     /// <summary>
     /// Creates a new instance of the <see cref="LocationSource"/> class.
     /// </summary>
     /// <param name="logger">The logger for the LocationSource</param>
-    public LocationSource(ILogger<LocationSource> logger, IOptionsMonitor<LocationDataSourceConfiguration> monitor)
+    public LocationSource(ILogger<LocationSource> logger, IOptionsMonitor<LocationDataSourcesConfiguration> monitor)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _configurationMonitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
@@ -87,15 +87,26 @@ public class LocationSource : ILocationSource
 
     protected virtual async Task<Dictionary<String, NamedGeoposition>> LoadRegionsFromJsonAsync()
     {
-        using Stream stream = GetStreamFromFileLocation();
-        List<NamedGeoposition> regionList = await JsonSerializer.DeserializeAsync<List<NamedGeoposition>>(stream, options) ?? new List<NamedGeoposition>();
-        Dictionary<String, NamedGeoposition> regionGeopositionMapping = new Dictionary<String, NamedGeoposition>();
-        foreach (NamedGeoposition region in regionList) 
+        var regionGeopositionMapping = new Dictionary<String, NamedGeoposition>();
+        foreach (var locationData in _configuration.LocationSources!)
         {
-            regionGeopositionMapping.Add(region.RegionName, region);
+            using Stream stream = GetStreamFromFileLocation(locationData);
+            var regionList = await JsonSerializer.DeserializeAsync<List<NamedGeoposition>>(stream, options) ?? new List<NamedGeoposition>();
+            foreach (NamedGeoposition region in regionList) 
+            {
+                regionGeopositionMapping.Add(BuildRegionPrefix(locationData, region), region);
+            }
         }
-
         return regionGeopositionMapping;
+    }
+
+    private string BuildRegionPrefix(LocationDataSourceConfiguration locationData, NamedGeoposition region)
+    {
+        if (String.IsNullOrEmpty(locationData.Prefix) || locationData.Delimiter == null)
+        {
+            return region.RegionName;
+        }
+        return $"{locationData.Prefix}{locationData.Delimiter}{region.RegionName}";
     }
 
     private async void LoadRegionsFromFileIfNotPresentAsync() {
@@ -105,9 +116,9 @@ public class LocationSource : ILocationSource
         }
     }
 
-    private Stream GetStreamFromFileLocation()
+    private Stream GetStreamFromFileLocation(LocationDataSourceConfiguration locationData)
     {
-        _logger.LogInformation($"Reading Location data from {_configuration.DataFileLocation}");
-        return File.OpenRead(_configuration.DataFileLocation!);
+        _logger.LogInformation($"Reading Location data from {locationData.DataFileLocation}");
+        return File.OpenRead(locationData.DataFileLocation!);
     }
 }

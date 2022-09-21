@@ -16,9 +16,9 @@ public static class ServiceCollectionExtensions
         services.ConfigureWattTimeClient(configuration);
         services.TryAddSingleton<ICarbonIntensityDataSource, WattTimeDataSource>();
         // configuring dependency injection to have config.
-        services.Configure<LocationDataSourceConfiguration>(c =>
+        services.Configure<LocationDataSourcesConfiguration>(c =>
         {
-            configuration.GetSection(LocationDataSourceConfiguration.Key).Bind(c);
+            configuration.GetSection(LocationDataSourcesConfiguration.Key).Bind(c);
         });
         services.TryAddSingleton<ILocationSource, LocationSource>();
     }
