@@ -36,7 +36,7 @@ public class HttpResponseExceptionFilterTests
     }
 
     [Test]
-    public void TestOnException_IHttpResponseException()
+    public void OnException_IHttpResponseException()
     {
         // Arrange
         var ex = new DummyHttpResponseException();
@@ -64,7 +64,7 @@ public class HttpResponseExceptionFilterTests
     [TestCase("key1", null, new string[] { "message one", "message two" }, TestName = "single key, multiple messages")]
     [TestCase("key1", "key2", new string[] { "message one" }, TestName = "multiple keys, single message")]
     [TestCase("key1", "key2", new string[] { "message one", "message two" }, TestName = "multiple keys, multiple messages")]
-    public void TestOnException_ArgumentException_ValidErrorDataInResponse(string firstKey, string secondKey, params string[] values)
+    public void OnException_ArgumentException_ValidErrorDataInResponse(string firstKey, string secondKey, params string[] values)
     {
         // Arrange
         var ex = new ArgumentException("My validation error");
@@ -103,7 +103,7 @@ public class HttpResponseExceptionFilterTests
     }
 
     [Test]
-    public void TestOnException_ArgumentException_InvalidErrorDataOmittedInResponse()
+    public void OnException_ArgumentException_InvalidErrorDataOmittedInResponse()
     {
         // Arrange
         var ex = new ArgumentException("My validation error");
@@ -142,7 +142,7 @@ public class HttpResponseExceptionFilterTests
     }
 
     [Test]
-    public void TestOnException_NotImplementedException()
+    public void OnException_NotImplementedException()
     {
         // Arrange
         var ex = new NotImplementedException("My validation error");
@@ -172,7 +172,7 @@ public class HttpResponseExceptionFilterTests
     }
 
     [Test]
-    public void TestOnException_GenericException()
+    public void OnException_GenericException()
     {
         // Arrange
         var ex = new Exception("My validation error");
@@ -203,7 +203,7 @@ public class HttpResponseExceptionFilterTests
     }
 
     [Test]
-    public void TestOnException_GenericException_WithVerboseTrue()
+    public void OnException_GenericException_WithVerboseTrue()
     {
         CarbonAwareVariablesConfiguration config = new CarbonAwareVariablesConfiguration()
         {
@@ -236,7 +236,7 @@ public class HttpResponseExceptionFilterTests
     }
 
     [Test]
-    public void TestOnException_GenericException_WithVerboseFalse()
+    public void OnException_GenericException_WithVerboseFalse()
     {
         CarbonAwareVariablesConfiguration config = new CarbonAwareVariablesConfiguration()
         {

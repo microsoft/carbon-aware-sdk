@@ -102,7 +102,7 @@ public class Tests
     }
 
     [Test]
-    public void TestEmissionsDataForLocationByTime()
+    public void GetEmissionsDataForLocationByTime()
     {
         var ed = _plugin.GetEmissionsDataForLocationByTime(MockLocations.Sydney, DateTime.Now);
         Assert.AreEqual(MockRatings.Sydney, ed[0].Rating);
@@ -125,7 +125,7 @@ public class Tests
     }
 
     [Test]
-    public void TestEmissionsDataForLocationsByTime()
+    public void GetEmissionsDataForLocationsByTime()
     {
         var locations = new List<string>() { MockLocations.Sydney, MockLocations.Auckland };
 
@@ -142,7 +142,7 @@ public class Tests
     }
 
     [Test]
-    public void TestEmissionsDataForBestLocationByTime()
+    public void GetBestEmissionsDataForLocationsByTime()
     {
         var locations1 = new List<string>() { MockLocations.Sydney, MockLocations.Melbourne };
         var locations2 = new List<string>() { MockLocations.Sydney, MockLocations.Auckland, MockLocations.Melbourne };

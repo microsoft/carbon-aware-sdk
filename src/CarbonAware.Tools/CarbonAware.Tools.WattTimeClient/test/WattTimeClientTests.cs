@@ -522,7 +522,7 @@ public class WattTimeClientTests
     }
 
     [Test]
-    public void TestClient_With_Proxy_Failure()
+    public void ClientWithProxy_ProxyFailure_ThrowsException()
     {
         var key1 = $"{CarbonAwareVariablesConfiguration.Key}:Proxy:UseProxy";
         var key2 = $"{CarbonAwareVariablesConfiguration.Key}:Proxy:Url";
@@ -542,7 +542,7 @@ public class WattTimeClientTests
     }
 
     [Test]
-    public void TestClient_With_Missing_Proxy_URL()
+    public void ClientWithProxy_MissingProxyURL_ThrowsException()
     {
         var key1 = $"{CarbonAwareVariablesConfiguration.Key}:Proxy:UseProxy";
         var settings = new Dictionary<string, string> {

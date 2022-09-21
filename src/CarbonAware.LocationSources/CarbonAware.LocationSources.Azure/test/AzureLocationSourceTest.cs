@@ -10,7 +10,7 @@ namespace CarbonAware.LocationSources.Azure.Test;
 public class AzureLocationSourceTest
 {   
     [Test]
-    public async Task TestToGeopositionLocation_ValidLocation()
+    public async Task ToGeopositionLocation_ValidLocation()
     {
         var logger = Mock.Of<ILogger<AzureLocationSource>>();
 
@@ -39,7 +39,7 @@ public class AzureLocationSourceTest
     // If an Azure Location with no LocationType is passed, should fail.
     // </summary>
     [Test]
-    public void TestToGeopositionLocation_LocationTypeNotProvided_ThrowsException()
+    public void ToGeopositionLocation_LocationTypeNotProvided_ThrowsException()
     {
         var mockLocationSource = SetupMockLocationSource().Object;
         Location invalidLocation = new Location()
@@ -56,7 +56,7 @@ public class AzureLocationSourceTest
     // If an Azure Location with invalid region name is passed, should fail.
     // </summary>
     [Test]
-    public void TestToGeopositionLocation_InvalidRegionName_ThrowsException()
+    public void ToGeopositionLocation_InvalidRegionName_ThrowsException()
     {
         var mockLocationSource = SetupMockLocationSource().Object;
         Location invalidLocation = new Location()
@@ -70,12 +70,30 @@ public class AzureLocationSourceTest
         });
     }
 
+    // <summary>
+    // Azure Location has non-Azure cloud provider
+    // </summary>
+    [Test]
+    public void ToGeopositionLocation_InvalidCloudProvider_ThrowsException()
+    {
+        var mockLocationSource = SetupMockLocationSource().Object;
+        var invalidLocation = new Location()
+        {
+            LocationType = LocationType.CloudProvider,
+            CloudProvider = CloudProvider.AWS,
+        };
+        Assert.ThrowsAsync<LocationConversionException>(async () =>
+        {
+            await mockLocationSource.ToGeopositionLocationAsync(invalidLocation);
+        });
+    }
+
     /// <summary>
     /// If a Location with type LocationType.Geoposition is passed in, function
     /// returns original Location.
     /// </summary>
     [Test]
-    public async Task TestToGeopositionLocation_AlreadyGeopositionLocation()
+    public async Task ToGeopositionLocation_AlreadyGeopositionLocation()
     {
         var mockLocationSource = SetupMockLocationSource().Object;
         Location location = new Location {

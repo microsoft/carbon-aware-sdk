@@ -62,7 +62,7 @@ public class CarbonAwareParametersTests
     [TestCase("Start", null, TestName = "set single property, valid")]
     [TestCase("End", "MultipleLocations", TestName = "set multiple, valid")]
     [TestCase(null, null, TestName = "no required properties, valid")]
-    public void TestValidate_ValidFor_RequiredPropertySet(PropertyName? propertyName1, PropertyName? propertyName2)
+    public void Validate_RequiredPropertiesSet(PropertyName? propertyName1, PropertyName? propertyName2)
     {
         // Arrange
         var parameters = new CarbonAwareParameters();
@@ -80,7 +80,7 @@ public class CarbonAwareParametersTests
     }
 
     [Test]
-    public void TestValidate_ThrowsFor_RequiredPropertyNotSet()
+    public void Validate_RequiredPropertyNotSet_ThrowsException()
     {
         // Arrange
         var parameters = new CarbonAwareParameters();
@@ -91,7 +91,7 @@ public class CarbonAwareParametersTests
     }
 
     [Test]
-    public void TestValidate_ThrowsFor_RequiredIEnumerablePropertyEmpty()
+    public void Validate_RequiredIEnumerablePropertyEmpty_ThrowsException()
     {
         // Arrange
         var parameters = new CarbonAwareParameters()
@@ -106,7 +106,7 @@ public class CarbonAwareParametersTests
     }
 
     [Test]
-    public void TestValidate_StartAfterEndThrows()
+    public void Validate_StartAfterEnd_ThrowsException()
     {
         // Arrange
         var parameters = new CarbonAwareParameters()
@@ -121,7 +121,7 @@ public class CarbonAwareParametersTests
     }
 
     [Test]
-    public void TestValidate_StartBeforeEnd()
+    public void Validate_StartBeforeEnd()
     {
         // Arrange
         var parameters = new CarbonAwareParameters()
@@ -139,7 +139,7 @@ public class CarbonAwareParametersTests
 
     [TestCase("2022-01-01T12:00:00Z", "2022-01-01T16:00:00Z", "2022-01-01T12:00:00Z", TestName = "start set, default not used")]
     [TestCase(null, "2022-01-01T16:00:00Z", "2022-01-01T16:00:00Z", TestName = "start not set, default used")]
-    public void TestGetStartOrDefault(DateTimeOffset? startValue, DateTimeOffset defaultValue, DateTimeOffset expectedResult)
+    public void GetStartOrDefault(DateTimeOffset? startValue, DateTimeOffset defaultValue, DateTimeOffset expectedResult)
     {
         // Arrange
         var parameters = new CarbonAwareParameters();
@@ -154,7 +154,7 @@ public class CarbonAwareParametersTests
 
     [TestCase("2022-01-01T12:00:00Z", "2022-01-01T16:00:00Z", "2022-01-01T12:00:00Z", TestName = "end set, default not used")]
     [TestCase(null, "2022-01-01T16:00:00Z", "2022-01-01T16:00:00Z", TestName = "end not set, default used")]
-    public void TestGetEndOrDefault(DateTimeOffset? endValue, DateTimeOffset defaultValue, DateTimeOffset expectedResult)
+    public void GetEndOrDefault(DateTimeOffset? endValue, DateTimeOffset defaultValue, DateTimeOffset expectedResult)
     {
         // Arrange
         var parameters = new CarbonAwareParameters();

@@ -12,7 +12,7 @@ public class IntervalHelperTests
     /// Test exit cases of min sampling filtering
     /// </summary>
     [Test]
-    public void TestFilterByDuration()
+    public void FilterByDuration_()
     {
         // Sample data from 8:30 to 10:30
         var data = new EmissionsData[5]
@@ -43,25 +43,29 @@ public class IntervalHelperTests
                 Duration = TimeSpan.FromMinutes(30)
             }
         };
-
-        // If pass in empty data, will just return empty data
-        var emptyResult = IntervalHelper.FilterByDuration(Enumerable.Empty<EmissionsData>(), startDateTimeOffset, endDateTimeOffset);
-        Assert.False(emptyResult.Any());
-
         // If pass in duration, will ignore data value. With 45 min duration, captures 3 data points
         var constantDuration = IntervalHelper.FilterByDuration(data, startDateTimeOffset, endDateTimeOffset, TimeSpan.FromMinutes(45));
         Assert.True(constantDuration.Count() == 3);
 
-        // If don't pass in duration, will lookup value in data. WIth included 30 min duration, captures 2 data points
+        // If don't pass in duration, will lookup value in data. With included 30 min duration, captures 2 data points
         var minWindowValid = IntervalHelper.FilterByDuration(data, startDateTimeOffset, endDateTimeOffset);
         Assert.True(minWindowValid.Count() == 2);
+    }
+
+    /// <summary>
+    /// Test exit cases of min sampling filtering
+    /// </summary>
+    [Test]
+    public void FilterByDuration_NoData_ReturnsEmpty()
+    {
+        var emptyResult = IntervalHelper.FilterByDuration(Enumerable.Empty<EmissionsData>(), startDateTimeOffset, endDateTimeOffset);
     }
 
     /// <summary>
     /// Test shift date functionality
     /// </summary>
     [Test]
-    public void TestExtendTimeByWindo()
+    public void ExtendTimeByWindow()
     {
         int minuteWindow = 30;
         (DateTimeOffset, DateTimeOffset) shifted = IntervalHelper.ExtendTimeByWindow(startDateTimeOffset, endDateTimeOffset, minuteWindow);
