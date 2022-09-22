@@ -14,8 +14,6 @@ public class LocationSourceTest
     [Test]
     public async Task TestToGeopositionLocation_ValidLocation()
     {
-        var logger = Mock.Of<ILogger<LocationSource>>();
-
         var mockLocationSource = SetupMockLocationSource().Object;
         Location inputLocation = new Location {
             LocationType = LocationType.CloudProvider,
@@ -32,7 +30,6 @@ public class LocationSourceTest
 
         var westResult = await mockLocationSource.ToGeopositionLocationAsync(inputLocation);
         AssertLocationsEqual(Constants.LocationWestUs, westResult);
-
     }
 
     // <summary>
@@ -85,6 +82,115 @@ public class LocationSourceTest
         Assert.AreEqual(location, result);
     }
 
+    [Test]
+    public async Task GeopositionLocation_ValidLocation_With_MultiConfiguration()
+    {
+        var configuration = new LocationDataSourcesConfiguration() 
+        {
+            LocationDataSources = new List<LocationDataSource>()
+            {
+                new LocationDataSource()
+                {
+                    Prefix = "prefix1",
+                    Delimiter = '-',
+                    DataFileLocation = "azure-regions.json"
+                },
+                new LocationDataSource()
+                {
+                    Prefix = "prefix2",
+                    Delimiter = '_',
+                    DataFileLocation = "azure-regions.json"
+                }
+            }
+        };
+        var options = new Mock<IOptionsMonitor<LocationDataSourcesConfiguration>>();
+        options.Setup(o => o.CurrentValue).Returns(() => configuration);
+        var logger = Mock.Of<ILogger<LocationSource>>();
+        var locationSource = new LocationSource(logger, options.Object);
+
+        Location inputLocation = new Location {
+            LocationType = LocationType.CloudProvider,
+            RegionName = "prefix1-eastus"
+        };
+
+        var eastResult = await locationSource.ToGeopositionLocationAsync(inputLocation);
+        AssertLocationsEqual(Constants.LocationEastUs, eastResult);
+
+        inputLocation = new Location {
+            LocationType = LocationType.CloudProvider,
+            RegionName = "prefix2_westus"
+        };
+
+        var westResult = await locationSource.ToGeopositionLocationAsync(inputLocation);
+        AssertLocationsEqual(Constants.LocationWestUs, westResult);
+    }
+
+    [Test]
+    public async Task GeopositionLocation_ValidLocation_Without_ConfigurationData_LoadDefaults()
+    {
+        var configuration = new LocationDataSourcesConfiguration();
+        var options = new Mock<IOptionsMonitor<LocationDataSourcesConfiguration>>();
+        options.Setup(o => o.CurrentValue).Returns(() => configuration);
+        var logger = Mock.Of<ILogger<LocationSource>>();
+        var locationSource = new LocationSource(logger, options.Object);
+
+        Location inputLocation = new Location {
+            LocationType = LocationType.CloudProvider,
+            RegionName = "eastus"
+        };
+
+        var eastResult = await locationSource.ToGeopositionLocationAsync(inputLocation);
+        AssertLocationsEqual(Constants.LocationEastUs, eastResult);
+
+        inputLocation = new Location {
+            LocationType = LocationType.CloudProvider,
+            RegionName = "westus"
+        };
+
+        var westResult = await locationSource.ToGeopositionLocationAsync(inputLocation);
+        AssertLocationsEqual(Constants.LocationWestUs, westResult);
+    }
+
+
+   [Test]
+    public void GeopositionLocation_InvalidLocation_With_Configuration()
+    {
+        var configuration = new LocationDataSourcesConfiguration() 
+        {
+            LocationDataSources = new List<LocationDataSource>()
+            {
+                new LocationDataSource()
+                {
+                    Prefix = "test",
+                    Delimiter = '-',
+                    DataFileLocation = "azure-regions.json"
+                }
+            }
+        };
+        var options = new Mock<IOptionsMonitor<LocationDataSourcesConfiguration>>();
+        options.Setup(o => o.CurrentValue).Returns(() => configuration);
+        var logger = Mock.Of<ILogger<LocationSource>>();
+        var locationSource = new LocationSource(logger, options.Object);
+
+        Location inputLocation = new Location {
+            LocationType = LocationType.CloudProvider,
+            RegionName = "eastus"
+        };
+        Assert.ThrowsAsync<ArgumentException>(async () =>
+        {
+            await locationSource.ToGeopositionLocationAsync(inputLocation);
+        });
+
+        inputLocation = new Location {
+            LocationType = LocationType.CloudProvider,
+            RegionName = "westus"
+        };
+        Assert.ThrowsAsync<ArgumentException>(async () =>
+        {
+            await locationSource.ToGeopositionLocationAsync(inputLocation);
+        });
+    }
+ 
     private static Mock<LocationSource> SetupMockLocationSource() {
         var logger = Mock.Of<ILogger<LocationSource>>();
         var monitor = Mock.Of<IOptionsMonitor<LocationDataSourcesConfiguration>>();
