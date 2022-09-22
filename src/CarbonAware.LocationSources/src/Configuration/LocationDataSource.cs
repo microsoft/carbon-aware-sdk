@@ -9,7 +9,6 @@ public class LocationDataSource
     private const string DefaultAzureLocationDataFile = "azure-regions.json";
     private const string BaseDirectory = "location-sources/json";
     private const string DirectoryRegExPattern = @"^[-\\/a-zA-Z_\d ]*$";
-    private const char DefaultDelimiter = '-';
 
     private string assemblyDirectory;
     private string? dataFileLocation;
@@ -37,7 +36,6 @@ public class LocationDataSource
     {
         var assemblyPath = Assembly.GetExecutingAssembly().Location;
         assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
-        Delimiter = DefaultDelimiter;
     }
 
     private static bool IsValidDirPath(string fileName)

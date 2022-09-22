@@ -13,10 +13,6 @@ namespace CarbonAware.LocationSources;
 /// </summary>
 public class LocationSource : ILocationSource
 {
-    public string Name => "Location Source";
-
-    public string Description => "Location source that knows how to get and work with location information.";
-
     private readonly ILogger<LocationSource> _logger;
 
     private IDictionary<string, NamedGeoposition>? namedGeopositions;
@@ -60,7 +56,7 @@ public class LocationSource : ILocationSource
         LoadRegionsFromFileIfNotPresentAsync();
 
         var regionName = location.RegionName ?? string.Empty;
-        if (! namedGeopositions!.ContainsKey(regionName))
+        if (!namedGeopositions!.ContainsKey(regionName))
         {
             throw new ArgumentException($"Unknown region: Region name '{regionName}' not found");
         }
@@ -92,13 +88,11 @@ public class LocationSource : ILocationSource
         {
             _logger.LogInformation($"Loading default location data configuration");
             await PopulateRegionMap(regionGeopositionMapping, LocationDataSource.DefaultAzureLocationDataSource());
+            return regionGeopositionMapping;
         }
-        else
+        foreach (var data in _configuration.LocationDataSources!)
         {
-            foreach (var data in _configuration.LocationDataSources!)
-            {
-                await PopulateRegionMap(regionGeopositionMapping, data);
-            }
+            await PopulateRegionMap(regionGeopositionMapping, data);
         }
         return regionGeopositionMapping;
     }
@@ -106,19 +100,20 @@ public class LocationSource : ILocationSource
     private async Task PopulateRegionMap(Dictionary<String, NamedGeoposition> map, LocationDataSource data)
     {
         using Stream stream = GetStreamFromFileLocation(data);
-        var regionList = await JsonSerializer.DeserializeAsync<List<NamedGeoposition>>(stream, options) ?? new List<NamedGeoposition>();
-        foreach (var region in regionList) 
+        var regionList = await JsonSerializer.DeserializeAsync<List<NamedGeoposition>>(stream, options);
+        foreach (var region in regionList!) 
         {
-            map.Add(BuildRegionPrefix(data, region), region);
+            map.Add(BuildKeyFromRegion(data, region), region);
         }
     }
 
-    private String BuildRegionPrefix(LocationDataSource locationData, NamedGeoposition region)
+    private String BuildKeyFromRegion(LocationDataSource locationData, NamedGeoposition region)
     {
-        if (String.IsNullOrEmpty(locationData.Prefix) || locationData.Delimiter == null)
+        if (String.IsNullOrEmpty(locationData.Prefix) || locationData.Delimiter is null)
         {
             return region.RegionName;
         }
+        // key = prefix + delimiter + regionName
         return $"{locationData.Prefix}{locationData.Delimiter}{region.RegionName}";
     }
 
