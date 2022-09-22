@@ -51,9 +51,9 @@ public class LocationSource : ILocationSource
         throw new LocationConversionException($"Location '{ location.LocationType }' cannot be converted to Geoposition. ");
     }
 
-    private Task<Location> GetGeoPositionLocationOrThrowAsync(Location location)
+    private async Task<Location> GetGeoPositionLocationOrThrowAsync(Location location)
     {
-        LoadRegionsFromFileIfNotPresentAsync();
+        await LoadRegionsFromFileIfNotPresentAsync();
 
         var regionName = location.RegionName ?? string.Empty;
         if (!namedGeopositions!.ContainsKey(regionName))
@@ -78,7 +78,7 @@ public class LocationSource : ILocationSource
                     Longitude = Convert.ToDecimal(geopositionLocation.Longitude)
                 };
 
-        return Task.FromResult(geoPosistionLocation);        
+        return geoPosistionLocation;
     }
 
     protected virtual async Task<Dictionary<String, NamedGeoposition>> LoadRegionsFromJsonAsync()
@@ -86,7 +86,7 @@ public class LocationSource : ILocationSource
         var regionGeopositionMapping = new Dictionary<String, NamedGeoposition>();
         if (_configuration.LocationDataSources is null || !_configuration.LocationDataSources.Any())
         {
-            _logger.LogInformation($"Loading default location data configuration");
+            _logger.LogInformation($"Loading Azure default location data source");
             await PopulateRegionMap(regionGeopositionMapping, LocationDataSource.DefaultAzureLocationDataSource());
             return regionGeopositionMapping;
         }
@@ -117,7 +117,8 @@ public class LocationSource : ILocationSource
         return $"{locationData.Prefix}{locationData.Delimiter}{region.RegionName}";
     }
 
-    private async void LoadRegionsFromFileIfNotPresentAsync() {
+    private async Task LoadRegionsFromFileIfNotPresentAsync()
+    {
         if (namedGeopositions == null || !namedGeopositions.Any())
         {
             namedGeopositions = await LoadRegionsFromJsonAsync();
@@ -126,7 +127,7 @@ public class LocationSource : ILocationSource
 
     private Stream GetStreamFromFileLocation(LocationDataSource locationData)
     {
-        _logger.LogInformation($"Reading Location data from {locationData.DataFileLocation}");
+        _logger.LogInformation($"Reading Location data source from {locationData.DataFileLocation}");
         if (_logger.IsEnabled(LogLevel.Debug))
         {
             _logger.LogDebug($"Location Data Prefix {locationData.Prefix} and Delimiter {locationData.Delimiter}");
