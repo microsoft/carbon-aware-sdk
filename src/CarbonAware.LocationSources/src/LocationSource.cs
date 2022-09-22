@@ -91,7 +91,7 @@ public class LocationSource : ILocationSource
         if (_configuration.LocationDataSources is null || !_configuration.LocationDataSources.Any())
         {
             _logger.LogInformation($"Loading default location data configuration");
-            await PopulateRegionMap(regionGeopositionMapping, LocationDataSource.GetDefaultAzureDataSourceLocation());
+            await PopulateRegionMap(regionGeopositionMapping, LocationDataSource.DefaultAzureLocationDataSource());
         }
         else
         {

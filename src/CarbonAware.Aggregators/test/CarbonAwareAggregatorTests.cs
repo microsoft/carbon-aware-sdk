@@ -285,7 +285,6 @@ public class CarbonAwareAggregatorTests
         var location = new Location()
         {
             LocationType = LocationType.CloudProvider,
-            // CloudProvider = CloudProvider.Azure,
             RegionName = regionName
         };
 
