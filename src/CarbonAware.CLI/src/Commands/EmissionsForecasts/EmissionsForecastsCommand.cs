@@ -1,49 +1,48 @@
 ﻿using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.CLI.Common;
 using CarbonAware.CLI.Model;
-using CarbonAware.Tools.WattTimeClient.Model;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Text.Json;
 
-namespace CarbonAware.CLI.Commands.Emissions;
+namespace CarbonAware.CLI.Commands.EmissionsForecasts;
 
-class EmissionsForecastCommand : Command
+class EmissionsForecastsCommand : Command
 {
     private readonly Option<string[]> _requiredLocation = CommonOptions.RequiredLocationOption;
     
-    private readonly Option<DateTimeOffset?> _dataEndTime = new Option<DateTimeOffset?>(
-                new string[] { "--data-end-time", "-e" },
+    private readonly Option<DateTimeOffset?> _dataEndAt = new Option<DateTimeOffset?>(
+                new string[] { "--data-end-at", "-e" },
             LocalizableStrings.DataEndAtDecsription)
     {
         Arity = ArgumentArity.ZeroOrOne,
     };
-    private readonly Option<DateTimeOffset?> _dataRequestedAt = new Option<DateTimeOffset?>(
-                new string[] { "--data-requested-at", "-r" },
-            LocalizableStrings.DataRequestedAtDescription)
+    private readonly Option<DateTimeOffset?> _requestedAt = new Option<DateTimeOffset?>(
+                new string[] { "--requested-at", "-r" },
+            LocalizableStrings.RequestedAtDescription)
     {
         Arity = ArgumentArity.ZeroOrOne,
     };
-    private readonly Option<DateTimeOffset?> _dataStartTime = new Option<DateTimeOffset?>(
-            new string[] { "--data-start-time", "-s" },
+    private readonly Option<DateTimeOffset?> _dataStartAt = new Option<DateTimeOffset?>(
+            new string[] { "--data-start-at", "-s" },
             LocalizableStrings.DataStartAtDescription)
     {
         Arity = ArgumentArity.ZeroOrOne,
     };
     private readonly Option<int?> _windowSize = new Option<int?>(
                 new string[] { "--window-size", "-w" },
-            LocalizableStrings.DurationDescription)
+            LocalizableStrings.WindowSizeDescription)
     {
         Arity = ArgumentArity.ZeroOrOne,
     };
 
-    public EmissionsForecastCommand() : base("emissions-forecast", LocalizableStrings.EmissionsCommandDescription)
+    public EmissionsForecastsCommand() : base("emissions-forecasts", LocalizableStrings.EmissionsForecastDescription)
     {
         AddOption(_requiredLocation);
-        AddOption(_dataStartTime);
-        AddOption(_dataEndTime);
+        AddOption(_dataStartAt);
+        AddOption(_dataEndAt);
         AddOption(_windowSize);
-        AddOption(_dataRequestedAt);
+        AddOption(_requestedAt);
 
         this.SetHandler(this.Run);
     }
@@ -56,9 +55,9 @@ class EmissionsForecastCommand : Command
 
         // Get the arguments and options to build the parameters.
         var locations = context.ParseResult.GetValueForOption<string[]>(_requiredLocation);
-        var startTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_dataStartTime);
-        var endTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_dataEndTime);
-        var requestedAt = context.ParseResult.GetValueForOption<DateTimeOffset?>(_dataRequestedAt);
+        var startTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_dataStartAt);
+        var endTime = context.ParseResult.GetValueForOption<DateTimeOffset?>(_dataEndAt);
+        var requestedAt = context.ParseResult.GetValueForOption<DateTimeOffset?>(_requestedAt);
         var duration = context.ParseResult.GetValueForOption<int?>(_windowSize);
 
         // Call the aggregator

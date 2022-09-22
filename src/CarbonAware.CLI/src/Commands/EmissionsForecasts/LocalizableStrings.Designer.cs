@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CarbonAware.CLI.Commands.Emissions {
+namespace CarbonAware.CLI.Commands.EmissionsForecasts {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace CarbonAware.CLI.Commands.Emissions {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CarbonAware.CLI.Commands.Emissions.LocalizableStrings", typeof(LocalizableStrings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CarbonAware.CLI.Commands.EmissionsForecasts.LocalizableStrings", typeof(LocalizableStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,47 +61,47 @@ namespace CarbonAware.CLI.Commands.Emissions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Outputs the weighted average of all data points within the start and end time boundaries..
+        ///   Looks up a localized string similar to End time boundary of forecasted data points. Ignores current forecast data points after this time..
         /// </summary>
-        internal static string AverageDescription {
+        internal static string DataEndAtDecsription {
             get {
-                return ResourceManager.GetString("AverageDescription", resourceCulture);
+                return ResourceManager.GetString("DataEndAtDecsription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Filter results down to the best (typically lowest) data point.
+        ///   Looks up a localized string similar to Start time boundary of forecasted data points. Ignores current forecast data points before this time..
         /// </summary>
-        internal static string BestDescription {
+        internal static string DataStartAtDescription {
             get {
-                return ResourceManager.GetString("BestDescription", resourceCulture);
+                return ResourceManager.GetString("DataStartAtDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Emissions command keyword to retrieve emissions data.
+        ///   Looks up a localized string similar to Command keyword to get Forecast data based on location.
         /// </summary>
-        internal static string EmissionsCommandDescription {
+        internal static string EmissionsForecastDescription {
             get {
-                return ResourceManager.GetString("EmissionsCommandDescription", resourceCulture);
+                return ResourceManager.GetString("EmissionsForecastDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to End time of emissions data..
+        ///   Looks up a localized string similar to The timestamp used to access the most recently generated forecast as of that time. If not provided, the current forecast is requested..
         /// </summary>
-        internal static string EndTimeDescription {
+        internal static string RequestedAtDescription {
             get {
-                return ResourceManager.GetString("EndTimeDescription", resourceCulture);
+                return ResourceManager.GetString("RequestedAtDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start time of emissions data..
+        ///   Looks up a localized string similar to The estimated duration (in minutes) of the workload..
         /// </summary>
-        internal static string StartTimeDescription {
+        internal static string WindowSizeDescription {
             get {
-                return ResourceManager.GetString("StartTimeDescription", resourceCulture);
+                return ResourceManager.GetString("WindowSizeDescription", resourceCulture);
             }
         }
     }

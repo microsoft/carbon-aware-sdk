@@ -117,19 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AverageDescription" xml:space="preserve">
-    <value>Outputs the weighted average of all data points within the start and end time boundaries.</value>
+  <data name="DataEndAtDecsription" xml:space="preserve">
+    <value>End time boundary of forecasted data points. Ignores current forecast data points after this time.</value>
   </data>
-  <data name="BestDescription" xml:space="preserve">
-    <value>Filter results down to the best (typically lowest) data point</value>
+  <data name="RequestedAtDescription" xml:space="preserve">
+    <value>The timestamp used to access the most recently generated forecast as of that time. If not provided, the current forecast is requested.</value>
   </data>
-  <data name="EmissionsCommandDescription" xml:space="preserve">
-    <value>Emissions command keyword to retrieve emissions data</value>
+  <data name="DataStartAtDescription" xml:space="preserve">
+    <value>Start time boundary of forecasted data points. Ignores current forecast data points before this time.</value>
   </data>
-  <data name="EndTimeDescription" xml:space="preserve">
-    <value>End time of emissions data.</value>
+  <data name="WindowSizeDescription" xml:space="preserve">
+    <value>The estimated duration (in minutes) of the workload.</value>
   </data>
-  <data name="StartTimeDescription" xml:space="preserve">
-    <value>Start time of emissions data.</value>
+  <data name="EmissionsForecastDescription" xml:space="preserve">
+    <value>Command keyword to get Forecast data based on location</value>
   </data>
 </root>

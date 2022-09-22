@@ -1,11 +1,12 @@
 ﻿using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.CLI.Commands.Emissions;
+using CarbonAware.CLI.Commands.EmissionsForecasts;
 using CarbonAware.Model;
 using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
-namespace CarbonAware.CLI.UnitTests;
+namespace CarbonAware.CLI.UnitTests.Commands.EmissionsForecasts;
 
 [TestFixture]
 public class EmissionsForecastsCommandTests : TestBase
@@ -14,7 +15,7 @@ public class EmissionsForecastsCommandTests : TestBase
     public async Task Run_CallsAggregatorWithLocationOptions()
     {
         // Arrange
-        var forecastCommand = new EmissionsForecastCommand();
+        var forecastCommand = new EmissionsForecastsCommand();
         var longAliasLocation = "eastus";
         var shortAliasLocation = "westus";
         var invocationContext = SetupInvocationContext(forecastCommand, $"emissions-forecast --location {longAliasLocation} -l {shortAliasLocation}");
@@ -22,7 +23,8 @@ public class EmissionsForecastsCommandTests : TestBase
         IEnumerable<string> actualLocations = Array.Empty<string>();
 
         _mockCarbonAwareAggregator.Setup(agg => agg.GetCurrentForecastDataAsync(It.IsAny<CarbonAwareParameters>()))
-            .Callback((CarbonAwareParameters _parameters) => {
+            .Callback((CarbonAwareParameters _parameters) =>
+            {
                 actualLocations = _parameters.MultipleLocations.Select(l => l.DisplayName);
             });
 
@@ -34,57 +36,59 @@ public class EmissionsForecastsCommandTests : TestBase
         CollectionAssert.AreEquivalent(expectedLocations, actualLocations);
     }
 
-    [TestCase("--data-start-time", "2022-01-02T03:04:05Z", TestName = "EmissionsForecastCommandTests.Run DataStartTimeOption: long alias")]
-    [TestCase("-s", "2022-01-02T03:04:05Z", TestName = "EmissionsForecastCommandTests.Run DataStartTimeOption: short alias")]
+    [TestCase("--data-start-at", "2022-01-02T03:04:05Z", TestName = "EmissionsForecastsCommandTests.Run DataStartTimeOption: long alias")]
+    [TestCase("-s", "2022-01-02T03:04:05Z", TestName = "EmissionsForecastsCommandTests.Run DataStartTimeOption: short alias")]
     public async Task Run_CallsCurrentForecast_WithStartTimeOptions(string alias, string optionValue)
     {
         // Arrange
-        var emissionsForecastCommand = new EmissionsForecastCommand();
-        var invocationContext = SetupInvocationContext(emissionsForecastCommand, $"emissions-forecast {alias} {optionValue}");
+        var emissionsForecastsCommand = new EmissionsForecastsCommand();
+        var invocationContext = SetupInvocationContext(emissionsForecastsCommand, $"emissions-forecast {alias} {optionValue}");
         var expectedStartTime = DateTimeOffset.Parse(optionValue);
         DateTimeOffset actualStartTime = default;
 
         _mockCarbonAwareAggregator.Setup(agg => agg.GetCurrentForecastDataAsync(It.IsAny<CarbonAwareParameters>()))
-            .Callback((CarbonAwareParameters _parameters) => {
+            .Callback((CarbonAwareParameters _parameters) =>
+            {
                 actualStartTime = _parameters.Start;
             });
         // Act
-        await emissionsForecastCommand.Run(invocationContext);
+        await emissionsForecastsCommand.Run(invocationContext);
 
         // Assert
         _mockCarbonAwareAggregator.Verify(agg => agg.GetCurrentForecastDataAsync(It.IsAny<CarbonAwareParameters>()), Times.Once);
         Assert.AreEqual(expectedStartTime, actualStartTime);
     }
 
-    [TestCase("--data-end-time", "2022-01-02T03:04:05Z", TestName = "EmissionsForecastCommandTests.Run DataEndTimeOption: long alias")]
-    [TestCase("-e", "2022-01-02T03:04:05Z", TestName = "EmissionsForecastCommandTests.Run DataEndTimeOption: short alias")]
+    [TestCase("--data-end-at", "2022-01-02T03:04:05Z", TestName = "EmissionsForecastsCommandTests.Run DataEndTimeOption: long alias")]
+    [TestCase("-e", "2022-01-02T03:04:05Z", TestName = "EmissionsForecastsCommandTests.Run DataEndTimeOption: short alias")]
     public async Task Run_CallsCurrentForecast_WithEndTimeOptions(string alias, string optionValue)
     {
         // Arrange
-        var emissionsForecastCommand = new EmissionsForecastCommand();
-        var invocationContext = SetupInvocationContext(emissionsForecastCommand, $"emissions-forecast {alias} {optionValue}");
+        var emissionsForecastsCommand = new EmissionsForecastsCommand();
+        var invocationContext = SetupInvocationContext(emissionsForecastsCommand, $"emissions-forecast {alias} {optionValue}");
         var expectedStartTime = DateTimeOffset.Parse(optionValue);
         DateTimeOffset actualEndTime = default;
 
         _mockCarbonAwareAggregator.Setup(agg => agg.GetCurrentForecastDataAsync(It.IsAny<CarbonAwareParameters>()))
-            .Callback((CarbonAwareParameters _parameters) => {
+            .Callback((CarbonAwareParameters _parameters) =>
+            {
                 actualEndTime = _parameters.End;
             });
         // Act
-        await emissionsForecastCommand.Run(invocationContext);
+        await emissionsForecastsCommand.Run(invocationContext);
 
         // Assert
         _mockCarbonAwareAggregator.Verify(agg => agg.GetCurrentForecastDataAsync(It.IsAny<CarbonAwareParameters>()), Times.Once);
         Assert.AreEqual(expectedStartTime, actualEndTime);
     }
 
-    [TestCase("--data-requested-at", "2022-01-02T03:04:05Z", TestName = "EmissionsForecastCommandTests.Run RequestedAt: long alias")]
-    [TestCase("-r", "2022-01-02T03:04:05Z", TestName = "EmissionsForecastCommandTests.Run RequestedAt: short alias")]
+    [TestCase("--requested-at", "2022-01-02T03:04:05Z", TestName = "EmissionsForecastsCommandTests.Run RequestedAt: long alias")]
+    [TestCase("-r", "2022-01-02T03:04:05Z", TestName = "EmissionsForecastsCommandTests.Run RequestedAt: short alias")]
     public async Task Run_CallsHistoricForecast_WhenRequestedAtProvided(string alias, string optionValue)
     {
         // Arrange
-        var emissionsForecastCommand = new EmissionsForecastCommand();
-        var invocationContext = SetupInvocationContext(emissionsForecastCommand, $"emissions-forecast -l eastus {alias} {optionValue}");
+        var emissionsForecastsCommand = new EmissionsForecastsCommand();
+        var invocationContext = SetupInvocationContext(emissionsForecastsCommand, $"emissions-forecast -l eastus {alias} {optionValue}");
         var emissionData = new EmissionsData()
         {
             Location = "useast",
@@ -104,7 +108,7 @@ public class EmissionsForecastsCommandTests : TestBase
             .ReturnsAsync(expectedForecast);
 
         // Act
-        await emissionsForecastCommand.Run(invocationContext);
+        await emissionsForecastsCommand.Run(invocationContext);
 
         // Assert
         _mockCarbonAwareAggregator.Verify(agg => agg.GetForecastDataAsync(It.IsAny<CarbonAwareParameters>()), Times.Once);
