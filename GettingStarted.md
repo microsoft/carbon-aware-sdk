@@ -164,7 +164,7 @@ WattTimeClient__BalancingAuthorityCacheTTL="90"
 ```
 
 ### JsonDataConfiguration data file location
-By setting `JsonDataSourceConfiguration__DataFileLocation=newdataset.json` property when `CarbonAwareVars__CarbonIntensityDataSource=JSON` is set or there is not data source defined (`JSON` is by default), the user can specify a file that can contains custom `EmissionsData` sets. The file should be located under the `<user's repo>/src/data/data-files` directory that is part of the repository. At build time, all the files under `<user's repo>/src/data`  are copied over the destination directory `<user's repo>/src/CarbonAware.WebApi/src/bin/[Debug|Publsh]/net6.0/data-sources/json` that is part of the `CarbonAware.WebApi` assembly. Also the file can be placed where the assembly `CarbonAware.WebApi.dll` is located under `data-sources/json` directory. For instance, if the application is installed under `/app`, copy the file to `/app/data-sources/json`. This can be done before the application starts by setting `JsonDataSourceConfiguration__DataFileLocation` environment variable.
+By setting `JsonDataSourceConfiguration__DataFileLocation=newdataset.json` property when `CarbonAwareVars__CarbonIntensityDataSource=JSON` is set or there is not data source defined (`JSON` is by default), the user can specify a file that can contains custom `EmissionsData` sets. The file should be located under the `<user's repo>/src/data/data-files` directory that is part of the repository. At build time, all the files under `<user's repo>/src/data`  are copied over the destination directory `<user's repo>/src/CarbonAware.WebApi/src/bin/[Debug|Publish]/net6.0/data-sources/json` that is part of the `CarbonAware.WebApi` assembly. Also the file can be placed where the assembly `CarbonAware.WebApi.dll` is located under `data-sources/json` directory. For instance, if the application is installed under `/app`, copy the file to `/app/data-sources/json`. This can be done before the application starts by setting `JsonDataSourceConfiguration__DataFileLocation` environment variable.
 ```sh
 cp <mydir>/newdataset.json /app/data-sources/json
 export CarbonAwareVars__CarbonIntensityDataSource=JSON
@@ -176,6 +176,29 @@ As soon a first request is performed, a log entry shows:
 info: CarbonAware.DataSources.Json.JsonDataSource[0]
     Reading Json data from /app/data-sources/json/newdataset.json
 ```
+
+### LocationDataSourcesConfiguration property for location data files
+By setting `LocationDataSourcesConfiguration` property with one or more location data sources, it is possible to load different `Location` data sets in order to have more than one location. For instance by setting two location regions, the property would be set as follow using [environment](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0#naming-of-environment-variables) variables:
+```sh
+"CarbonAwareVars__CarbonIntensityDataSource": "WattTime",
+"WattTimeClient__Username": "wattTimeUsername",
+"WattTimeClient__Password": "wattTimePassword",
+"LocationDataSourcesConfiguration__LocationDataSources__0__DataFileLocation": "azure-regions.json",
+"LocationDataSourcesConfiguration__LocationDataSources__0__Prefix": "az",
+"LocationDataSourcesConfiguration__LocationDataSources__0__Delimiter": "-",
+"LocationDataSourcesConfiguration__LocationDataSources__1__DataFileLocation": "custom-regions.json",
+"LocationDataSourcesConfiguration__LocationDataSources__1__Prefix": "custom",
+"LocationDataSourcesConfiguration__LocationDataSources__1__Delimiter": "_",
+```
+This way when the application starts, it open the files specified by `DataFileLocation` property that should located under `location-sources/json` directory. The format of these files is the same as the `Location` Model class. In order to differentiate between regions, a `Prefix` and `Delimiter` properties are used to allow the user to select the region when a request is performed. By settings the properties, the region should be made of **region**=`Prefix`+`Delimiter`+`RegionName`, so when the query is performed, it would be found. The following example shows how to perform an http request:
+```sh
+PREFIX=az
+DELIMITER='-'
+REGION=${PREFIX}${DELIMITER}eastus
+curl "http://${IP_HOST}:${PORT}/emissions/bylocations/best?location=${REGION}&time=2022-05-25&toTime=2022-05-26&durationMinutes=0"
+```
+
+At build time, all the files under `<user's repo>/src/data` are copied over the destination directory `<user's repo>/src/CarbonAware.WebApi/src/bin/[Debug|Publish]/net6.0/location-sources/json` that is part of the `CarbonAware.WebApi` assembly. Also the file can be placed where the assembly `CarbonAware.WebApi.dll` is located under `location-sources/json` directory. For instance, if the application is installed under `/app`, copy the file to `/app/location-sources/json`.
 
 ### Sample Environment Variable Configuration Using WattTime
 
