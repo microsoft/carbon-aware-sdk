@@ -36,6 +36,7 @@ public class LocationDataSource
     {
         var assemblyPath = Assembly.GetExecutingAssembly().Location;
         assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
+        DataFileLocation = DefaultAzureLocationDataFile;
     }
 
     private static bool IsValidDirPath(string fileName)
@@ -51,12 +52,5 @@ public class LocationDataSource
         }
         var match = Regex.Match(dirName, DirectoryRegExPattern);
         return match.Success;
-    }
-
-    public static LocationDataSource DefaultAzureLocationDataSource()
-    {
-        return new LocationDataSource() {
-            DataFileLocation = DefaultAzureLocationDataFile
-        };
     }
 }

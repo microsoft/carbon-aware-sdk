@@ -87,7 +87,7 @@ public class LocationSource : ILocationSource
         if (_configuration.LocationDataSources is null || !_configuration.LocationDataSources.Any())
         {
             _logger.LogInformation($"Loading Azure default location data source");
-            await PopulateRegionMapAsync(result, LocationDataSource.DefaultAzureLocationDataSource());
+            await PopulateRegionMapAsync(result, new LocationDataSource());
             return result;
         }
         foreach (var data in _configuration.LocationDataSources!)
