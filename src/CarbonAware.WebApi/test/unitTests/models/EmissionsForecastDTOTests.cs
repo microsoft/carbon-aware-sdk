@@ -20,7 +20,7 @@ public class EmissionsForecastDTOTests
         var emissionsForecast = new EmissionsForecast()
         {
             GeneratedAt = expectedGeneratedAt,
-            Location = new Location(){ LocationType = LocationType.CloudProvider, RegionName = expectedLocationName },
+            Location = new Location(){ RegionName = expectedLocationName },
             DataStartAt =  expectedStartTime,
             DataEndAt =  expectedEndTime,
             WindowSize = TimeSpan.FromMinutes(expectedWindowSize),

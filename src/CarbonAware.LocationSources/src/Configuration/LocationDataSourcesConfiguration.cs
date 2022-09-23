@@ -8,6 +8,6 @@ public class LocationDataSourcesConfiguration
 
     public const string Key = "LocationDataSourcesConfiguration";
 
-    public List<LocationDataSource>? LocationDataSources { get; set; }
+    public List<LocationSourceFile> LocationDataSources { get; set; } = new();
 
 }

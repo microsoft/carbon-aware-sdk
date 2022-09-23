@@ -5,11 +5,11 @@ using System.Reflection;
 namespace CarbonAware.LocationSources.Test;
 
 [TestFixture]
-public class LocationDataSourceTests
+public class LocationSourceFileTests
 {
 
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    private LocationDataSource _dataSource { get; set; }
+    private LocationSourceFile _dataSource { get; set; }
     private string AssemblyPath { get; set; }
     #pragma warning restore CS8618
     
@@ -18,7 +18,7 @@ public class LocationDataSourceTests
     [SetUp]
     public void Setup()
     {
-        _dataSource = new LocationDataSource();
+        _dataSource = new LocationSourceFile();
         AssemblyPath = Assembly.GetExecutingAssembly().Location;
     }
 

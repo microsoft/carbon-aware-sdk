@@ -1,4 +1,4 @@
-namespace CarbonAware.Model;
+namespace CarbonAware.LocationSources;
 
 public class NamedGeoposition
 {

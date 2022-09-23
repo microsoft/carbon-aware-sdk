@@ -15,7 +15,7 @@ public class LocationSource : ILocationSource
 {
     private readonly ILogger<LocationSource> _logger;
 
-    private IDictionary<string, NamedGeoposition>? _namedGeopositions;
+    private IDictionary<string, NamedGeoposition> _namedGeopositions;
 
     private static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
@@ -32,28 +32,12 @@ public class LocationSource : ILocationSource
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _configurationMonitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
+        _namedGeopositions = new Dictionary<string, NamedGeoposition>();
     }
 
     public async Task<Location> ToGeopositionLocationAsync(Location location)
     {
-        switch (location.LocationType)
-        {
-            case LocationType.Geoposition:
-            {
-                return await Task.FromResult(location);
-            }
-            case LocationType.CloudProvider: 
-            {
-                var geoPositionLocation = await GetGeoPositionLocationOrThrowAsync(location);
-                return geoPositionLocation;
-            }
-        }
-        throw new LocationConversionException($"Location '{ location.LocationType }' cannot be converted to Geoposition. ");
-    }
-
-    private async Task<Location> GetGeoPositionLocationOrThrowAsync(Location location)
-    {
-        await LoadRegionsFromFileIfNotPresentAsync();
+        await LoadLocationFromFileIfNotPresentAsync();
 
         var regionName = location.RegionName ?? string.Empty;
         if (!_namedGeopositions!.ContainsKey(regionName))
@@ -66,14 +50,8 @@ public class LocationSource : ILocationSource
         {
             throw new LocationConversionException($"Lat/long cannot be retrieved for region '{regionName}'");
         }
-        if (_logger.IsEnabled(LogLevel.Debug))
-        {
-            _logger.LogDebug($"Converted Azure Location named '{location.RegionName}' to Geoposition Location at latitude '{location.Latitude}'" 
-                                + "and logitude '{longitude}'.", location.RegionName, geopositionLocation.Latitude, geopositionLocation.Longitude);
-        }
         Location geoPosistionLocation = new Location 
                 {
-                    LocationType = LocationType.Geoposition,
                     Latitude = Convert.ToDecimal(geopositionLocation.Latitude),
                     Longitude = Convert.ToDecimal(geopositionLocation.Longitude)
                 };
@@ -81,51 +59,44 @@ public class LocationSource : ILocationSource
         return geoPosistionLocation;
     }
 
-    protected virtual async Task<Dictionary<String, NamedGeoposition>> LoadRegionsFromJsonAsync()
+    private async Task LoadLocationJsonFileAsync()
     {
-        var result = new Dictionary<String, NamedGeoposition>();
-        if (_configuration.LocationDataSources is null || !_configuration.LocationDataSources.Any())
+        if (!_configuration.LocationDataSources.Any())
         {
             _logger.LogInformation($"Loading default location data source");
-            await PopulateRegionMapAsync(result, new LocationDataSource());
-            return result;
+            await PopulateRegionMapAsync(new LocationSourceFile());
+            return;
         }
         foreach (var data in _configuration.LocationDataSources!)
         {
-            await PopulateRegionMapAsync(result, data);
+            await PopulateRegionMapAsync(data);
         }
-        return result;
     }
 
-    private async Task PopulateRegionMapAsync(Dictionary<String, NamedGeoposition> map, LocationDataSource data)
+    private async Task PopulateRegionMapAsync(LocationSourceFile data)
     {
         using Stream stream = GetStreamFromFileLocation(data);
         var regionList = await JsonSerializer.DeserializeAsync<List<NamedGeoposition>>(stream, options);
         foreach (var region in regionList!) 
         {
-            map.Add(BuildKeyFromRegion(data, region), region);
+            _namedGeopositions.Add(BuildKeyFromRegion(data, region), region);
         }
     }
 
-    private String BuildKeyFromRegion(LocationDataSource locationData, NamedGeoposition region)
+    private String BuildKeyFromRegion(LocationSourceFile locationData, NamedGeoposition region)
     {
-        if (String.IsNullOrEmpty(locationData.Prefix) || locationData.Delimiter is null)
-        {
-            return region.RegionName;
-        }
-        // key = prefix + delimiter + regionName
         return $"{locationData.Prefix}{locationData.Delimiter}{region.RegionName}";
     }
 
-    private async Task LoadRegionsFromFileIfNotPresentAsync()
+    private async Task LoadLocationFromFileIfNotPresentAsync()
     {
-        if (_namedGeopositions is null || !_namedGeopositions.Any())
+        if (!_namedGeopositions.Any())
         {
-            _namedGeopositions = await LoadRegionsFromJsonAsync();
+            await LoadLocationJsonFileAsync();
         }
     }
 
-    private Stream GetStreamFromFileLocation(LocationDataSource locationData)
+    private Stream GetStreamFromFileLocation(LocationSourceFile locationData)
     {
         _logger.LogInformation($"Reading Location data source from {locationData.DataFileLocation}");
         if (_logger.IsEnabled(LogLevel.Debug))

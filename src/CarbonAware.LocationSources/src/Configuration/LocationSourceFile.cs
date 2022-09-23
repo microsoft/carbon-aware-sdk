@@ -3,10 +3,10 @@ using System.Text.RegularExpressions;
 
 namespace CarbonAware.LocationSources.Configuration;
 
-public class LocationDataSource
+public class LocationSourceFile
 {
 
-    private const string DefaultAzureLocationDataFile = "azure-regions.json";
+    private const string DefaultLocationDataFile = "azure-regions.json";
     private const string BaseDirectory = "location-sources/json";
     private const string DirectoryRegExPattern = @"^[-\\/a-zA-Z_\d ]*$";
 
@@ -29,14 +29,14 @@ public class LocationDataSource
         }
     }
 
-    public string? Prefix { get ; set; }
-    public char? Delimiter { get;  set; }
+    public string Prefix { get ; set; } = String.Empty;
+    public string Delimiter { get;  set; } = String.Empty;
 
-    public LocationDataSource()
+    public LocationSourceFile()
     {
         var assemblyPath = Assembly.GetExecutingAssembly().Location;
         assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
-        DataFileLocation = DefaultAzureLocationDataFile;
+        DataFileLocation = DefaultLocationDataFile;
     }
 
     private static bool IsValidDirPath(string fileName)

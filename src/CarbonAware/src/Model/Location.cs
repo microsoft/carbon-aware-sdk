@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace CarbonAware.Model;
 
@@ -9,10 +8,6 @@ namespace CarbonAware.Model;
 public class Location
 {
     private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
-    /// <summary>
-    /// Gets or sets the type of location this location object represents.
-    /// </summary>
-    public LocationType LocationType { get; set; } = LocationType.NotProvided;
 
     /// <summary>
     /// Gets or sets the latitude.
@@ -32,18 +27,10 @@ public class Location
     #nullable disable
 
     /// <summary>
-    /// Gets the display name based on LocationType.
+    /// Gets the display name.
     /// </summary>
     public string DisplayName {
-        get {
-            if (LocationType == LocationType.Geoposition) {
-                return $"{Latitude}, {Longitude}";
-            } else if (LocationType == LocationType.CloudProvider) {
-                return $"{RegionName}";
-            } else {
-                return "Not Provided";
-            }
-        }
+        get => RegionName;
     }
 
     /// <inheritdoc />

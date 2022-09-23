@@ -284,7 +284,6 @@ public class CarbonAwareAggregatorTests
         // Arrange
         var location = new Location()
         {
-            LocationType = LocationType.CloudProvider,
             RegionName = regionName
         };
 
@@ -334,7 +333,6 @@ public class CarbonAwareAggregatorTests
         // Arrange
         var location = new Location()
         {
-            LocationType = LocationType.Geoposition,
             Latitude = (decimal)1.0,
             Longitude = (decimal)2.0
         };
