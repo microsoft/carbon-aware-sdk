@@ -1,4 +1,4 @@
-/*using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.CLI.Commands.Emissions;
 using CarbonAware.Model;
 using Microsoft.Extensions.Options;
@@ -168,4 +168,4 @@ public class EmissionsCommandTests : TestBase
         // Assert
         CollectionAssert.Contains(invocationContext.ParseResult.Errors.Select(e => e.Message), expectedErrorMessage);
     }
-}*/
+}

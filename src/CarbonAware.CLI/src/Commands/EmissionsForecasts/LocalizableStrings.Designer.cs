@@ -79,11 +79,11 @@ namespace CarbonAware.CLI.Commands.EmissionsForecasts {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Command keyword to get Forecast data based on location.
+        ///   Looks up a localized string similar to Gets emissions forecast data for given locations..
         /// </summary>
-        internal static string EmissionsForecastDescription {
+        internal static string EmissionsForecastsCommandDescription {
             get {
-                return ResourceManager.GetString("EmissionsForecastDescription", resourceCulture);
+                return ResourceManager.GetString("EmissionsForecastsCommandDescription", resourceCulture);
             }
         }
         

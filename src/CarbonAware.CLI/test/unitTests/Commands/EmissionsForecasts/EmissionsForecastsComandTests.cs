@@ -18,7 +18,7 @@ public class EmissionsForecastsCommandTests : TestBase
         var forecastCommand = new EmissionsForecastsCommand();
         var longAliasLocation = "eastus";
         var shortAliasLocation = "westus";
-        var invocationContext = SetupInvocationContext(forecastCommand, $"emissions-forecast --location {longAliasLocation} -l {shortAliasLocation}");
+        var invocationContext = SetupInvocationContext(forecastCommand, $"emissions-forecasts --location {longAliasLocation} -l {shortAliasLocation}");
         var expectedLocations = new List<string>() { longAliasLocation, shortAliasLocation };
         IEnumerable<string> actualLocations = Array.Empty<string>();
 
@@ -42,7 +42,7 @@ public class EmissionsForecastsCommandTests : TestBase
     {
         // Arrange
         var emissionsForecastsCommand = new EmissionsForecastsCommand();
-        var invocationContext = SetupInvocationContext(emissionsForecastsCommand, $"emissions-forecast {alias} {optionValue}");
+        var invocationContext = SetupInvocationContext(emissionsForecastsCommand, $"emissions-forecasts {alias} {optionValue}");
         var expectedStartTime = DateTimeOffset.Parse(optionValue);
         DateTimeOffset actualStartTime = default;
 
@@ -65,7 +65,7 @@ public class EmissionsForecastsCommandTests : TestBase
     {
         // Arrange
         var emissionsForecastsCommand = new EmissionsForecastsCommand();
-        var invocationContext = SetupInvocationContext(emissionsForecastsCommand, $"emissions-forecast {alias} {optionValue}");
+        var invocationContext = SetupInvocationContext(emissionsForecastsCommand, $"emissions-forecasts {alias} {optionValue}");
         var expectedStartTime = DateTimeOffset.Parse(optionValue);
         DateTimeOffset actualEndTime = default;
 
@@ -88,7 +88,7 @@ public class EmissionsForecastsCommandTests : TestBase
     {
         // Arrange
         var emissionsForecastsCommand = new EmissionsForecastsCommand();
-        var invocationContext = SetupInvocationContext(emissionsForecastsCommand, $"emissions-forecast -l eastus {alias} {optionValue}");
+        var invocationContext = SetupInvocationContext(emissionsForecastsCommand, $"emissions-forecasts -l eastus {alias} {optionValue}");
         var emissionData = new EmissionsData()
         {
             Location = "useast",

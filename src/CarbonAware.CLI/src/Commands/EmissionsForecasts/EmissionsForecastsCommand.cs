@@ -36,7 +36,7 @@ class EmissionsForecastsCommand : Command
         Arity = ArgumentArity.ZeroOrOne,
     };
 
-    public EmissionsForecastsCommand() : base("emissions-forecasts", LocalizableStrings.EmissionsForecastDescription)
+    public EmissionsForecastsCommand() : base("emissions-forecasts", LocalizableStrings.EmissionsForecastsCommandDescription)
     {
         AddOption(_requiredLocation);
         AddOption(_dataStartAt);

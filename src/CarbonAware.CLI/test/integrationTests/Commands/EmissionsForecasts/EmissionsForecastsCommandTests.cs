@@ -67,19 +67,18 @@ public class EmissionsForecastsCommandTests : IntegrationTestingBase
     {
         // Arrange
         var location = "eastus";
-        var start = DateTimeOffset.UtcNow.DateTime;
-        var end =  start + TimeSpan.FromHours(3.0);
+        var start = DateTimeOffset.UtcNow.AddMinutes(10);
+        var end =  start.AddHours(5);
         var dataStartAt = start.ToString("yyyy-MM-ddTHH:mm:ss");
         var dataEndAt = end.ToString("yyyy-MM-ddTHH:mm:ss");
-
+       
         _dataSourceMocker.SetupForecastMock();
-
         // Act
         var exitCode = await InvokeCliAsync($"emissions-forecasts -l {location} -s {dataStartAt} -e {dataEndAt}");
 
         // Assert
         Assert.AreEqual(0, exitCode);
-
+     
         var jsonResults = JsonNode.Parse(_console.Out.ToString()!)!.AsArray()!;
         var firstResult = jsonResults.First()!.AsObject();
         Assert.AreEqual(1, jsonResults.Count);

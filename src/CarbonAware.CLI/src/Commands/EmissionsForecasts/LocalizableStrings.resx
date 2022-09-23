@@ -129,7 +129,7 @@
   <data name="WindowSizeDescription" xml:space="preserve">
     <value>The estimated duration (in minutes) of the workload.</value>
   </data>
-  <data name="EmissionsForecastDescription" xml:space="preserve">
-    <value>Command keyword to get Forecast data based on location</value>
+  <data name="EmissionsForecastsCommandDescription" xml:space="preserve">
+    <value>Gets emissions forecast data for given locations.</value>
   </data>
 </root>
