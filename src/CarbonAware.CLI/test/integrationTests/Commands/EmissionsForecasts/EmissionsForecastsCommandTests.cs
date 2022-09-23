@@ -68,8 +68,8 @@ public class EmissionsForecastsCommandTests : IntegrationTestingBase
     {
         // Arrange
         var location = "eastus";
-        var end = DateTimeOffset.UtcNow.DateTime;
-        var start =  end - TimeSpan.FromHours(3.0);
+        var start = DateTimeOffset.UtcNow.DateTime;
+        var end =  start + TimeSpan.FromHours(3.0);
         var dataStartAt = start.ToString("yyyy-MM-ddTHH:mm:ss");
         var dataEndAt = end.ToString("yyyy-MM-ddTHH:mm:ss");
 
