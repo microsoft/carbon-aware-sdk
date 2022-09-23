@@ -126,7 +126,7 @@ public class LocationSourceTest
     }
 
     [Test]
-    public async Task GeopositionLocation_ValidLocation_Without_ConfigurationData_LoadDefaults()
+    public async Task GeopositionLocation_ValidLocation_Without_Configuration_LoadDefaults()
     {
         var configuration = new LocationDataSourcesConfiguration();
         var options = new Mock<IOptionsMonitor<LocationDataSourcesConfiguration>>();

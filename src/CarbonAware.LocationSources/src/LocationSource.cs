@@ -86,7 +86,7 @@ public class LocationSource : ILocationSource
         var result = new Dictionary<String, NamedGeoposition>();
         if (_configuration.LocationDataSources is null || !_configuration.LocationDataSources.Any())
         {
-            _logger.LogInformation($"Loading Azure default location data source");
+            _logger.LogInformation($"Loading default location data source");
             await PopulateRegionMapAsync(result, new LocationDataSource());
             return result;
         }
@@ -130,7 +130,7 @@ public class LocationSource : ILocationSource
         _logger.LogInformation($"Reading Location data source from {locationData.DataFileLocation}");
         if (_logger.IsEnabled(LogLevel.Debug))
         {
-            _logger.LogDebug($"Location Data Prefix {locationData.Prefix} and Delimiter {locationData.Delimiter}");
+            _logger.LogDebug($"Location data source Prefix '{locationData.Prefix}' and Delimiter '{locationData.Delimiter}'");
         }
         return File.OpenRead(locationData.DataFileLocation!);
     }

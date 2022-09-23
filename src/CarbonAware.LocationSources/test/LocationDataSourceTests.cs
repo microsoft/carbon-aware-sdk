@@ -23,7 +23,7 @@ public class LocationDataSourceTests
     }
 
     [Test]
-    public void GetDefaultLocationDataFileLocation_IsNotNull_ExpectedBaseDir()
+    public void GetDefaultLocationDataSourceFile_IsNotNull_ExpectedBaseDir()
     {
         Assert.That(_dataSource.DataFileLocation, Is.Not.Null);
         var expectedDir = Path.Combine(Path.GetDirectoryName(AssemblyPath)!, BaseDir);
@@ -34,7 +34,7 @@ public class LocationDataSourceTests
     [TestCase("~/newfile.json", TestName = "setting user's home dir")]
     [TestCase(null, TestName = "setting null filepath")]
     [TestCase("", TestName = "setting empty filepath")]
-    public void SetLocationDataFileLocation_ThrowsArgumentException(string filePath)
+    public void SetLocationDataSourceFile_ThrowsArgumentException(string filePath)
     {
         var ex = Assert.Throws<ArgumentException>(() => _dataSource.DataFileLocation = filePath);
         Assert.That(ex!.Message, Contains.Substring("not supported characters"));
@@ -44,7 +44,7 @@ public class LocationDataSourceTests
     [TestCase("/file1.json", TestName = "setting root dir")]
     [TestCase("another_dir/anotherfile.json", TestName = "subdir under base dir")]
     [TestCase("new-dir 123/Sub_Dir/anotherfile.json", TestName = "subdirs with numbers and upper case chars under base dir")]
-    public void SetLocationDataFileLocation_Success(string filePath)
+    public void SetLocationDataSourceFile_Success(string filePath)
     {
         _dataSource.DataFileLocation = filePath;
         var expected = Path.Combine(Path.GetDirectoryName(AssemblyPath)!, BaseDir, filePath);
