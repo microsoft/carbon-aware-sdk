@@ -8,7 +8,6 @@ namespace CarbonAware.CLI.IntegrationTests.Commands.EmissionsForecasts;
 /// Tests that the CLI handles and packages various responses from aggregators 
 /// and data sources properly, including empty responses and exceptions.
 /// </summary>
-//[TestFixture(DataSourceType.JSON)]
 [TestFixture(DataSourceType.WattTime)]
 public class EmissionsForecastsCommandTests : IntegrationTestingBase
 {
