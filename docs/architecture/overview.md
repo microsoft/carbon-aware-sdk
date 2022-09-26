@@ -1,6 +1,6 @@
 # Architecture Overview
 
-The Carbon Aware SDK was built in 3 layers, with each layer having it's own set of responsibilities. 
+The Carbon Aware SDK is built with three layers where each layer has its own set of responsibilities.
 1. User interface layer
 2. Business Logic Layer
 3. Data Layer
@@ -20,9 +20,9 @@ Both UIs access the same logic in the layers below.
 The business logic layer functions as the processor, taking in the user input and figuring out how to fulfill it. It is comprised of a set of aggregators that know what type of data they need and how to calculate the result. 
 
 ### Aggregator
-Aggregators have knowledge of the different data source interfaces in the data layer. They can aggregate multiple sources of data into a single response given a request, like the SCI Score aggregator shown in the diagram above. They can also map to a single data source interface, handling all the operations needed by the user for that area of data. 
+Aggregators have knowledge of the different data source interfaces in the data layer. They can either aggregate multiple sources of data into a single response given a request (see example `SCI Score Aggregator` in diagram) or map to a single data source interface, handling all the operations needed by the user for that area of data (see the `Carbon Intensity Aggregator` in diagram).
 
-For example, the `CarbonAwareAggregator` handles requests for various carbon emissions information. It can calculate the average carbon emissions over a time period, or the best carbon emissions given a set of locations. It can transform forecasted carbon emissions to suit particular use-cases. It can also just deliver the emissions data points in a standard schema without performing any calculations.
+For example, the `Carbon Intensity Aggregator` handles requests for various carbon emissions information. It can calculate the average carbon emissions over a time period, or the best carbon emissions given a set of locations. It can transform forecasted carbon emissions to suit particular use-cases. It can also just deliver the emissions data points in a standard schema without performing any calculations.
 
 ## Data Layer
 The data layer is responsible for ingesting data into the SDK. It is comprised of a set of data source interfaces representing the broad categories of data used by the SDK. 
