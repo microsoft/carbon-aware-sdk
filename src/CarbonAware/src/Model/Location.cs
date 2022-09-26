@@ -26,13 +26,6 @@ public class Location
     public string? RegionName { get; set; }
     #nullable disable
 
-    /// <summary>
-    /// Gets the display name.
-    /// </summary>
-    public string DisplayName {
-        get => RegionName;
-    }
-
     /// <inheritdoc />
     public override string ToString()
     {

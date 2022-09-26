@@ -9,9 +9,6 @@ namespace CarbonAware.LocationSources.Test;
 
 public class LocationSourceTest
 {   
-    // <summary>
-    // If a Location with invalid region name is passed, should fail.
-    // </summary>
     [Test]
     public void GeopositionLocation_InvalidRegionName_ThrowsException()
     {
@@ -34,24 +31,19 @@ public class LocationSourceTest
     [Test]
     public async Task GeopositionLocation_ValidLocation_With_MultiConfiguration()
     {
-        var configuration = new LocationDataSourcesConfiguration() 
-        {
-            LocationDataSources = new List<LocationSourceFile>()
+        var configuration = new LocationDataSourcesConfiguration();
+        configuration.LocationDataSources.Add(new LocationSourceFile
             {
-                new LocationSourceFile()
-                {
-                    Prefix = "prefix1",
-                    Delimiter = "-",
-                    DataFileLocation = "azure-regions.json"
-                },
-                new LocationSourceFile()
-                {
-                    Prefix = "prefix2",
-                    Delimiter = "_",
-                    DataFileLocation = "azure-regions.json"
-                }
-            }
-        };
+                Prefix = "prefix1",
+                Delimiter = "-",
+                DataFileLocation = "azure-regions.json"
+            });
+        configuration.LocationDataSources.Add(new LocationSourceFile
+            {
+                Prefix = "prefix2",
+                Delimiter = "_",
+                DataFileLocation = "azure-regions.json"
+            });
         var options = new Mock<IOptionsMonitor<LocationDataSourcesConfiguration>>();
         options.Setup(o => o.CurrentValue).Returns(() => configuration);
         var logger = Mock.Of<ILogger<LocationSource>>();
@@ -99,18 +91,13 @@ public class LocationSourceTest
    [Test]
     public void GeopositionLocation_InvalidLocation_With_Configuration()
     {
-        var configuration = new LocationDataSourcesConfiguration() 
+        var configuration = new LocationDataSourcesConfiguration();
+        configuration.LocationDataSources.Add(new LocationSourceFile
         {
-            LocationDataSources = new List<LocationSourceFile>()
-            {
-                new LocationSourceFile()
-                {
-                    Prefix = "test",
-                    Delimiter = "-",
-                    DataFileLocation = "azure-regions.json"
-                }
-            }
-        };
+            Prefix = "test",
+            Delimiter = "-",
+            DataFileLocation = "azure-regions.json"
+        });
         var options = new Mock<IOptionsMonitor<LocationDataSourcesConfiguration>>();
         options.Setup(o => o.CurrentValue).Returns(() => configuration);
         var logger = Mock.Of<ILogger<LocationSource>>();
