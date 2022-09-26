@@ -75,9 +75,7 @@ public static class ServiceCollectionExtensions
 ```
 
 ### Register the New Data Source
-Once the data source's ServiceCollectionExtensions is configured, it can be registered as an available data source for the SDK. This is done in the `CarbonAware.DataSources.Registration` project. In particular, there is an equivalent `ServiceCollectionExtensions` file in the `Configuration` directory of that project. The public function `AddDataSourceService` contains a switch statement that reads in the environment variables for the SDK and selects the requested data source. To register your new data source, you must: 
-1. Add a new enum type to the `DataSourceType` enum file in that Configuration folder.
-2. Add a new case statement in the `AddDataSourceService` function that matches on your new enum and adds your data source service to the services on the SDK (by calling your previously defined function).
+Once the data source's ServiceCollectionExtensions is configured, it can be registered as an available data source for the SDK by adding to the switch statement found in the AddDataSourceService function of [this file](../../src/CarbonAware.DataSources/CarbonAware.DataSources.Registration\Configuration\ServiceCollectionExtensions.cs). Note you will need to add a new enum type to the `DataSourceType` [enum file](../../src/CarbonAware.DataSources/CarbonAware.DataSources.Registration/Configuration/DataSourceType.cs) to reference in the switch statement.
 
 ```csharp
     switch (dataSourceType)
