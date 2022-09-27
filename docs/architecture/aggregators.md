@@ -1,10 +1,11 @@
 # Aggregators
-Aggregators live in the business logic tier and are responsible for taking a consumer request and fulfilling it. They perform any necessary validation on the inputs from the consumer tier, call the necessary data source(s), and do any post-processing required before returning the result to the consumer.
+Aggregators live in between the consumer and data tiers, containing the business logic for the SDK. They have knowledge of the different types of data providers and how to aggregate the resulting data.
 
-## Validating Inputs
-Part of the aggregator's responsibility is validating the input it receives from the consumer. This includes enforcing required fields and any validations (i.e., a list field cannot be empty, a time field cannot be in the past etc.) 
+## Aggregators' Responsibility
+Aggregators are responsible for taking in consumer requests, calling the specified data source(s), and performing any necessary logic before returning the result to the consumer.
 
-The tricky part is that each aggregator can support a wide variety of consumer requests that could potentially require access to various data sources. Therefore the input must be generic enough to support various requests, but specific enough to allow enforcement of requirements. To handle this, we have create the `Carbon Aware Parameters` class. 
+### Consumer <-> Aggregator Contract
+Each aggregator can support a wide variety of consumer requests that could in turn potentially require access to various data sources. The input to the aggregator must be generic enough to handle those cases, but specific enough to allow enforcement of required fields and validations (i.e., a list field cannot be empty, a time field cannot be in the past etc.). To handle this, we have created the `Carbon Aware Parameters` class, and each aggregator function receives an instance of this class.
 
 ## Carbon Aware Parameters
 The `CarbonAwareParameters` class allows the user to pass in a unique parameter instance to an aggregator function with the specific parameters needed by that call. 
@@ -20,30 +21,37 @@ The list of allowed parameters is defined in the class and includes
 The display name of each parameter can be overriden using the public setter. By default, each parameter display name is set to the variable name (ex: `Start = "start"`). The parameter display names are used when creating the validation error messages. Overriding them is useful in situations where the variables the user is using for input don't exactly match the default display name of the parameter (e.g. the user variable in the controller is `periodStartTime` instead of `startTime`). That way, when the error is thrown to the user, the parameter names will match the users' expectation
 
 ### Required Properties
-The first core validation the parameters class does is validating that required parameters are defined. By default, all parameters are considered optional. Calling the `SetRequiredProperties(...)` function with the desired arguments sets the required parameters for the instance.
-```
+The first core check the parameters class does is validating that required parameters are defined. By default, all parameters are considered optional. Calling the `SetRequiredProperties(...)` function with the desired arguments sets the required parameters for the instance.
+```csharp
     /// <summary>
-    /// Set the required properties in this parameters instance. Default to not required
+    /// Accepts any PropertyNames as arguments and sets the associated property as required for validation.
     /// </summary>
-    public void SetRequiredProperties(
-        bool singleLocation = false,
-        bool multipleLocations = false,
-        bool start = false,
-        bool end = false,
-        bool requested = false,
-        bool duration = false)
+    public void SetRequiredProperties(params PropertyName[] requiredProperties
+```
+
+### Validations
+The second core check the parameters class does is enforcing validations on the parameters themselves. Some common examples include
+- Relationship validations: _`start < end` must be true_
+- Content validations: _`list.Any()` must be true for list fields_
+
+Calling the `SetValidations(...)` function with the desired arguments sets the validations for the instance.
+```csharp
+    /// <summary>
+    /// Accepts any ValidationName as arguments and sets the associated validation to check.
+    /// </summary>
+    public void SetValidations(params ValidationName[] validationNames) 
 ```
 
 ### Validate
-Calling the `Validate(...)` function will validate (1) required parameters and (2) specified relationships between parameters. Currently, the only relationship we check is whether `start` is before `end`, which can be triggered by setting that flag in the `Validate` function to `true` (defaults to `false`). 
+Calling the `Validate(...)` function will validate (1) required parameters and (2) specified validations. Currently, the only validation we check is whether `start` is before `end`.
 
-If no errors are thrown, the funciton simply returns. If any validation errors are found, they are packaged into a single  `ArgumentException` error with each being part of the `data` dictionary.
+If no errors are thrown, the function simply returns. If any validation errors are found, they are packaged into a single  `ArgumentException` error with each being part of the `data` dictionary.
 ```
     /// <summary>
-    /// Validates this instance by checking the required properties are defined. Optionally validated that start property occurs before end, but that check defaults to false. Returns if validation succeeds, or throws if any validation errors are found.
+    /// Validates the properties and relationships between properties. Any validation errors found are packaged into an
+    /// ArgumentException and thrown. If there are no errors, simply returns void. 
     /// </summary>
-    /// <param name="startBeforeEndRequired"></param>
-    public void Validate(bool startBeforeEndRequired = false)
+    public void Validate()
  ```
 
  ### Getters With Default Fallbacks
@@ -55,8 +63,3 @@ If no errors are thrown, the funciton simply returns. If any validation errors a
     TimeSpan DurationOrDefault
 
  ```
-
- ### Open Questions/Ideas
- 1. Process of adding new fields: is there a way to refactor the code such that the "requried" check of validation can automatically be done for all fields (insted of having to manually add the repeated code each time).
- 2. Nullable parameters: Is there a way to write the class cleanly such that the parameters aren't nullable? This is because once we validate the parameters and query them, in most cases we need non-nullable instances (i.e., `DateTimeOffset` no `DateTimeOffset?`). So right now we'd need more null checking or casting.
-3. Defaulting fields: going hand in hand with the above, is there a way to batch default all the fields at once? That way, they are known to either have a value (whether that be the user value or the default we perscribe for this instance) or they throw when we try to get.
