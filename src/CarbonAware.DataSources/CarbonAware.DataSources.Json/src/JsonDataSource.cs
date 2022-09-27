@@ -20,7 +20,7 @@ public class JsonDataSource : ICarbonIntensityDataSource
 
     public string Version => "0.0.1";
 
-    public double MinSamplingWindow => 1440;  // 24 hrs
+    public double MinSamplingWindow => 120;  // 2 hrs
 
     private List<EmissionsData>? _emissionsData;
 

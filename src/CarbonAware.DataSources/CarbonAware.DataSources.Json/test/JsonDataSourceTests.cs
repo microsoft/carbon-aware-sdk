@@ -74,6 +74,24 @@ public class JsonDataSourceTests
 
     }
 
+    [Test]
+    public async Task GetCarbonIntensityAsync_TimeInterval()
+    {
+        var mockDataSource = SetupMockDataSource();
+
+        var location = new Location() { RegionName = "midwest" };
+        IEnumerable<Location> locations = new List<Location>() { location };
+        var start = DateTimeOffset.Parse("2021-05-01T14:45:11+00:00");
+        var end = DateTimeOffset.Parse("2021-05-01T16:45:11+00:00");
+        var dataSource = mockDataSource.Object;
+        var result = await dataSource.GetCarbonIntensityAsync(locations, start, end);
+        Assert.AreEqual(2, result.Count());
+
+        foreach (var r in result)
+        {
+            Assert.IsTrue(locations.Where(loc => loc.RegionName == r.Location).Any());
+        }
+    }
     private Mock<JsonDataSource> SetupMockDataSource() {
         var logger = Mock.Of<ILogger<JsonDataSource>>();
         var monitor = Mock.Of<IOptionsMonitor<JsonDataSourceConfiguration>>();
@@ -91,19 +109,31 @@ public class JsonDataSourceTests
         return new List<EmissionsData>() {
                 new EmissionsData {
                     Location = "eastus",
-                    Time = DateTime.Parse("2021-09-01")
-                },
-                new EmissionsData {
-                    Location = "westus",
-                    Time = DateTime.Parse("2021-12-01")
+                    Time = DateTime.Parse("2021-09-01T13:45:11+00:00")
                 },
                 new EmissionsData {
                     Location = "eastus",
-                    Time = DateTime.Parse("2022-02-01")
+                    Time = DateTime.Parse("2021-05-01T13:45:11+00:00")
+                },
+                new EmissionsData {
+                    Location = "westus",
+                    Time = DateTime.Parse("2021-12-01T13:45:11+00:00")
+                },
+                new EmissionsData {
+                    Location = "eastus",
+                    Time = DateTime.Parse("2022-02-01T13:45:11+00:00")
                 },
                 new EmissionsData {
                     Location = "midwest",
-                    Time = DateTime.Parse("2021-05-01")
+                    Time = DateTime.Parse("2021-05-01T07:45:11+00:00")
+                },
+                new EmissionsData {
+                    Location = "midwest",
+                    Time = DateTime.Parse("2021-05-01T14:45:11+00:00")
+                },
+                new EmissionsData {
+                    Location = "midwest",
+                    Time = DateTime.Parse("2021-05-01T13:45:11+00:00")
                 }
             };
     }
