@@ -75,7 +75,7 @@ public class JsonDataSourceTests
     }
 
     [Test]
-    public async Task GetCarbonIntensityAsync_TimeInterval()
+    public async Task GetCarbonIntensityAsync_ReturnsData_UsingSamplingWindow()
     {
         var mockDataSource = SetupMockDataSource();
 
