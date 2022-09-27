@@ -8,12 +8,16 @@ labels: Design, Needs Triage
 # Description
 
 
-# Acceptance criteria
 
-- [ ] This is something that can be verified to show that this user story is satisfied.
-- [ ] Architectual Decisions documented in a decision log
+# Acceptance Criteria
 
-# Sprint Ready Checklist 
+- [ ] Design satisfies the <functional requirement> 
+- [ ] Design satisfies the <non-functional requirement>
+- [ ] Final architectural decisions proposed in an [Architectural Decision Record log](https://github.com/microsoft/carbon-aware-sdk/tree/dev/docs/architecture/decisions)
+
+# Dependencies
+
+# Sprint-Ready Checklist 
 - [ ] Acceptance criteria defined 
-- [ ] Team understands acceptance criteria 
+- [ ] Engineering team understands acceptance criteria
 - [ ] External / 3rd Party dependencies identified

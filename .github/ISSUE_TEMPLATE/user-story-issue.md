@@ -5,19 +5,21 @@ labels: Needs Triage
 ---
 
 # Description
-As a ..., I want to ..., so I can ...
+As a... <persona>, I want to... <user action>, so I can... <user value>
 
-<Link to Design Document or User Story>
+<Link to Design if available>
 
 # Acceptance criteria
 
 - [ ] This is something that can be verified to show that this user story is satisfied.
 - [ ] Unit Tests are completed and code passes tests
 
-# Sprint Ready Checklist 
+# Dependencies
+
+
+# Sprint-Ready Checklist 
 - [ ] Acceptance criteria defined 
-- [ ] Team understands acceptance criteria 
-- [ ] Team has defined solution / steps to satisfy acceptance criteria 
 - [ ] Acceptance criteria is verifiable / testable 
 - [ ] External / 3rd Party dependencies identified
+- [ ] Engineering team understands acceptance criteria 
 - [ ] Is the user story small enough to be implemented in a short amount of time, but large enough to provide value?

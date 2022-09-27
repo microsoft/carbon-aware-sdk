@@ -1,6 +1,6 @@
 ---
 name: Epic
-about: This template provides a basic structure for an epic issues.
+about: This template provides a basic structure for an epic.  Epics are used to describe a new feature or bigger piece of functionality to be developed.
 title: '[Epic] <title>'
 labels: Epic
 ---
@@ -11,13 +11,12 @@ _Introduction_
 
 ### Success Metrics
 
-### Work items
+### Work Items
 
-#### Design and specification 📔
+#### Design and Specification 📔
 
 - [ ] Design Document
-- [ ] Architectual Decisions Document
-- [ ] Integration Test Complete
+- [ ] Architectural Decision Record(s)
 
 #### Engineering ⚙️
 
@@ -25,6 +24,6 @@ _Introduction_
 
 #### Release planning
 
+- [ ] Integration Test Complete
 - [ ] Demo the feature internally
-- [ ] GSF updates added to code
-- [ ] Pull Request created for GSF
+- [ ] Pull Request created in GSF/dev branch
