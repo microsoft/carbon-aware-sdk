@@ -32,13 +32,13 @@ public class LocationSourceTest
     public async Task GeopositionLocation_ValidLocation_With_MultiConfiguration()
     {
         var configuration = new LocationDataSourcesConfiguration();
-        configuration.LocationDataSources.Add(new LocationSourceFile
+        configuration.LocationSourceFiles.Add(new LocationSourceFile
             {
                 Prefix = "prefix1",
                 Delimiter = "-",
                 DataFileLocation = "azure-regions.json"
             });
-        configuration.LocationDataSources.Add(new LocationSourceFile
+        configuration.LocationSourceFiles.Add(new LocationSourceFile
             {
                 Prefix = "prefix2",
                 Delimiter = "_",
@@ -92,7 +92,7 @@ public class LocationSourceTest
     public void GeopositionLocation_InvalidLocation_With_Configuration()
     {
         var configuration = new LocationDataSourcesConfiguration();
-        configuration.LocationDataSources.Add(new LocationSourceFile
+        configuration.LocationSourceFiles.Add(new LocationSourceFile
         {
             Prefix = "test",
             Delimiter = "-",

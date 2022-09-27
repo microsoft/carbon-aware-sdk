@@ -29,7 +29,7 @@ public class LocationSourceFile
         }
     }
 
-    public string Prefix { get ; set; } = String.Empty;
+    public string Prefix { get; set; } = String.Empty;
     public string Delimiter { get;  set; } = String.Empty;
 
     public LocationSourceFile()

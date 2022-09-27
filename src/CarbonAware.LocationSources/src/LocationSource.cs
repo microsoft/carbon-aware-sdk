@@ -17,7 +17,7 @@ public class LocationSource : ILocationSource
 
     private IDictionary<string, NamedGeoposition> _namedGeopositions;
 
-    private static readonly JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+    private static readonly JsonSerializerOptions _options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
     private IOptionsMonitor<LocationDataSourcesConfiguration> _configurationMonitor { get; }
 
@@ -40,34 +40,32 @@ public class LocationSource : ILocationSource
         await LoadLocationFromFileIfNotPresentAsync();
 
         var regionName = location.RegionName ?? string.Empty;
-        if (!_namedGeopositions!.ContainsKey(regionName))
+        if (!_namedGeopositions.ContainsKey(regionName))
         {
             throw new ArgumentException($"Unknown region: Region name '{regionName}' not found");
         }
 
-        NamedGeoposition geopositionLocation = _namedGeopositions![regionName];    
+        NamedGeoposition geopositionLocation = _namedGeopositions[regionName];    
         if (!geopositionLocation.IsValidGeopositionLocation())  
         {
             throw new LocationConversionException($"Lat/long cannot be retrieved for region '{regionName}'");
         }
-        Location geoPosistionLocation = new Location 
-                {
-                    Latitude = Convert.ToDecimal(geopositionLocation.Latitude),
-                    Longitude = Convert.ToDecimal(geopositionLocation.Longitude)
-                };
-
-        return geoPosistionLocation;
+        return new Location
+        {
+            Latitude = Convert.ToDecimal(geopositionLocation.Latitude),
+            Longitude = Convert.ToDecimal(geopositionLocation.Longitude)
+        };
     }
 
     private async Task LoadLocationJsonFileAsync()
     {
-        if (!_configuration.LocationDataSources.Any())
+        if (!_configuration.LocationSourceFiles.Any())
         {
             _logger.LogInformation($"Loading default location data source");
             await PopulateRegionMapAsync(new LocationSourceFile());
             return;
         }
-        foreach (var data in _configuration.LocationDataSources!)
+        foreach (var data in _configuration.LocationSourceFiles)
         {
             await PopulateRegionMapAsync(data);
         }
@@ -76,7 +74,7 @@ public class LocationSource : ILocationSource
     private async Task PopulateRegionMapAsync(LocationSourceFile data)
     {
         using Stream stream = GetStreamFromFileLocation(data);
-        var regionList = await JsonSerializer.DeserializeAsync<List<NamedGeoposition>>(stream, options);
+        var regionList = await JsonSerializer.DeserializeAsync<List<NamedGeoposition>>(stream, _options);
         foreach (var region in regionList!) 
         {
             _namedGeopositions.Add(BuildKeyFromRegion(data, region), region);
