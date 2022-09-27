@@ -109,19 +109,15 @@ public class JsonDataSourceTests
         return new List<EmissionsData>() {
                 new EmissionsData {
                     Location = "eastus",
-                    Time = DateTime.Parse("2021-09-01T13:45:11+00:00")
-                },
-                new EmissionsData {
-                    Location = "eastus",
-                    Time = DateTime.Parse("2021-05-01T13:45:11+00:00")
+                    Time = DateTime.Parse("2021-09-01")
                 },
                 new EmissionsData {
                     Location = "westus",
-                    Time = DateTime.Parse("2021-12-01T13:45:11+00:00")
+                    Time = DateTime.Parse("2021-12-01")
                 },
                 new EmissionsData {
                     Location = "eastus",
-                    Time = DateTime.Parse("2022-02-01T13:45:11+00:00")
+                    Time = DateTime.Parse("2022-02-01")
                 },
                 new EmissionsData {
                     Location = "midwest",
