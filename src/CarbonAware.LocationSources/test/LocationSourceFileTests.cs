@@ -13,21 +13,12 @@ public class LocationSourceFileTests
     private string AssemblyPath { get; set; }
     #pragma warning restore CS8618
     
-    private const string BaseDir = "location-sources/json";
 
     [SetUp]
     public void Setup()
     {
         _dataSource = new LocationSourceFile();
         AssemblyPath = Assembly.GetExecutingAssembly().Location;
-    }
-
-    [Test]
-    public void GetDefaultLocationDataSourceFile_IsNotNull_ExpectedBaseDir()
-    {
-        Assert.That(_dataSource.DataFileLocation, Is.Not.Null);
-        var expectedDir = Path.Combine(Path.GetDirectoryName(AssemblyPath)!, BaseDir);
-        Assert.That(_dataSource.DataFileLocation, Contains.Substring(expectedDir));
     }
 
     [TestCase("../newfile.json", TestName = "setting parent's dir")]
@@ -47,13 +38,7 @@ public class LocationSourceFileTests
     public void SetLocationDataSourceFile_Success(string filePath)
     {
         _dataSource.DataFileLocation = filePath;
-        var expected = Path.Combine(Path.GetDirectoryName(AssemblyPath)!, BaseDir, filePath);
+        var expected = Path.Combine(Path.GetDirectoryName(AssemblyPath)!, LocationSourceFile.BaseDirectory, filePath);
         Assert.That(_dataSource.DataFileLocation, Is.EqualTo(expected));
-    }
-
-    [Test]
-    public void VerifyDefaultAzureLocationDataSource()
-    {
-        Assert.That(_dataSource.DataFileLocation, Contains.Substring("azure"));
     }
 }

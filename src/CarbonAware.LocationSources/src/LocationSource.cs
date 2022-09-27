@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using CarbonAware.LocationSources.Configuration;
+using System.Reflection;
 
 namespace CarbonAware.LocationSources;
 
@@ -39,13 +40,13 @@ public class LocationSource : ILocationSource
     {
         await LoadLocationFromFileIfNotPresentAsync();
 
-        var regionName = location.RegionName ?? string.Empty;
+        var regionName = location.Name ?? string.Empty;
         if (!_namedGeopositions.ContainsKey(regionName))
         {
             throw new ArgumentException($"Unknown region: Region name '{regionName}' not found");
         }
 
-        NamedGeoposition geopositionLocation = _namedGeopositions[regionName];    
+        var geopositionLocation = _namedGeopositions[regionName];    
         if (!geopositionLocation.IsValidGeopositionLocation())  
         {
             throw new LocationConversionException($"Lat/long cannot be retrieved for region '{regionName}'");
@@ -59,25 +60,19 @@ public class LocationSource : ILocationSource
 
     private async Task LoadLocationJsonFileAsync()
     {
-        if (!_configuration.LocationSourceFiles.Any())
+        var sourceFiles = !_configuration.LocationSourceFiles.Any() ? DiscoveryFiles() : _configuration.LocationSourceFiles;
+        foreach (var source in sourceFiles)
         {
-            _logger.LogInformation($"Loading default location data source");
-            await PopulateRegionMapAsync(new LocationSourceFile());
-            return;
-        }
-        foreach (var data in _configuration.LocationSourceFiles)
-        {
-            await PopulateRegionMapAsync(data);
-        }
-    }
-
-    private async Task PopulateRegionMapAsync(LocationSourceFile data)
-    {
-        using Stream stream = GetStreamFromFileLocation(data);
-        var regionList = await JsonSerializer.DeserializeAsync<List<NamedGeoposition>>(stream, _options);
-        foreach (var region in regionList!) 
-        {
-            _namedGeopositions.Add(BuildKeyFromRegion(data, region), region);
+            using Stream stream = GetStreamFromFileLocation(source);
+            var regionList = await JsonSerializer.DeserializeAsync<List<NamedGeoposition>>(stream, _options);
+            foreach (var region in regionList!) 
+            {
+                var key = BuildKeyFromRegion(source, region);
+                if (!_namedGeopositions.TryAdd(key, region))
+                {
+                    _logger.LogInformation($"Key {key} for region {region} from {source.DataFileLocation} not added since already exists");
+                }
+            }
         }
     }
 
@@ -102,5 +97,20 @@ public class LocationSource : ILocationSource
             _logger.LogDebug($"Location data source Prefix '{locationData.Prefix}' and Delimiter '{locationData.Delimiter}'");
         }
         return File.OpenRead(locationData.DataFileLocation!);
+    }
+
+    private IEnumerable<LocationSourceFile> DiscoveryFiles()
+    {
+        var assemblyPath = Assembly.GetExecutingAssembly().Location;
+        var assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
+
+        var pathCombined = Path.Combine(assemblyDirectory, LocationSourceFile.BaseDirectory);
+        var files = Directory.GetFiles(pathCombined);
+        if (files is null)
+        {
+            _logger.LogWarning($"No location files found under {pathCombined}");
+            return Enumerable.Empty<LocationSourceFile>();
+        }
+        return files.Select(x => Path.GetFileName(x)).Select(p => new LocationSourceFile { DataFileLocation = p });
     }
 }

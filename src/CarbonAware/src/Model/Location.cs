@@ -23,7 +23,7 @@ public class Location
     /// Gets or sets the region name to use.  When set to GeoPosition, this value should be null.
     /// </summary>
     #nullable enable
-    public string? RegionName { get; set; }
+    public string? Name { get; set; }
     #nullable disable
 
     /// <inheritdoc />

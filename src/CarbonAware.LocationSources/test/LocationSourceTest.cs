@@ -20,7 +20,7 @@ public class LocationSourceTest
 
         Location invalidLocation = new Location()
         {
-            RegionName = "invalid location"
+            Name = "invalid location"
         };
         Assert.ThrowsAsync<ArgumentException>(async () =>
         {
@@ -50,14 +50,14 @@ public class LocationSourceTest
         var locationSource = new LocationSource(logger, options.Object);
 
         Location inputLocation = new Location {
-            RegionName = "prefix1-eastus"
+            Name = "prefix1-eastus"
         };
 
         var eastResult = await locationSource.ToGeopositionLocationAsync(inputLocation);
         AssertLocationsEqual(Constants.LocationEastUs, eastResult);
 
         inputLocation = new Location {
-            RegionName = "prefix2_westus"
+            Name = "prefix2_westus"
         };
 
         var westResult = await locationSource.ToGeopositionLocationAsync(inputLocation);
@@ -74,14 +74,14 @@ public class LocationSourceTest
         var locationSource = new LocationSource(logger, options.Object);
 
         Location inputLocation = new Location {
-            RegionName = "eastus"
+            Name = "eastus"
         };
 
         var eastResult = await locationSource.ToGeopositionLocationAsync(inputLocation);
         AssertLocationsEqual(Constants.LocationEastUs, eastResult);
 
         inputLocation = new Location {
-            RegionName = "westus"
+            Name = "westus"
         };
 
         var westResult = await locationSource.ToGeopositionLocationAsync(inputLocation);
@@ -104,7 +104,7 @@ public class LocationSourceTest
         var locationSource = new LocationSource(logger, options.Object);
 
         Location inputLocation = new Location {
-            RegionName = "eastus"
+            Name = "eastus"
         };
         Assert.ThrowsAsync<ArgumentException>(async () =>
         {
@@ -112,7 +112,7 @@ public class LocationSourceTest
         });
 
         inputLocation = new Location {
-            RegionName = "westus"
+            Name = "westus"
         };
         Assert.ThrowsAsync<ArgumentException>(async () =>
         {

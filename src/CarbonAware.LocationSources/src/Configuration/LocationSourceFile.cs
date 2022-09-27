@@ -6,26 +6,25 @@ namespace CarbonAware.LocationSources.Configuration;
 public class LocationSourceFile
 {
 
-    private const string DefaultLocationDataFile = "azure-regions.json";
-    private const string BaseDirectory = "location-sources/json";
+    public const string BaseDirectory = "location-sources/json";
     private const string DirectoryRegExPattern = @"^[-\\/a-zA-Z_\d ]*$";
 
-    private string assemblyDirectory;
-    private string? dataFileLocation;
+    private string _assemblyDirectory;
+    private string? _dataFileLocation;
 
     /// <summary>
     /// Location data file location
     /// </summary>
     public string DataFileLocation
     {
-        get => dataFileLocation!;
+        get => _dataFileLocation!;
         set
         {
             if (!IsValidDirPath(value))
             {
                 throw new ArgumentException($"File path '{value}' contains not supported characters.");
             }
-            dataFileLocation = Path.Combine(assemblyDirectory, BaseDirectory, value);
+            _dataFileLocation = Path.Combine(_assemblyDirectory, BaseDirectory, value);
         }
     }
 
@@ -35,8 +34,7 @@ public class LocationSourceFile
     public LocationSourceFile()
     {
         var assemblyPath = Assembly.GetExecutingAssembly().Location;
-        assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
-        DataFileLocation = DefaultLocationDataFile;
+        _assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
     }
 
     private static bool IsValidDirPath(string fileName)

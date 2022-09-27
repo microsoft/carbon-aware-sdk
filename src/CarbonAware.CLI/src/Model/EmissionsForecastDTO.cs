@@ -22,7 +22,7 @@ class EmissionsForecastDTO
         EmissionsForecastDTO forecast = new()
         {
             GeneratedAt = emissionsForecast.GeneratedAt,
-            Location = emissionsForecast.Location.RegionName!,
+            Location = emissionsForecast.Location.Name!,
             DataStartAt = emissionsForecast.DataStartAt,
             DataEndAt = emissionsForecast.DataEndAt,
             WindowSize = (int)emissionsForecast.WindowSize.TotalMinutes,
