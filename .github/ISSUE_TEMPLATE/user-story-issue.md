@@ -9,7 +9,7 @@ As a... <persona>, I want to... <user action>, so I can... <user value>
 
 <Link to Design if available>
 
-# Acceptance criteria
+# Acceptance Criteria
 
 - [ ] This is something that can be verified to show that this user story is satisfied.
 - [ ] Unit Tests are completed and code passes tests

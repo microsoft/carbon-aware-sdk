@@ -22,8 +22,8 @@ _Introduction_
 
 - [ ] <User Stories>
 
-#### Release planning
+#### Release Planning
 
-- [ ] Integration Test Complete
+- [ ] Integration tests are complete
 - [ ] Demo the feature internally
 - [ ] Pull Request created in GSF/dev branch
