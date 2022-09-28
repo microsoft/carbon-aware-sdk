@@ -65,13 +65,12 @@ public class LocationSourceTest
     }
 
     [Test]
-    public async Task GeopositionLocation_ValidLocation_Without_Configuration_LoadDefaults()
+    public async Task GeopositionLocation_ValidLocation_No_Configuration_DiscoverFiles()
     {
-        var configuration = new LocationDataSourcesConfiguration();
         var options = new Mock<IOptionsMonitor<LocationDataSourcesConfiguration>>();
-        options.Setup(o => o.CurrentValue).Returns(() => configuration);
-        var logger = Mock.Of<ILogger<LocationSource>>();
-        var locationSource = new LocationSource(logger, options.Object);
+        options.Setup(o => o.CurrentValue).Returns(() => new LocationDataSourcesConfiguration());
+        var mockLogger = new Mock<ILogger<LocationSource>>();
+        var locationSource = new LocationSource(mockLogger.Object, options.Object);
 
         Location inputLocation = new Location {
             Name = "eastus"
@@ -79,6 +78,7 @@ public class LocationSourceTest
 
         var eastResult = await locationSource.ToGeopositionLocationAsync(inputLocation);
         AssertLocationsEqual(Constants.LocationEastUs, eastResult);
+        VerifyLoggerCall(mockLogger, "files discovered", LogLevel.Information);
 
         inputLocation = new Location {
             Name = "westus"
@@ -124,5 +124,15 @@ public class LocationSourceTest
     {
         Assert.AreEqual(expected.Latitude, actual.Latitude);
         Assert.AreEqual(expected.Longitude, actual.Longitude);
+    }
+
+    private void VerifyLoggerCall(Mock<ILogger<LocationSource>> logger, String message, LogLevel level)
+    {
+        logger.Verify(m => m.Log(level,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, _) => v.ToString().Contains(message)),
+            null,
+            It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            Times.Once);
     }
 }

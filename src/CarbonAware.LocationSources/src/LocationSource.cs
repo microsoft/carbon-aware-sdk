@@ -109,7 +109,7 @@ public class LocationSource : ILocationSource
         if (files is null)
         {
             _logger.LogWarning($"No location files found under {pathCombined}");
-            return Enumerable.Empty<LocationSourceFile>();
+            return Array.Empty<LocationSourceFile>();
         }
         _logger.LogInformation($"{files.Length} files discovered");
         return files.Select(x => Path.GetFileName(x)).Select(n => new LocationSourceFile { DataFileLocation = n });
