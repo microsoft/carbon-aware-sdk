@@ -60,7 +60,7 @@ public class LocationSource : ILocationSource
 
     private async Task LoadLocationJsonFileAsync()
     {
-        var sourceFiles = !_configuration.LocationSourceFiles.Any() ? DiscoveryFiles() : _configuration.LocationSourceFiles;
+        var sourceFiles = !_configuration.LocationSourceFiles.Any() ? DiscoverFiles() : _configuration.LocationSourceFiles;
         foreach (var source in sourceFiles)
         {
             using Stream stream = GetStreamFromFileLocation(source);
@@ -70,7 +70,7 @@ public class LocationSource : ILocationSource
                 var key = BuildKeyFromRegion(source, region);
                 if (!_namedGeopositions.TryAdd(key, region))
                 {
-                    _logger.LogInformation($"Key {key} for region {region} from {source.DataFileLocation} not added since already exists");
+                    _logger.LogInformation($"Key {key} for region {region} from {source.DataFileLocation} not added since it already exists");
                 }
             }
         }
@@ -99,7 +99,7 @@ public class LocationSource : ILocationSource
         return File.OpenRead(locationData.DataFileLocation!);
     }
 
-    private IEnumerable<LocationSourceFile> DiscoveryFiles()
+    private IEnumerable<LocationSourceFile> DiscoverFiles()
     {
         var assemblyPath = Assembly.GetExecutingAssembly().Location;
         var assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
@@ -111,6 +111,7 @@ public class LocationSource : ILocationSource
             _logger.LogWarning($"No location files found under {pathCombined}");
             return Enumerable.Empty<LocationSourceFile>();
         }
-        return files.Select(x => Path.GetFileName(x)).Select(p => new LocationSourceFile { DataFileLocation = p });
+        _logger.LogInformation($"{files.Length} files discovered");
+        return files.Select(x => Path.GetFileName(x)).Select(n => new LocationSourceFile { DataFileLocation = n });
     }
 }

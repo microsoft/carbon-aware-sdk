@@ -183,12 +183,12 @@ By setting `LocationDataSourcesConfiguration` property with one or more location
 "CarbonAwareVars__CarbonIntensityDataSource": "WattTime",
 "WattTimeClient__Username": "wattTimeUsername",
 "WattTimeClient__Password": "wattTimePassword",
-"LocationDataSourcesConfiguration__LocationDataSources__0__DataFileLocation": "azure-regions.json",
-"LocationDataSourcesConfiguration__LocationDataSources__0__Prefix": "az",
-"LocationDataSourcesConfiguration__LocationDataSources__0__Delimiter": "-",
-"LocationDataSourcesConfiguration__LocationDataSources__1__DataFileLocation": "custom-regions.json",
-"LocationDataSourcesConfiguration__LocationDataSources__1__Prefix": "custom",
-"LocationDataSourcesConfiguration__LocationDataSources__1__Delimiter": "_",
+"LocationDataSourcesConfiguration__LocationSourceFiles__0__DataFileLocation": "azure-regions.json",
+"LocationDataSourcesConfiguration__LocationSourceFiles__0__Prefix": "az",
+"LocationDataSourcesConfiguration__LocationSourceFiles__0__Delimiter": "-",
+"LocationDataSourcesConfiguration__LocationSourceFiles__1__DataFileLocation": "custom-regions.json",
+"LocationDataSourcesConfiguration__LocationSourceFiles__1__Prefix": "custom",
+"LocationDataSourcesConfiguration__LocationSourceFiles__1__Delimiter": "_",
 ```
 This way when the application starts, it open the files specified by `DataFileLocation` property that should located under `location-sources/json` directory. The format of these files is the same as the `Location` Model class. In order to differentiate between regions, a `Prefix` and `Delimiter` properties are used to allow the user to select the region when a request is performed. By settings the properties, the region should be made of **region**=`Prefix`+`Delimiter`+`RegionName`, so when the query is performed, it would be found. The following example shows how to perform an http request:
 ```sh
@@ -230,6 +230,34 @@ WattTimeClient__Password="wattTimePassword"
     "wattTimeClient":{
         "username": "wattTimeUsername",
         "password": "wattTimePassword",
+    }
+}
+```
+
+### Sample Json Configuration Using WattTime and Defined Location Source Files
+
+```json
+{
+    "carbonAwareVars": {
+        "carbonIntensityDataSource": "WattTime",
+    },
+    "wattTimeClient": {
+        "username": "wattTimeUsername",
+        "password": "wattTimePassword"
+    },
+    "locationDataSourcesConfiguration": {
+        "locationSourceFiles": [
+            {
+                "prefix": "az",
+                "delimiter": "-",
+                "dataFileLocation": "azure-regions.json"
+            },
+            {
+                "prefix": "custom",
+                "delimiter": "_",
+                "dataFileLocation": "custom-regions.json"
+            }
+        ]
     }
 }
 ```
