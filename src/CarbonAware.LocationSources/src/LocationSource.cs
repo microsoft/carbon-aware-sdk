@@ -40,16 +40,16 @@ public class LocationSource : ILocationSource
     {
         await LoadLocationFromFileIfNotPresentAsync();
 
-        var regionName = location.Name ?? string.Empty;
-        if (!_namedGeopositions.ContainsKey(regionName))
+        var name = location.Name ?? string.Empty;
+        if (!_namedGeopositions.ContainsKey(name))
         {
-            throw new ArgumentException($"Unknown region: Region name '{regionName}' not found");
+            throw new ArgumentException($"Unknown region: Region name '{name}' not found");
         }
 
-        var geopositionLocation = _namedGeopositions[regionName];    
+        var geopositionLocation = _namedGeopositions[name];    
         if (!geopositionLocation.IsValidGeopositionLocation())  
         {
-            throw new LocationConversionException($"Lat/long cannot be retrieved for region '{regionName}'");
+            throw new LocationConversionException($"Lat/long cannot be retrieved for region '{name}'");
         }
         return new Location
         {
