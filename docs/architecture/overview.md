@@ -14,7 +14,7 @@ The consumer tier is the entry point for interacting with the SDK. It handles ta
 1. A RESTful WebAPI that can be called using HTTP requests.
 2. A command line tool that runs directly on a host machine.
 
-Both consumers access the same logic in the tiers below.
+Both consumers access the same components in the tiers below.
 
 ## Business Logic Tier
 The business logic tier functions as the processor, taking in the user input and figuring out how to fulfill it. It is comprised of a set of aggregators that know what type of data they need and how to calculate the result. 
@@ -43,3 +43,8 @@ The SDK uses dependency injection to load aggregators and data sources based on 
 2. All available data sources are registered in the `DataSource.Registration` project.
 3. Each aggregator defines a `ServiceCollectionExtension` method where it registers the data sources it intends to use.
 4. The `Program.cs` file registers the aggregators at startup
+
+## Example Call Flow
+The swimlanes diagram below follows an example call through all 3 tiers of the architecture. In this diagram, the _Client_ is a user of the SDK and the _Data Provider_ is a source of raw data, such as [WattTime](https://www.wattime.org).
+
+![Tiers flow diagram](../images/overview-tiers-swimlanes.png)
