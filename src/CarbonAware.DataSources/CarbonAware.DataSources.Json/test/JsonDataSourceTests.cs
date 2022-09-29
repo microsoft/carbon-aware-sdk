@@ -75,7 +75,7 @@ public class JsonDataSourceTests
     }
 
     [Test]
-    public async Task GetCarbonIntensityAsync_ReturnsData_UsingSamplingWindow()
+    public async Task GetCarbonIntensityAsync_ReturnsSingleDataPoint_WhenStartParamExactlyMatchesDataStart()
     {
         var mockDataSource = SetupMockDataSource();
 
