@@ -6,34 +6,38 @@ public static class Constants
 {
 
     public static readonly NamedGeoposition EastUsRegion = new () {
-                    RegionName = "eastus",
+                    RegionName = "test-eastus",
                     Latitude = "37.3719",
-                    Longitude = "-79.8164"
+                    Longitude = "-71.8164"
                     };
     public static readonly NamedGeoposition WestUsRegion = new () {
-                    RegionName = "westus",
+                    RegionName = "test-westus",
                     Latitude = "37.783",
-                    Longitude = "-122.417"
+                    Longitude = "-121.417"
                 };
     public static readonly NamedGeoposition NorthCentralRegion = new () {
-                    RegionName = "northcentralus",
+                    RegionName = "test-northcentralus",
                     Latitude = "37.783",
-                    Longitude = "-122.417"
+                    Longitude = "-120.417"
+                };
+    public static readonly NamedGeoposition FakeRegion = new () {
+                    RegionName = "fake-region"
                 };
 
+
     public static readonly Location LocationEastUs = new () {
-                    Name = "eastus",
+                    Name = "test-eastus",
                     Latitude = 37.3719m,
-                    Longitude = -79.8164m
+                    Longitude = -71.8164m
                     };
     public static readonly Location LocationWestUs = new () {
-                    Name = "westus",
+                    Name = "test-westus",
                     Latitude = 37.783m,
-                    Longitude = -122.417m
+                    Longitude = -121.417m
                 };
     public static readonly Location LocationNorthCentral = new () {
-                    Name = "northcentralus",
+                    Name = "test-northcentralus",
                     Latitude = 37.783m,
-                    Longitude = -122.417m
+                    Longitude = -120.417m
                 };            
 }

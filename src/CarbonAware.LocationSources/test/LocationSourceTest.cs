@@ -4,11 +4,40 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Microsoft.Extensions.Options;
 using CarbonAware.LocationSources.Configuration;
+using System.Reflection;
+using System.Text.Json;
+using CarbonAware.Exceptions;
 
 namespace CarbonAware.LocationSources.Test;
 
+[TestFixture]
 public class LocationSourceTest
-{   
+{
+
+    private string _goodFile { get; set; }
+    private string _badFile { get; set; }
+    private string _assemblyPath => Assembly.GetExecutingAssembly().Location;
+    private string _assemblyDirectory => Path.GetDirectoryName(_assemblyPath);
+
+
+    [OneTimeSetUp]
+    protected async Task CreateTestLocationFiles()
+    {
+        var goodData = new List<NamedGeoposition>
+        {
+            Constants.EastUsRegion,
+            Constants.NorthCentralRegion,
+            Constants.WestUsRegion
+        };
+        _goodFile = await GenerateTestLocationFile(goodData);
+        var badData = new List<NamedGeoposition>
+        {
+            Constants.NorthCentralRegion,
+            Constants.FakeRegion
+        };
+        _badFile = await GenerateTestLocationFile(badData, "bad");
+    }
+
     [Test]
     public void GeopositionLocation_InvalidRegionName_ThrowsException()
     {
@@ -29,6 +58,30 @@ public class LocationSourceTest
     }
 
     [Test]
+    public void GeopositionLocation_InvalidLatLong_ThrowsException()
+    {
+        
+        var logger = Mock.Of<ILogger<LocationSource>>();
+        var configuration = new LocationDataSourcesConfiguration();
+        var options = new Mock<IOptionsMonitor<LocationDataSourcesConfiguration>>();
+        configuration.LocationSourceFiles.Add(new LocationSourceFile
+        {
+            DataFileLocation = _badFile
+        });
+        options.Setup(o => o.CurrentValue).Returns(() => configuration);
+        var locationSource = new LocationSource(logger, options.Object);
+
+        Location invalidLocation = new Location()
+        {
+            Name = "fake-region"
+        };
+        Assert.ThrowsAsync<LocationConversionException>(async () =>
+        {
+            await locationSource.ToGeopositionLocationAsync(invalidLocation);
+        });
+    }
+
+    [Test]
     public async Task GeopositionLocation_ValidLocation_With_MultiConfiguration()
     {
         var configuration = new LocationDataSourcesConfiguration();
@@ -36,13 +89,13 @@ public class LocationSourceTest
             {
                 Prefix = "prefix1",
                 Delimiter = "-",
-                DataFileLocation = "azure-regions.json"
+                DataFileLocation = _goodFile
             });
         configuration.LocationSourceFiles.Add(new LocationSourceFile
             {
                 Prefix = "prefix2",
                 Delimiter = "_",
-                DataFileLocation = "azure-regions.json"
+                DataFileLocation = _goodFile
             });
         var options = new Mock<IOptionsMonitor<LocationDataSourcesConfiguration>>();
         options.Setup(o => o.CurrentValue).Returns(() => configuration);
@@ -50,14 +103,14 @@ public class LocationSourceTest
         var locationSource = new LocationSource(logger, options.Object);
 
         Location inputLocation = new Location {
-            Name = "prefix1-eastus"
+            Name = "prefix1-test-eastus"
         };
 
         var eastResult = await locationSource.ToGeopositionLocationAsync(inputLocation);
         AssertLocationsEqual(Constants.LocationEastUs, eastResult);
 
         inputLocation = new Location {
-            Name = "prefix2_westus"
+            Name = "prefix2_test-westus"
         };
 
         var westResult = await locationSource.ToGeopositionLocationAsync(inputLocation);
@@ -73,7 +126,7 @@ public class LocationSourceTest
         var locationSource = new LocationSource(mockLogger.Object, options.Object);
 
         Location inputLocation = new Location {
-            Name = "eastus"
+            Name = "test-eastus"
         };
 
         var eastResult = await locationSource.ToGeopositionLocationAsync(inputLocation);
@@ -81,7 +134,7 @@ public class LocationSourceTest
         VerifyLoggerCall(mockLogger, "files discovered", LogLevel.Information);
 
         inputLocation = new Location {
-            Name = "westus"
+            Name = "test-westus"
         };
 
         var westResult = await locationSource.ToGeopositionLocationAsync(inputLocation);
@@ -96,7 +149,7 @@ public class LocationSourceTest
         {
             Prefix = "test",
             Delimiter = "-",
-            DataFileLocation = "azure-regions.json"
+            DataFileLocation = _goodFile
         });
         var options = new Mock<IOptionsMonitor<LocationDataSourcesConfiguration>>();
         options.Setup(o => o.CurrentValue).Returns(() => configuration);
@@ -104,7 +157,7 @@ public class LocationSourceTest
         var locationSource = new LocationSource(logger, options.Object);
 
         Location inputLocation = new Location {
-            Name = "eastus"
+            Name = "test-eastus"
         };
         Assert.ThrowsAsync<ArgumentException>(async () =>
         {
@@ -112,14 +165,32 @@ public class LocationSourceTest
         });
 
         inputLocation = new Location {
-            Name = "westus"
+            Name = "test-westus"
         };
         Assert.ThrowsAsync<ArgumentException>(async () =>
         {
             await locationSource.ToGeopositionLocationAsync(inputLocation);
         });
     }
- 
+
+    [OneTimeTearDown]
+    protected void RemoveTestLocationFiles()
+    {
+        var fileList = new List<string> 
+        {
+            _goodFile, _badFile
+        };
+
+        fileList.ForEach(file =>
+        {
+            var path = Path.Combine(_assemblyDirectory, LocationSourceFile.BaseDirectory, file);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        });
+    }
+
     private static void AssertLocationsEqual(Location expected, Location actual)
     {
         Assert.AreEqual(expected.Latitude, actual.Latitude);
@@ -134,5 +205,17 @@ public class LocationSourceTest
             null,
             It.IsAny<Func<It.IsAnyType, Exception, string>>()),
             Times.Once);
+    }
+
+    private async Task<string> GenerateTestLocationFile(List<NamedGeoposition> data, string fileExt = "json")
+    {
+        var assemblyPath = Assembly.GetExecutingAssembly().Location;
+        var assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
+        var fileName = Path.ChangeExtension(Path.GetRandomFileName(), $".{fileExt}");
+        var filePath = Path.Combine(assemblyDirectory, LocationSourceFile.BaseDirectory, fileName);
+        using FileStream createStream = File.Create(filePath);
+        await JsonSerializer.SerializeAsync(createStream, data);
+        await createStream.DisposeAsync();
+        return fileName;
     }
 }
