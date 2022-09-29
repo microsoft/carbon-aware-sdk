@@ -105,13 +105,13 @@ public class LocationSource : ILocationSource
         var assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
 
         var pathCombined = Path.Combine(assemblyDirectory, LocationSourceFile.BaseDirectory);
-        var files = Directory.GetFiles(pathCombined);
+        var files = Directory.GetFiles(pathCombined, "*.json", SearchOption.AllDirectories);
         if (files is null)
         {
             _logger.LogWarning($"No location files found under {pathCombined}");
             return Array.Empty<LocationSourceFile>();
         }
         _logger.LogInformation($"{files.Length} files discovered");
-        return files.Select(x => Path.GetFileName(x)).Select(n => new LocationSourceFile { DataFileLocation = n });
+        return files.Select(x => x.Substring(pathCombined.Length + 1)).Select(n => new LocationSourceFile { DataFileLocation = n });
     }
 }
