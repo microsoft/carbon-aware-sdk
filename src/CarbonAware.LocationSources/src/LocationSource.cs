@@ -1,11 +1,11 @@
-using CarbonAware.Model;
-using CarbonAware.Interfaces;
 using CarbonAware.Exceptions;
-using Microsoft.Extensions.Logging;
-using System.Text.Json;
-using Microsoft.Extensions.Options;
+using CarbonAware.Interfaces;
+using CarbonAware.Model;
 using CarbonAware.LocationSources.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Reflection;
+using System.Text.Json;
 
 namespace CarbonAware.LocationSources;
 

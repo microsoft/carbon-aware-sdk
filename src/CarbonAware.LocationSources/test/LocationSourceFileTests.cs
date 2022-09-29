@@ -10,15 +10,14 @@ public class LocationSourceFileTests
 
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private LocationSourceFile _dataSource { get; set; }
-    private string AssemblyPath { get; set; }
     #pragma warning restore CS8618
+    private string _assemblyPath => Assembly.GetExecutingAssembly().Location;
     
 
     [SetUp]
     public void Setup()
     {
         _dataSource = new LocationSourceFile();
-        AssemblyPath = Assembly.GetExecutingAssembly().Location;
     }
 
     [TestCase("../newfile.json", TestName = "setting parent's dir")]
@@ -38,7 +37,7 @@ public class LocationSourceFileTests
     public void SetLocationDataSourceFile_Success(string filePath)
     {
         _dataSource.DataFileLocation = filePath;
-        var expected = Path.Combine(Path.GetDirectoryName(AssemblyPath)!, LocationSourceFile.BaseDirectory, filePath);
+        var expected = Path.Combine(Path.GetDirectoryName(_assemblyPath)!, LocationSourceFile.BaseDirectory, filePath);
         Assert.That(_dataSource.DataFileLocation, Is.EqualTo(expected));
     }
 }
