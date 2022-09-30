@@ -39,5 +39,11 @@ public static class Constants
                     Name = "test-northcentralus",
                     Latitude = 37.783m,
                     Longitude = -120.417m
-                };            
+                };
+    public static readonly Location FakeLocation = new () {
+                    Name = "fake-region",
+                    Latitude = 0.0m,
+                    Longitude = 0.0m
+                    };
+
 }

@@ -16,8 +16,7 @@ public class LocationSourceTest
 
     private string _goodFile { get; set; }
     private string _badFile { get; set; }
-    private string _assemblyPath => Assembly.GetExecutingAssembly().Location;
-    private string _assemblyDirectory => Path.GetDirectoryName(_assemblyPath);
+    private string _assemblyDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
 
     [OneTimeSetUp]
@@ -32,6 +31,7 @@ public class LocationSourceTest
         _goodFile = await GenerateTestLocationFile(goodData);
         var badData = new List<NamedGeoposition>
         {
+            Constants.NorthCentralRegion,
             Constants.NorthCentralRegion,
             Constants.FakeRegion
         };
@@ -71,13 +71,9 @@ public class LocationSourceTest
         options.Setup(o => o.CurrentValue).Returns(() => configuration);
         var locationSource = new LocationSource(logger, options.Object);
 
-        Location invalidLocation = new Location()
-        {
-            Name = "fake-region"
-        };
         Assert.ThrowsAsync<LocationConversionException>(async () =>
         {
-            await locationSource.ToGeopositionLocationAsync(invalidLocation);
+            await locationSource.ToGeopositionLocationAsync(Constants.FakeLocation);
         });
     }
 
@@ -209,10 +205,8 @@ public class LocationSourceTest
 
     private async Task<string> GenerateTestLocationFile(List<NamedGeoposition> data, string fileExt = "json")
     {
-        var assemblyPath = Assembly.GetExecutingAssembly().Location;
-        var assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
         var fileName = Path.ChangeExtension(Path.GetRandomFileName(), $".{fileExt}");
-        var filePath = Path.Combine(assemblyDirectory, LocationSourceFile.BaseDirectory, fileName);
+        var filePath = Path.Combine(_assemblyDirectory, LocationSourceFile.BaseDirectory, fileName);
         using FileStream createStream = File.Create(filePath);
         await JsonSerializer.SerializeAsync(createStream, data);
         await createStream.DisposeAsync();
