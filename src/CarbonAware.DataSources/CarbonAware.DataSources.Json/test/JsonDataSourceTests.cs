@@ -80,7 +80,7 @@ public class JsonDataSourceTests
         var mockDataSource = SetupMockDataSource();
 
         var location = new Location() { RegionName = "midwest" };
-        IEnumerable<Location> locations = new List<Location>() { location };
+        var locations = new List<Location>() { location };
         var start = DateTimeOffset.Parse("2022-09-07T12:45:11+00:00");
         var end = DateTimeOffset.Parse("2022-09-07T13:45:11+00:00");
         var dataSource = mockDataSource.Object;
