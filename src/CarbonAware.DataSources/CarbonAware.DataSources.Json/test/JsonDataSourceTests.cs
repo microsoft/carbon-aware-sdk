@@ -89,7 +89,7 @@ public class JsonDataSourceTests
 
         foreach (var r in result)
         {
-           Assert.IsTrue(locations.Where(loc => loc.Name == r.Location).Any());
+            Assert.IsTrue(locations.Where(loc => loc.Name == r.Location).Any());
         }
     }
     private Mock<JsonDataSource> SetupMockDataSource() {
