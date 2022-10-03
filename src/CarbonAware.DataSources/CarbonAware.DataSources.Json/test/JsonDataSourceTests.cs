@@ -79,7 +79,7 @@ public class JsonDataSourceTests
     {
         var mockDataSource = SetupMockDataSource();
 
-        var location = new Location() { RegionName = "midwest" };
+        var location = new Location() { Name = "midwest" };
         var locations = new List<Location>() { location };
         var start = DateTimeOffset.Parse("2022-09-07T12:45:11+00:00");
         var end = DateTimeOffset.Parse("2022-09-07T13:45:11+00:00");
@@ -89,7 +89,7 @@ public class JsonDataSourceTests
 
         foreach (var r in result)
         {
-            Assert.IsTrue(locations.Where(loc => loc.RegionName == r.Location).Any());
+            Assert.IsTrue(locations.Where(loc => loc.Name == r.Location).Any());
         }
     }
     private Mock<JsonDataSource> SetupMockDataSource() {
