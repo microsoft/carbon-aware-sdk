@@ -1,6 +1,6 @@
 # Data Sources
 
-Data sources allow developers easily integrate different data providers into the carbon aware SDK ([WattTime](https://www.wattime.org), [ElectricityMaps](https://www.electricitymaps.com/g), etc) to be made available to all higher level user-interfaces (WebAPI, CLI, etc), while avoiding the details of how to interact with any specific provider.
+Data sources allow developers easily integrate different data providers into the carbon aware SDK ([WattTime](https://www.wattime.org), [ElectricityMaps](https://www.electricitymaps.com/), etc) to be made available to all higher-level user-interfaces (WebAPI, CLI, etc), while avoiding the details of how to interact with any specific provider.
 
 ## Data Sources' Responsibility
 Data sources act as the data ingestion tier for the SDK, handling the retrieval of data from a given data provider. They contain specific knowledge about the data provider they access, such as flags used in requests, fields that come back in responses, special use cases etc. They also handle any external calls that must be made to access the data provider. While helper clients can be built to handle these calls, only the data source should have access to, and knowledge of, that client.
@@ -18,11 +18,9 @@ Post-processing should only ensure the types are what is expected and to fix any
 
 ## Creating a New Data Source
 
-Each new data source should be a new dotnet project under the `CarbonAware.DataSources` namespace and corresponding directory. This project should have a reference to the `CarbonAware` project, and include the `Microsoft.Extensions.DependencyInjection` package. It should also be added to the solution. We have provided a command snippet below:
+Each new data source should be a new .NET project under the `CarbonAware.DataSources` namespace and corresponding directory. This project should have a reference to the `CarbonAware` project, and include the `Microsoft.Extensions.DependencyInjection` package. It should also be added to the solution. We have provided a command snippet below:
 
 ```sh
-JenMadiedo marked this conversation as resolved.
-Show resolved
 cd src
 dotnet new classlib --name CarbonAware.DataSources.MyNewDataSource -o CarbonAware.DataSources/CarbonAware.DataSources.MyNewDataSource/src
 dotnet sln add CarbonAware.DataSources/CarbonAware.DataSources.MyNewDataSource/src/CarbonAware.DataSources.MyNewDataSource.csproj

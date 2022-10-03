@@ -5,10 +5,10 @@ Aggregators live in between the consumer and data tiers, containing the business
 Aggregators are responsible for taking in consumer requests, calling the specified data source(s), and performing any necessary logic before returning the result to the consumer.
 
 ### Consumer <-> Aggregator Contract
-Each aggregator can support a wide variety of consumer requests that could in turn potentially require access to various data sources. The input to the aggregator must be generic enough to handle those cases, but specific enough to allow enforcement of required fields and validations (i.e., a list field cannot be empty, a time field cannot be in the past etc.). To handle this, we have created the `Carbon Aware Parameters` class, and each aggregator function receives an instance of this class.
+Each aggregator can support a wide variety of consumer requests whose arguments may be required to access data from one or more data sources. The input to the aggregator must be generic enough to handle those cases, but specific enough to allow enforcement of required fields and validations (i.e., a list field cannot be empty, a time field cannot be in the past etc.). The `CarbonAwareParameters` class handles these concerns for the `CarbonAwareAggregator`. Each public method in the aggregator receives an instance of this "Parameters" class.  Future aggregators will create their own "Parameters" class to manage their argument needs.
 
 ## Carbon Aware Parameters
-The `CarbonAwareParameters` class allows the user to pass in a unique parameter instance to an aggregator function with the specific parameters needed by that call. 
+The `CarbonAwareParameters` class allows the user to pass in a unique parameter instance to the public `CarbonAwareAggregator` methods with the specific parameters needed by that call. 
 The list of allowed parameters is defined in the class and includes
 - SingleLocation
 - MultipleLocations
@@ -26,7 +26,7 @@ The first core check the parameters class does is validating that required param
     /// <summary>
     /// Accepts any PropertyNames as arguments and sets the associated property as required for validation.
     /// </summary>
-    public void SetRequiredProperties(params PropertyName[] requiredProperties
+    public void SetRequiredProperties(params PropertyName[] requiredProperties)
 ```
 
 ### Validations
