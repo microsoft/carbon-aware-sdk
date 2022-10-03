@@ -88,13 +88,39 @@ public class JsonDataSource : ICarbonIntensityDataSource
     {
         var (newStartTime, newEndTime) = IntervalHelper.ExtendTimeByWindow(startTime, endTime, MinSamplingWindow);
         var windowData = data.Where(ed => ed.TimeBetween(newStartTime, newEndTime));
-        var filteredData = IntervalHelper.FilterByDuration(windowData, startTime, endTime, TimeSpan.FromHours(DURATION));
+        var duration = GetDurationFromEmissionDataPointsOrDefault(windowData, TimeSpan.FromHours(DURATION));
+        var filteredData = IntervalHelper.FilterByDuration(windowData, startTime, endTime, duration);
 
         if (!filteredData.Any())
         {
             _logger.LogInformation($"Not enough data with {MinSamplingWindow} window");
         }
         return filteredData;
+    }
+
+    private TimeSpan GetDurationFromEmissionDataPoints(IEnumerable<EmissionsData> emissionDataPoints)
+    {
+        var firstPoint = emissionDataPoints.FirstOrDefault();
+        var secondPoint = emissionDataPoints.Skip(1)?.FirstOrDefault();
+
+        var first = firstPoint ?? throw new ArgumentException("Too few data points returned");
+        var second = secondPoint ?? throw new ArgumentException("Too few data points returned");
+
+        // Handle chronological and reverse-chronological data by using `.Duration()` to get
+        // the absolute value of the TimeSpan between the two points.
+        return first.Time.Subtract(second.Time).Duration();
+    }
+
+    private TimeSpan GetDurationFromEmissionDataPointsOrDefault(IEnumerable<EmissionsData> emissionDataPoints, TimeSpan defaultValue)
+    {
+        try
+        {
+            return GetDurationFromEmissionDataPoints(emissionDataPoints);
+        }
+        catch (ArgumentException)
+        {
+            return defaultValue;
+        }
     }
 
     private IEnumerable<EmissionsData> FilterByLocation(IEnumerable<EmissionsData> data, IEnumerable<string?> locations)
