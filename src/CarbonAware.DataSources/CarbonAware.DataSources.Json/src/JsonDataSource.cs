@@ -26,8 +26,6 @@ public class JsonDataSource : ICarbonIntensityDataSource
 
     private readonly ILogger<JsonDataSource> _logger;
 
-    private const double DURATION = 8; // 8 hrs
-
     private IOptionsMonitor<JsonDataSourceConfiguration> _configurationMonitor { get; }
 
     private JsonDataSourceConfiguration _configuration => _configurationMonitor.CurrentValue;
@@ -56,13 +54,14 @@ public class JsonDataSource : ICarbonIntensityDataSource
         _logger.LogInformation("JSON data source getting carbon intensity for locations {locations} for period {periodStartTime} to {periodEndTime}.", locations, periodStartTime, periodEndTime);
 
         IEnumerable<EmissionsData>? emissionsData = await GetJsonDataAsync();
-        if (emissionsData == null || !emissionsData.Any()) {
+        if (emissionsData == null || !emissionsData.Any())
+        {
             _logger.LogDebug("Emission data list is empty");
             return Array.Empty<EmissionsData>();
         }
         _logger.LogDebug($"Total emission records retrieved {emissionsData.Count()}");
         var stringLocations = locations.Select(loc => loc.Name);
-            
+
         emissionsData = FilterByLocation(emissionsData, stringLocations);
         emissionsData = FilterByDateRange(emissionsData, periodStartTime, periodEndTime);
 
@@ -88,8 +87,7 @@ public class JsonDataSource : ICarbonIntensityDataSource
     {
         var (newStartTime, newEndTime) = IntervalHelper.ExtendTimeByWindow(startTime, endTime, MinSamplingWindow);
         var windowData = data.Where(ed => ed.TimeBetween(newStartTime, newEndTime));
-        var duration = GetDurationFromEmissionDataPointsOrDefault(windowData, TimeSpan.FromHours(DURATION));
-        var filteredData = IntervalHelper.FilterByDuration(windowData, startTime, endTime, duration);
+        var filteredData = IntervalHelper.FilterByDuration(windowData, startTime, endTime);
 
         if (!filteredData.Any())
         {
@@ -98,34 +96,9 @@ public class JsonDataSource : ICarbonIntensityDataSource
         return filteredData;
     }
 
-    private TimeSpan GetDurationFromEmissionDataPoints(IEnumerable<EmissionsData> emissionDataPoints)
-    {
-        var firstPoint = emissionDataPoints.FirstOrDefault();
-        var secondPoint = emissionDataPoints.Skip(1)?.FirstOrDefault();
-
-        var first = firstPoint ?? throw new ArgumentException("Too few data points returned");
-        var second = secondPoint ?? throw new ArgumentException("Too few data points returned");
-
-        // Handle chronological and reverse-chronological data by using `.Duration()` to get
-        // the absolute value of the TimeSpan between the two points.
-        return first.Time.Subtract(second.Time).Duration();
-    }
-
-    private TimeSpan GetDurationFromEmissionDataPointsOrDefault(IEnumerable<EmissionsData> emissionDataPoints, TimeSpan defaultValue)
-    {
-        try
-        {
-            return GetDurationFromEmissionDataPoints(emissionDataPoints);
-        }
-        catch (ArgumentException)
-        {
-            return defaultValue;
-        }
-    }
-
     private IEnumerable<EmissionsData> FilterByLocation(IEnumerable<EmissionsData> data, IEnumerable<string?> locations)
     {
-        if (locations.Any()) 
+        if (locations.Any())
         {
             data = data.Where(ed => locations.Contains(ed.Location));
         }
@@ -141,7 +114,8 @@ public class JsonDataSource : ICarbonIntensityDataSource
         }
         using Stream stream = GetStreamFromFileLocation();
         var jsonObject = await JsonSerializer.DeserializeAsync<EmissionsJsonFile>(stream);
-        if (_emissionsData is null || !_emissionsData.Any()) {
+        if (_emissionsData is null || !_emissionsData.Any())
+        {
             _emissionsData = jsonObject?.Emissions;
         }
         return _emissionsData;
