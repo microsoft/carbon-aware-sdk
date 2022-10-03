@@ -1,4 +1,4 @@
-# AzureLocationSource
+# LocationSource
 This project contains a library to convert a Azure region to its corresponding geoposition coordinates. 
 
 ## Configuration
@@ -31,5 +31,5 @@ In `myProject.csproj`:
 Once the LocationSource is configured through dependency injection, you can instantiate using
 
 ```csharp
-services.TryAddSingleton<ILocationSource, AzureLocationSource>();
+services.TryAddSingleton<ILocationSource, LocationSource>();
 ```

@@ -25,7 +25,7 @@ public class EmissionsForecastsCommandTests : TestBase
         _mockCarbonAwareAggregator.Setup(agg => agg.GetCurrentForecastDataAsync(It.IsAny<CarbonAwareParameters>()))
             .Callback((CarbonAwareParameters _parameters) =>
             {
-                actualLocations = _parameters.MultipleLocations.Select(l => l.DisplayName);
+                actualLocations = _parameters.MultipleLocations.Select(l => l.Name!);
             });
 
         // Act

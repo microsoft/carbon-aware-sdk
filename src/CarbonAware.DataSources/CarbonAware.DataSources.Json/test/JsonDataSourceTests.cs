@@ -19,8 +19,8 @@ public class JsonDataSourceTests
     {
         var mockDataSource = SetupMockDataSource();
 
-        var location1 = new Location() { RegionName = "eastus"};
-        var location2 = new Location() { RegionName = "westus"};
+        var location1 = new Location() { Name = "eastus"};
+        var location2 = new Location() { Name = "westus"};
         IEnumerable<Location> locations = new List<Location>() { location1, location2 };
         var start = new DateTimeOffset(2021,8,9,0,0,0,TimeSpan.Zero);
         var end = new DateTimeOffset(2022,4,9,0,0,0,TimeSpan.Zero);
@@ -29,7 +29,7 @@ public class JsonDataSourceTests
         Assert.AreEqual(3, result.Count());
 
         foreach (var r in result) {
-            Assert.IsTrue(locations.Where(loc => loc.RegionName == r.Location).Any());
+            Assert.IsTrue(locations.Where(loc => loc.Name == r.Location).Any());
         }
     }
 
@@ -38,7 +38,7 @@ public class JsonDataSourceTests
     {
         var mockDataSource = SetupMockDataSource();
         
-        var location = new Location {RegionName = "eastus"};
+        var location = new Location {Name = "eastus"};
         var start = new DateTimeOffset(2021,8,9,0,0,0,TimeSpan.Zero);
         var end = new DateTimeOffset(2021,12,9,0,0,0,TimeSpan.Zero);
 
@@ -54,7 +54,7 @@ public class JsonDataSourceTests
     {
         var mockDataSource = SetupMockDataSource();
         
-        var location = new Location {RegionName = "paris"};
+        var location = new Location {Name = "paris"};
         var start = new DateTimeOffset(2021,8,9,0,0,0,TimeSpan.Zero);
         var end = new DateTimeOffset(2021,12,9,0,0,0,TimeSpan.Zero);
         
@@ -69,7 +69,7 @@ public class JsonDataSourceTests
     {
         var mockDataSource = SetupMockDataSource();
         var dataSource = mockDataSource.Object;
-        var location = new Location {RegionName = "paris"};
+        var location = new Location {Name = "paris"};
         Assert.ThrowsAsync<NotImplementedException>(async () => await  dataSource.GetCurrentCarbonIntensityForecastAsync(location));
 
     }
@@ -79,7 +79,7 @@ public class JsonDataSourceTests
     {
         var mockDataSource = SetupMockDataSource();
 
-        var location = new Location() { RegionName = "midwest" };
+        var location = new Location() { Name = "midwest" };
         var locations = new List<Location>() { location };
         var start = DateTimeOffset.Parse("2022-09-07T12:45:11+00:00");
         var end = DateTimeOffset.Parse("2022-09-07T13:45:11+00:00");
@@ -89,7 +89,7 @@ public class JsonDataSourceTests
 
         foreach (var r in result)
         {
-            Assert.IsTrue(locations.Where(loc => loc.RegionName == r.Location).Any());
+            Assert.IsTrue(locations.Where(loc => loc.Name == r.Location).Any());
         }
     }
     private Mock<JsonDataSource> SetupMockDataSource() {
