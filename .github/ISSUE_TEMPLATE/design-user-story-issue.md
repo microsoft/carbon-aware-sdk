@@ -21,3 +21,6 @@ labels: Design, Needs Triage
 - [ ] Acceptance criteria defined 
 - [ ] Engineering team understands acceptance criteria
 - [ ] External / 3rd Party dependencies identified
+
+# Task List
+- [ ] List of tasks needed to complete the user story

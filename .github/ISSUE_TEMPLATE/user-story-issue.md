@@ -23,3 +23,6 @@ As a... <persona>, I want to... <user action>, so I can... <user value>
 - [ ] External / 3rd Party dependencies identified
 - [ ] Engineering team understands acceptance criteria 
 - [ ] Is the user story small enough to be implemented in a short amount of time, but large enough to provide value?
+
+# Task List
+- [ ] List of tasks needed to complete the user story
