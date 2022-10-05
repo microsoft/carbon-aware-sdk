@@ -16,6 +16,9 @@ As a... <persona>, I want to... <user action>, so I can... <user value>
 
 # Dependencies
 
+# Task List
+- [ ] List of tasks (punchlist) needed to complete the user story
+
 
 # Sprint-Ready Checklist 
 - [ ] Acceptance criteria defined 
@@ -24,5 +27,3 @@ As a... <persona>, I want to... <user action>, so I can... <user value>
 - [ ] Engineering team understands acceptance criteria 
 - [ ] Is the user story small enough to be implemented in a short amount of time, but large enough to provide value?
 
-# Task List
-- [ ] List of tasks needed to complete the user story
