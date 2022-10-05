@@ -17,6 +17,9 @@ labels: Design, Needs Triage
 
 # Dependencies
 
+# Task List
+- [ ] List of tasks (punchlist) needed to complete the user story
+
 # Sprint-Ready Checklist 
 - [ ] Acceptance criteria defined 
 - [ ] Engineering team understands acceptance criteria

@@ -16,6 +16,9 @@ As a... <persona>, I want to... <user action>, so I can... <user value>
 
 # Dependencies
 
+# Task List
+- [ ] List of tasks (punchlist) needed to complete the user story
+
 
 # Sprint-Ready Checklist 
 - [ ] Acceptance criteria defined 
