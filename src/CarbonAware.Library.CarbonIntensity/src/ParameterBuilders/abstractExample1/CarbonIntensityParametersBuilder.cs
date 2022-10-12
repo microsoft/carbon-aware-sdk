@@ -1,9 +1,10 @@
+using CarbonAware.Aggregators.CarbonAware;
 
-
-namespace CarbonAware.Aggregators.CarbonAware;
+namespace CarbonAware.Library.CarbonIntensity;
 
 public class CarbonIntensityParametersBuilder : AbstractCarbonAwareParametersBuilder
 {
+    // Class overrides build and throws error if setup not valid for this type of parameter
     public override CarbonAwareParameters Build()
     {
         if (locations != null)
