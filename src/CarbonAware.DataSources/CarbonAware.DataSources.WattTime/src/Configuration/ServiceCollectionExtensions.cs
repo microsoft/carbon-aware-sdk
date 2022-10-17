@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Configuration;
 using CarbonAware.Interfaces;
 using CarbonAware.Tools.WattTimeClient.Configuration;
+using CarbonAware.Exceptions;
 using CarbonAware.LocationSources;
 using CarbonAware.LocationSources.Configuration;
 

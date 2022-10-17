@@ -1,0 +1,60 @@
+using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Aggregators.Forecast;
+using CarbonAware.Exceptions;
+using CarbonAware.Tools.WattTimeClient;
+using CarbonAware.Tools.WattTimeClient.Configuration;
+using GSF.CarbonIntensity.Exceptions;
+using GSF.CarbonIntensity.Models;
+using Microsoft.Extensions.Logging;
+
+namespace GSF.CarbonIntensity.Handlers;
+
+internal sealed class ForecastHandler : IForecastHandler
+{
+    private readonly IForecastAggregator _aggregator;
+    private readonly ILogger<ForecastHandler> _logger;
+
+    public ForecastHandler(ILogger<ForecastHandler> logger, IForecastAggregator aggregator)
+    {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _aggregator = aggregator ?? throw new ArgumentNullException(nameof(aggregator));
+    }
+
+    public async Task<IEnumerable<EmissionsForecast>> GetCurrentAsync(string[] locations, DateTimeOffset? start = null, DateTimeOffset? end = null, int? duration = null)
+    {
+        var parameters = new CarbonAwareParametersBaseDTO
+        {
+            Start = start,
+            End = end,
+            MultipleLocations = locations,
+            Duration = duration
+        };
+        try {
+            var results = await _aggregator.GetCurrentForecastDataAsync(parameters);
+            return results.Select(f => ToForecastData(f));
+        }
+        catch (Exception ex) when (ex is WattTimeClientException || ex is WattTimeClientHttpException || ex is LocationConversionException || ex is ConfigurationException)
+        {
+            throw new CarbonIntensityException(ex.Message, ex);
+        }
+    }
+
+    private static EmissionsForecast ToForecastData(CarbonAware.Model.EmissionsForecast emissionsForecast) {
+        return new EmissionsForecast {
+            RequestedAt = emissionsForecast.RequestedAt,
+            GeneratedAt = emissionsForecast.GeneratedAt,
+            EmissionsDataPoints = emissionsForecast.ForecastData.Select(x => ToEmissionsData(x)),
+            OptimalDataPoints = emissionsForecast.OptimalDataPoints.Select(x => ToEmissionsData(x))
+        };
+    }
+
+    private static EmissionsData ToEmissionsData(CarbonAware.Model.EmissionsData emissionsData)
+    {
+        return new EmissionsData {
+                Duration = emissionsData.Duration,
+                Location = emissionsData.Location,
+                Rating = emissionsData.Rating,
+                Time = emissionsData.Time
+        };
+    }
+}
