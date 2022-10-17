@@ -1,3 +1,4 @@
+using CarbonAware.Exceptions;
 
 namespace CarbonAware.Tools.WattTimeClient.Configuration;
 
