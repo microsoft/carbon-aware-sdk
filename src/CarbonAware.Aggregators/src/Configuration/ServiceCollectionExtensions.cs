@@ -15,6 +15,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddDataSourceService(configuration);
         services.TryAddSingleton<ICarbonAwareAggregator, CarbonAwareAggregator>();
+        services.TryAddSingleton<IForecastAggregator, ForecastAggregator>();
+        services.TryAddSingleton<IEmissionsAggregator, EmissionsAggregator>();
         return services;
     }
 }

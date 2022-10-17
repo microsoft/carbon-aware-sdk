@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\CarbonAware\src\CarbonAware.csproj" />
+    <ProjectReference Include="..\..\CarbonAware.DataSources.NullForecast\CarbonAware.DataSources.NullForecast.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -18,9 +18,9 @@ public abstract class TestsBase
         this.MockCarbonAwareLogger = new Mock<ILogger<CarbonAwareController>>();
     }
 
-    protected static Mock<ICarbonAwareAggregator> CreateAggregatorWithEmissionsData(List<EmissionsData> data)
+    protected static Mock<IEmissionsAggregator> CreateAggregatorWithEmissionsData(List<EmissionsData> data)
     {
-        var aggregator = new Mock<ICarbonAwareAggregator>();
+        var aggregator = new Mock<IEmissionsAggregator>();
         aggregator.Setup(x => x.GetEmissionsDataAsync(It.IsAny<CarbonAwareParameters>()))
             .Callback((CarbonAwareParameters parameters) =>
             {
@@ -31,9 +31,9 @@ public abstract class TestsBase
         return aggregator;
     }
 
-    protected static Mock<ICarbonAwareAggregator> CreateAggregatorWithBestEmissionsData(List<EmissionsData> data)
+    protected static Mock<IEmissionsAggregator> CreateAggregatorWithBestEmissionsData(List<EmissionsData> data)
     {
-        var aggregator = new Mock<ICarbonAwareAggregator>();
+        var aggregator = new Mock<IEmissionsAggregator>();
         aggregator.Setup(x => x.GetBestEmissionsDataAsync(It.IsAny<CarbonAwareParameters>()))
             .Callback((CarbonAwareParameters parameters) =>
             {
@@ -44,13 +44,13 @@ public abstract class TestsBase
         return aggregator;
     }
 
-    protected static Mock<ICarbonAwareAggregator> CreateAggregatorWithForecastData(List<EmissionsData> data)
+    protected static Mock<IForecastAggregator> CreateAggregatorWithForecastData(List<EmissionsData> data)
     {
         var forecasts = new List<EmissionsForecast>()
         {
             new EmissionsForecast(){ ForecastData = data }
         };
-        var aggregator = new Mock<ICarbonAwareAggregator>();
+        var aggregator = new Mock<IForecastAggregator>();
         aggregator.Setup(x => x.GetCurrentForecastDataAsync(It.IsAny<CarbonAwareParameters>()))
             .Callback((CarbonAwareParameters parameters) =>
             {
@@ -61,9 +61,9 @@ public abstract class TestsBase
         return aggregator;
     }
 
-    protected static Mock<ICarbonAwareAggregator> CreateCarbonAwareAggregatorWithAverageCI(double data)
+    protected static Mock<IEmissionsAggregator> CreateCarbonAwareAggregatorWithAverageCI(double data)
     {
-        var aggregator = new Mock<ICarbonAwareAggregator>();
+        var aggregator = new Mock<IEmissionsAggregator>();
         aggregator.Setup(x => x.CalculateAverageCarbonIntensityAsync(It.IsAny<CarbonAwareParameters>()))
             .Callback((CarbonAwareParameters parameters) =>
             {
