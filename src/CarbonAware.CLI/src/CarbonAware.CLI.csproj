@@ -5,6 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>CarbonAware.CLI</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

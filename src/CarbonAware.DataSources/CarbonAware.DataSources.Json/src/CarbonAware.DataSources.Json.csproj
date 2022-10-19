@@ -16,4 +16,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  
+  <ItemGroup Label="FilesToCopy">
+   	<Content Include="$(AssemblyName).targets" PackagePath="build\$(AssemblyName).targets" />
+    <Content Include="$(ProjectDir)..\..\..\data\data-sources\**\*.json" Pack="true" PackagePath="data-sources\json\">
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+    </Content>
+  </ItemGroup>
 </Project>
