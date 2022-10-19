@@ -1,9 +1,11 @@
 using CarbonAware.Model;
-using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Aggregators.Forecast;
 using CarbonAware.WebApi.Controllers;
 using Microsoft.Extensions.Logging;
 using Moq;
 using static CarbonAware.Aggregators.CarbonAware.CarbonAwareParameters;
+using CarbonAware.Aggregators.Emissions;
+using CarbonAware.Aggregators.CarbonAware;
 
 namespace CarbonAware.WepApi.UnitTests;
 
@@ -18,7 +20,7 @@ public abstract class TestsBase
         this.MockCarbonAwareLogger = new Mock<ILogger<CarbonAwareController>>();
     }
 
-    protected static Mock<IEmissionsAggregator> CreateAggregatorWithEmissionsData(List<EmissionsData> data)
+    protected static Mock<IEmissionsAggregator> CreateEmissionsAggregator(List<EmissionsData> data)
     {
         var aggregator = new Mock<IEmissionsAggregator>();
         aggregator.Setup(x => x.GetEmissionsDataAsync(It.IsAny<CarbonAwareParameters>()))
@@ -44,7 +46,7 @@ public abstract class TestsBase
         return aggregator;
     }
 
-    protected static Mock<IForecastAggregator> CreateAggregatorWithForecastData(List<EmissionsData> data)
+    protected static Mock<IForecastAggregator> CreateForecastAggregator(List<EmissionsData> data)
     {
         var forecasts = new List<EmissionsForecast>()
         {

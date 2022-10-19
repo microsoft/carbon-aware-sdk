@@ -5,8 +5,9 @@ using System.Diagnostics;
 using CarbonAware.Interfaces;
 using Microsoft.Extensions.Logging;
 using CarbonAware.Extensions;
+using CarbonAware.Aggregators.CarbonAware;
 
-namespace CarbonAware.Aggregators.CarbonAware;
+namespace CarbonAware.Aggregators.Forecast;
 public class ForecastAggregator : IForecastAggregator
 {
     private static readonly ActivitySource Activity = new ActivitySource(nameof(ForecastAggregator));

@@ -2,7 +2,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using CarbonAware.Interfaces;
-using CarbonAware.DataSources.NullForecast;
 
 namespace CarbonAware.DataSources.Json.Configuration;
 
@@ -15,7 +14,6 @@ public static class ServiceCollectionExtensions
         {
             configuration.GetSection(JsonDataSourceConfiguration.Key).Bind(c);
         });
-        services.TryAddSingleton<ICarbonIntensityDataSource, JsonDataSource>();
         services.TryAddSingleton<IForecastDataSource, JsonDataSource>();
         services.TryAddSingleton<IEmissionsDataSource, JsonDataSource>();
 

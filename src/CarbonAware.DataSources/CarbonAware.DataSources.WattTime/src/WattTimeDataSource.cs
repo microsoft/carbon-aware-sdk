@@ -11,7 +11,7 @@ namespace CarbonAware.DataSources.WattTime;
 /// <summary>
 /// Reprsents a wattime data source.
 /// </summary>
-public class WattTimeDataSource : ICarbonIntensityDataSource, IEmissionsDataSource, IForecastDataSource
+public class WattTimeDataSource : IEmissionsDataSource, IForecastDataSource
 {
     public string Name => "WattTimeDataSource";
 

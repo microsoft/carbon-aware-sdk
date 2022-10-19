@@ -1,4 +1,5 @@
-﻿using CarbonAware.Extensions;
+﻿using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Extensions;
 using CarbonAware.Interfaces;
 using CarbonAware.Model;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static CarbonAware.Aggregators.CarbonAware.CarbonAwareParameters;
 
-namespace CarbonAware.Aggregators.CarbonAware;
+namespace CarbonAware.Aggregators.Emissions;
 
 public class EmissionsAggregator : IEmissionsAggregator
 {
@@ -25,8 +26,8 @@ public class EmissionsAggregator : IEmissionsAggregator
     /// <param name="dataSource">An <see cref="IEmissionsDataSource"> data source.</param>
     public EmissionsAggregator(ILogger<EmissionsAggregator> logger, IEmissionsDataSource dataSource)
     {
-        this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        this._dataSource = dataSource;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _dataSource = dataSource;
     }
 
     /// <inheritdoc />
@@ -42,7 +43,7 @@ public class EmissionsAggregator : IEmissionsAggregator
             var start = parameters.GetStartOrDefault(DateTimeOffset.UtcNow);
             var end = parameters.GetEndOrDefault(start);
 
-            return await this._dataSource.GetCarbonIntensityAsync(locations, start, end);
+            return await _dataSource.GetCarbonIntensityAsync(locations, start, end);
         }
     }
 
@@ -57,7 +58,7 @@ public class EmissionsAggregator : IEmissionsAggregator
         var start = parameters.GetStartOrDefault(DateTimeOffset.UtcNow);
         var end = parameters.GetEndOrDefault(start);
 
-        var results = await this._dataSource.GetCarbonIntensityAsync(locations, start, end);
+        var results = await _dataSource.GetCarbonIntensityAsync(locations, start, end);
         return GetOptimalEmissions(results);
     }
 
@@ -73,7 +74,7 @@ public class EmissionsAggregator : IEmissionsAggregator
             var start = parameters.Start;
 
             _logger.LogInformation("Aggregator getting average carbon intensity from data source");
-            var emissionData = await this._dataSource.GetCarbonIntensityAsync(parameters.SingleLocation, start, end);
+            var emissionData = await _dataSource.GetCarbonIntensityAsync(parameters.SingleLocation, start, end);
             var value = emissionData.AverageOverPeriod(start, end);
             _logger.LogInformation($"Carbon Intensity Average: {value}");
 

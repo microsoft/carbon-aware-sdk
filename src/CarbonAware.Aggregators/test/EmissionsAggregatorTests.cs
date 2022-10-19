@@ -1,4 +1,5 @@
 ﻿using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Aggregators.Emissions;
 using CarbonAware.Interfaces;
 using CarbonAware.Model;
 using Microsoft.Extensions.Logging;

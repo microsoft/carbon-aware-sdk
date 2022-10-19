@@ -1,9 +1,11 @@
-using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Aggregators.Emissions;
 using CarbonAware.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using CarbonAware.Model;
 using System.Diagnostics;
 using Swashbuckle.AspNetCore.Annotations;
+using CarbonAware.Aggregators.Forecast;
+using CarbonAware.Aggregators.CarbonAware;
 
 namespace CarbonAware.WebApi.Controllers;
 
@@ -13,18 +15,15 @@ public class CarbonAwareController : ControllerBase
 {
     private readonly ILogger<CarbonAwareController> _logger;
     
-    private readonly ICarbonAwareAggregator _aggregator;
-
     private readonly IForecastAggregator _forecastAggregator;
 
     private readonly IEmissionsAggregator _emissionsAggregator;
 
     private static readonly ActivitySource Activity = new ActivitySource(nameof(CarbonAwareController));
 
-    public CarbonAwareController(ILogger<CarbonAwareController> logger, ICarbonAwareAggregator aggregator, IEmissionsAggregator emissionsAggregator, IForecastAggregator forecastAggregator)
+    public CarbonAwareController(ILogger<CarbonAwareController> logger, IEmissionsAggregator emissionsAggregator, IForecastAggregator forecastAggregator)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _aggregator = aggregator ?? throw new ArgumentNullException(nameof(aggregator));
         _forecastAggregator = forecastAggregator ?? throw new ArgumentNullException(nameof(forecastAggregator));
         _emissionsAggregator = emissionsAggregator ?? throw new ArgumentNullException(nameof(emissionsAggregator));
     }

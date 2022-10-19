@@ -1,6 +1,7 @@
-﻿using CarbonAware.Model;
+﻿using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Model;
 
-namespace CarbonAware.Aggregators.CarbonAware;
+namespace CarbonAware.Aggregators.Forecast;
 
 public interface IForecastAggregator
 {

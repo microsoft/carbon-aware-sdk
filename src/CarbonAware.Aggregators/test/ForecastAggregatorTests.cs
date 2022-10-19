@@ -1,4 +1,5 @@
 ﻿using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Aggregators.Forecast;
 using CarbonAware.Aggregators.Tests;
 using CarbonAware.Interfaces;
 using CarbonAware.Model;

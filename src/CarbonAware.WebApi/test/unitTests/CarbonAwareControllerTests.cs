@@ -2,6 +2,8 @@ namespace CarbonAware.WepApi.UnitTests;
 
 using CarbonAware.Aggregators;
 using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Aggregators.Emissions;
+using CarbonAware.Aggregators.Forecast;
 using CarbonAware.Model;
 using CarbonAware.WebApi.Controllers;
 using CarbonAware.WebApi.Models;
@@ -22,7 +24,6 @@ using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext
 public class CarbonAwareControllerTests : TestsBase
 {
     IForecastAggregator forecastAggregator = Mock.Of<IForecastAggregator>();
-    ICarbonAwareAggregator carbonAwareAggregator = new Mock<ICarbonAwareAggregator>().Object;
     
     /// <summary>
     /// Tests that successful emissions call to an aggregator with any data returned results in action with OK status.
@@ -41,7 +42,7 @@ public class CarbonAwareControllerTests : TestsBase
                 Time = DateTime.Now
             }
         };
-        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, carbonAwareAggregator, CreateAggregatorWithEmissionsData(data).Object, forecastAggregator);
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateEmissionsAggregator(data).Object, forecastAggregator);
         var parametersDTO = new EmissionsDataForLocationsParametersDTO() { MultipleLocations = locations };
 
         IActionResult result = await controller.GetEmissionsDataForLocationsByTime(parametersDTO);
@@ -65,7 +66,7 @@ public class CarbonAwareControllerTests : TestsBase
                 Time = DateTime.Now
             }
         };
-        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, carbonAwareAggregator, CreateAggregatorWithEmissionsData(data).Object, forecastAggregator);
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateEmissionsAggregator(data).Object, forecastAggregator);
 
         IActionResult result = await controller.GetEmissionsDataForLocationByTime(location);
 
@@ -88,7 +89,7 @@ public class CarbonAwareControllerTests : TestsBase
             Time = DateTime.Now
             }
         };
-        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, carbonAwareAggregator, CreateAggregatorWithBestEmissionsData(data).Object, forecastAggregator);
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateAggregatorWithBestEmissionsData(data).Object, forecastAggregator);
         var parametersDTO = new EmissionsDataForLocationsParametersDTO(){ MultipleLocations = locations };
 
         var result = await controller.GetBestEmissionsDataForLocationsByTime(parametersDTO);
@@ -114,8 +115,8 @@ public class CarbonAwareControllerTests : TestsBase
             }
         };
         var emissionsAggregator = Mock.Of<IEmissionsAggregator>();
-        var forecastAggregator = CreateAggregatorWithForecastData(data);
-        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, carbonAwareAggregator, emissionsAggregator, forecastAggregator.Object);
+        var forecastAggregator = CreateForecastAggregator(data);
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, emissionsAggregator, forecastAggregator.Object);
         var parametersDTO = new EmissionsForecastCurrentParametersDTO() { MultipleLocations = locations };
 
         IActionResult result = await controller.GetCurrentForecastData(parametersDTO);
@@ -132,7 +133,7 @@ public class CarbonAwareControllerTests : TestsBase
     {
         // Arrange
         double data = 0.7;
-        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, carbonAwareAggregator, CreateCarbonAwareAggregatorWithAverageCI(data).Object, forecastAggregator);
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateCarbonAwareAggregatorWithAverageCI(data).Object, forecastAggregator);
 
         var parametersDTO = new CarbonIntensityParametersDTO
         {
@@ -167,7 +168,7 @@ public class CarbonAwareControllerTests : TestsBase
         var data = 0.7;
 
         var aggregator = CreateCarbonAwareAggregatorWithAverageCI(data);
-        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, carbonAwareAggregator, aggregator.Object, forecastAggregator);
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, aggregator.Object, forecastAggregator);
 
         var request1 = new CarbonIntensityBatchParametersDTO { SingleLocation = location, Start = start1, End = end1 };
         var request2 = new CarbonIntensityBatchParametersDTO { SingleLocation = location, Start = start2, End = end2 };
@@ -186,7 +187,7 @@ public class CarbonAwareControllerTests : TestsBase
     [Test]
     public async Task GetEmissionsDataForLocationByTime_EmptyResultReturnsNoContent()
     {
-        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, carbonAwareAggregator, CreateAggregatorWithEmissionsData(new List<EmissionsData>()).Object, forecastAggregator);
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateEmissionsAggregator(new List<EmissionsData>()).Object, forecastAggregator);
 
         string location = "Sydney";
         IActionResult result = await controller.GetEmissionsDataForLocationByTime(location);
@@ -201,7 +202,7 @@ public class CarbonAwareControllerTests : TestsBase
     [Test]
     public async Task GetEmissionsDataForLocationsByTime_EmptyResultReturnsNoContent()
     {
-        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, carbonAwareAggregator, CreateAggregatorWithEmissionsData(new List<EmissionsData>()).Object, forecastAggregator);
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateEmissionsAggregator(new List<EmissionsData>()).Object, forecastAggregator);
 
         string location = "Sydney";
         var parametersDTO = new EmissionsDataForLocationsParametersDTO() { MultipleLocations = new string[] { location } };
@@ -218,7 +219,7 @@ public class CarbonAwareControllerTests : TestsBase
     [Test]
     public async Task GetBestEmissions_EmptyResultReturnsNoContent()
     {
-        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, carbonAwareAggregator, CreateAggregatorWithEmissionsData(new List<EmissionsData>()).Object, forecastAggregator);
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateEmissionsAggregator(new List<EmissionsData>()).Object, forecastAggregator);
         var parametersDTO = new EmissionsDataForLocationsParametersDTO() { MultipleLocations = new string[] { "Sydney" } };
 
         IActionResult result = await controller.GetBestEmissionsDataForLocationsByTime(parametersDTO);
@@ -235,7 +236,7 @@ public class CarbonAwareControllerTests : TestsBase
     [TestCase(new object?[] { }, TestName = "empty array: simulates no 'location' query string")]
     public void GetEmissionsDataForLocationsByTime_NoLocations_ThrowsException(params string[] locations)
     {
-        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, carbonAwareAggregator, CreateAggregatorWithEmissionsData(new List<EmissionsData>()).Object, forecastAggregator);
+        var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateEmissionsAggregator(new List<EmissionsData>()).Object, forecastAggregator);
         var parametersDTO = new EmissionsDataForLocationsParametersDTO() { MultipleLocations = locations };
 
         Assert.ThrowsAsync<ArgumentException>(async () => await controller.GetEmissionsDataForLocationsByTime(parametersDTO));
