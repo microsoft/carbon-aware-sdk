@@ -7,15 +7,13 @@ namespace CarbonAware.DataSources.Json.Configuration;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddJsonDataSourceService(this IServiceCollection services, IConfiguration configuration)
+    public static void AddJsonEmissionsDataSource(this IServiceCollection services, IConfiguration configuration)
     {
         // configuring dependency injection to have config.
         services.Configure<JsonDataSourceConfiguration>(c =>
         {
             configuration.GetSection(JsonDataSourceConfiguration.Key).Bind(c);
         });
-        services.TryAddSingleton<IForecastDataSource, JsonDataSource>();
         services.TryAddSingleton<IEmissionsDataSource, JsonDataSource>();
-
     }
 }
