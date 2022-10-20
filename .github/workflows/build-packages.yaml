@@ -35,14 +35,14 @@ jobs:
         run: mkdir -p ${{ env.OUTPUT_DIR }}
 
       - name: Run create packages
-        run: ./create_packages ${{ env.OUTPUT_DIR }}
+        run: ./create_packages.sh ${{ env.OUTPUT_DIR }}
         working-directory: ${{ env.PKG_SCRIPTS_DIR }}
 
       - name: Restore current packages for ConsoleApp
         run: dotnet restore ${{ env.CONSOLE_APP }}
 
       - name: Add packages to ConsoleApp
-        run: ./add_packages ${{ env.CONSOLE_APP}} ${{ env.OUTPUT_DIR }}
+        run: ./add_packages.sh ${{ env.CONSOLE_APP}} ${{ env.OUTPUT_DIR }}
         working-directory: ${{ env.PKG_SCRIPTS_DIR }}
 
       - name: Restore packages after Add to ConsoleAppSample
