@@ -1,6 +1,4 @@
-﻿using CarbonAware.Aggregators.CarbonAware;
-using CarbonAware.Model;
-using GSF.CarbonIntensity.Configuration;
+﻿using GSF.CarbonIntensity.Configuration;
 using GSF.CarbonIntensity.Handlers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,13 +18,5 @@ const string startDate = "2022-03-01T15:30:00Z";
 const string endDate = "2022-03-01T18:30:00Z";
 const string location = "eastus";
 
-var param = new CarbonAwareParameters {
-    SingleLocation = new Location {
-        RegionName = location    
-    },
-    Start = DateTimeOffset.Parse(startDate),
-    End = DateTimeOffset.Parse(endDate)
-};
-
-var result = await handler.GetAverageCarbonIntensity(param);
+var result = await handler.GetAverageCarbonIntensity(location, DateTimeOffset.Parse(start), DateTimeOffset.Parse(end));
 Console.WriteLine($"For location {location} Starting at: {startDate} Ending at: {endDate} the Average Emissions Rating is: {result}.");
