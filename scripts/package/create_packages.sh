@@ -3,6 +3,14 @@ set -x
 
 PREFIX="0.0.10"
 DEST_PACKAGES=$1
+DOTNET_SOLUTION=$2
+if [ -z $DEST_PACKAGES ]  || [ -z $DOTNET_SOLUTION ]
+then
+    printf "Missing parameters. Usage: $0 DEST_PACKAGES\n"
+    printf "Example: $0 /mypackages src/CarbonAwareSDK.sln"
+    exit 1
+fi
+
 if [[ -z $DEST_PACKAGES ]]
 then
     printf "Missing parameter. Usage: $0 DEST_PACKAGES\n"
@@ -13,7 +21,6 @@ fi
 # Remove existing packages with PREFIX
 mkdir -p $DEST_PACKAGES
 find $DEST_PACKAGES -name "*.nupkg" -exec rm {} \;
-DOTNET_SOLUTION="../../src/CarbonAwareSDK.sln"
 dotnet pack $DOTNET_SOLUTION -o $DEST_PACKAGES -c Debug \
     -p:VersionPrefix=$PREFIX \
     -p:VersionSuffix=beta \
