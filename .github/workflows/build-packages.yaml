@@ -44,7 +44,7 @@ jobs:
       - name: Add packages to ConsoleApp
         run: ${{ env.ADD_PKG }} ${{ env.CONSOLE_APP}} ${{ env.OUTPUT_DIR }}
 
-      - name: Restore packages after Add to ConsoleAppSample
+      - name: Restore packages after Add to ConsoleApp
         run: dotnet restore ${{ env.CONSOLE_APP }}
 
       - name: Build ConsoleApp

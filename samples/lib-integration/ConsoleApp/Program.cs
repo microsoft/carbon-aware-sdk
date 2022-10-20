@@ -5,7 +5,7 @@ using GSF.CarbonIntensity.Handlers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-Console.WriteLine("Hello, ConsoleAppSample!");
+Console.WriteLine("Hello, ConsoleApp Emissions Sample!");
 
 var configuration = new ConfigurationBuilder()
         .Build();
