@@ -13,9 +13,9 @@ on:
 
 env:
   PREFIX: "0.0.1"
-  DOTNET_SOLUTION: "./src/CarbonAwareSDK.sln"
+  DOTNET_SOLUTION: "src/CarbonAwareSDK.sln"
   OUTPUT_DIR: "packages"
-  CONSOLE_APP: "./samples/lib-integration/ConsoleApp/ConsoleApp.csproj"
+  CONSOLE_APP: "samples/lib-integration/ConsoleApp/ConsoleApp.csproj"
   CREATE_PKG: "scripts/package/create_packages.sh"
   ADD_PKG: "scripts/package/add_packages.sh"
 
@@ -43,6 +43,9 @@ jobs:
 
       - name: Add packages to ConsoleApp
         run: ${{ env.ADD_PKG }} ${{ env.CONSOLE_APP}} ${{ env.OUTPUT_DIR }}
+
+      - name: Cat ConsoleApp project file
+        run: cat ${{ env.CONSOLE_APP }}
 
       - name: Restore packages after Add to ConsoleApp
         run: dotnet restore ${{ env.CONSOLE_APP }}
