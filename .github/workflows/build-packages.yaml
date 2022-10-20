@@ -18,7 +18,6 @@ env:
 
 jobs:
   dotnet-pack:
-    if: ${{ github.event.label.name == 'package' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
