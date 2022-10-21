@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 Console.WriteLine("Hello, ConsoleApp Emissions Sample!");
 
 var configuration = new ConfigurationBuilder()
+        .AddEnvironmentVariables()
         .Build();
 
 var serviceCollection = new ServiceCollection();

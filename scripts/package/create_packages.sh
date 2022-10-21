@@ -6,7 +6,7 @@ DEST_PACKAGES=$1
 DOTNET_SOLUTION=$2
 if [ -z $DEST_PACKAGES ]  || [ -z $DOTNET_SOLUTION ]
 then
-    printf "Missing parameters. Usage: $0 DEST_PACKAGES\n"
+    printf "Missing parameters. Usage: $0 DEST_PACKAGES DOTNET_SOLUTION\n"
     printf "Example: $0 /mypackages src/CarbonAwareSDK.sln"
     exit 1
 fi
