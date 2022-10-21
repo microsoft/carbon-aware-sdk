@@ -21,6 +21,7 @@ fi
 # Remove existing packages with PREFIX
 mkdir -p $DEST_PACKAGES
 find $DEST_PACKAGES -name "*.nupkg" -exec rm {} \;
+
 dotnet pack $DOTNET_SOLUTION -o $DEST_PACKAGES -c Debug \
     -p:VersionPrefix=$PREFIX \
     -p:VersionSuffix=beta \
@@ -30,7 +31,8 @@ dotnet pack $DOTNET_SOLUTION -o $DEST_PACKAGES -c Debug \
     -p:PackageTags="Green-Software-Foundation GSF Microsoft" \
     -p:RepositoryUrl="https://github.com/Green-Software-Foundation/carbon-aware-sdk" \
     -p:RepositoryType=git \
-    -p:RepositoryBranch=dev \
+    -p:RepositoryBranch=${GITHUB_REF#refs/heads/} \
+    -p:SourceRevisionId=${{ github.sha }} \
     -p:Description="Green Software Foundation SDK. Allows to get Carbon Emissions information from WattTime and ElectricityMap sources." \
     -p:PackageLicenseExpression=MIT
 
