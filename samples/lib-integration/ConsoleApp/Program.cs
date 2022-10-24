@@ -19,5 +19,5 @@ const string startDate = "2022-03-01T15:30:00Z";
 const string endDate = "2022-03-01T18:30:00Z";
 const string location = "eastus";
 
-var result = await handler.GetAverageCarbonIntensity(location, DateTimeOffset.Parse(startDate), DateTimeOffset.Parse(endDate));
+var result = await handler.GetAverageCarbonIntensityAsync(location, DateTimeOffset.Parse(startDate), DateTimeOffset.Parse(endDate));
 Console.WriteLine($"For location {location} Starting at: {startDate} Ending at: {endDate} the Average Emissions Rating is: {result}.");
