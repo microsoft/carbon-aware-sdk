@@ -1,11 +1,11 @@
-using CarbonAware.Model;
+using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Aggregators.Emissions;
 using CarbonAware.Aggregators.Forecast;
+using CarbonAware.Model;
 using CarbonAware.WebApi.Controllers;
 using Microsoft.Extensions.Logging;
 using Moq;
 using static CarbonAware.Aggregators.CarbonAware.CarbonAwareParameters;
-using CarbonAware.Aggregators.Emissions;
-using CarbonAware.Aggregators.CarbonAware;
 
 namespace CarbonAware.WepApi.UnitTests;
 

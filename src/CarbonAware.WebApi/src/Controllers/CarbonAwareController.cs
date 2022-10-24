@@ -1,11 +1,10 @@
 using CarbonAware.Aggregators.Emissions;
+using CarbonAware.Aggregators.Forecast;
+using CarbonAware.Model;
 using CarbonAware.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using CarbonAware.Model;
-using System.Diagnostics;
 using Swashbuckle.AspNetCore.Annotations;
-using CarbonAware.Aggregators.Forecast;
-using CarbonAware.Aggregators.CarbonAware;
+using System.Diagnostics;
 
 namespace CarbonAware.WebApi.Controllers;
 

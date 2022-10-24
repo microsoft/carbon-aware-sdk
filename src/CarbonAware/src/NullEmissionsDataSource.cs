@@ -3,7 +3,7 @@ using CarbonAware.Model;
 
 namespace CarbonAware;
 
-public class NullEmisssionsDataSource : IEmissionsDataSource
+public class NullEmissionsDataSource : IEmissionsDataSource
 {
     public Task<IEnumerable<EmissionsData>> GetCarbonIntensityAsync(IEnumerable<Location> locations, DateTimeOffset periodStartTime, DateTimeOffset periodEndTime)
     {
