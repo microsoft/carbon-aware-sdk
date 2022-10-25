@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 
-PREFIX="0.0.10"
+VPREFIX="0.0.10"
 DEST_PACKAGES=$1
 DOTNET_SOLUTION=$2
 if [ -z $DEST_PACKAGES ]  || [ -z $DOTNET_SOLUTION ]
@@ -12,29 +12,31 @@ then
 fi
 
 mkdir -p $DEST_PACKAGES
-# Remove existing packages with PREFIX
-find $DEST_PACKAGES -name "*.nupkg" -exec rm {} \;
-revision=$(git rev-parse HEAD)
-branch=dev
-description="Green Software Foundation SDK. Allows to retreive Carbon Emissions data from different data sources like WattTime, ElectricityMap or a static json file."
-authors="GSF"
-company="GSF"
-title="Green-Software-Foundation-SDK"
-tags="Green-Software-Foundation GSF Microsoft"
-repurl="https://github.com/Green-Software-Foundation/carbon-aware-sdk"
-license="MIT"
+# Remove existing packages
+find $DEST_PACKAGES -name "*.nupkg" -name "*.snpukg" -exec rm {} \;
+# Setup package metadata
+VSUFFIX="beta"
+REVISION=$(git rev-parse HEAD)
+BRANCH=dev
+DESCRIPTION="Green Software Foundation SDK. Allows to retreive Carbon Emissions data from different data sources like WattTime or ElectricityMap or a static json file."
+AUTHORS="GSF"
+COMPANY="GSF"
+TITLE="Green-Software-Foundation-SDK"
+TAGS="Green-Software-Foundation GSF Microsoft"
+REPURL="https://github.com/Green-Software-Foundation/carbon-aware-sdk"
+LICENSE="MIT"
 dotnet pack $DOTNET_SOLUTION -o $DEST_PACKAGES -c Debug \
-    -p:VersionPrefix=$PREFIX \
-    -p:VersionSuffix=beta \
-    -p:Authors="$authors" \
-    -p:Company="$company" \
-    -p:Title="$title" \
-    -p:PackageTags="$tags" \
-    -p:RepositoryUrl="$repurl" \
+    -p:VersionPrefix=$VPREFIX \
+    -p:VersionSuffix=$VSUFFIX \
+    -p:Authors=$AUTHORS \
+    -p:Company=$COMPANY \
+    -p:Title=$TITLE \
+    -p:PackageTags="$TAGS" \
+    -p:RepositoryUrl=$REPURL \
     -p:RepositoryType=git \
-    -p:RepositoryBranch="$branch" \
-    -p:SourceRevisionId="$revision" \
-    -p:Description="$description" \
-    -p:PackageLicenseExpression="$license" \
+    -p:RepositoryBranch=$BRANCH \
+    -p:SourceRevisionId=$REVISION \
+    -p:Description="$DESCRIPTION" \
+    -p:PackageLicenseExpression=$LICENSE \
     -p:IncludeSymbols="true" \
     -p:SymbolPackageFormat="snupkg"
