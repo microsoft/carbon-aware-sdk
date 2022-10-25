@@ -10,6 +10,7 @@ on:
       - 'src/**'
       - '.github/workflows/**'
       - 'samples/lib-integration/ConsoleApp/**'
+      - 'scripts/package/**'
 
 env:
   PREFIX: "0.0.1"
