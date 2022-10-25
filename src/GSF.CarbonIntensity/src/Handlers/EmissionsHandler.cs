@@ -1,4 +1,7 @@
 using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Exceptions;
+using CarbonAware.Tools.WattTimeClient;
+using CarbonAware.Tools.WattTimeClient.Configuration;
 using GSF.CarbonIntensity.Exceptions;
 using Microsoft.Extensions.Logging;
 
@@ -27,9 +30,11 @@ internal sealed class EmissionsHandler : IEmissionsHandler
             var result = await _aggregator.CalculateAverageCarbonIntensityAsync(parameters);
             _logger.LogDebug("calculated average carbon intensity: {carbonIntensity}", result);
             return result;
-        } catch (Exception e) {
-            throw new CarbonIntensityException(e.Message, e);
+        } catch (Exception ex) {
+            if (ex is WattTimeClientException || ex is WattTimeClientHttpException || ex is LocationConversionException || ex is ConfigurationException){
+                throw new CarbonIntensityException(ex.Message, ex);
+            }
+            throw ex;
         }
-
     }
 }
