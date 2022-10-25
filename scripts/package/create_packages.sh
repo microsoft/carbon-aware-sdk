@@ -35,6 +35,6 @@ dotnet pack $DOTNET_SOLUTION -o $DEST_PACKAGES -c Debug \
     -p:RepositoryBranch="$branch" \
     -p:SourceRevisionId="$revision" \
     -p:Description="$description" \
-    -p:PackageLicenseExpression="$license"
+    -p:PackageLicenseExpression="$license" \
     -p:IncludeSymbols="true" \
     -p:SymbolPackageFormat="snupkg"
