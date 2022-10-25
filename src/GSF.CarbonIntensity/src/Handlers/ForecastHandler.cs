@@ -38,7 +38,7 @@ internal sealed class ForecastHandler : IForecastHandler
         return new EmissionsForecast {
             RequestedAt = emissionsForecast.RequestedAt,
             GeneratedAt = emissionsForecast.GeneratedAt,
-            EmissionsData = emissionsForecast.ForecastData.Select(x => ToEmissionsData(x)),
+            EmissionsDataPoints = emissionsForecast.ForecastData.Select(x => ToEmissionsData(x)),
             OptimalDataPoints = emissionsForecast.OptimalDataPoints.Select(x => ToEmissionsData(x))
         };
     }
