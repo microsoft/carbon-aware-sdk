@@ -1,8 +1,8 @@
-name: Build Packages Install Packages on ConsoleApp
+name: Build and Install GSF Packages on Sample ConsoleApp
 
 on:
   push:
-    branches: [ juzuluag/pkg_with_old_code_branch ]
+    branches: [ dev, main ]
   pull_request:
     types: [labeled]
     branches: [ dev, main ]
