@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Tools.WattTimeClient;
 using GSF.CarbonIntensity.Exceptions;
 using GSF.CarbonIntensity.Handlers;
 using Microsoft.Extensions.Logging;
@@ -58,7 +59,7 @@ public class ForecastHandlerTests
         var aggregator = new Mock<ICarbonAwareAggregator>();
         aggregator
             .Setup(x => x.GetCurrentForecastDataAsync(It.IsAny<CarbonAwareParameters>()))
-            .ThrowsAsync(new Exception());
+            .ThrowsAsync(new WattTimeClientException(""));
         var handler = new ForecastHandler(Logger.Object, aggregator.Object);
         Assert.ThrowsAsync<CarbonIntensityException>(async () => await handler.GetCurrentAsync(It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>()));
     }

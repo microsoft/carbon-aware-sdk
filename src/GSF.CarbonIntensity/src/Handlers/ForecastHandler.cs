@@ -1,4 +1,7 @@
 using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Exceptions;
+using CarbonAware.Tools.WattTimeClient;
+using CarbonAware.Tools.WattTimeClient.Configuration;
 using GSF.CarbonIntensity.Exceptions;
 using GSF.CarbonIntensity.Models;
 using Microsoft.Extensions.Logging;
@@ -29,8 +32,9 @@ internal sealed class ForecastHandler : IForecastHandler
             var results = await _aggregator.GetCurrentForecastDataAsync(parameters);
             return !results.Any() ? null : ToForecastData(results.First());
         }
-        catch (Exception e) {
-            throw new CarbonIntensityException(e.Message, e);
+        catch (Exception ex) when (ex is WattTimeClientException || ex is WattTimeClientHttpException || ex is LocationConversionException || ex is ConfigurationException)
+        {
+            throw new CarbonIntensityException(ex.Message, ex);
         }
     }
 
