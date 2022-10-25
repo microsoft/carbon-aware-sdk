@@ -34,15 +34,6 @@ dotnet pack $DOTNET_SOLUTION -o $DEST_PACKAGES -c Debug \
     -p:RepositoryType=git \
     -p:RepositoryBranch=$branch \
     -p:SourceRevisionId=$rev \
-    -p:Description="Green Software Foundation SDK. Allows to get Carbon Emissions information from WattTime and ElectricityMap sources." \
+    -p:Description="Green Software Foundation SDK. Allows to get Carbon Emissions information from Data Sources like WattTime, ElectricityMap or static json." \
     -p:PackageLicenseExpression=MIT
-
-
-# ISSUE: Each package could have its own description.
-# ISSUE: To have a very good dev starting guide on how to start
-# using the service extension to import the aggregator, how to pass 
-# configuration information (using envs, or using own configuration map)
-# and how to construct the CarbonAwareParams in case we don't provide
-# a better mechanism to deal with.
-# reference: https://blog.tonysneed.com/2021/12/04/copy-nuget-content-files-to-output-directory-on-build/
 
