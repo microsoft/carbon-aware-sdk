@@ -13,7 +13,7 @@ fi
 
 mkdir -p $DEST_PACKAGES
 # Remove existing packages with PREFIX
-find $DEST_PACKAGES -name "*.nupkg" -exec rm {} \;
+find $DEST_PACKAGES -name "*.nupkg" -name "*.snupkg" -exec rm {} \;
 revision=$(git rev-parse HEAD)
 branch=$(git rev-parse --abbrev-ref HEAD)
 dotnet pack $DOTNET_SOLUTION -o $DEST_PACKAGES -c Debug \
@@ -28,4 +28,6 @@ dotnet pack $DOTNET_SOLUTION -o $DEST_PACKAGES -c Debug \
     -p:RepositoryBranch=$branch \
     -p:SourceRevisionId=$revision \
     -p:Description="Green Software Foundation SDK. Allows to retreive Carbon Emissions data from different data sources like WattTime, ElectricityMap or a static json file." \
-    -p:PackageLicenseExpression=MIT
+    -p:PackageLicenseExpression=MIT \
+    -p:IncludeSymbols=true \
+    -p:SymbolPackageFormat=snupkg
