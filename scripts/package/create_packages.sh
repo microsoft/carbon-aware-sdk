@@ -13,9 +13,9 @@ fi
 
 mkdir -p $DEST_PACKAGES
 # Remove existing packages with PREFIX
-find $DEST_PACKAGES -name "*.nupkg" -name "*.snupkg" -exec rm {} \;
+find $DEST_PACKAGES -name "*.nupkg" -exec rm {} \;
 revision=$(git rev-parse HEAD)
-branch=$(git symbolic-ref --short HEAD)
+branch=$(git branch --show-current)
 description="Green Software Foundation SDK. Allows to retreive Carbon Emissions data from different data sources like WattTime, ElectricityMap or a static json file."
 authors="GSF"
 company="GSF"
