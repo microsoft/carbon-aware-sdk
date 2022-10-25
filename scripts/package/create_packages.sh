@@ -11,17 +11,10 @@ then
     exit 1
 fi
 
-if [[ -z $DEST_PACKAGES ]]
-then
-    printf "Missing parameter. Usage: $0 DEST_PACKAGES\n"
-    printf "Example: $0 /mypackages"
-    exit 1
-fi
-
-# Remove existing packages with PREFIX
 mkdir -p $DEST_PACKAGES
+# Remove existing packages with PREFIX
 find $DEST_PACKAGES -name "*.nupkg" -exec rm {} \;
-rev=$(git rev-parse HEAD)
+revision=$(git rev-parse HEAD)
 branch=$(git rev-parse --abbrev-ref HEAD)
 dotnet pack $DOTNET_SOLUTION -o $DEST_PACKAGES -c Debug \
     -p:VersionPrefix=$PREFIX \
@@ -33,7 +26,6 @@ dotnet pack $DOTNET_SOLUTION -o $DEST_PACKAGES -c Debug \
     -p:RepositoryUrl="https://github.com/Green-Software-Foundation/carbon-aware-sdk" \
     -p:RepositoryType=git \
     -p:RepositoryBranch=$branch \
-    -p:SourceRevisionId=$rev \
-    -p:Description="Green Software Foundation SDK. Allows to get Carbon Emissions information from Data Sources like WattTime, ElectricityMap or static json." \
+    -p:SourceRevisionId=$revision \
+    -p:Description="Green Software Foundation SDK. Allows to retreive Carbon Emissions data from different data sources like WattTime, ElectricityMap or a static json file." \
     -p:PackageLicenseExpression=MIT
-

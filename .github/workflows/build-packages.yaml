@@ -36,7 +36,7 @@ jobs:
       - name: Make package dir
         run: mkdir -p ${{ env.OUTPUT_DIR }}
 
-      - name: Run create packages
+      - name: Create packages
         run: ${{ env.CREATE_PKG }} ${{ env.OUTPUT_DIR }} ${{ env.DOTNET_SOLUTION }}
 
       - name: Restore current packages for ConsoleApp
@@ -48,7 +48,7 @@ jobs:
       - name: Cat ConsoleApp project file
         run: cat ${{ env.CONSOLE_APP }}
 
-      - name: Restore packages after Add to ConsoleApp
+      - name: Restore packages for ConsoleApp
         run: dotnet restore ${{ env.CONSOLE_APP }}
 
       - name: Build ConsoleApp
