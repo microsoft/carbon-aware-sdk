@@ -19,8 +19,8 @@ branch=$(git symbolic-ref --short HEAD)
 description="Green Software Foundation SDK. Allows to retreive Carbon Emissions data from different data sources like WattTime, ElectricityMap or a static json file."
 authors="GSF"
 company="GSF"
-title="Green Software Foundation SDK"
-tags="Green-Software-Foundation GSF Microsoft"
+title="Green-Software-Foundation-SDK"
+tags="Green-Software-Foundation\ GSF\ Microsoft"
 repurl="https://github.com/Green-Software-Foundation/carbon-aware-sdk"
 license="MIT"
 dotnet pack $DOTNET_SOLUTION -o $DEST_PACKAGES -c Debug \
@@ -35,6 +35,6 @@ dotnet pack $DOTNET_SOLUTION -o $DEST_PACKAGES -c Debug \
     -p:RepositoryBranch=$branch \
     -p:SourceRevisionId=$revision \
     -p:Description=$description \
-    -p:PackageLicenseExpression=$license \
-    -p:IncludeSymbols=true \
-    -p:SymbolPackageFormat=snupkg
+    -p:PackageLicenseExpression=$license
+    # -p:IncludeSymbols=true \
+    # -p:SymbolPackageFormat=snupkg
