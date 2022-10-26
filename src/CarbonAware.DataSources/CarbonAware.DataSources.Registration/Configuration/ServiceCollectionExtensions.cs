@@ -1,8 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
-using CarbonAware;
+using CarbonAware.Configuration;
 using CarbonAware.Interfaces;
 using CarbonAware.DataSources.Json.Configuration;
 using CarbonAware.DataSources.WattTime.Configuration;
+using CarbonAware.Tools.WattTimeClient.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -13,6 +14,10 @@ public static class ServiceCollectionExtensions
     {
         // find all the Classes in the Assembly that implements AddEmissionServices method,
         // and added them here with the specific implementation class.
+        var dataSources = configuration.GetSection(DataSourcesConfiguration.Key).Get<DataSourcesConfiguration>();
+        dataSources.ConfigurationSection = configuration.GetSection($"{DataSourcesConfiguration.Key}:Configurations");
+        dataSources.AssertValid();
+
         var carbonAwareConfig = configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
         var forecastDataSource = GetDataSourceTypeFromValue(carbonAwareConfig?.ForecastDataSource);
         var emissionsDataSource = GetDataSourceTypeFromValue(carbonAwareConfig?.EmissionsDataSource);
