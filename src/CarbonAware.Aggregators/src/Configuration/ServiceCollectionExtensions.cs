@@ -1,8 +1,11 @@
-using CarbonAware.Exceptions;
 using CarbonAware.Aggregators.CarbonAware;
-using CarbonAware.DataSources.Configuration;
 using CarbonAware.Aggregators.Emissions;
 using CarbonAware.Aggregators.Forecast;
+using CarbonAware.DataSources.Configuration;
+using CarbonAware.Exceptions;
+using CarbonAware.Interfaces;
+using CarbonAware.LocationSources;
+using CarbonAware.LocationSources.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -18,6 +21,11 @@ public static class ServiceCollectionExtensions
     {
         services.TryAddSingleton<IForecastAggregator, ForecastAggregator>();
         services.TryAddSingleton<IEmissionsAggregator, EmissionsAggregator>();
+        services.Configure<LocationDataSourcesConfiguration>(c =>
+        {
+            configuration.GetSection(LocationDataSourcesConfiguration.Key).Bind(c);
+        });
+        services.TryAddSingleton<ILocationSource, LocationSource>();
         services.AddDataSourceService(configuration);
         return services;
     }
