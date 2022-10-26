@@ -30,11 +30,10 @@ internal sealed class EmissionsHandler : IEmissionsHandler
             var result = await _aggregator.CalculateAverageCarbonIntensityAsync(parameters);
             _logger.LogDebug("calculated average carbon intensity: {carbonIntensity}", result);
             return result;
-        } catch (Exception ex) {
-            if (ex is WattTimeClientException || ex is WattTimeClientHttpException || ex is LocationConversionException || ex is ConfigurationException){
-                throw new CarbonIntensityException(ex.Message, ex);
-            }
-            throw ex;
+        }
+        catch (Exception ex) when (ex is WattTimeClientException || ex is WattTimeClientHttpException || ex is LocationConversionException || ex is ConfigurationException)
+        {
+            throw new CarbonIntensityException(ex.Message, ex);
         }
     }
 }
