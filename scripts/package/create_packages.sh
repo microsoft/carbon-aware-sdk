@@ -1,20 +1,20 @@
 #!/bin/bash
 set -x
 
-VPREFIX="0.0.10"
-DEST_PACKAGES=$1
-DOTNET_SOLUTION=$2
-if [ -z $DEST_PACKAGES ]  || [ -z $DOTNET_SOLUTION ]
+DOTNET_SOLUTION=$1
+DEST_PACKAGES=$2
+if [ -z $DOTNET_SOLUTION ] || [ -z $DEST_PACKAGES ]
 then
-    printf "Missing parameters. Usage: $0 DEST_PACKAGES DOTNET_SOLUTION\n"
-    printf "Example: $0 /mypackages src/CarbonAwareSDK.sln"
+    printf "Missing parameters. Usage: $0 DOTNET_SOLUTION DEST_PACKAGES\n"
+    printf "Example: $0 src/CarbonAwareSDK.sln /mypackages"
     exit 1
 fi
 
 mkdir -p $DEST_PACKAGES
 # Remove existing packages
-find $DEST_PACKAGES -name "*.nupkg" -name "*.snpukg" -exec rm {} \;
+find $DEST_PACKAGES \( -name '*.nupkg' -o -name '*.snupkg' \) -exec rm {} \;
 # Setup package metadata
+VPREFIX="0.0.10"
 VSUFFIX="beta"
 REVISION=$(git rev-parse HEAD)
 BRANCH=dev

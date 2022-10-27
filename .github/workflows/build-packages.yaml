@@ -32,11 +32,8 @@ jobs:
           dotnet-version: '6.0.x'
           include-prerelease: false
 
-      - name: Make package dir
-        run: mkdir -p ${{ env.OUTPUT_DIR }}
-
       - name: Create packages
-        run: ${{ env.CREATE_PKG }} ${{ env.OUTPUT_DIR }} ${{ env.DOTNET_SOLUTION }}
+        run: ${{ env.CREATE_PKG }} ${{ env.DOTNET_SOLUTION }} ${{ env.OUTPUT_DIR }}
 
       - name: Restore current packages for ConsoleApp
         run: dotnet restore ${{ env.CONSOLE_APP }}
