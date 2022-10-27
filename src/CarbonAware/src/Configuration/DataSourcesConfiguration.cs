@@ -11,14 +11,24 @@ public class DataSourcesConfiguration
     public IConfigurationSection? ConfigurationSection { get; set; }
     #nullable disable
 
+    public string EmissionsConfigurationType()
+    {
+        return GetConfigurationType(EmissionsDataSource);
+    }
+
+    public string ForecastConfigurationType()
+    {
+        return GetConfigurationType(ForecastDataSource);
+    }
+
     public T EmissionsConfiguration<T>()
     {
-        return ConfigurationSection.GetSection($"{EmissionsDataSource}").Get<T>();
+        return GetConfigurationClass<T>(EmissionsDataSource);
     }
 
     public T ForecastConfiguration<T>()
     {
-        return ConfigurationSection.GetSection($"{ForecastDataSource}").Get<T>();
+        return GetConfigurationClass<T>(ForecastDataSource);
     }
 
     public void AssertValid()
@@ -37,6 +47,16 @@ public class DataSourcesConfiguration
         {
             throw new ArgumentException($"Forecast data source value '{ForecastDataSource}' was not found in 'Configurations'");
         }
+    }
+
+    private string GetConfigurationType(string dataSourceName)
+    {
+        return ConfigurationSection.GetValue<string>($"{dataSourceName}:Type");   
+    }
+
+    private T GetConfigurationClass<T>(string dataSourceName)
+    {
+        return ConfigurationSection.GetSection(dataSourceName).Get<T>();
     }
 
     private bool ConfigurationSectionContainsKey(string key)
