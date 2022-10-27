@@ -49,7 +49,7 @@ public static class ServiceCollectionExtensions
         {
             case DataSourceType.JSON:
             {
-                services.AddJsonEmissionsDataSource(configuration);
+                services.AddJsonEmissionsDataSource(dataSources);
                 break;
             }
             case DataSourceType.WattTime:
