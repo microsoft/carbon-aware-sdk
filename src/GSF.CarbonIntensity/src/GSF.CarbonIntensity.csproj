@@ -48,4 +48,8 @@
       <Content Include="$(TargetDir)/data-sources/**/*.json" Pack="true" PackagePath="data-sources/" />
     </ItemGroup>
 
+    <ItemGroup Label="IncludeSymbols" Condition="$(IncludeSymbols) == true">
+      <Content Include="$(TargetDir)/CarbonAware*.pdb" Pack="true" PackagePath="lib/net6.0/" />
+    </ItemGroup>
+
 </Project>
