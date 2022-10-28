@@ -43,13 +43,9 @@
 
     <!-- Add files required to create a package -->
     <ItemGroup Label="FilesToCopy">
-      <Content Include="$(AssemblyName).targets" PackagePath="build/$(AssemblyName).targets" />
-      <Content Include="$(TargetDir)/CarbonAware*.dll" Pack="true" PackagePath="lib/net6.0/">
-        <PackageCopyToOutput>true</PackageCopyToOutput>
-      </Content>
-      <Content Include="$(TargetDir)/data-sources/**/*.json" Pack="true" PackagePath="data-sources/">
-        <PackageCopyToOutput>true</PackageCopyToOutput>
-      </Content>
+      <Content Include="$(AssemblyName).targets" Pack="true" PackagePath="build/$(AssemblyName).targets" />
+      <Content Include="$(TargetDir)/CarbonAware*.dll" Pack="true" PackagePath="lib/net6.0/" />
+      <Content Include="$(TargetDir)/data-sources/**/*.json" Pack="true" PackagePath="data-sources/" />
     </ItemGroup>
 
 </Project>
