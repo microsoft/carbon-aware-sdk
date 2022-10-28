@@ -14,12 +14,13 @@ env:
   DOTNET_SOLUTION: "src/CarbonAwareSDK.sln"
   OUTPUT_DIR: "packages"
   CONSOLE_APP: "samples/lib-integration/ConsoleApp/ConsoleApp.csproj"
+  CONSOLE_DIR: "samples/lib-integration/ConsoleApp"
   CREATE_PKG: "scripts/package/create_packages.sh"
   ADD_PKG: "scripts/package/add_packages.sh"
 
 jobs:
   dotnet-pack:
-    if: ${{ github.event.label.name == 'package' }}
+    # if: ${{ github.event.label.name == 'package' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -48,6 +49,10 @@ jobs:
 
       - name: Build ConsoleApp
         run: dotnet build ${{ env.CONSOLE_APP }}
+      
+      - name: List content
+        run: ls  -l samples/lib-integration/ConsoleApp/bin/Debug/net6.0/*.dll
 
       - name: Run ConsoleApp
-        run: dotnet run --project ${{ env.CONSOLE_APP }}
+        run: dotnet run 
+        working-directory: ${{ env.CONSOLE_DIR }}
