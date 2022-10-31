@@ -1,6 +1,6 @@
 # Packaging the Carbon Aware SDK
 
-With the addition of the C# Client Library as a was to consume the Carbon Aware SDK, we have also added [bach scripts](../scripts/package/) to package the library, and have included a sample [Console App](../samples/lib-integration/) showing how the package can be consumed.
+With the addition of the C# Client Library as a way to consume the Carbon Aware SDK, we have also added [bash scripts](../scripts/package/) to package the library, and have included a sample [Console App](../samples/lib-integration/) showing how the package can be consumed.
 
 ## Included Projects
 The current package include 8 projects from the SDK:
@@ -14,7 +14,7 @@ The current package include 8 projects from the SDK:
 7. "CarbonAware.LocationSources.Azure"
 8. "CarbonAware.Tools.WattTimeClient"
 
-These 8 projects enable users of the library to consume the current routes exposed by the library.
+These 8 projects enable users of the library to consume the current routes exposed by the library. The package that needs to be added to a new C# project is `GSF.CarbonIntensity`.
 
 ## Included Scripts
 There are 2 scripts included to help the packaging process
@@ -36,5 +36,5 @@ Prerequisites:
 ## Console App Sample
 There is a sample console app in the [lib integration folder](../samples/lib-integration/ConsoleApp/). The app shows how to use dependency injection to pull in the packages and ping the SDK.
 
-In order to run the app, you will need to run the script commands in `build-packages.yaml` to create the packages, add them, and the restore them into the app.
+In order to run the app, you will need to run the scripts commands similar to what `build-packages.yaml` does, to create the packages, add them, and the restore them into the app.
 
