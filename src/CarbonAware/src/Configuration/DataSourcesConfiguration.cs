@@ -21,14 +21,14 @@ public class DataSourcesConfiguration
         return GetConfigurationType(ForecastDataSource);
     }
 
-    public T EmissionsConfiguration<T>()
+    public IConfigurationSection EmissionsConfigurationSection()
     {
-        return GetConfigurationClass<T>(EmissionsDataSource);
+        return GetConfigurationSection(EmissionsDataSource);
     }
 
-    public T ForecastConfiguration<T>()
+    public IConfigurationSection ForecastConfiguration()
     {
-        return GetConfigurationClass<T>(ForecastDataSource);
+        return GetConfigurationSection(ForecastDataSource);
     }
 
     public void AssertValid()
@@ -54,9 +54,9 @@ public class DataSourcesConfiguration
         return ConfigurationSection.GetValue<string>($"{dataSourceName}:Type");   
     }
 
-    private T GetConfigurationClass<T>(string dataSourceName)
+    private IConfigurationSection GetConfigurationSection(string dataSourceName)
     {
-        return ConfigurationSection.GetSection(dataSourceName).Get<T>();
+        return ConfigurationSection.GetSection(dataSourceName);
     }
 
     private bool ConfigurationSectionContainsKey(string key)

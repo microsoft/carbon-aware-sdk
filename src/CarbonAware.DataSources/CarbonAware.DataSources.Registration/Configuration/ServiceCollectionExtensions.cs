@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
         dataSources.AssertValid();
 
         var emissionsDataSourceStr = dataSources.EmissionsConfigurationType();
+
         switch (emissionsDataSourceStr)
         {
             case "JSON":
@@ -26,8 +27,18 @@ public static class ServiceCollectionExtensions
                 services.AddJsonEmissionsDataSource(dataSources);
                 break;
             }
-
+            case "WattTime":
+            {
+                services.AddWattTimeEmissionsDataSource(configuration);
+                break;
+            }
+            default:
+            {
+                services.TryAddSingleton<IEmissionsDataSource, NullEmissionsDataSource>();
+            }
         }
+
+
         services.TryAddSingleton<IForecastDataSource, NullForecastDataSource>();
 
         /* var carbonAwareConfig = configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();

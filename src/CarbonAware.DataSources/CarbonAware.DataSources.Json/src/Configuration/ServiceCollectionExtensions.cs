@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
         // configuring dependency injection to have config.
         services.Configure<JsonDataSourceConfiguration>(config =>
         {
-            config = dataSourcesConfig.EmissionsConfiguration<JsonDataSourceConfiguration>();
+            dataSourcesConfig.EmissionsConfigurationSection().Bind(config);
         });
         services.TryAddSingleton<IEmissionsDataSource, JsonDataSource>();
     }
