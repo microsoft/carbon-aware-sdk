@@ -1,5 +1,6 @@
-using static CarbonAware.Aggregators.CarbonAware.Parameters.CarbonAwareParameters;
-namespace CarbonAware.Aggregators.CarbonAware.Parameters;
+using static CarbonAware.Parameters.CarbonAwareParameters;
+
+namespace CarbonAware.Parameters;
 
 public partial class Validator {
 

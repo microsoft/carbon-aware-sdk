@@ -1,9 +1,10 @@
-using PropertyName = CarbonAware.Aggregators.CarbonAware.Parameters.CarbonAwareParameters.PropertyName;
+using PropertyName = CarbonAware.Parameters.CarbonAwareParameters.PropertyName;
 
-namespace CarbonAware.Aggregators.CarbonAware.Parameters;
+namespace CarbonAware.Parameters;
 
 public partial class Validator
 {
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
     public enum ValidationName { 
         // Start < End
         StartBeforeEnd, 

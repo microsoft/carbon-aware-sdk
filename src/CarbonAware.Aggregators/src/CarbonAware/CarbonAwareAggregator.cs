@@ -1,10 +1,10 @@
-using CarbonAware.Aggregators.CarbonAware.Parameters;
 using CarbonAware.Extensions;
 using CarbonAware.Interfaces;
 using CarbonAware.Model;
+using CarbonAware.Parameters;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using Validators = CarbonAware.Aggregators.CarbonAware.Parameters.Validator;
+using Validators = CarbonAware.Parameters.Validator;
 
 namespace CarbonAware.Aggregators.CarbonAware;
 

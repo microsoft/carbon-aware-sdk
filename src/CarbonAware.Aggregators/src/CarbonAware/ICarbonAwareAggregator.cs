@@ -1,5 +1,5 @@
-using CarbonAware.Aggregators.CarbonAware.Parameters;
 using CarbonAware.Model;
+using CarbonAware.Parameters;
 
 namespace CarbonAware.Aggregators.CarbonAware;
 

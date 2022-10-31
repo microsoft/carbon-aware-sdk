@@ -1,10 +1,10 @@
-using CarbonAware.Model;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
-namespace CarbonAware.Aggregators.CarbonAware.Parameters;
+namespace CarbonAware.Parameters;
 public class CarbonAwareParametersBaseDTO
 {
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
     virtual public string[]? MultipleLocations { get; set; }
     virtual public string? SingleLocation { get; set; }
     virtual public DateTimeOffset? Start { get; set; }

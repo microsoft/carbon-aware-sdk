@@ -1,15 +1,11 @@
-using CarbonAware.Aggregators.CarbonAware.Parameters;
 using CarbonAware.Model;
+using CarbonAware.Parameters;
 using Microsoft.AspNetCore.Mvc;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
-using PropertyName = CarbonAware.Aggregators.CarbonAware.Parameters.CarbonAwareParameters.PropertyName;
-using ValidationName = CarbonAware.Aggregators.CarbonAware.Parameters.Validator.ValidationName;
+using PropertyName = CarbonAware.Parameters.CarbonAwareParameters.PropertyName;
+using ValidationName = CarbonAware.Parameters.Validator.ValidationName;
 
-namespace CarbonAware.Aggregators.Tests;
+namespace CarbonAware.Tests;
 
 [TestFixture]
 public class CarbonAwareCarbonAwareParametersTests

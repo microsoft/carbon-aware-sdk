@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
-using CarbonAware.Aggregators.CarbonAware.Parameters;
+using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Parameters;
 
 namespace CarbonAware.WebApi.Models;
 

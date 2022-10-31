@@ -1,7 +1,8 @@
 namespace CarbonAware.WepApi.UnitTests;
 
-using CarbonAware.Aggregators.CarbonAware.Parameters;
+using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.Model;
+using CarbonAware.Parameters;
 using CarbonAware.WebApi.Controllers;
 using CarbonAware.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;

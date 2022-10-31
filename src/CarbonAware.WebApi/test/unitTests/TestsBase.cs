@@ -3,8 +3,8 @@ using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.WebApi.Controllers;
 using Microsoft.Extensions.Logging;
 using Moq;
-using CarbonAware.Aggregators.CarbonAware.Parameters;
-using static CarbonAware.Aggregators.CarbonAware.Parameters.CarbonAwareParameters;
+using CarbonAware.Parameters;
+using static CarbonAware.Parameters.CarbonAwareParameters;
 
 namespace CarbonAware.WepApi.UnitTests;
 

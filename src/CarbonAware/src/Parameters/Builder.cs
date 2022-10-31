@@ -1,11 +1,12 @@
-using static CarbonAware.Aggregators.CarbonAware.Parameters.Validator;
+using static CarbonAware.Parameters.Validator;
 
-namespace CarbonAware.Aggregators.CarbonAware.Parameters;
+namespace CarbonAware.Parameters;
 /// <summary>
 /// Single class builder that does field validation real-time as users try to set it based on instantiated ParameterType
 /// </summary>
 public class Builder
 {
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
     public enum ParameterType { GenericParameters, EmissionsParameters, CurrentForecastParameters, ForecastParameters, CarbonIntensityParameters }
     private readonly CarbonAwareParametersBaseDTO baseParameters;
     private readonly ParameterType parameterType;

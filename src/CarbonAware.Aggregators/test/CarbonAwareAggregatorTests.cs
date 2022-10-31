@@ -1,7 +1,7 @@
 using CarbonAware.Aggregators.CarbonAware;
-using CarbonAware.Aggregators.CarbonAware.Parameters;
 using CarbonAware.Interfaces;
 using CarbonAware.Model;
+using CarbonAware.Parameters;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
