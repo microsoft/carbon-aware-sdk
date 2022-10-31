@@ -28,7 +28,7 @@ builder.Services.AddSwaggerGen(c =>
     c.SchemaFilter<CarbonAwareParametersBaseDtoSchemaFilter>();
 });
 
-builder.Services.Configure<CarbonAwareVariablesConfiguration>(builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key));
+//builder.Services.Configure<CarbonAwareVariablesConfiguration>(builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key));
 
 builder.Services.AddCarbonAwareEmissionServices(builder.Configuration);
 CarbonAwareVariablesConfiguration config = new CarbonAwareVariablesConfiguration();

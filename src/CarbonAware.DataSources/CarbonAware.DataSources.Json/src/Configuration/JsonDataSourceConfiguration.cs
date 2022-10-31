@@ -7,7 +7,7 @@ namespace CarbonAware.DataSources.Json.Configuration;
 /// <summary>
 /// A configuration class for holding Json Data config values.
 /// </summary>
-public class JsonDataSourceConfiguration : IDataSourceConfiguration
+public class JsonDataSourceConfiguration 
 {
     private const string BaseDirectory = "data-sources/json";
     private const string DefaultDataFile = "test-data-azure-emissions.json";
@@ -30,8 +30,6 @@ public class JsonDataSourceConfiguration : IDataSourceConfiguration
             dataFileLocation = Path.Combine(assemblyDirectory, BaseDirectory, value);
         }
     }
-
-    public string Type { get; set; }
 
     public JsonDataSourceConfiguration()
     {

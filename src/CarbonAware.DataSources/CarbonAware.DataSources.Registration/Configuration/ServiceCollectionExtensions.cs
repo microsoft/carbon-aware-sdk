@@ -18,52 +18,64 @@ public static class ServiceCollectionExtensions
         dataSources.ConfigurationSection = configuration.GetSection($"{DataSourcesConfiguration.Key}:Configurations");
         dataSources.AssertValid();
 
-        var carbonAwareConfig = configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
-        var forecastDataSource = GetDataSourceTypeFromValue(carbonAwareConfig?.ForecastDataSource);
-        var emissionsDataSource = GetDataSourceTypeFromValue(carbonAwareConfig?.EmissionsDataSource);
-
-        if (forecastDataSource == DataSourceType.None && emissionsDataSource == DataSourceType.None)
+        var emissionsDataSourceStr = dataSources.EmissionsConfigurationType();
+        switch (emissionsDataSourceStr)
         {
-            throw new ArgumentException("At least one data source must be specified in configuration");
-        }
-
-        switch (forecastDataSource)
-        {
-            case DataSourceType.JSON:
-            {
-                throw new ArgumentException("JSON data source is not supported for forecast data");
-            }
-            case DataSourceType.WattTime:
-            {
-                services.AddWattTimeForecastDataSource(configuration);
-                break;
-            }
-            case DataSourceType.None:
-            {
-                services.TryAddSingleton<IForecastDataSource, NullForecastDataSource>();
-                break;
-            }
-        }
-
-        switch (emissionsDataSource)
-        {
-            case DataSourceType.JSON:
+            case "JSON":
             {
                 services.AddJsonEmissionsDataSource(dataSources);
                 break;
             }
-            case DataSourceType.WattTime:
-            {
-                services.AddWattTimeEmissionsDataSource(configuration);
-                break;
-            }
-            case DataSourceType.None:
-            {
-                services.TryAddSingleton<IEmissionsDataSource, NullEmissionsDataSource>();
-                break;
-            }
-        }
 
+        }
+        services.TryAddSingleton<IForecastDataSource, NullForecastDataSource>();
+
+        /* var carbonAwareConfig = configuration.GetSection(CarbonAwareVariablesConfiguration.Key).Get<CarbonAwareVariablesConfiguration>();
+         var forecastDataSource = GetDataSourceTypeFromValue(carbonAwareConfig?.ForecastDataSource);
+         var emissionsDataSource = GetDataSourceTypeFromValue(carbonAwareConfig?.EmissionsDataSource);
+
+         if (forecastDataSource == DataSourceType.None && emissionsDataSource == DataSourceType.None)
+         {
+             throw new ArgumentException("At least one data source must be specified in configuration");
+         }
+
+         switch (forecastDataSource)
+         {
+             case DataSourceType.JSON:
+             {
+                 throw new ArgumentException("JSON data source is not supported for forecast data");
+             }
+             case DataSourceType.WattTime:
+             {
+                 services.AddWattTimeForecastDataSource(configuration);
+                 break;
+             }
+             case DataSourceType.None:
+             {
+                 services.TryAddSingleton<IForecastDataSource, NullForecastDataSource>();
+                 break;
+             }
+         }
+
+         switch (emissionsDataSource)
+         {
+             case DataSourceType.JSON:
+             {
+                 services.AddJsonEmissionsDataSource(dataSources);
+                 break;
+             }
+             case DataSourceType.WattTime:
+             {
+                 services.AddWattTimeEmissionsDataSource(configuration);
+                 break;
+             }
+             case DataSourceType.None:
+             {
+                 services.TryAddSingleton<IEmissionsDataSource, NullEmissionsDataSource>();
+                 break;
+             }
+         }
+ */
         return services;
     }
 
