@@ -1,4 +1,4 @@
-using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Aggregators.CarbonAware.Parameters;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 

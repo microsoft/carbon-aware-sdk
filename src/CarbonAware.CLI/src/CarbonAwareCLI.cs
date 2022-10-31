@@ -3,6 +3,7 @@ using CarbonAware.CLI.Options;
 using CommandLine.Text;
 using Microsoft.Extensions.Logging;
 using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Aggregators.CarbonAware.Parameters;
 
 namespace CarbonAware.CLI;
 

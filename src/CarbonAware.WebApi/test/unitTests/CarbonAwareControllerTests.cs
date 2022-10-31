@@ -1,7 +1,6 @@
 namespace CarbonAware.WepApi.UnitTests;
 
-using CarbonAware.Aggregators;
-using CarbonAware.Aggregators.CarbonAware;
+using CarbonAware.Aggregators.CarbonAware.Parameters;
 using CarbonAware.Model;
 using CarbonAware.WebApi.Controllers;
 using CarbonAware.WebApi.Models;
@@ -10,9 +9,7 @@ using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net;
-using System.Text.Json;
 using System.Threading.Tasks;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 /// <summary>
 /// Tests that the Web API controller handles and packages various responses from a plugin properly 
