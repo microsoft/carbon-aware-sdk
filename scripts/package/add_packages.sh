@@ -13,13 +13,6 @@ fi
 
 declare -a packages=(
     "GSF.CarbonIntensity"
-    "CarbonAware"
-    "CarbonAware.Aggregators"
-    "CarbonAware.DataSources.Json"
-    "CarbonAware.DataSources.Registration"
-    "CarbonAware.DataSources.WattTime"
-    "CarbonAware.LocationSources.Azure"
-    "CarbonAware.Tools.WattTimeClient"
 )
 
 # Remove packages from project
@@ -28,7 +21,6 @@ do
     dotnet remove $DOTNET_PROJECT package $pname
 done
 
-rm -rf ~/.nuget/packages/carbonaware*
 rm -rf ~/.nuget/packages/gsf.carbonintensity*
 
 # Add packages to project

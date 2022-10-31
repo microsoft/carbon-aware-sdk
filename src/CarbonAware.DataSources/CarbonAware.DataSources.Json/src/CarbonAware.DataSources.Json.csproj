@@ -9,18 +9,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Include="$(ProjectDir)..\..\..\data\data-sources\**\*.json" Link="\data-sources\json\%(RecursiveDir)%(Filename)%(Extension)">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  
-  <ItemGroup Label="FilesToCopy">
-   	<Content Include="$(AssemblyName).targets" PackagePath="build\$(AssemblyName).targets" />
-    <Content Include="$(ProjectDir)..\..\..\data\data-sources\**\*.json" Pack="true" PackagePath="data-sources\json\">
-      <PackageCopyToOutput>true</PackageCopyToOutput>
     </Content>
   </ItemGroup>
 </Project>

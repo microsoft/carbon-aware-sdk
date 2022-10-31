@@ -11,7 +11,6 @@ on:
       - 'scripts/package/**'
 
 env:
-  PREFIX: "0.0.1"
   DOTNET_SOLUTION: "src/CarbonAwareSDK.sln"
   OUTPUT_DIR: "packages"
   CONSOLE_APP: "samples/lib-integration/ConsoleApp/ConsoleApp.csproj"
@@ -31,6 +30,9 @@ jobs:
         with:
           dotnet-version: '6.0.x'
           include-prerelease: false
+
+      - name: Build solution
+        run: dotnet build ${{ env.DOTNET_SOLUTION }}
 
       - name: Create packages
         run: ${{ env.CREATE_PKG }} ${{ env.DOTNET_SOLUTION }} ${{ env.OUTPUT_DIR }}
