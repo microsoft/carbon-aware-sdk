@@ -206,7 +206,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
         }
     }
 
-    [TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", TestName = "EmissionsMarginalCarbonIntensity expects OK for full datetime")]
+    /*[TestCase("2022-1-1T04:05:06Z", "2022-1-2T04:05:06Z", "eastus", TestName = "EmissionsMarginalCarbonIntensity expects OK for full datetime")]
     [TestCase("2021-12-25", "2021-12-26", "westus", TestName = "EmissionsMarginalCarbonIntensity expects OK date only, no time")]
     public async Task EmissionsMarginalCarbonIntensity_ReturnsOk(string start, string end, string location)
     {
@@ -236,7 +236,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
             }
         }
     }
-
+*/
     [TestCase("location", "", TestName = "EmissionsMarginalCarbonIntensity returns BadRequest for missing value for location")]
     [TestCase("non-location-param", "", TestName = "EmissionsMarginalCarbonIntensity returns BadRequest for location not present")]
     public async Task EmissionsMarginalCarbonIntensity_EmptyLocationQueryString_ReturnsBadRequest(string queryString, string value)

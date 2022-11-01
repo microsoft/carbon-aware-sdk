@@ -46,7 +46,7 @@ public static class ServiceCollectionExtensions
         var httpClientBuilder = services.AddHttpClient<WattTimeClient>(IWattTimeClient.NamedClient);
 
         var Proxy = dataSourcesConfig.EmissionsConfigurationSection().GetSection("Proxy").Get<WebProxyConfiguration>();
-        if (Proxy.UseProxy == true)
+        if (Proxy != null && Proxy.UseProxy == true)
         {
             if (String.IsNullOrEmpty(Proxy.Url))
             {
