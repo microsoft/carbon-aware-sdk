@@ -19,18 +19,18 @@ internal sealed class ForecastHandler : IForecastHandler
         _aggregator = aggregator ?? throw new ArgumentNullException(nameof(aggregator));
     }
 
-    public async Task<EmissionsForecast?> GetCurrentAsync(string location, DateTimeOffset? start, DateTimeOffset? end, int? duration)
+    public async Task<IEnumerable<EmissionsForecast>> GetCurrentAsync(string[] locations, DateTimeOffset? start = null, DateTimeOffset? end = null, int? duration = null)
     {
         var parameters = new CarbonAwareParametersBaseDTO
         {
             Start = start,
             End = end,
-            MultipleLocations = new [] { location },
+            MultipleLocations = locations,
             Duration = duration
         };
         try {
             var results = await _aggregator.GetCurrentForecastDataAsync(parameters);
-            return !results.Any() ? null : ToForecastData(results.First());
+            return results.Select(f => ToForecastData(f));
         }
         catch (Exception ex) when (ex is WattTimeClientException || ex is WattTimeClientHttpException || ex is LocationConversionException || ex is ConfigurationException)
         {
