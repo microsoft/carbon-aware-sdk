@@ -41,7 +41,7 @@ When adding values via environment variables, we recommend that you use the doub
 Note that double underscores are used to represent dotted notation or child elements that you see in the JSON below.  For example, to set proxy information using environment variables, you'd do this:
 
 ```bash
-  CarbonAwareVars__Proxy__UseProxy
+   DataSources__Configurations__WattTime__UseProxy
 ```
 
 #### Local project settings
@@ -61,15 +61,8 @@ Used to configure specific values that affect how the application gets data and 
 ```json
 {
     "carbonAwareVars": {
-        "ForecastDataSource": "WattTime",
-        "EmissionsDataSource": "JSON",
-        "webApiRoutePrefix": "",
-        "proxy": {
-            "useProxy": false,
-            "url": "",
-            "username": "",
-            "password": ""
-        }
+        "TelemetryProvider": "ApplicationInsights",
+        "VerboseApi": "true",
     }
 }
 ```
@@ -118,7 +111,7 @@ If using the WattTime datasource, WattTime configuration is required.
 
 ```json
 {
-    "wattTimeClient":{
+    "WattTime":{
         "username": "",
         "password": "",
         "baseUrl": "https://api2.watttime.org/v2/"
@@ -190,40 +183,34 @@ info: CarbonAware.DataSources.Json.JsonDataSource[0]
 ### WattTimeClient Caching BalancingAuthority
 To improve performance communicating with the WattTime API service, the client caches the data mapping location coordinates to balancing authorities.  By default, this data is stored in an in-memory cache for `86400` seconds, but expiration can be configured using the setting `BalancingAuthorityCacheTTL` (Set to "0" to not use cache).  The regional boundaries of a balancing authority tend to be stable, but as they can change, the [WattTime documentation](https://www.watttime.org/api-documentation/#determine-grid-region) recommends not caching for longer than 1 month.
 ```bash
-WattTimeClient__BalancingAuthorityCacheTTL="90"
+WattTime__BalancingAuthorityCacheTTL="90"
 ```
 
-### Sample Environment Variable Configuration Using WattTime
+### Sample Environment Variable Configuration for Emissions data Using WattTime
 
 ```bash
-CarbonAwareVars__CarbonIntensityDataSource="WattTime"
+Datasources__EmissionsDataSource="WattTime"
 CarbonAwareVars__WebApiRoutePrefix="/microsoft/cse/fsi"
-CarbonAwareVars__Proxy__UseProxy=true
-CarbonAwareVars__Proxy__Url="http://10.10.10.1"
-CarbonAwareVars__Proxy__Username="proxyUsername"
-CarbonAwareVars__Proxy__Password="proxyPassword"
-WattTimeClient__Username="wattTimeUsername"
-WattTimeClient__Password="wattTimePassword"
+DataSources__Configurations__WattTime__Proxy__UseProxy=true
+DataSources__Configurations__WattTime__Proxy__Url="http://10.10.10.1"
+DataSources__Configurations__WattTime__Proxy__Username="proxyUsername"
+DataSources__Configurations__WattTime__Password="proxyPassword"
+DataSources__Configurations__WattTime__Username="wattTimeUsername"
+DataSources__Configurations__WattTime__Password="wattTimePassword"
 ```
 
-### Sample Json Configuration Using WattTime
+### Sample Configuration For Emissions data Using JSON
 
 ```json
 {
-    "carbonAwareVars": {
-        "carbonIntensityDataSource": "WattTime",
-        "webApiRoutePrefix": "/microsoft/cse/fsi",
-        "proxy": {
-            "useProxy": true,
-            "url": "http://10.10.10.1",
-            "username": "proxyUsername",
-            "password": "proxyPassword"
+    "DataSources": {
+        "EmissionsDataSource": "Json",
+        "Configurations": {
+          "Json": {
+            "Type": "Json",
+            "DataFileLocation": "test-data.json"
+          }
         }
-    },
-    "wattTimeClient":{
-        "username": "wattTimeUsername",
-        "password": "wattTimePassword",
-    }
 }
 ```
 
@@ -248,9 +235,9 @@ You also need to configure the SDK with environment variables. They are minimum 
 
 ```bash
 $ podman run -it --rm -p 8080:80 \
-    -e CarbonAwareVars__CarbonIntensityDataSource="WattTime" \
-    -e WattTimeClient__Username="wattTimeUsername" \
-    -e WattTimeClient__Password="wattTimePassword" \
+    -e DataSources__EmissionsDataSource="WattTime" \
+    -e DataSources__Configurations__WattTime__Username="wattTimeUsername" \
+    -e DataSources__Configurations__WattTime__Password="wattTimePassword" \
   carbon-aware-sdk-webapi
 ```
 
