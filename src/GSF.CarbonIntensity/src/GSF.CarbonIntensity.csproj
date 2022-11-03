@@ -46,6 +46,7 @@
       <Content Include="$(AssemblyName).targets" Pack="true" PackagePath="build/$(AssemblyName).targets" />
       <Content Include="$(TargetDir)/CarbonAware*.dll" Pack="true" PackagePath="lib/net6.0/" />
       <Content Include="$(TargetDir)/data-sources/**/*.json" Pack="true" PackagePath="data-sources/" />
+      <Content Include="$(TargetDir)/location-sources/**/*.json" Pack="true" PackagePath="location-sources/" />
     </ItemGroup>
 
     <ItemGroup Label="IncludeSymbols" Condition="$(IncludeSymbols) == true">

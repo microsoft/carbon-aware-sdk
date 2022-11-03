@@ -7,6 +7,11 @@
         <!-- Copy to bin dir for Azure Functions to work -->
         <Copy SourceFiles="@(DataSourceFiles)" DestinationFolder="$(TargetDir)/bin/data-sources/%(RecursiveDir)" />
     </Target>
+    <Target Name="CopyLocationSourceFiles" BeforeTargets="BeforeBuild">
+        <Copy SourceFiles="@(CopyLocationSourceFiles)" DestinationFolder="$(TargetDir)/location-sources/%(RecursiveDir)" />
+        <!-- Copy to bin dir for Azure Functions to work -->
+        <Copy SourceFiles="@(CopyLocationSourceFiles)" DestinationFolder="$(TargetDir)/bin/location-sources/%(RecursiveDir)" />
+    </Target>
     <ItemGroup>
         <DllFiles Include="$(MSBuildThisFileDirectory)/../lib/net6.0/*.dll" />
     </ItemGroup>

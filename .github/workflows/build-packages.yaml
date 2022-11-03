@@ -31,9 +31,6 @@ jobs:
           dotnet-version: '6.0.x'
           include-prerelease: false
 
-      - name: Build solution
-        run: dotnet build ${{ env.DOTNET_SOLUTION }}
-
       - name: Create packages
         run: ${{ env.CREATE_PKG }} ${{ env.DOTNET_SOLUTION }} ${{ env.OUTPUT_DIR }}
 
