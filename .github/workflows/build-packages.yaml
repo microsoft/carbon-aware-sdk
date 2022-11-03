@@ -1,9 +1,10 @@
 name: Build and Install GSF Packages on Sample ConsoleApp
 
 on:
+  push:
+    branches: [ dev, main ]
   pull_request:
-    types: [labeled]
-    # branches: [ dev, main ]
+    branches: [ dev, main ]
     paths:
       - 'src/**'
       - '.github/workflows/**'
@@ -14,12 +15,11 @@ env:
   DOTNET_SOLUTION: "src/CarbonAwareSDK.sln"
   OUTPUT_DIR: "packages"
   CONSOLE_APP: "samples/lib-integration/ConsoleApp/ConsoleApp.csproj"
-  CREATE_PKG: "scripts/package/create_packages.sh"
-  ADD_PKG: "scripts/package/add_packages.sh"
+  CREATE_PKGS: "scripts/package/create_packages.sh"
+  ADD_PKGS: "scripts/package/add_packages.sh"
 
 jobs:
   dotnet-pack:
-    if: ${{ github.event.label.name == 'package' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,13 +32,13 @@ jobs:
           include-prerelease: false
 
       - name: Create packages
-        run: ${{ env.CREATE_PKG }} ${{ env.DOTNET_SOLUTION }} ${{ env.OUTPUT_DIR }}
+        run: ${{ env.CREATE_PKGS }} ${{ env.DOTNET_SOLUTION }} ${{ env.OUTPUT_DIR }}
 
       - name: Restore current packages for ConsoleApp
         run: dotnet restore ${{ env.CONSOLE_APP }}
 
       - name: Add packages to ConsoleApp
-        run: ${{ env.ADD_PKG }} ${{ env.CONSOLE_APP}} ${{ env.OUTPUT_DIR }}
+        run: ${{ env.ADD_PKGS }} ${{ env.CONSOLE_APP}} ${{ env.OUTPUT_DIR }}
 
       - name: Cat ConsoleApp project file
         run: cat ${{ env.CONSOLE_APP }}
