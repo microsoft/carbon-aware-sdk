@@ -31,6 +31,7 @@ git cherry-pick c1e41af726297b494337007d038ee857e434b21b # issue #161 - new data
 git cherry-pick ac91c74f7ca042c40271dd1d0258ce646f571b13 # issue #161 - data source interfaces in config
 git cherry-pick 36237cae538ea519201667e0eefe3f876985de91 # issue #160 - C# library
 git cherry-pick 12ac0f67d1ccc5eff7dfcd08f26d74463ab1ff94 # issue #166 - SDK library tooling
+git cherry-pick 9d385ee79f70367e88ffbc48579b83958dc594ec # issue #164 - New DataSource Config Schema
 
 ###### Adding features to this script:
 ###### 1) switch to your feature branch
