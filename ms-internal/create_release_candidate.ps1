@@ -22,8 +22,6 @@ git checkout gsf/dev
 git checkout -b release
 
 # Cherry-pick our required, but unmerged commits onto the branch
-git cherry-pick e3309b6746eb02425cce8975606f87005e2207bd # issue 591 - location source
-git cherry-pick ccc7431fd341e9d8aabd01ad684f477d0dcc5c08 # issue 583 - CLI
 git cherry-pick 4d4a2ef6172754899e9040b7f9e3cf272989e0b3 # issue #161 - new data source interfaces
 git cherry-pick 357b52b262f01bbad45332173eab91b0ef4e7620 # issue #161 - data source interfaces in config
 git cherry-pick 6408d2928224bc68d5167b429c502fa7cac560da # issue #160 - C# library
