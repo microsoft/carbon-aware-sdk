@@ -22,11 +22,12 @@ git checkout gsf/dev
 git checkout -b release
 
 # Cherry-pick our required, but unmerged commits onto the branch
-git cherry-pick 4d4a2ef6172754899e9040b7f9e3cf272989e0b3 # issue #161 - new data source interfaces
-git cherry-pick 357b52b262f01bbad45332173eab91b0ef4e7620 # issue #161 - data source interfaces in config
-git cherry-pick 6408d2928224bc68d5167b429c502fa7cac560da # issue #160 - C# library
-git cherry-pick b814a2d1e0c23caeb388ec71ffc6e39ab8f69f76 # issue #166 - SDK library tooling
-git cherry-pick d47f7da5ccba45f1bbf22f0dbd0daa1c02346e91 # issue #164 - New DataSource Config Schema
+git cherry-pick bb3c82d9823b0034bfc0ed67a5b4a9d53aece8c4 # issue #161 - new data source interfaces
+git cherry-pick 381a377a25059e7e7974a476d976c8fa4cb56a66 # issue #161 - data source interfaces in config
+git cherry-pick 7844751d0dab99459f74e133e65b45aa0342a19a # issue #160 - C# library
+git cherry-pick 7c3df3e96204b5458449655ac745879223163667 # issue #166 - SDK library tooling
+git cherry-pick 7a65f6094189def0506f22ddebf663daf91425f2 # issue #164 - New DataSource Config Schema
+git cherry-pick 3e1aa3dc490e9a88e4b99956296d4443fb561fc2 # issue #195 - Bug fix for location string localization
 
 ####### Adding/updating features with this script:
 ####### 1) switch to your feature branch
