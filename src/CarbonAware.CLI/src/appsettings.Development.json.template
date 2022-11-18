@@ -1,5 +1,17 @@
 //copy this file as "appsettings.Development.json",  remove this comment and update the settings below accordingly
 {
+  "LocationDataSourcesConfiguration": {
+    "LocationSourceFiles": [
+      {
+        "DataFileLocation": "azure-regions.json"
+      },
+      {
+        "DataFileLocation": "custom-azure-zones.json",
+        "Prefix": "zone",
+        "Delimiter": "."
+      }
+    ]
+  },
   "DataSources": {
     "EmissionsDataSource": "test",
     "ForecastDataSource": "WattTime",
@@ -23,4 +35,3 @@
     }
   }
 }
-    
