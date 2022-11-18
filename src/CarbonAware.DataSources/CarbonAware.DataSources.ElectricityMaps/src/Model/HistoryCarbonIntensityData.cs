@@ -34,37 +34,37 @@ public record HistoryCarbonIntensity
     public int CarbonIntensity { get; init; }
 
     /// <summary>
-    /// DateTime indicating when the carbon intensity was generated.
+    /// Indicates the datetime of the carbon intensity
     /// </summary>
     [JsonPropertyName("datetime")]
     public DateTimeOffset DateTime { get; init; }
 
     /// <summary>
-    /// DateTime indicating when the carbon intensity was updated.
+    /// Indicates the datetime the carbon intensity was updated
     /// </summary>
     [JsonPropertyName("updatedAt")]
     public DateTimeOffset UpdatedAt { get; init; }
 
     /// <summary>
-    /// DateTime indicating when the carbon intensity was created.
+    /// Indicates the datetime the carbon intensity was created at
     /// </summary>
     [JsonPropertyName("createdAt")]
     public DateTimeOffset CreatedAt { get; init; }
 
     /// <summary>
-    /// Type of emission factors used for computing the carbon intensity.
+    /// Indicated the emission factor type used for computing the carbon intensity.
     /// </summary>
     [JsonPropertyName("emissionFactorType")]
     public EmissionsFactor EmissionFactorType { get; init; }
 
     /// <summary>
-    /// Estimated data.
+    /// Indicates whether the result is estimated or no
     /// </summary>
     [JsonPropertyName("isEstimated")]
     public Boolean IsEstimated { get; init; }
 
     /// <summary>
-    /// Estimated method.
+    /// Estimation method.
     /// </summary>
     [JsonPropertyName("estimationMethod")]
     public string? EstimationMethod { get; init; } = string.Empty;

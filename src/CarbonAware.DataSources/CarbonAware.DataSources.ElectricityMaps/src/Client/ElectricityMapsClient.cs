@@ -1,12 +1,12 @@
-using System.Net.Http.Headers;
-using System.Net.Mime;
-using System.Text.Json;
-using System.Web;
 using CarbonAware.DataSources.ElectricityMaps.Configuration;
 using CarbonAware.DataSources.ElectricityMaps.Constants;
 using CarbonAware.DataSources.ElectricityMaps.Model;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
+using System.Net.Mime;
+using System.Text.Json;
+using System.Web;
 
 namespace CarbonAware.DataSources.ElectricityMaps.Client;
 
@@ -38,7 +38,7 @@ internal class ElectricityMapsClient : IElectricityMapsClient
     /// <inheritdoc/>
     public async Task<HistoryCarbonIntensityData> GetHistoryCarbonIntensityDataAsync(string zoneName)
     {
-        _log.LogInformation("Requesting past carbon intensity using zone name {zoneName}",
+        _log.LogDebug("Requesting past carbon intensity using zone name {zoneName}",
             zoneName);
 
         var parameters = new Dictionary<string, string>()
@@ -52,7 +52,7 @@ internal class ElectricityMapsClient : IElectricityMapsClient
     /// <inheritdoc/>
     public async Task<HistoryCarbonIntensityData> GetHistoryCarbonIntensityDataAsync(string latitude, string longitude)
     {
-        _log.LogInformation("Requesting past carbon intensity using latitude {latitude} longitude {longitude}",
+        _log.LogDebug("Requesting past carbon intensity using latitude {latitude} longitude {longitude}",
             latitude, longitude);
 
         var parameters = new Dictionary<string, string>()
@@ -77,7 +77,7 @@ internal class ElectricityMapsClient : IElectricityMapsClient
     /// <inheritdoc/>
     public async Task<ForecastedCarbonIntensityData> GetCurrentForecastAsync(string zoneName)
     {
-        _log.LogInformation("Requesting forecasted carbon intensity using zone name {zoneName}",
+        _log.LogDebug("Requesting forecasted carbon intensity using zone name {zoneName}",
             zoneName);
 
         var parameters = new Dictionary<string, string>()
@@ -91,7 +91,7 @@ internal class ElectricityMapsClient : IElectricityMapsClient
     /// <inheritdoc/>
     public async Task<ForecastedCarbonIntensityData> GetCurrentForecastAsync(string latitude, string longitude)
     {
-        _log.LogInformation("Requesting forecasted carbon intensity using latitude {latitude} longitude {longitude}",
+        _log.LogDebug("Requesting forecasted carbon intensity using latitude {latitude} longitude {longitude}",
             latitude, longitude);
 
         var parameters = new Dictionary<string, string>()
@@ -132,7 +132,7 @@ internal class ElectricityMapsClient : IElectricityMapsClient
         {
             url = BuildUrlWithQueryString(path, parameters);
         }
-        _log.LogInformation("Requesting data using url {url}", url);
+        _log.LogDebug("Requesting data using url {url}", url);
         var response = await this.GetResponseAsync(url);
         return await response.Content.ReadAsStreamAsync();
     }
@@ -165,7 +165,7 @@ internal class ElectricityMapsClient : IElectricityMapsClient
         // Parameters don't contain a ZoneName to check, exit
         if (!parameters.ContainsKey(QueryStrings.ZoneName)) return;
 
-        Dictionary<string, ZoneData>? values = new();
+        Dictionary<string, ZoneData> values = new();
         try 
         {
             values = await _zonesAllowed.Value;
@@ -175,7 +175,7 @@ internal class ElectricityMapsClient : IElectricityMapsClient
             return;
         }
 
-        string zoneName = parameters[QueryStrings.ZoneName]!;
+        string zoneName = parameters[QueryStrings.ZoneName];
 
         // If zone name not contained within allowed zones, throw
         if (!values.ContainsKey(zoneName))
@@ -189,22 +189,19 @@ internal class ElectricityMapsClient : IElectricityMapsClient
         ZoneData zoneData = values[zoneName]!;
 
         // If path not supported within zone, throw
-        if (!(zoneData.Access.Contains(path) || zoneData.Access.Contains("*"))) {
+        if (!(zoneData.Access.Contains(path) || zoneData.Access.Contains("*")))
+        {
             _log.LogError("Path {path} not supported for current token on zone {zoneName}", path, zoneName);
             _log.LogError("Zones supported {zoneList}",
-                String.Join(", ", values.Select(kvp => string.Format("{0}", kvp.Key))));
+                string.Join(", ", values.Select(kvp => string.Format("{0}", kvp.Key))));
             throw new ElectricityMapsClientException($"Path {path} not supported for current token on zone {zoneName}.");
         }
-
-        return;
     }
 
     // Make GET request to Zones endpoint to cache allowed zones given user token
     private async Task<Dictionary<string, ZoneData>> PopulateZonesData()
     {
-        using (var result = await this.MakeRequestGetStreamAsync(Paths.Zones))
-        {
-            return await JsonSerializer.DeserializeAsync<Dictionary<string, ZoneData>>(result, _options) ?? throw new ElectricityMapsClientException($"Error getting zone data");
-        }
+        using var result = await MakeRequestGetStreamAsync(Paths.Zones);
+        return await JsonSerializer.DeserializeAsync<Dictionary<string, ZoneData>>(result, _options) ?? throw new ElectricityMapsClientException($"Error getting zone data");
     }
 }

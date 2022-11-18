@@ -36,7 +36,7 @@ public interface IElectricityMapsClient
     public Task<HistoryCarbonIntensityData> GetHistoryCarbonIntensityDataAsync(string latitude, string longitude);
 
     /// <summary>
-    /// Async method to get the most recent 24 hour observed emission data for a given latitude and longitude.
+    /// Async method to get the most recent 24 hour observed emission data for a given a zone name.
     /// </summary>
     /// <param name="zoneName">Zone name for query</param>
     /// <returns>A <see cref="Task{HistoryCarbonIntensityData}"/> which contains all emissions data points in the 24 hour period.</returns>
