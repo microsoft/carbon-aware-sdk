@@ -1,8 +1,9 @@
-﻿using CarbonAware.Interfaces;
+﻿using CarbonAware.Exceptions;
+using CarbonAware.Interfaces;
 
 namespace CarbonAware.DataSources.ElectricityMaps.Client;
 
-public class ElectricityMapsClientHttpException : Exception, IHttpResponseException
+public class ElectricityMapsClientHttpException : CarbonAwareException, IHttpResponseException
 {
     /// <summary>
     /// Creates a new instance of the <see cref="ElectricityMapsClientHttpException"/> class.

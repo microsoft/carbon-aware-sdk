@@ -27,7 +27,7 @@ public class ElectricityMapsDataSourceMocker : IDataSourceMocker
     public void SetupHistoryMock(decimal latitude, decimal longitude)
     {
         var data = new List<HistoryCarbonIntensity>();
-        DateTimeOffset now = DateTimeOffset.Now;
+        DateTimeOffset now = DateTimeOffset.UtcNow;
         DateTimeOffset past24 = now.AddHours(-24);
 
         while (past24 < now)
@@ -49,7 +49,7 @@ public class ElectricityMapsDataSourceMocker : IDataSourceMocker
         var result = new HistoryCarbonIntensityData
         {
             HistoryData = data,
-            Zone = GetZoneGivenLatLong(latitude, longitude)
+            Zone = ZONE_NAME
         };
 
         SetupResponseGivenGetRequest(Paths.History, result);
@@ -58,7 +58,7 @@ public class ElectricityMapsDataSourceMocker : IDataSourceMocker
     public void SetupForecastMock()
     {
         var data = new List<Forecast>();
-        DateTimeOffset baseTime = DateTimeOffset.Now;
+        DateTimeOffset baseTime = DateTimeOffset.UtcNow;
         DateTimeOffset baseTimeHour = new (baseTime.Year, baseTime.Month, baseTime.Day, baseTime.Hour, 0,0,baseTime.Offset);
         DateTimeOffset future24 = baseTimeHour.AddHours(24);
 
@@ -128,11 +128,5 @@ public class ElectricityMapsDataSourceMocker : IDataSourceMocker
                     .WithHeader("Content-Type", MediaTypeNames.Application.Json)
                     .WithBody(jsonBody)
         );
-    }
-
-    private string GetZoneGivenLatLong(decimal latitutde, decimal longitude)
-    {
-        // TODO: Update with lookup code.
-        return "NE";
     }
 }

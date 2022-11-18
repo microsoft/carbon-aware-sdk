@@ -9,15 +9,21 @@
       - [Proxy](#proxy)
       - [WattTime Caching BalancingAuthority](#watttime-caching-balancingauthority)
     - [Json Configuration](#json-configuration)
+    - [ElectricityMaps Configuration](#electricitymaps-configuration)
+      - [ApiTokenHeader](#api-token-header)
+      - [ApiToken](#api-token)
+      - [baseUrl](#baseurl)
   - [CarbonAwareVars](#carbonawarevars)
     - [Tracing and Monitoring Configuration](#tracing-and-monitoring-configuration)
     - [Verbosity](#verbosity)
     - [Web API Prefix](#web-api-prefix)
   - [LocationDataSourcesConfiguration](#locationdatasourcesconfiguration)
 - [Sample Configurations](#sample-configurations)
-  - [Environment Variable Configuration for Emissions data Using WattTime](#environment-variable-configuration-for-emissions-data-using-watttime)
+  - [Configuration for Emissions data Using WattTime](#configuration-for-emissions-data-using-watttime)
+  - [Configuration for Forecast data Using ElectricityMaps](#configuration-for-forecast-data-using-electricitymaps)
+  - [Configuration for Emissions data Using WattTime and Forecast data Using ElectricityMaps](#configuration-for-emissions-data-using-watttime-and-forecast-data-using-electricitymaps)
   - [Configuration For Emissions data Using JSON](#configuration-for-emissions-data-using-json)
-  - [Json Configuration Using WattTime and Defined Location Source Files](#json-configuration-using-watttime-and-defined-location-source-files)
+  - [Configuration Using WattTime and Defined Location Source Files](#configuration-using-watttime-and-defined-location-source-files)
 
 # Configuration
 
@@ -160,6 +166,42 @@ info: CarbonAware.DataSources.Json.JsonDataSource[0]
     Reading Json data from /app/data-sources/json/mycustomfile.json
 ```
 
+### ElectricityMaps Configuration
+
+If using the ElectricityMaps data source, ElectricityMaps configuration is required.
+
+__With an account token:__
+```json
+{
+    "APITokenHeader": "auth-token",
+    "APIToken": "<api-token>",
+    "baseUrl": "https://api.electricitymap.org/v3/"
+}
+```
+
+__With a free trial token:__
+```json
+{
+    "APITokenHeader": "X-BLOBR-KEY",
+    "APIToken": "<api-token>",
+    "baseUrl": "https://api-access.electricitymaps.com/<url-token>"
+}
+```
+
+> **Sign up for a free trial:** To get a free trial: https://api-portal.electricitymaps.com/
+
+#### API Token Header
+
+The API Token Header for ElectricityMaps. If you have a paid account, the header is "auth-token". If you're using the free trial, the header is "X-BLOB-KEY"
+
+#### API Token
+
+The ElectricityMaps token you receive with your account or free trial.
+
+#### baseUrl
+
+The url to use when connecting to ElectricityMaps. Defaults to "https://api.electricitymap.org/v3/" but can be overridden in the config if needed (such as for free-trial users or enable integration testing scenarios).
+
 ## CarbonAwareVars
 
 This section contains the global settings for the SDK. The configuration looks like this:
@@ -277,7 +319,7 @@ One can also specify these values in `appsettings.json` like this:
 
 # Sample Configurations
 
-## Environment Variable Configuration for Emissions data Using WattTime
+## Configuration for Emissions data Using WattTime
 
 ```bash
 DataSources__EmissionsDataSource="WattTime"
@@ -290,22 +332,60 @@ DataSources__Configurations__WattTime__Username="wattTimeUsername"
 DataSources__Configurations__WattTime__Password="wattTimePassword"
 ```
 
+## Configuration for Forecast data Using ElectricityMaps
+```json
+{
+  "DataSources": {
+    "ForecastDataSource": "ElectricityMaps",
+    "Configurations": {
+      "ElectricityMaps": {
+        "Type": "ElectricityMaps",
+        "APITokenHeader": "auth-token",
+        "APIToken": "token"
+      }
+    }
+  }
+}
+```
+
+## Configuration for Emissions data Using WattTime and Forecast data Using ElectricityMaps
+```json
+  "DataSources": {
+    "EmissionsDataSource": "WattTime",
+    "ForecastDataSource": "ElectricityMaps",
+    "Configurations": {
+      "WattTime": {
+        "Type": "WattTime",
+        "Username": "username",
+        "Password": "password",
+        "BaseURL": "https://api2.watttime.org/v2/",
+      },
+      "ElectricityMaps": {
+        "Type": "ElectricityMaps",
+        "APITokenHeader": "auth-token",
+        "APIToken": "token"
+      }
+    }
+  }
+```
+
 ## Configuration For Emissions data Using JSON
 
 ```json
 {
-    "DataSources": {
-        "EmissionsDataSource": "Json",
-        "Configurations": {
-          "Json": {
-            "Type": "Json",
-            "DataFileLocation": "test-data-azure-emissions.json"
-          }
+  "DataSources": {
+      "EmissionsDataSource": "Json",
+      "Configurations": {
+        "Json": {
+          "Type": "Json",
+          "DataFileLocation": "test-data.json"
         }
+      }
+  }
 }
 ```
 
-## Json Configuration Using WattTime and Defined Location Source Files
+## Configuration Using WattTime and Defined Location Source Files
 
 ```json
 {
