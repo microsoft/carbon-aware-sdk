@@ -296,6 +296,8 @@ curl "http://${IP_HOST}:${PORT}/emissions/bylocations/best?location=${REGION}&ti
 
 At build time, all the JSON files under `<user's repo>/src/data/location-sources` are copied over the destination directory `<user's repo>/src/CarbonAware.WebApi/src/bin/[Debug|Publish]/net6.0/location-sources/json` that is part of the `CarbonAware.WebApi` assembly. Also the file can be placed where the assembly `CarbonAware.WebApi.dll` is located under `location-sources/json` directory. For instance, if the application is installed under `/app`, copy the file to `/app/location-sources/json`.
 
+**Note**: Under `<user's repo>/src/data/location-sources` there is a template file `custom-azure-zones.json.template` that can be used for locations that don't have latitude and logitude, and the underline datasource requires a zone name. This is the case for data source `ElectricityMaps` where the routes can be accessible using lat/lon, but some regions are zone name based.
+
 One can also specify these values in `appsettings.json` like this:
 
 ```json
