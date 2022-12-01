@@ -46,7 +46,7 @@ public static class ServiceCollectionExtensions
         {
             if (String.IsNullOrEmpty(Proxy.Url))
             {
-                throw new ConfigurationException("Proxy Url is not configured.");
+                throw new Exceptions.ConfigurationException("Proxy Url is not configured.");
             }
             httpClientBuilder.ConfigurePrimaryHttpMessageHandler(() => 
                 new HttpClientHandler() {
