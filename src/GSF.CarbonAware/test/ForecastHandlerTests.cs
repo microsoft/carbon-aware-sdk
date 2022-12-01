@@ -1,5 +1,4 @@
 using CarbonAware.Aggregators.CarbonAware;
-using CarbonAware.Aggregators.Forecast;
 using CarbonAware.Tools.WattTimeClient;
 using GSF.CarbonAware.Exceptions;
 using GSF.CarbonAware.Handlers;
@@ -11,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using static CarbonAware.Aggregators.CarbonAware.CarbonAwareParameters;
+using CarbonAware.Aggregators.Forecast;
 
 namespace GSF.CarbonAware.Tests;
 
