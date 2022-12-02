@@ -29,6 +29,7 @@ git cherry-pick da2cbc22bd14088586aa06191b84e3709e1c6e53 # issue #166 - SDK libr
 git cherry-pick 064f86499d0f0e016066169115dcf02ab8b41f34 # issue #164 - New DataSource Config Schema
 git cherry-pick 2b0c230e84a6bf75b2911a9713ecc79b64596650 # issue #167 - ElectricityMaps Client
 git cherry-pick d7f868a1352ffd0de9388e2486d7e90459a10ad4 # issue #167 - ElectricityMaps Data Source - Forecasts
+git cherry-pick f368bc9abc8d58232e7621c7b421d98efcbb9e0a # issue #174 - ElectricityMaps Data Source - Emissions
 
 ####### Adding/updating features with this script:
 ####### 1) switch to your feature branch
