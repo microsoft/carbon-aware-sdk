@@ -31,8 +31,6 @@ public class WattTimeClient : IWattTimeClient
 
     private WattTimeClientConfiguration Configuration => this.ConfigurationMonitor.CurrentValue;
 
-    private static readonly ActivitySource Activity = new ActivitySource(nameof(WattTimeClient));
-
     private ILogger<WattTimeClient> Log { get; }
 
     private IMemoryCache memoryCache { get; }
@@ -161,7 +159,6 @@ public class WattTimeClient : IWattTimeClient
         var url = BuildUrlWithQueryString(Paths.Historical, parameters);
 
         Log.LogInformation("Requesting data using url {url}", url);
-        activity?.AddTag(QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation);
 
         var result = await this.GetStreamWithAuthRetryAsync(url);
 
@@ -179,16 +176,17 @@ public class WattTimeClient : IWattTimeClient
     private async Task<HttpResponseMessage> GetAsyncWithAuthRetry(string uriPath)
     {
         await this.EnsureTokenAsync();
-        using (var activity = Activity.StartActivity(uriPath, ActivityKind.Client))
+        HttpResponseMessage response;
+        using (var activity = Activity.Current?.Source.StartActivity(uriPath, ActivityKind.Client))
         {
-            var response = await this.client.GetAsync(uriPath, HttpCompletionOption.ResponseHeadersRead);
+            response = await this.client.GetAsync(uriPath, HttpCompletionOption.ResponseHeadersRead);
         }
 
         if (RetriableStatusCodes.Contains(response.StatusCode))
         {
             Log.LogDebug("Failed to get url {url} with status code {statusCode}.  Attempting to log in again.", uriPath, response.StatusCode);
             await this.UpdateAuthTokenAsync();
-            using (var activity = Activity.StartActivity(uriPath, ActivityKind.Client))
+            using (var activity = Activity.Current?.Source.StartActivity(uriPath, ActivityKind.Client))
             {
                 response = await this.client.GetAsync(uriPath, HttpCompletionOption.ResponseHeadersRead);
             }
@@ -224,9 +222,10 @@ public class WattTimeClient : IWattTimeClient
         Log.LogInformation("Attempting to log in user {username}", this.Configuration.Username);
 
         this.SetBasicAuthenticationHeader();
-        using (var activity = Activity.StartActivity(Paths.Login, ActivityKind.Client))
+        HttpResponseMessage response;
+        using (var activity = Activity.Current?.Source.StartActivity(Paths.Login, ActivityKind.Client))
         {
-            var response = await this.client.GetAsync(Paths.Login);
+            response = await this.client.GetAsync(Paths.Login);
         }
 
         LoginResult? data = null;

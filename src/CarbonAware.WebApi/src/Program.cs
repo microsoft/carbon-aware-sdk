@@ -6,6 +6,7 @@ using CarbonAware.WebApi.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using CarbonAware.WebApi.Configuration;
 using Microsoft.OpenApi.Models;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
