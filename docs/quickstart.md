@@ -23,6 +23,7 @@ The CLI can either be run locally with `dotnet` or in a container, e.g. using VS
     ```
     or
     ```bash
+    export DataSources__EmissionsDataSource="ElectricityMaps"
     export DataSources__ForecastDataSource="ElectricityMaps"
     export DataSources__Configurations__ElectricityMaps__Type="ElectricityMaps"
     export DataSources__Configurations__ElectricityMaps__APITokenHeader="auth-token"
