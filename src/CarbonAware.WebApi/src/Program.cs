@@ -1,7 +1,9 @@
 using System.Reflection;
 using CarbonAware;
-using CarbonAware.Exceptions;
-using CarbonAware.Aggregators.Configuration;
+// using CarbonAware.Exceptions;
+// using CarbonAware.Aggregators.Configuration;
+using GSF.CarbonAware.Configuration;
+using GSF.CarbonAware.Exceptions;
 using CarbonAware.WebApi.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using CarbonAware.WebApi.Configuration;
@@ -31,8 +33,24 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.Configure<CarbonAwareVariablesConfiguration>(builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key));
 
-string? errorMessage;
-bool successfulEmissionServices = builder.Services.TryAddCarbonAwareEmissionServices(builder.Configuration, out errorMessage);
+// ------------------------------------------
+
+// string? errorMessage;
+// bool successfulEmissionServices = builder.Services.TryAddCarbonAwareEmissionServices(builder.Configuration, out errorMessage);
+
+bool successfulEmissionServices = true;
+string? errorMessage = null;
+try
+{
+    builder.Services.AddEmissionsServices(builder.Configuration);
+} catch(CarbonAwareException e) {
+    successfulEmissionServices = false;
+    errorMessage = e.Message;
+}
+
+// ------------------------------------------
+
+builder.Services.AddEmissionsServices(builder.Configuration);
 
 CarbonAwareVariablesConfiguration config = new();
 
@@ -65,8 +83,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();   
 }
-
-    
 
 app.UseHttpsRedirection();
 

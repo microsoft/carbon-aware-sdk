@@ -1,5 +1,6 @@
-using CarbonAware.Aggregators.Emissions;
-using CarbonAware.Aggregators.Forecast;
+using GSF.CarbonAware.Handlers;
+// using CarbonAware.Aggregators.Emissions;
+// using CarbonAware.Aggregators.Forecast;
 using CarbonAware.Model;
 using CarbonAware.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -13,18 +14,24 @@ namespace CarbonAware.WebApi.Controllers;
 public class CarbonAwareController : ControllerBase
 {
     private readonly ILogger<CarbonAwareController> _logger;
-    
-    private readonly IForecastAggregator _forecastAggregator;
 
-    private readonly IEmissionsAggregator _emissionsAggregator;
+    private readonly IEmissionsHandler _emissionsHandler;
+
+    private readonly IForecastHandler _forecastHandler;
+    
+    // private readonly IForecastAggregator _forecastAggregator;
+
+    // private readonly IEmissionsAggregator _emissionsAggregator;
 
     private static readonly ActivitySource Activity = new ActivitySource(nameof(CarbonAwareController));
 
-    public CarbonAwareController(ILogger<CarbonAwareController> logger, IEmissionsAggregator emissionsAggregator, IForecastAggregator forecastAggregator)
+    public CarbonAwareController(ILogger<CarbonAwareController> logger, IEmissionsHandler emissionsHandler, IForecastHandler forecastHandler/*IEmissionsAggregator emissionsAggregator, IForecastAggregator forecastAggregator*/)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _forecastAggregator = forecastAggregator ?? throw new ArgumentNullException(nameof(forecastAggregator));
-        _emissionsAggregator = emissionsAggregator ?? throw new ArgumentNullException(nameof(emissionsAggregator));
+        // _forecastAggregator = forecastAggregator ?? throw new ArgumentNullException(nameof(forecastAggregator));
+        _forecastHandler = forecastHandler ?? throw new ArgumentNullException(nameof(forecastHandler));
+        _emissionsHandler = emissionsHandler ?? throw new ArgumentNullException(nameof(emissionsHandler));
+        //_emissionsAggregator = emissionsAggregator ?? throw new ArgumentNullException(nameof(emissionsAggregator));
     }
 
     /// <summary>
@@ -41,7 +48,8 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            var response = await _emissionsAggregator.GetBestEmissionsDataAsync(parameters);
+            //var response = await _emissionsAggregator.GetBestEmissionsDataAsync(parameters);
+            var response = await _emissionsHandler.GetBestEmissionsDataAsync(parameters.MultipleLocations!, parameters.Start, parameters.End); //string or string[]?
             return response.Any() ? Ok(response) : NoContent();
         }
     }
@@ -60,7 +68,8 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            var response = await _emissionsAggregator.GetEmissionsDataAsync(parameters);
+            //var response = await _emissionsAggregator.GetEmissionsDataAsync(parameters);
+            var response = await _emissionsHandler.GetEmissionsDataAsync(parameters.MultipleLocations!, parameters.Start, parameters.End); //string or string[]?
             return response.Any() ? Ok(response) : NoContent();
         }
     }
@@ -121,7 +130,9 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            var forecasts = await _forecastAggregator.GetCurrentForecastDataAsync(parameters);
+            //var forecasts = await _forecastAggregator.GetCurrentForecastDataAsync(parameters);
+            var forecasts = await _forecastHandler.GetCurrentForecastAsync(parameters.MultipleLocations!, parameters.Start, parameters.End, parameters.Duration);
+            // qq: why are the two emissionsForecast classes different?
             var results = forecasts.Select(f => EmissionsForecastDTO.FromEmissionsForecast(f));
             return Ok(results);
         }
@@ -157,7 +168,15 @@ public class CarbonAwareController : ControllerBase
             var result = new List<EmissionsForecastDTO>();
             foreach ( var forecastParameters in requestedForecasts)
             {
-                var forecast = await _forecastAggregator.GetForecastDataAsync(forecastParameters);
+                // var forecast = await _forecastAggregator.GetForecastDataAsync(forecastParameters);
+                var forecast = await _forecastHandler.GetForecastByDateAsync(
+                    forecastParameters.SingleLocation!,
+                    forecastParameters.Start,
+                    forecastParameters.End,
+                    forecastParameters.Requested,
+                    forecastParameters.Duration
+                );
+                // qq: why are the two emissionsForecast classes different?
                 result.Add(EmissionsForecastDTO.FromEmissionsForecast(forecast));
             };
 
@@ -185,7 +204,14 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            var result = await this._emissionsAggregator.CalculateAverageCarbonIntensityAsync(parameters);
+            //var result = await this._emissionsAggregator.CalculateAverageCarbonIntensityAsync(parameters);
+
+            var result = await this._emissionsHandler.GetAverageCarbonIntensityAsync(
+                parameters.SingleLocation!,
+                (DateTimeOffset)parameters.Start!,
+                (DateTimeOffset)parameters.End!
+            );
+
             var carbonIntensity = new CarbonIntensityDTO
             {
                 Location = parameters.SingleLocation,
@@ -194,7 +220,8 @@ public class CarbonAwareController : ControllerBase
                 CarbonIntensity = result,
             };
             _logger.LogDebug("calculated average carbon intensity: {carbonIntensity}", carbonIntensity);
-            return Ok(carbonIntensity);
+            return Ok(carbonIntensity);                
+            
         }
     }
 
@@ -221,9 +248,15 @@ public class CarbonAwareController : ControllerBase
         using (var activity = Activity.StartActivity())
         {
             var result = new List<CarbonIntensityDTO>();
-            foreach ( var carbonIntensityBatchDTO in requestedCarbonIntensities)
+            foreach (var carbonIntensityBatchDTO in requestedCarbonIntensities)
             {
-                var carbonIntensityValue = await this._emissionsAggregator.CalculateAverageCarbonIntensityAsync(carbonIntensityBatchDTO);
+                // var carbonIntensityValue = await this._emissionsAggregator.CalculateAverageCarbonIntensityAsync(carbonIntensityBatchDTO);
+                var carbonIntensityValue = await this._emissionsHandler.GetAverageCarbonIntensityAsync(
+                    carbonIntensityBatchDTO.SingleLocation!,
+                    (DateTimeOffset)carbonIntensityBatchDTO.Start!,
+                    (DateTimeOffset)carbonIntensityBatchDTO.End!
+                );
+
                 var carbonIntensityDTO = new CarbonIntensityDTO()
                 {
                     Location = carbonIntensityBatchDTO.SingleLocation,
