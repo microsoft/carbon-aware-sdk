@@ -4,6 +4,8 @@ using CarbonAware.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Diagnostics;
+using CarbonAware.Aggregators.CarbonAware;
+using static CarbonAware.Aggregators.CarbonAware.CarbonAwareParameters;
 
 namespace CarbonAware.WebApi.Controllers;
 
