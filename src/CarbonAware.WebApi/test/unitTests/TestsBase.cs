@@ -21,10 +21,12 @@ public abstract class TestsBase
     protected static Mock<IEmissionsHandler> CreateEmissionsHandler(List<EmissionsData> data)
     {
         var handler = new Mock<IEmissionsHandler>();
+
         handler.Setup(x => x.GetEmissionsDataAsync(It.IsAny<string[]>(), null, null))
             .Callback((string[] location, DateTimeOffset? start, DateTimeOffset? end) =>
             {
                 Assert.NotNull(location);
+                Assert.NotZero(location.Length);
             })
             .ReturnsAsync(data);
         return handler;
@@ -37,6 +39,7 @@ public abstract class TestsBase
             .Callback((string[] location, DateTimeOffset? start, DateTimeOffset? end) =>
             {
                 Assert.NotNull(location);
+                Assert.NotZero(location.Length);
             })
             .ReturnsAsync(data);
         return handler;
@@ -53,6 +56,7 @@ public abstract class TestsBase
             .Callback((string[] locations, DateTimeOffset? dataStartAt, DateTimeOffset? dataEndAt, int? windowSize) =>
             {
                 Assert.NotNull(locations);
+                Assert.NotZero(locations.Length);
             })
             .ReturnsAsync(forecasts);
         return handler;
@@ -65,6 +69,7 @@ public abstract class TestsBase
             .Callback((string location, DateTimeOffset start, DateTimeOffset end) =>
             {
                 Assert.NotNull(location);
+                Assert.NotZero(location.Length);
                 Assert.NotNull(start);
                 Assert.NotNull(end);
             })

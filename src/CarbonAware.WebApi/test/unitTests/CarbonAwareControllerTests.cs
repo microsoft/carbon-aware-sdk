@@ -29,14 +29,14 @@ public class CarbonAwareControllerTests : TestsBase
     public async Task GetEmissionsByMultipleLocations_SuccessfulCallReturnsOk(params string[] locations)
     {
         var data = new List<EmissionsData>()
-        {
-            new EmissionsData()
             {
-                Location = "Sydney",
-                Rating = 0.9,
-                Time = DateTime.Now
-            }
-        };
+                new EmissionsData()
+                {
+                    Location = "Sydney",
+                    Rating = 0.9,
+                    Time = DateTime.Now
+                }
+            };
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateEmissionsHandler(data).Object, forecastHandler);
         var parametersDTO = new EmissionsDataForLocationsParametersDTO() { MultipleLocations = locations };
 
@@ -53,14 +53,14 @@ public class CarbonAwareControllerTests : TestsBase
     {
         var location = "Sydney";
         var data = new List<EmissionsData>()
-        {
-            new EmissionsData()
             {
-                Location = location,
-                Rating = 0.9,
-                Time = DateTime.Now
-            }
-        };
+                new EmissionsData()
+                {
+                    Location = location,
+                    Rating = 0.9,
+                    Time = DateTime.Now
+                }
+            };
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateEmissionsHandler(data).Object, forecastHandler);
 
         IActionResult result = await controller.GetEmissionsDataForLocationByTime(location);
@@ -77,13 +77,13 @@ public class CarbonAwareControllerTests : TestsBase
     public async Task GetBestEmissions_SuccessfulCallReturnsOk(params string[] locations)
     {
         var data = new List<EmissionsData>()
-            {
-                new EmissionsData(){
-                Location = "Sydney",
-                Rating = 0.9,
-                Time = DateTime.Now
-                }
-            };
+                {
+                    new EmissionsData(){
+                    Location = "Sydney",
+                    Rating = 0.9,
+                    Time = DateTime.Now
+                    }
+                };
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateHandlerWithBestEmissionsData(data).Object, forecastHandler);
         var parametersDTO = new EmissionsDataForLocationsParametersDTO() { MultipleLocations = locations };
 
@@ -101,14 +101,14 @@ public class CarbonAwareControllerTests : TestsBase
     public async Task GetForecast_SuccessfulCallReturnsOk(params string[] locations)
     {
         var data = new List<EmissionsData>()
-            {
-                new EmissionsData()
                 {
-                    Location = "Sydney",
-                    Rating = 0.9,
-                    Time = DateTime.Now
-                }
-            };
+                    new EmissionsData()
+                    {
+                        Location = "Sydney",
+                        Rating = 0.9,
+                        Time = DateTime.Now
+                    }
+                };
         var emissionsHandler = Mock.Of<IEmissionsHandler>();
         var forecastHandler = CreateForecastHandler(data);
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, emissionsHandler, forecastHandler.Object);
@@ -228,16 +228,19 @@ public class CarbonAwareControllerTests : TestsBase
     }
 
     /// <summary>
-    /// GetEmissionsDataForLocationsByTime: Tests empty or null location arrays throw ArgumentException.
+    /// GetEmissionsDataForLocationsByTime: Tests empty or null location arrays returned results in action with No Content status.
     /// </summary>
     [TestCase(new object?[] { null, null }, TestName = "array of nulls: simulates 'location=&location=' empty value input")]
     [TestCase(new object?[] { null, }, TestName = "array of nulls: simulates 'location=' empty value input")]
     [TestCase(new object?[] { }, TestName = "empty array: simulates no 'location' query string")]
-    public void GetEmissionsDataForLocationsByTime_NoLocations_ThrowsException(params string[] locations)
+    public async Task GetEmissionsDataForLocationsByTime_NoLocations_ThrowsException(params string[] locations)
     {
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateEmissionsHandler(new List<EmissionsData>()).Object, forecastHandler);
         var parametersDTO = new EmissionsDataForLocationsParametersDTO() { MultipleLocations = locations };
 
-        Assert.ThrowsAsync<ArgumentException>(async () => await controller.GetEmissionsDataForLocationsByTime(parametersDTO));
+        IActionResult result = await controller.GetBestEmissionsDataForLocationsByTime(parametersDTO);
+
+        //Assert
+        TestHelpers.AssertStatusCode(result, HttpStatusCode.NoContent);
     }
 }
