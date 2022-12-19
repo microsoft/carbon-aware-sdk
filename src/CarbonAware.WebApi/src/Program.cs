@@ -1,7 +1,5 @@
 using System.Reflection;
 using CarbonAware;
-// using CarbonAware.Exceptions;
-// using CarbonAware.Aggregators.Configuration;
 using GSF.CarbonAware.Configuration;
 using GSF.CarbonAware.Exceptions;
 using CarbonAware.WebApi.Filters;
@@ -33,11 +31,6 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.Configure<CarbonAwareVariablesConfiguration>(builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key));
 
-// ------------------------------------------
-
-// string? errorMessage;
-// bool successfulEmissionServices = builder.Services.TryAddCarbonAwareEmissionServices(builder.Configuration, out errorMessage);
-
 bool successfulEmissionServices = true;
 string? errorMessage = null;
 try
@@ -47,8 +40,6 @@ try
     successfulEmissionServices = false;
     errorMessage = e.Message;
 }
-
-// ------------------------------------------
 
 builder.Services.AddEmissionsServices(builder.Configuration);
 

@@ -2,9 +2,6 @@ namespace CarbonAware.WepApi.UnitTests;
 
 using GSF.CarbonAware.Handlers;
 using GSF.CarbonAware.Models;
-using CarbonAware.Aggregators.CarbonAware;
-using CarbonAware.Aggregators.Emissions;
-// using CarbonAware.Model;
 using CarbonAware.WebApi.Controllers;
 using CarbonAware.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +18,8 @@ using System.Threading.Tasks;
 [TestFixture]
 public class CarbonAwareControllerTests : TestsBase
 {
-    // readonly IForecastAggregator forecastAggregator = Mock.Of<IForecastAggregator>();
     readonly IForecastHandler forecastHandler = Mock.Of<IForecastHandler>();
-    
+
     /// <summary>
     /// Tests that successful emissions call to an aggregator with any data returned results in action with OK status.
     /// </summary>
@@ -81,15 +77,15 @@ public class CarbonAwareControllerTests : TestsBase
     public async Task GetBestEmissions_SuccessfulCallReturnsOk(params string[] locations)
     {
         var data = new List<EmissionsData>()
-        {
-            new EmissionsData(){
-            Location = "Sydney",
-            Rating = 0.9,
-            Time = DateTime.Now
-            }
-        };
+            {
+                new EmissionsData(){
+                Location = "Sydney",
+                Rating = 0.9,
+                Time = DateTime.Now
+                }
+            };
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateHandlerWithBestEmissionsData(data).Object, forecastHandler);
-        var parametersDTO = new EmissionsDataForLocationsParametersDTO(){ MultipleLocations = locations };
+        var parametersDTO = new EmissionsDataForLocationsParametersDTO() { MultipleLocations = locations };
 
         var result = await controller.GetBestEmissionsDataForLocationsByTime(parametersDTO);
 
@@ -105,14 +101,14 @@ public class CarbonAwareControllerTests : TestsBase
     public async Task GetForecast_SuccessfulCallReturnsOk(params string[] locations)
     {
         var data = new List<EmissionsData>()
-        {
-            new EmissionsData()
             {
-                Location = "Sydney",
-                Rating = 0.9,
-                Time = DateTime.Now
-            }
-        };
+                new EmissionsData()
+                {
+                    Location = "Sydney",
+                    Rating = 0.9,
+                    Time = DateTime.Now
+                }
+            };
         var emissionsHandler = Mock.Of<IEmissionsHandler>();
         var forecastHandler = CreateForecastHandler(data);
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, emissionsHandler, forecastHandler.Object);
