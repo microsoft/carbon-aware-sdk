@@ -6,7 +6,7 @@ using NUnit.Framework;
 using System.CommandLine.IO;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading;
+using CarbonAware.DataSources.ElectricityMaps.Mocks;
 
 namespace CarbonAware.CLI.IntegrationTests;
 
@@ -18,7 +18,8 @@ public abstract class IntegrationTestingBase
 {
     private string _executableName = "caw";
     internal DataSourceType _dataSource;
-    internal string? _dataSourceEnv;
+    internal string? _emissionsDataSourceEnv;
+    internal string? _forecastDataSourceEnv;
     protected IDataSourceMocker _dataSourceMocker;
     protected TestConsole _console = new();
 
@@ -28,14 +29,14 @@ public abstract class IntegrationTestingBase
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
         _dataSource = dataSource;
-        _dataSourceEnv = Environment.GetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource");
+        _emissionsDataSourceEnv = Environment.GetEnvironmentVariable("DataSources__EmissionsDataSource");
+        _forecastDataSourceEnv = Environment.GetEnvironmentVariable("DataSources__ForecastDataSource");
     }
 
     protected async Task<int> InvokeCliAsync(string arguments)
     {
         // Initialize process here
         using var proc = new Process();
-        
         proc.StartInfo.FileName = _executableName;
         // add arguments as whole string
         proc.StartInfo.Arguments = arguments;
@@ -58,9 +59,14 @@ public abstract class IntegrationTestingBase
         proc.Start();
 
         // get output to testing console.
-        Console.Out.WriteLine(proc.StandardOutput.ReadToEnd());
-        Console.Error.WriteLine(proc.StandardError.ReadToEnd());
-        
+        using var sOutput = proc.StandardOutput;
+        Console.Out.WriteLine(await sOutput.ReadToEndAsync());
+        await Console.Out.FlushAsync();
+
+        using var sError = proc.StandardError;
+        Console.Error.WriteLine(await sError.ReadToEndAsync());
+        await Console.Error.FlushAsync();
+
         await proc.WaitForExitAsync();
 
         // Kill the process if WaitForExitAsync times out or is cancelled.
@@ -74,6 +80,7 @@ public abstract class IntegrationTestingBase
         var standardError = new StreamWriter(Console.OpenStandardError());
         standardOutput.AutoFlush = true;
         standardError.AutoFlush = true;
+        
         Console.SetOut(standardOutput);
         Console.SetError(standardError);
 
@@ -90,14 +97,27 @@ public abstract class IntegrationTestingBase
         {
             case DataSourceType.JSON:
                 {
-                    Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "JSON");
+                    Environment.SetEnvironmentVariable("DataSources__EmissionsDataSource", "Json");
+                    Environment.SetEnvironmentVariable("DataSources__Configurations__Json__Type", "JSON");
                     _dataSourceMocker = new JsonDataSourceMocker();
                     break;
                 }
             case DataSourceType.WattTime:
                 {
-                    Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", "WattTime");
+                    Environment.SetEnvironmentVariable("DataSources__EmissionsDataSource", "WattTime");
+                    Environment.SetEnvironmentVariable("DataSources__ForecastDataSource", "WattTime");
+                    Environment.SetEnvironmentVariable("DataSources__Configurations__WattTime__Type", "WattTime");
                     _dataSourceMocker = new WattTimeDataSourceMocker();
+                    break;
+                }
+            case DataSourceType.ElectricityMaps:
+                {
+                    Environment.SetEnvironmentVariable("DataSources__ForecastDataSource", "ElectricityMaps");
+                    Environment.SetEnvironmentVariable("DataSources__Configurations__ElectricityMaps__Type", "ElectricityMaps");
+                    Environment.SetEnvironmentVariable("DataSources__Configurations__ElectricityMaps__APITokenHeader", "token");
+                    Environment.SetEnvironmentVariable("DataSources__Configurations__ElectricityMaps__APIToken", "test");
+
+                    _dataSourceMocker = new ElectricityMapsDataSourceMocker();
                     break;
                 }
             case DataSourceType.None:
@@ -140,6 +160,7 @@ public abstract class IntegrationTestingBase
     public void TearDown()
     {
         _dataSourceMocker.Dispose();
-        Environment.SetEnvironmentVariable("CarbonAwareVars__CarbonIntensityDataSource", _dataSourceEnv);
+        Environment.SetEnvironmentVariable("DataSources__EmissionsDataSource", _emissionsDataSourceEnv);
+        Environment.SetEnvironmentVariable("DataSources__ForecastDataSource", _forecastDataSourceEnv);
     }
 }

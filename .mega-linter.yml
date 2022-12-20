@@ -1,0 +1,4 @@
+ENABLE: MARKDOWN
+
+# See https://megalinter.io/latest/descriptors/markdown/#readme for configuration options
+MARKDOWN_FILTER_REGEX_EXCLUDE: '(license\.md)'

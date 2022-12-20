@@ -5,10 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware", "CarbonAware\src\CarbonAware.csproj", "{40FC1BA4-ABDB-4D9F-A53A-8F44F0AC67DA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Plugins.BasicJsonPlugin", "CarbonAware.Plugins.BasicJsonPlugin\src\CarbonAware.Plugins.BasicJsonPlugin.csproj", "{7F8C741C-3101-44F9-A352-B5CBEC00FEFC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.Plugins.BasicJsonPlugin.Tests", "CarbonAware.Plugins.BasicJsonPlugin\test\CarbonAware.Plugins.BasicJsonPlugin.Tests.csproj", "{0B53454A-CB47-41D2-8A39-5C056E43695C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.CLI", "CarbonAware.CLI\src\CarbonAware.CLI.csproj", "{D057DD75-CFFA-496F-B493-171E122AC91D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.WebApi", "CarbonAware.WebApi\src\CarbonAware.WebApi.csproj", "{1A606EAE-C8BE-454F-B3F7-C649C9293B65}"
@@ -54,6 +50,16 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.CLI.UnitTests", "CarbonAware.CLI\test\unitTests\CarbonAware.CLI.UnitTests.csproj", "{BAB37BFE-3133-4323-ACD5-0F7ED1340A04}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.CLI.IntegrationTests", "CarbonAware.CLI\test\integrationTests\CarbonAware.CLI.IntegrationTests.csproj", "{C0F13A86-0C5A-4108-A51A-14760BA22063}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GSF.CarbonAware", "GSF.CarbonAware\src\GSF.CarbonAware.csproj", "{66BFF3BC-F15B-4A56-B8E4-6CE68EAF54CD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GSF.CarbonAware.Tests", "GSF.CarbonAware\test\GSF.CarbonAware.Tests.csproj", "{BCCD8C11-7413-4272-8922-417429CFF27A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.DataSources.ElectricityMaps", "CarbonAware.DataSources\CarbonAware.DataSources.ElectricityMaps\src\CarbonAware.DataSources.ElectricityMaps.csproj", "{7479A601-EAED-4651-BF08-99520B0179CB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.DataSources.ElectricityMaps.Tests", "CarbonAware.DataSources\CarbonAware.DataSources.ElectricityMaps\test\CarbonAware.DataSources.ElectricityMaps.Tests.csproj", "{09F16357-0DB3-4D54-9EBB-19CE1CB3CE31}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarbonAware.DataSources.ElectricityMaps.Mocks", "CarbonAware.DataSources\CarbonAware.DataSources.ElectricityMaps\mock\CarbonAware.DataSources.ElectricityMaps.Mocks.csproj", "{40155CED-4F39-485D-9AF8-4D267E236146}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -165,6 +171,26 @@ Global
 		{C0F13A86-0C5A-4108-A51A-14760BA22063}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0F13A86-0C5A-4108-A51A-14760BA22063}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0F13A86-0C5A-4108-A51A-14760BA22063}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66BFF3BC-F15B-4A56-B8E4-6CE68EAF54CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66BFF3BC-F15B-4A56-B8E4-6CE68EAF54CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66BFF3BC-F15B-4A56-B8E4-6CE68EAF54CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66BFF3BC-F15B-4A56-B8E4-6CE68EAF54CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCCD8C11-7413-4272-8922-417429CFF27A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCCD8C11-7413-4272-8922-417429CFF27A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCCD8C11-7413-4272-8922-417429CFF27A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCCD8C11-7413-4272-8922-417429CFF27A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7479A601-EAED-4651-BF08-99520B0179CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7479A601-EAED-4651-BF08-99520B0179CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7479A601-EAED-4651-BF08-99520B0179CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7479A601-EAED-4651-BF08-99520B0179CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09F16357-0DB3-4D54-9EBB-19CE1CB3CE31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09F16357-0DB3-4D54-9EBB-19CE1CB3CE31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09F16357-0DB3-4D54-9EBB-19CE1CB3CE31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09F16357-0DB3-4D54-9EBB-19CE1CB3CE31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40155CED-4F39-485D-9AF8-4D267E236146}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40155CED-4F39-485D-9AF8-4D267E236146}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40155CED-4F39-485D-9AF8-4D267E236146}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40155CED-4F39-485D-9AF8-4D267E236146}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

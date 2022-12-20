@@ -1,17 +1,19 @@
 ﻿using CarbonAware.Exceptions;
 using CarbonAware.Interfaces;
+using CarbonAware.LocationSources.Exceptions;
 using CarbonAware.Model;
 using CarbonAware.Tools.WattTimeClient;
 using CarbonAware.Tools.WattTimeClient.Model;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace CarbonAware.DataSources.WattTime;
 
 /// <summary>
 /// Reprsents a wattime data source.
 /// </summary>
-public class WattTimeDataSource : ICarbonIntensityDataSource
+public class WattTimeDataSource : IEmissionsDataSource, IForecastDataSource
 {
     public string Name => "WattTimeDataSource";
 
@@ -195,7 +197,8 @@ public class WattTimeDataSource : ICarbonIntensityDataSource
         try
         {
             var geolocation = await this.LocationSource.ToGeopositionLocationAsync(location);
-            balancingAuthority = await WattTimeClient.GetBalancingAuthorityAsync(geolocation.Latitude.ToString() ?? "", geolocation.Longitude.ToString() ?? "");
+            balancingAuthority = await WattTimeClient.GetBalancingAuthorityAsync(
+               Convert.ToString(geolocation.Latitude, CultureInfo.InvariantCulture) ?? "", Convert.ToString(geolocation.Longitude, CultureInfo.InvariantCulture) ?? "");
         }
         catch(Exception ex) when (ex is LocationConversionException ||  ex is WattTimeClientHttpException)
         {

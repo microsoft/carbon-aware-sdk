@@ -1,18 +1,52 @@
 //copy this file as "appsettings.Development.json",  remove this comment and update the settings below accordingly
 {
-  "carbonAwareVars": {
-    "carbonIntensityDataSource": "WattTime",
-    "webApiRoutePrefix": "/microsoft/cse/fsi",
-    "proxy": {
-      "useProxy": false,
-      "url": "http://10.10.10.1",
-      "username": "proxyUsername",
-      "password": "proxyPassword"
-    }
+  "LocationDataSourcesConfiguration": {
+    "LocationSourceFiles": [
+      {
+        "DataFileLocation": "azure-regions.json",
+      },
+      {
+        "DataFileLocation": "custom-azure-zones.json",
+        "Prefix": "zone",
+        "Delimiter": "."
+      }
+    ]
   },
-  "wattTimeClient": {
-    "username": "watttimeusername",
-    "password": "watttimepassword"
+  "DataSources": {
+    "EmissionsDataSource": "",
+    "ForecastDataSource": "",
+    "Configurations": {
+      "test-json": {
+        "Type": "JSON",
+        "DataFileLocation": "test-data-azure-emissions.json"
+      },
+      "wattTime_no-proxy": {
+        "Type": "WattTime",
+        "Username": "username",
+        "Password": "password",
+        "BaseURL": "https://api2.watttime.org/v2/",
+        "Proxy": {
+          "UseProxy": false
+        }
+      },
+      "wattTime_proxy": {
+        "Type": "WattTime",
+        "Username": "username",
+        "Password": "password",
+        "BaseURL": "https://api2.watttime.org/v2/",
+        "Proxy": {
+          "UseProxy": true,
+          "Url": "https://localhost:1234",
+          "Username": "ProxyUser",
+          "Password": "p@$$w0rD!"
+        }
+      },
+      "em": {
+        "Type": "ElectricityMaps",
+        "APITokenHeader": "auth-token",
+        "APIToken": "myAwesomeToken"
+      }
+    }
   }
 }
   
