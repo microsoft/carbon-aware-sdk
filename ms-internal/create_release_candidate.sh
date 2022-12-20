@@ -25,8 +25,9 @@ git checkout gsf/dev
 git checkout -b release
 
 # Cherry-pick our required, but unmerged commits onto the branch
-git cherry-pick a14e60b77eb271f1b253810dbc6b02f539ad6b25 # issue #174 - ElectricityMaps Data Source - Emissions
-git cherry-pick 87b104ae7881aa02cbab57a03b58bd6b563f4b71 # issue 227 - Bug fix to allow regional settings for converting lat/long
+git cherry-pick 37ae9cb0bbdc793fda5fdcf35c6f34b3e9a1975d # issue #174 - ElectricityMaps Data Source - Emissions
+git cherry-pick 797ffe502cd439dc7c372bb6dd2be00e9ffb4d23 # issue 227 - Bug fix to allow regional settings for converting lat/long
+git cherry-pick 14ef3e71872f06e9ebc220e21154e4e5972b5073 # issue 229 - Fix Console app
 
 ####### Adding/updating features with this script:
 ####### 1) switch to your feature branch
