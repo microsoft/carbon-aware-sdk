@@ -42,6 +42,7 @@ try
 }
 
 builder.Services.AddEmissionsServices(builder.Configuration);
+builder.Services.AddForecastServices(builder.Configuration); //
 
 CarbonAwareVariablesConfiguration config = new();
 
