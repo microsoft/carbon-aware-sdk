@@ -12,6 +12,7 @@ using CarbonAware.Tools.WattTimeClient.Configuration;
 using CarbonAware.Tools.WattTimeClient.Constants;
 using System.Globalization;
 using Microsoft.Extensions.Caching.Memory;
+using System.Net.Sockets;
 
 namespace CarbonAware.Tools.WattTimeClient;
 
@@ -94,8 +95,14 @@ public class WattTimeClient : IWattTimeClient
         };
 
         var result = await this.MakeRequestGetStreamAsync(Paths.Forecast, parameters, tags);
-
+        //Console.WriteLine(result);
+        readStream(result);
         var forecast = await JsonSerializer.DeserializeAsync<Forecast?>(result, options) ?? throw new WattTimeClientException($"Error getting forecast for  {balancingAuthorityAbbreviation}");
+
+        //var result = await this.MakeRequestGetStringAsync(Paths.Forecast, parameters, tags);
+        //Console.WriteLine(result);
+        // readStream(result);
+        //var forecast = JsonSerializer.Deserialize<Forecast?>(result, options) ?? throw new WattTimeClientException($"Error getting forecast for  {balancingAuthorityAbbreviation}");
 
         return forecast;
     }
@@ -122,11 +129,14 @@ public class WattTimeClient : IWattTimeClient
         {
             { QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation }
         };
-        using (var result = await this.MakeRequestGetStreamAsync(Paths.Forecast, parameters, tags))
-        {
-            var forecasts = await JsonSerializer.DeserializeAsync<List<Forecast>>(result, options) ?? throw new WattTimeClientException($"Error getting forecasts for {balancingAuthorityAbbreviation}");
-            return forecasts.FirstOrDefault();
-        }
+
+        // var result = await this.MakeRequestGetStringAsync(Paths.Forecast, parameters, tags);
+        // var forecasts = JsonSerializer.Deserialize<List<Forecast>>(result, options) ?? throw new WattTimeClientException($"Error getting forecasts for {balancingAuthorityAbbreviation}");
+
+        var result = await this.MakeRequestGetStreamAsync(Paths.Forecast, parameters, tags);
+        var forecasts = await JsonSerializer.DeserializeAsync<List<Forecast>>(result, options) ?? throw new WattTimeClientException($"Error getting forecasts for {balancingAuthorityAbbreviation}");
+        return forecasts.FirstOrDefault();
+        
     }
 
     /// <inheritdoc/>
@@ -165,11 +175,9 @@ public class WattTimeClient : IWattTimeClient
             Log.LogInformation("Requesting data using url {url}", url);
             activity?.AddTag(QueryStrings.BalancingAuthorityAbbreviation, balancingAuthorityAbbreviation);
 
-            var result = await this.GetStreamWithAuthRetryAsync(url);
-
+            var response = await this.GetAsyncWithAuthRetry(url);
             Log.LogDebug("For query {url}, received data stream", url);
-
-            return result;
+            return await response.Content.ReadAsStreamAsync();
         }
     }
 
@@ -200,13 +208,6 @@ public class WattTimeClient : IWattTimeClient
 
         return response;
     }
-
-    private async Task<Stream> GetStreamWithAuthRetryAsync(string uriPath)
-    {
-        var response = await this.GetAsyncWithAuthRetry(uriPath);
-        return await response.Content.ReadAsStreamAsync();
-    }
-
 
     private async Task EnsureTokenAsync()
     {
@@ -272,11 +273,29 @@ public class WattTimeClient : IWattTimeClient
                     activity?.AddTag(kvp.Key, kvp.Value);
                 }
             }
-            var result = await this.GetStreamWithAuthRetryAsync(url);
+            var response = await this.GetAsyncWithAuthRetry(url);
+            Log.LogDebug("For query {url}, received data {result}", url, response);
+            return await response.Content.ReadAsStreamAsync();
+        }
+    }
 
-            Log.LogDebug("For query {url}, received data {result}", url, result);
+    private async Task<string> MakeRequestGetStringAsync(string path, Dictionary<string, string> parameters, Dictionary<string, string>? tags = null)
+    {
+        using (var activity = Activity.StartActivity())
+        {
+            var url = BuildUrlWithQueryString(path, parameters);
 
-            return result;
+            Log.LogInformation("Requesting data using url {url}", url);
+
+            if (tags != null)
+            {
+                foreach (var kvp in tags)
+                {
+                    activity?.AddTag(kvp.Key, kvp.Value);
+                }
+            }
+            var response = await this.GetAsyncWithAuthRetry(url);
+            return await response.Content.ReadAsStringAsync();
         }
     }
 
@@ -329,5 +348,17 @@ public class WattTimeClient : IWattTimeClient
             return baValue;
         });
         return balancingAuthority;
+    }
+
+    private static void readStream(Stream stream)
+    {
+        StreamReader reader = new StreamReader(stream);
+        string line = reader.ReadLine();
+        Console.WriteLine(line);
+        while ((line = reader.ReadLine()) != null)
+        {
+            Console.WriteLine(line);
+        }
+
     }
 }
