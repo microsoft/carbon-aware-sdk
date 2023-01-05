@@ -32,17 +32,26 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.Configure<CarbonAwareVariablesConfiguration>(builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key));
 
 bool successfulEmissionServices = true;
-string? errorMessage = null;
+string? errorMessageEmissionServices = null;
 try
 {
     builder.Services.AddEmissionsServices(builder.Configuration);
 } catch(CarbonAwareException e) {
     successfulEmissionServices = false;
-    errorMessage = e.Message;
+    errorMessageEmissionServices = e.Message;
 }
 
-builder.Services.AddEmissionsServices(builder.Configuration);
-builder.Services.AddForecastServices(builder.Configuration); //
+bool successfulForecastServices = true;
+string? errorMessageForecastServices = null;
+try
+{
+    builder.Services.AddForecastServices(builder.Configuration);
+}
+catch (CarbonAwareException e)
+{
+    successfulForecastServices = false;
+    errorMessageForecastServices = e.Message;
+}
 
 CarbonAwareVariablesConfiguration config = new();
 
@@ -61,7 +70,13 @@ var app = builder.Build();
 if(!successfulEmissionServices)
 {
     var _logger = app.Services.GetService<ILogger<Program>>();
-    _logger?.LogError(errorMessage);
+    _logger?.LogError(errorMessageEmissionServices);
+}
+
+if (!successfulForecastServices)
+{
+    var _logger = app.Services.GetService<ILogger<Program>>();
+    _logger?.LogError(errorMessageForecastServices);
 }
 
 if (config.WebApiRoutePrefix != null)
