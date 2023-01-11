@@ -1,0 +1,11 @@
+cawebapimap:
+ - name: "CarbonAwareVars__CarbonIntensityDataSource"
+   value: "WattTime"
+ - name:  "WattTimeClient__Username"
+   value: "testuser"
+ - name: "WattTimeClient__Password"
+   value: "testpasswd"
+ - name: "CarbonAwareVars__TelemetryProvider"
+   value: "ApplicationInsights"
+ - name: "APPLICATIONINSIGHTS_CONNECTION_STRING"
+   value: "InstrumentationKey=something"

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "ca-deploy-charts.fullname" . }}-test-connection"
+  labels:
+    {{- include "ca-deploy-charts.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "ca-deploy-charts.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
