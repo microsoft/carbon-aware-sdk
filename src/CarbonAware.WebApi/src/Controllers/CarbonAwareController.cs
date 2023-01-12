@@ -1,7 +1,7 @@
-using CarbonAware.Aggregators.Emissions;
-using CarbonAware.Aggregators.Forecast;
+
 using CarbonAware.Model;
 using CarbonAware.WebApi.Models;
+using GSF.CarbonAware.Handlers;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Diagnostics;
@@ -13,18 +13,18 @@ namespace CarbonAware.WebApi.Controllers;
 public class CarbonAwareController : ControllerBase
 {
     private readonly ILogger<CarbonAwareController> _logger;
-    
-    private readonly IForecastAggregator _forecastAggregator;
 
-    private readonly IEmissionsAggregator _emissionsAggregator;
+    private readonly IEmissionsHandler emissionsHandler;
+
+    private readonly IForecastHandler forecastHandler;
 
     private static readonly ActivitySource Activity = new ActivitySource(nameof(CarbonAwareController));
 
-    public CarbonAwareController(ILogger<CarbonAwareController> logger, IEmissionsAggregator emissionsAggregator, IForecastAggregator forecastAggregator)
+    public CarbonAwareController(ILogger<CarbonAwareController> logger, IEmissionsHandler emissionsHandler, IForecastHandler forecastHandler)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _forecastAggregator = forecastAggregator ?? throw new ArgumentNullException(nameof(forecastAggregator));
-        _emissionsAggregator = emissionsAggregator ?? throw new ArgumentNullException(nameof(emissionsAggregator));
+        forecastHandler = forecastHandler ?? throw new ArgumentNullException(nameof(forecastHandler));
+        emissionsHandler = emissionsHandler ?? throw new ArgumentNullException(nameof(emissionsHandler));
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            var response = await _emissionsAggregator.GetBestEmissionsDataAsync(parameters);
+            var response = await emissionsHandler.GetBestEmissionsDataAsync(parameters.SingleLocation!, parameters.Start, parameters.End);
             return response.Any() ? Ok(response) : NoContent();
         }
     }
@@ -60,7 +60,7 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            var response = await _emissionsAggregator.GetEmissionsDataAsync(parameters);
+            var response = await emissionsHandler.GetEmissionsDataAsync(parameters.MultipleLocations!, parameters.Start, parameters.End);
             return response.Any() ? Ok(response) : NoContent();
         }
     }
@@ -121,9 +121,9 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            var forecasts = await _forecastAggregator.GetCurrentForecastDataAsync(parameters);
-            var results = forecasts.Select(f => EmissionsForecastDTO.FromEmissionsForecast(f));
-            return Ok(results);
+           /* var forecasts = await forecastHandler.GetCurrentForecastAsync(parameters.MultipleLocations!, parameters.Start, parameters.End, parameters.Duration);
+            var results = forecasts.Select(f => EmissionsForecastDTO.FromEmissionsForecast(f));*/
+            return Ok(null);
         }
     }
 
@@ -155,11 +155,17 @@ public class CarbonAwareController : ControllerBase
         using (var activity = Activity.StartActivity())
         {
             var result = new List<EmissionsForecastDTO>();
-            foreach ( var forecastParameters in requestedForecasts)
+          /*  foreach ( var forecastParameters in requestedForecasts)
             {
-                var forecast = await _forecastAggregator.GetForecastDataAsync(forecastParameters);
+                var forecast = await forecastHandler.GetForecastByDateAsync(
+                    forecastParameters.SingleLocation!,
+                    forecastParameters.Start,
+                    forecastParameters.End,
+                    forecastParameters.Requested,
+                    forecastParameters.Duration
+                );
                 result.Add(EmissionsForecastDTO.FromEmissionsForecast(forecast));
-            };
+            };*/
 
             return Ok(result);
         }
@@ -185,13 +191,13 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            var result = await this._emissionsAggregator.CalculateAverageCarbonIntensityAsync(parameters);
+           // var result = await this._emissionsAggregator.CalculateAverageCarbonIntensityAsync(parameters);
             var carbonIntensity = new CarbonIntensityDTO
             {
                 Location = parameters.SingleLocation,
                 StartTime = parameters.Start,
                 EndTime = parameters.End,
-                CarbonIntensity = result,
+        //        CarbonIntensity = result,
             };
             _logger.LogDebug("calculated average carbon intensity: {carbonIntensity}", carbonIntensity);
             return Ok(carbonIntensity);
@@ -223,13 +229,13 @@ public class CarbonAwareController : ControllerBase
             var result = new List<CarbonIntensityDTO>();
             foreach ( var carbonIntensityBatchDTO in requestedCarbonIntensities)
             {
-                var carbonIntensityValue = await this._emissionsAggregator.CalculateAverageCarbonIntensityAsync(carbonIntensityBatchDTO);
+              //  var carbonIntensityValue = await this._emissionsAggregator.CalculateAverageCarbonIntensityAsync(carbonIntensityBatchDTO);
                 var carbonIntensityDTO = new CarbonIntensityDTO()
                 {
                     Location = carbonIntensityBatchDTO.SingleLocation,
                     StartTime = carbonIntensityBatchDTO.Start,
                     EndTime = carbonIntensityBatchDTO.End,
-                    CarbonIntensity = carbonIntensityValue,
+             //       CarbonIntensity = carbonIntensityValue,
                 };
                 result.Add(carbonIntensityDTO);
             }

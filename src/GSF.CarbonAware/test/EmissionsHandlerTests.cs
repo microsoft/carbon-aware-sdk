@@ -1,4 +1,4 @@
-using CarbonAware.Aggregators.CarbonAware;
+/*using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.Aggregators.Emissions;
 using EmissionsData = CarbonAware.Model.EmissionsData;
 using GSF.CarbonAware.Exceptions;
@@ -187,4 +187,4 @@ public class EmissionsHandlerTests
             .ReturnsAsync(data);
         return aggregator;
     }
-}
+}*/

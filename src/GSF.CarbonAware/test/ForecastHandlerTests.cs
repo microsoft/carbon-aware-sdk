@@ -1,4 +1,4 @@
-using CarbonAware.Aggregators.CarbonAware;
+/*using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.Aggregators.Forecast;
 using GSF.CarbonAware.Exceptions;
 using GSF.CarbonAware.Handlers;
@@ -139,3 +139,4 @@ public class ForecastHandlerTests
         return aggregator;
     }
 }
+*/

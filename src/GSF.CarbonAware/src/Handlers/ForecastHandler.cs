@@ -1,5 +1,5 @@
-using CarbonAware.Aggregators.CarbonAware;
-using CarbonAware.Aggregators.Forecast;
+
+using CarbonAware.Interfaces;
 using GSF.CarbonAware.Models;
 using Microsoft.Extensions.Logging;
 using CarbonAwareException = CarbonAware.Exceptions.CarbonAwareException;
@@ -8,7 +8,7 @@ namespace GSF.CarbonAware.Handlers;
 
 internal sealed class ForecastHandler : IForecastHandler
 {
-    private readonly IForecastAggregator _aggregator;
+    private readonly IForecastDataSource _dataSource;
     private readonly ILogger<ForecastHandler> _logger;
 
     /// <summary>
@@ -16,16 +16,16 @@ internal sealed class ForecastHandler : IForecastHandler
     /// </summary>
     /// <param name="logger">The logger for the handler</param>
     /// <param name="aggregator">An <see cref="IForecastAggregator"> aggregator.</param>
-    public ForecastHandler(ILogger<ForecastHandler> logger, IForecastAggregator aggregator)
+    public ForecastHandler(ILogger<ForecastHandler> logger, IForecastDataSource _dataSource)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _aggregator = aggregator ?? throw new ArgumentNullException(nameof(aggregator));
+        _dataSource = _dataSource ?? throw new ArgumentNullException(nameof(_dataSource));
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<EmissionsForecast>> GetCurrentForecastAsync(string[] locations, DateTimeOffset? start = null, DateTimeOffset? end = null, int? duration = null)
     {
-        var parameters = new CarbonAwareParametersBaseDTO
+        /*var parameters = new CarbonAwareParametersBaseDTO
         {
             Start = start,
             End = end,
@@ -41,13 +41,14 @@ internal sealed class ForecastHandler : IForecastHandler
         catch (CarbonAwareException ex)
         {
             throw new Exceptions.CarbonAwareException(ex.Message, ex);
-        }
+        }*/
+        return null;
     }
 
     /// <inheritdoc />
     public async Task<EmissionsForecast> GetForecastByDateAsync(string location, DateTimeOffset? start = null, DateTimeOffset? end = null, DateTimeOffset? requestedAt = null, int? duration = null)
     {
-        var parameters = new CarbonAwareParametersBaseDTO
+        /*var parameters = new CarbonAwareParametersBaseDTO
         {
             Start = start,
             End = end,
@@ -66,6 +67,8 @@ internal sealed class ForecastHandler : IForecastHandler
         catch (CarbonAwareException ex)
         {
             throw new Exceptions.CarbonAwareException(ex.Message, ex);
-        }
+        }*/
+
+        return null;
     }
 }
