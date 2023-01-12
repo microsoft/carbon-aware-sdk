@@ -8,6 +8,7 @@ using static CarbonAware.Aggregators.CarbonAware.CarbonAwareParameters;
 
 namespace CarbonAware.Aggregators.Emissions;
 
+[Obsolete]
 public class EmissionsAggregator : IEmissionsAggregator
 {
     private static readonly ActivitySource Activity = new(nameof(EmissionsAggregator));
