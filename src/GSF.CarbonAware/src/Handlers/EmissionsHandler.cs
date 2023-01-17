@@ -11,13 +11,12 @@ namespace GSF.CarbonAware.Handlers;
 internal sealed class EmissionsHandler : IEmissionsHandler
 {
     private readonly ILogger<EmissionsHandler> _logger;
-    // private readonly IEmissionsAggregator _aggregator;
     private readonly IEmissionsDataSource _emissionsDataSource;
     /// <summary>
     /// Creates a new instance of the <see cref="EmissionsHandler"/> class.
     /// </summary>
     /// <param name="logger">The logger for the handler</param>
-    /// <param name="aggregator">An <see cref="IEmissionsAggregator"> aggregator.</param>
+    /// <param name="emissionsDataSource">An <see cref="IEmissionsDataSource"> datasource.</param>
     public EmissionsHandler(ILogger<EmissionsHandler> logger, IEmissionsDataSource emissionsDataSource)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -41,17 +40,7 @@ internal sealed class EmissionsHandler : IEmissionsHandler
         };
 
         CarbonAwareParameters parameters = carbonAwareParameters;
-        /* try
-         {
-             var emissionsData = await _aggregator.GetEmissionsDataAsync(parameters);
-             var result = emissionsData.Select(e => (Models.EmissionsData)e);
-             return result;
-         }
-         catch (CarbonAwareException ex)
-         {
-             throw new Exceptions.CarbonAwareException(ex.Message, ex);
-         }*/
-
+        
         try
         {
             parameters.SetRequiredProperties(PropertyName.MultipleLocations);
@@ -82,44 +71,65 @@ internal sealed class EmissionsHandler : IEmissionsHandler
     ///<inheritdoc/>
     public async Task<IEnumerable<Models.EmissionsData>> GetBestEmissionsDataAsync(string[] locations, DateTimeOffset? start = null, DateTimeOffset? end = null)
     {
-        /* var parameters = new CarbonAwareParametersBaseDTO
-         {
-             Start = start,
-             End = end,
-             MultipleLocations = locations
-         };
-         try
-         {
-             var emissionsData = await _aggregator.GetBestEmissionsDataAsync(parameters);
-             var result = emissionsData.Select(e => (EmissionsData)e);
-             return result;
-         }
-         catch (CarbonAwareException ex)
-         {
-             throw new Exceptions.CarbonAwareException(ex.Message, ex);
-         }*/
+        var carbonAwareParameters = new CarbonAwareParametersBaseDTO
+        {
+            Start = start,
+            End = end,
+            MultipleLocations = locations
+        };
+        CarbonAwareParameters parameters = carbonAwareParameters;
 
-        return null;
+        parameters.SetRequiredProperties(PropertyName.MultipleLocations);
+        parameters.SetValidations(ValidationName.StartRequiredIfEnd);
+        parameters.Validate();
+
+        var startTime = parameters.GetStartOrDefault(DateTimeOffset.UtcNow);
+        var endTime = parameters.GetEndOrDefault(startTime);
+        var results = await _emissionsDataSource.GetCarbonIntensityAsync(parameters.MultipleLocations, startTime, endTime);
+        IEnumerable<Models.EmissionsData> emissions = results.Select(e => (Models.EmissionsData)e); ;
+        return GetOptimalEmissions(emissions);
     }
 
     /// <inheritdoc />
     public async Task<double> GetAverageCarbonIntensityAsync(string location, DateTimeOffset start, DateTimeOffset end)
     {
-        /* var parameters = new CarbonAwareParametersBaseDTO {
-             Start = start,
-             End = end,
-             SingleLocation = location
-         };
+        var carbonAwareParameters = new CarbonAwareParametersBaseDTO
+        {
+            Start = start,
+            End = end,
+            SingleLocation = location
+        };
+        CarbonAwareParameters parameters = carbonAwareParameters;
+        parameters.SetRequiredProperties(PropertyName.SingleLocation, PropertyName.Start, PropertyName.End);
+        parameters.Validate();
 
-         try {
-             var result = await _aggregator.CalculateAverageCarbonIntensityAsync(parameters);
-             _logger.LogDebug("calculated average carbon intensity: {carbonIntensity}", result);
-             return result;
-         }
-         catch (CarbonAwareException ex)
-         {
-             throw new Exceptions.CarbonAwareException(ex.Message, ex);
-         }*/
-        return 0;
+        
+        _logger.LogInformation("Aggregator getting average carbon intensity from data source");
+        var emissionData = await _emissionsDataSource.GetCarbonIntensityAsync(parameters.SingleLocation, parameters.Start, parameters.End);
+        //TODO: Call actual method
+        var value = 0;// emissionData.AverageOverPeriod(start, end);
+        _logger.LogInformation("Carbon Intensity Average: {value}", value);
+
+        return value;
+
+    }
+
+    private static IEnumerable<Models.EmissionsData> GetOptimalEmissions(IEnumerable<Models.EmissionsData> emissionsData)
+    {
+        if (!emissionsData.Any())
+        {
+            return Array.Empty<Models.EmissionsData>();
+        }
+
+        var bestResult = emissionsData.MinBy(x => x.Rating);
+
+        IEnumerable<Models.EmissionsData> results = Array.Empty<Models.EmissionsData>();
+
+        if (bestResult != null)
+        {
+            results = emissionsData.Where(x => x.Rating == bestResult.Rating);
+        }
+
+        return results;
     }
 }

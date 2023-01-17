@@ -22,7 +22,7 @@ public record EmissionsDataDTO
     [JsonPropertyName("value")]
     public double Value { get; set; }
 
-    public static EmissionsDataDTO? FromEmissionsData(EmissionsData emissionsData)
+    public static EmissionsDataDTO? FromEmissionsData(global::GSF.CarbonAware.Models.EmissionsData emissionsData)
     {
         if (emissionsData == null)
         {
@@ -30,7 +30,7 @@ public record EmissionsDataDTO
         }
         return new EmissionsDataDTO
         {
-            Location = emissionsData.Location,
+            Location = emissionsData.Location!,
             Timestamp = emissionsData.Time,
             Duration = (int)emissionsData.Duration.TotalMinutes,
             Value = emissionsData.Rating

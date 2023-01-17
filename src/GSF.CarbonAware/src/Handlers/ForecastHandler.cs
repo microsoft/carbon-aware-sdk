@@ -8,18 +8,18 @@ namespace GSF.CarbonAware.Handlers;
 
 internal sealed class ForecastHandler : IForecastHandler
 {
-    private readonly IForecastDataSource _dataSource;
+    private readonly IForecastDataSource _forecastDataSource;
     private readonly ILogger<ForecastHandler> _logger;
 
     /// <summary>
     /// Creates a new instance of the <see cref="ForecastHandler"/> class.
     /// </summary>
     /// <param name="logger">The logger for the handler</param>
-    /// <param name="aggregator">An <see cref="IForecastAggregator"> aggregator.</param>
-    public ForecastHandler(ILogger<ForecastHandler> logger, IForecastDataSource _dataSource)
+    /// <param name="forecastDataSource">An <see cref="IForecastDataSource"> datsource.</param>
+    public ForecastHandler(ILogger<ForecastHandler> logger, IForecastDataSource forecastDataSource)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _dataSource = _dataSource ?? throw new ArgumentNullException(nameof(_dataSource));
+        _forecastDataSource = forecastDataSource ?? throw new ArgumentNullException(nameof(forecastDataSource));
     }
 
     /// <inheritdoc />
