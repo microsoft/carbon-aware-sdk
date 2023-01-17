@@ -10,18 +10,18 @@ namespace GSF.CarbonAware.Handlers;
 
 internal sealed class ForecastHandler : IForecastHandler
 {
-    private readonly IForecastDataSource _dataSource;
+    private readonly IForecastDataSource _forecastDataSource;
     private readonly ILogger<ForecastHandler> _logger;
 
     /// <summary>
     /// Creates a new instance of the <see cref="ForecastHandler"/> class.
     /// </summary>
     /// <param name="logger">The logger for the handler</param>
-    /// <param name="datasource">An <see cref="IForecastAggregator"> datasource.</param>
-    public ForecastHandler(ILogger<ForecastHandler> logger, IForecastDataSource dataSource)
+    /// <param name="forecastDataSource">An <see cref="IForecastDataSource"> datsource.</param>
+    public ForecastHandler(ILogger<ForecastHandler> logger, IForecastDataSource forecastDataSource)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _forecastDataSource = forecastDataSource ?? throw new ArgumentNullException(nameof(forecastDataSource));
     }
 
     /// <inheritdoc />
@@ -41,7 +41,7 @@ internal sealed class ForecastHandler : IForecastHandler
         var forecasts = new List<EmissionsForecast>();
         foreach (var location in parameters.MultipleLocations)
         {
-            var forecast = await _dataSource.GetCurrentCarbonIntensityForecastAsync(location);
+            var forecast = await _forecastDataSource.GetCurrentCarbonIntensityForecastAsync(location);
             var emissionsForecast = ProcessAndValidateForecast(forecast, parameters);
             forecasts.Add(emissionsForecast);
         }
@@ -64,7 +64,7 @@ internal sealed class ForecastHandler : IForecastHandler
         var parameters = (CarbonAwareParameters) dto;
         parameters.SetRequiredProperties(PropertyName.SingleLocation, PropertyName.Requested);
         parameters.Validate();
-        var forecast = await this._dataSource.GetCarbonIntensityForecastAsync(parameters.SingleLocation, parameters.Requested);
+        var forecast = await _forecastDataSource.GetCarbonIntensityForecastAsync(parameters.SingleLocation, parameters.Requested);
         var emissionsForecast = ProcessAndValidateForecast(forecast, parameters);
         return emissionsForecast;
     }
