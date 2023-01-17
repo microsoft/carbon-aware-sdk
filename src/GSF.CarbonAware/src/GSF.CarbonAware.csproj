@@ -53,13 +53,4 @@
     <ItemGroup Label="IncludeSymbols" Condition="$(IncludeSymbols) == true">
       <Content Include="$(TargetDir)/CarbonAware*.pdb" Pack="true" PackagePath="lib/net6.0/" />
     </ItemGroup>
-
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>GSF.CarbonAware.Tests</_Parameter1>
-    </AssemblyAttribute>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
 </Project>
