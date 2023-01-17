@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace GSF.CarbonAware.Handlers.CarbonAware;
 
-public class CarbonAwareParametersBaseDTO
+internal class CarbonAwareParametersBaseDTO
 {
     virtual public string[]? MultipleLocations { get; set; }
     virtual public string? SingleLocation { get; set; }
@@ -45,7 +45,7 @@ public class CarbonAwareParametersBaseDTO
     }
 }
 
-public class CarbonAwareParameters
+internal class CarbonAwareParameters
 {
     private IEnumerable<Location> _multipleLocations = new List<Location>();
     private Location _singleLocation = new Location();
@@ -108,7 +108,7 @@ public class CarbonAwareParameters
 
     public enum ValidationName { StartBeforeEnd, StartRequiredIfEnd };
 
-    public class Validator
+    internal class Validator
     {
         private Func<bool> _predicate {get; init; }
         private string _errorKey {get; init; }
@@ -331,7 +331,7 @@ public class CarbonAwareParameters
 }
 
 // Ease-of-use extension method for our error dictionary.
-public static class CarbonAwareParametersExtensions
+internal static class CarbonAwareParametersExtensions
 {
     public static void AppendValue(this Dictionary<string, List<string>> dict, string key, string value)
     {
@@ -352,5 +352,27 @@ public static class CarbonAwareParametersExtensions
                 property.DisplayName = newDisplayName;
             }
         }
+    }
+}
+
+internal static class CarbonAwareOptimalEmission
+{
+    public static IEnumerable<global::CarbonAware.Model.EmissionsData> GetOptimalEmissions(IEnumerable<global::CarbonAware.Model.EmissionsData> emissionsData)
+    {
+        if (!emissionsData.Any())
+        {
+            return Array.Empty<global::CarbonAware.Model.EmissionsData>();
+        }
+
+        var bestResult = emissionsData.MinBy(x => x.Rating);
+
+        IEnumerable<global::CarbonAware.Model.EmissionsData> results = Array.Empty<global::CarbonAware.Model.EmissionsData>();
+
+        if (bestResult != null)
+        {
+            results = emissionsData.Where(x => x.Rating == bestResult.Rating);
+        }
+
+        return results;
     }
 }

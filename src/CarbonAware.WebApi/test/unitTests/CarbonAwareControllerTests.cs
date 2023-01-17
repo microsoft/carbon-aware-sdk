@@ -1,4 +1,4 @@
-/*namespace CarbonAware.WepApi.UnitTests;
+namespace CarbonAware.WepApi.UnitTests;
 
 using CarbonAware.Aggregators.CarbonAware;
 using CarbonAware.Aggregators.Emissions;
@@ -239,4 +239,3 @@ public class CarbonAwareControllerTests : TestsBase
         Assert.ThrowsAsync<ArgumentException>(async () => await controller.GetEmissionsDataForLocationsByTime(parametersDTO));
     }
 }
-*/

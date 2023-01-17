@@ -1,4 +1,5 @@
 using CarbonAware;
+using CarbonAware.Exceptions;
 using CarbonAware.Extensions;
 using CarbonAware.Interfaces;
 using GSF.CarbonAware.Handlers.CarbonAware;
@@ -36,17 +37,23 @@ internal sealed class ForecastHandler : IForecastHandler
         };
 
         var parameters = (CarbonAwareParameters) dto;
-        parameters.SetRequiredProperties(PropertyName.MultipleLocations);
-        parameters.Validate();
-        var forecasts = new List<EmissionsForecast>();
-        foreach (var location in parameters.MultipleLocations)
+        try
         {
-            var forecast = await _forecastDataSource.GetCurrentCarbonIntensityForecastAsync(location);
-            var emissionsForecast = ProcessAndValidateForecast(forecast, parameters);
-            forecasts.Add(emissionsForecast);
+            parameters.SetRequiredProperties(PropertyName.MultipleLocations);
+            parameters.Validate();
+            var forecasts = new List<EmissionsForecast>();
+            foreach (var location in parameters.MultipleLocations)
+            {
+                var forecast = await _forecastDataSource.GetCurrentCarbonIntensityForecastAsync(location);
+                var emissionsForecast = ProcessAndValidateForecast(forecast, parameters);
+                forecasts.Add(emissionsForecast);
+            }
+            return forecasts;
         }
-
-        return forecasts;
+        catch (CarbonAwareException ex)
+        {
+            throw new Exceptions.CarbonAwareException(ex.Message, ex);
+        }
     }
 
     /// <inheritdoc />
@@ -62,11 +69,18 @@ internal sealed class ForecastHandler : IForecastHandler
         };
 
         var parameters = (CarbonAwareParameters) dto;
-        parameters.SetRequiredProperties(PropertyName.SingleLocation, PropertyName.Requested);
-        parameters.Validate();
-        var forecast = await _forecastDataSource.GetCarbonIntensityForecastAsync(parameters.SingleLocation, parameters.Requested);
-        var emissionsForecast = ProcessAndValidateForecast(forecast, parameters);
-        return emissionsForecast;
+        try
+        {
+            parameters.SetRequiredProperties(PropertyName.SingleLocation, PropertyName.Requested);
+            parameters.Validate();
+            var forecast = await _forecastDataSource.GetCarbonIntensityForecastAsync(parameters.SingleLocation, parameters.Requested);
+            var emissionsForecast = ProcessAndValidateForecast(forecast, parameters);
+            return emissionsForecast;
+        }
+        catch (CarbonAwareException ex)
+        {
+            throw new Exceptions.CarbonAwareException(ex.Message, ex);
+        }
     }
 
     private static EmissionsForecast ProcessAndValidateForecast(global::CarbonAware.Model.EmissionsForecast forecast, CarbonAwareParameters parameters)
@@ -79,30 +93,11 @@ internal sealed class ForecastHandler : IForecastHandler
         forecast.Validate();
         forecast.ForecastData = IntervalHelper.FilterByDuration(forecast.ForecastData, forecast.DataStartAt, forecast.DataEndAt);
         forecast.ForecastData = forecast.ForecastData.RollingAverage(windowSize, forecast.DataStartAt, forecast.DataEndAt);
-        forecast.OptimalDataPoints = GetOptimalEmissions(forecast.ForecastData);
+        forecast.OptimalDataPoints = CarbonAwareOptimalEmission.GetOptimalEmissions(forecast.ForecastData);
         if (forecast.ForecastData.Any())
         {
             forecast.WindowSize = forecast.ForecastData.First().Duration;
         }
         return forecast;
-    }
-
-    private static IEnumerable<global::CarbonAware.Model.EmissionsData> GetOptimalEmissions(IEnumerable<global::CarbonAware.Model.EmissionsData> emissionsData)
-    {
-        if (!emissionsData.Any())
-        {
-            return Array.Empty<global::CarbonAware.Model.EmissionsData>();
-        }
-
-        var bestResult = emissionsData.MinBy(x => x.Rating);
-
-        IEnumerable<global::CarbonAware.Model.EmissionsData> results = Array.Empty<global::CarbonAware.Model.EmissionsData>();
-
-        if (bestResult != null)
-        {
-            results = emissionsData.Where(x => x.Rating == bestResult.Rating);
-        }
-
-        return results;
     }
 }

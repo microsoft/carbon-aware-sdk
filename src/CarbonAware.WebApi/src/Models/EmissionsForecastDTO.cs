@@ -96,14 +96,18 @@ public record EmissionsForecastDTO
     [JsonPropertyName("forecastData")]
     public IEnumerable<EmissionsDataDTO>? ForecastData { get; set; }
 
-    public static EmissionsForecastDTO FromEmissionsForecast(global::GSF.CarbonAware.Models.EmissionsForecast emissionsForecast)
+    public static EmissionsForecastDTO FromEmissionsForecast(EmissionsForecast emissionsForecast)
     {
         return new EmissionsForecastDTO
         {
-            RequestedAt = emissionsForecast.RequestedAt,
             GeneratedAt = emissionsForecast.GeneratedAt,
-            ForecastData = emissionsForecast.EmissionsDataPoints.Select(d => EmissionsDataDTO.FromEmissionsData(d))!,
-            OptimalDataPoints = emissionsForecast.OptimalDataPoints.Select(d => EmissionsDataDTO.FromEmissionsData(d))!
+            Location = emissionsForecast.Location.Name!,
+            DataStartAt = emissionsForecast.DataStartAt,
+            DataEndAt = emissionsForecast.DataEndAt,
+            WindowSize = (int)emissionsForecast.WindowSize.TotalMinutes,
+            OptimalDataPoints = emissionsForecast.OptimalDataPoints.Select(d => EmissionsDataDTO.FromEmissionsData(d))!,
+            ForecastData = emissionsForecast.ForecastData.Select(d => EmissionsDataDTO.FromEmissionsData(d))!,
+            RequestedAt = emissionsForecast.RequestedAt
         };
     }
 }
