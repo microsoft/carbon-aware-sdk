@@ -40,7 +40,7 @@ public class CarbonAwareController : ControllerBase
     [HttpGet("bylocations/best")]
     public async Task<IActionResult> GetBestEmissionsDataForLocationsByTime([FromQuery] EmissionsDataForLocationsParametersDTO parameters)
     {
-        var response = await _emissionsHandler.GetBestEmissionsDataAsync(parameters.SingleLocation!, parameters.Start, parameters.End);
+        var response = await _emissionsHandler.GetBestEmissionsDataAsync(parameters.MultipleLocations!, parameters.Start, parameters.End);
         return response.Any() ? Ok(response) : NoContent();
     }
 
