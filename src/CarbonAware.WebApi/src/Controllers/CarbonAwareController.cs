@@ -14,7 +14,7 @@ public class CarbonAwareController : ControllerBase
 {
     private readonly ILogger<CarbonAwareController> _logger;
 
-    private readonly IEmissionsHandler emissionsHandler;
+    private readonly IEmissionsHandler _emissionsHandler;
 
     private readonly IForecastHandler forecastHandler;
 
@@ -24,7 +24,7 @@ public class CarbonAwareController : ControllerBase
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         forecastHandler = forecastHandler ?? throw new ArgumentNullException(nameof(forecastHandler));
-        emissionsHandler = emissionsHandler ?? throw new ArgumentNullException(nameof(emissionsHandler));
+        _emissionsHandler = emissionsHandler ?? throw new ArgumentNullException(nameof(emissionsHandler));
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            var response = await emissionsHandler.GetBestEmissionsDataAsync(parameters.SingleLocation!, parameters.Start, parameters.End);
+            var response = await _emissionsHandler.GetBestEmissionsDataAsync(parameters.SingleLocation!, parameters.Start, parameters.End);
             return response.Any() ? Ok(response) : NoContent();
         }
     }
@@ -60,7 +60,7 @@ public class CarbonAwareController : ControllerBase
     {
         using (var activity = Activity.StartActivity())
         {
-            var response = await emissionsHandler.GetEmissionsDataAsync(parameters.MultipleLocations!, parameters.Start, parameters.End);
+            var response = await _emissionsHandler.GetEmissionsDataAsync(parameters.MultipleLocations!, parameters.Start, parameters.End);
             return response.Any() ? Ok(response) : NoContent();
         }
     }

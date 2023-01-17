@@ -18,10 +18,10 @@ internal sealed class EmissionsHandler : IEmissionsHandler
     /// </summary>
     /// <param name="logger">The logger for the handler</param>
     /// <param name="aggregator">An <see cref="IEmissionsAggregator"> aggregator.</param>
-    public EmissionsHandler(ILogger<EmissionsHandler> logger, IEmissionsDataSource _emissionsDataSource)
+    public EmissionsHandler(ILogger<EmissionsHandler> logger, IEmissionsDataSource emissionsDataSource)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _emissionsDataSource = _emissionsDataSource ?? throw new ArgumentNullException(nameof(_emissionsDataSource));
+        _emissionsDataSource = emissionsDataSource ?? throw new ArgumentNullException(nameof(emissionsDataSource));
     }
 
     ///<inheritdoc/>
