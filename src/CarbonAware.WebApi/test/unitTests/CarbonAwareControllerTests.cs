@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 public class CarbonAwareControllerTests : TestsBase
 {
     readonly IForecastHandler forecastHandler = Mock.Of<IForecastHandler>();
-    
+
     /// <summary>
     /// Tests that successful emissions call to an aggregator with any data returned results in action with OK status.
     /// </summary>
@@ -79,13 +79,13 @@ public class CarbonAwareControllerTests : TestsBase
         var data = new List<EmissionsData>()
         {
             new EmissionsData(){
-                Location = "Sydney",
-                Rating = 0.9,
-                Time = DateTime.Now
+            Location = "Sydney",
+            Rating = 0.9,
+            Time = DateTime.Now
             }
         };
         var controller = new CarbonAwareController(this.MockCarbonAwareLogger.Object, CreateHandlerWithBestEmissionsData(data).Object, forecastHandler);
-        var parametersDTO = new EmissionsDataForLocationsParametersDTO(){ MultipleLocations = locations };
+        var parametersDTO = new EmissionsDataForLocationsParametersDTO() { MultipleLocations = locations };
 
         var result = await controller.GetBestEmissionsDataForLocationsByTime(parametersDTO);
 
