@@ -1,4 +1,7 @@
-using CarbonAware.Aggregators.Configuration;
+using CarbonAware.DataSources.Configuration;
+using CarbonAware.Interfaces;
+using CarbonAware.LocationSources;
+using CarbonAware.LocationSources.Configuration;
 using GSF.CarbonAware.Handlers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +16,12 @@ public static class ServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddEmissionsServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddCarbonAwareEmissionServices(configuration);
+        services.Configure<LocationDataSourcesConfiguration>(c =>
+        {
+            configuration.GetSection(LocationDataSourcesConfiguration.Key).Bind(c);
+        });
+        services.TryAddSingleton<ILocationSource, LocationSource>();
+        services.AddDataSourceService(configuration);
         services.TryAddSingleton<IEmissionsHandler, EmissionsHandler>();
         return services;
     }
@@ -23,7 +31,12 @@ public static class ServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddForecastServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddCarbonAwareEmissionServices(configuration);
+        services.Configure<LocationDataSourcesConfiguration>(c =>
+        {
+            configuration.GetSection(LocationDataSourcesConfiguration.Key).Bind(c);
+        });
+        services.TryAddSingleton<ILocationSource, LocationSource>();
+        services.AddDataSourceService(configuration);
         services.TryAddSingleton<IForecastHandler, ForecastHandler>();
         return services;
     }
