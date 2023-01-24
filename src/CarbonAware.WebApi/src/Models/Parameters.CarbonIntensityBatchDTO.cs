@@ -1,6 +1,6 @@
-using CarbonAware.Aggregators.CarbonAware;
-using System.Text.Json.Serialization;
+using GSF.CarbonAware.Handlers.CarbonAware;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Text.Json.Serialization;
 
 namespace CarbonAware.WebApi.Models;
 

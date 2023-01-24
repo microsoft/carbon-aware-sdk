@@ -3,10 +3,7 @@ using GSF.CarbonAware.Models;
 using CarbonAware.WebApi.Controllers;
 using Microsoft.Extensions.Logging;
 using Moq;
-using CarbonAware.Aggregators.CarbonAware;
-using static CarbonAware.Aggregators.CarbonAware.CarbonAwareParameters;
-using CarbonAware.Aggregators.Emissions;
-using CarbonAware.Aggregators.Forecast;
+using CarbonAware.Interfaces;
 
 namespace CarbonAware.WepApi.UnitTests;
 
@@ -86,7 +83,7 @@ public abstract class TestsBase
     protected static Mock<IEmissionsHandler> CreateCarbonAwareHandlerWithAverageCI(double data)
     {
         var handler = new Mock<IEmissionsHandler>();
-        var aggregator = new Mock<IEmissionsAggregator>();
+        var datasource = new Mock<IEmissionsDataSource>();
 
         handler.Setup(x => x.GetAverageCarbonIntensityAsync(It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
             .Callback((string location, DateTimeOffset start, DateTimeOffset end) =>

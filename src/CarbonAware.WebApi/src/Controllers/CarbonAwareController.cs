@@ -1,6 +1,6 @@
-using GSF.CarbonAware.Handlers;
-using CarbonAware.Model;
 using CarbonAware.WebApi.Models;
+using GSF.CarbonAware.Handlers;
+using GSF.CarbonAware.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Diagnostics;
