@@ -20,7 +20,8 @@ public static class ServiceCollectionExtensions
         {
             configuration.GetSection(LocationDataSourcesConfiguration.Key).Bind(c);
         });
-        services.TryAddSingleton<ILocationSource, LocationSource>();
+        // services.TryAddSingleton<ILocationSource, LocationSource>();
+        services.TryAddSingleton<ILocationSource, AutoLocationSource>();
         services.AddDataSourceService(configuration);
         services.TryAddSingleton<IEmissionsHandler, EmissionsHandler>();
         services.TryAddSingleton<ILocationHandler, LocationHandler>();
