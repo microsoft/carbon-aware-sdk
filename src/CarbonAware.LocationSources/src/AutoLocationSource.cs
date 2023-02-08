@@ -22,13 +22,15 @@ public class AutoLocationSource : ILocationSource
 
     private LocationDataSourcesConfiguration _configuration => _configurationMonitor.CurrentValue;
 
+    private readonly IIpStackClient _client;
 
     /// <summary>
     /// Creates a new instance of the <see cref="LocationSource"/> class.
     /// </summary>
     /// <param name="logger">The logger for the LocationSource</param>
-    public AutoLocationSource(ILogger<AutoLocationSource> logger, IOptionsMonitor<LocationDataSourcesConfiguration> monitor)
+    public AutoLocationSource(IIpStackClient client, ILogger<AutoLocationSource> logger, IOptionsMonitor<LocationDataSourcesConfiguration> monitor)
     {
+        _client = client;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _configurationMonitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
         _allLocations = new Dictionary<string, Location>(StringComparer.InvariantCultureIgnoreCase);
@@ -44,6 +46,8 @@ public class AutoLocationSource : ILocationSource
     /// <inheritdoc />
     public async Task<IDictionary<string, Location>> GetGeopositionLocationsAsync()
     {
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
+        // HttpClient client = 
+        return _allLocations;
     }
 }
