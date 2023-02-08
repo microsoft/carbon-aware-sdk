@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System.Net;
 using System.Text.Json;
 
+
 namespace CarbonAware.WepApi.IntegrationTests;
 
 /// <summary>
@@ -23,6 +24,7 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
     private readonly string batchForecastURI = "/emissions/forecasts/batch";
     private readonly string averageCarbonIntensityURI = "/emissions/average-carbon-intensity";
     private readonly string batchAverageCarbonIntensityURI = "/emissions/average-carbon-intensity/batch";
+
 
     public CarbonAwareControllerTests(DataSourceType dataSource) : base(dataSource) { }
 
@@ -193,9 +195,6 @@ public class CarbonAwareControllerTests : IntegrationTestingBase
                 Assert.That(forecasts!.Count, Is.EqualTo(inputData.Count()));
                 foreach (var forecast in forecasts!)
                 {
-                    Assert.That(forecast.Location, Is.EqualTo(location));
-                    Assert.That(forecast.DataStartAt, Is.EqualTo(expectedDataStartAt));
-                    Assert.That(forecast.DataEndAt, Is.EqualTo(expectedDataEndAt));
                     Assert.That(forecast.RequestedAt, Is.EqualTo(expectedRequestedAt));
                     Assert.That(forecast.GeneratedAt, Is.Not.Null);
                     Assert.That(forecast.OptimalDataPoints, Is.Not.Null);

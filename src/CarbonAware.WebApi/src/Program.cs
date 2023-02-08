@@ -1,13 +1,31 @@
-using System.Reflection;
 using CarbonAware;
-using CarbonAware.Exceptions;
-using CarbonAware.Aggregators.Configuration;
-using CarbonAware.WebApi.Filters;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using CarbonAware.WebApi.Configuration;
+using CarbonAware.WebApi.Filters;
+using GSF.CarbonAware.Configuration;
+using GSF.CarbonAware.Exceptions;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
+
+// Define constants to initialize tracing with
+var serviceName = "CarbonAware.WebAPI";
+var serviceVersion = "1.0.0";
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddOpenTelemetryTracing(tracerProviderBuilder =>
+{
+    tracerProviderBuilder
+        .AddConsoleExporter()
+        .AddSource(serviceName)
+        .SetResourceBuilder(
+            ResourceBuilder.CreateDefault()
+                .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
+        .AddHttpClientInstrumentation()
+        .AddAspNetCoreInstrumentation();
+});
 
 // Add services to the container.
 builder.Services.AddControllers(options =>
@@ -31,8 +49,17 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.Configure<CarbonAwareVariablesConfiguration>(builder.Configuration.GetSection(CarbonAwareVariablesConfiguration.Key));
 
-string? errorMessage;
-bool successfulEmissionServices = builder.Services.TryAddCarbonAwareEmissionServices(builder.Configuration, out errorMessage);
+bool successfulServices = true;
+string? errorMessage = null;
+try
+{
+    builder.Services.AddEmissionsServices(builder.Configuration);
+    builder.Services.AddForecastServices(builder.Configuration);
+} catch(CarbonAwareException e)
+{
+    successfulServices = false;
+    errorMessage = e.Message;
+}
 
 CarbonAwareVariablesConfiguration config = new();
 
@@ -47,8 +74,8 @@ builder.Services.AddSwaggerGen(c => {
     });
 
 var app = builder.Build();
-
-if(!successfulEmissionServices)
+ 
+if (!successfulServices)
 {
     var _logger = app.Services.GetService<ILogger<Program>>();
     _logger?.LogError(errorMessage);
@@ -63,10 +90,9 @@ if (config.WebApiRoutePrefix != null)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();   
+    app.UseSwaggerUI();
 }
 
-    
 
 app.UseHttpsRedirection();
 
@@ -79,6 +105,7 @@ app.MapControllers();
 app.MapHealthChecks("/health");
 
 app.Run();
+
 
 // Please view https://docs.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-6.0#basic-tests-with-the-default-webapplicationfactory
 // This line is needed to allow for Integration Testing
