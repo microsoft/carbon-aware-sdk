@@ -8,8 +8,10 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddLocationSourceService(this IServiceCollection services, IConfiguration configuration)
     {
-       services.TryAddSingleton<IIpStackClient, IpStackClient>(); 
-       services.TryAddSingleton<ILocationSource, AutoLocationSource>();
-       return services;
+        var _ = services.AddHttpClient<IpStackClient>(IIpStackClient.NamedClient);
+        // TODO add proxy config for this client.
+        services.TryAddSingleton<IIpStackClient, IpStackClient>();
+        services.TryAddSingleton<ILocationSource, AutoLocationSource>();
+        return services;
     }
 }

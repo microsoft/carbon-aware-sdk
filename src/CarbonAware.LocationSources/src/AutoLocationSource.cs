@@ -48,6 +48,7 @@ public class AutoLocationSource : ILocationSource
     {
         // throw new NotImplementedException();
         // HttpClient client = 
+        var d = await _client.GetData();
         return _allLocations;
     }
 }

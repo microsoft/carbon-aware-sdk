@@ -26,8 +26,10 @@ internal class IpStackClient : IIpStackClient
     }
 
 
-    public Task<string> GetData()
+    public async Task<string> GetData()
     {
-        throw new NotImplementedException();
+        var data = await _client.GetStringAsync("/documentation");
+        return "";
+        // throw new NotImplementedException();
     }
 }
