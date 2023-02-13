@@ -10,6 +10,7 @@ showing how the package can be consumed.
   - [Included Scripts](#included-scripts)
     - [Running the packaging scripts](#running-the-packaging-scripts)
   - [SDK Configuration](#sdk-configuration)
+    - [CO2 Signal](#co2-signal)
     - [ElectricityMaps](#electricitymaps)
     - [WattTime](#watttime)
     - [Json](#json)
@@ -23,13 +24,14 @@ The current package include 8 projects from the SDK:
 
 1. "GSF.CarbonAware"
 2. "CarbonAware"
-3. "CarbonAware.DataSources.ElectricityMaps"
-4. "CarbonAware.DataSources.Json"
-5. "CarbonAware.DataSources.Registration"
-6. "CarbonAware.DataSources.WattTime"
-7. "CarbonAware.LocationSources"
+3. "CarbonAware.DataSources.Co2Signal"
+4. "CarbonAware.DataSources.ElectricityMaps"
+5. "CarbonAware.DataSources.Json"
+6. "CarbonAware.DataSources.Registration"
+7. "CarbonAware.DataSources.WattTime"
+8. "CarbonAware.LocationSources"
 
-These 7 projects enable users of the library to consume the current endpoints
+These 8 projects enable users of the library to consume the current endpoints
 exposed by the library. The package that needs to be added to a new C# project
 is `GSF.CarbonAware`.
 
@@ -65,15 +67,27 @@ Alternatively you can run in your local environment using the
 
 ## SDK Configuration
 
-The configuration needed to connect to WattTime or Json data sources can be
-managed using environment variables or appsettings. More information on data
-source configuration can be found
+The configuration needed to connect to WattTime, ElectricityMaps, CO2 Signal, or
+Json data sources can be managed using environment variables or appsettings.
+More information on data source configuration can be found
 [here](https://github.com/Green-Software-Foundation/carbon-aware-sdk/blob/dev/docs/configuration.md#datasources)
+
+### CO2 Signal
+
+Below are the environment variables (i.e. bash shell) needed to set up the **CO2
+Signal** data source.
+
+```bash
+export DataSources__EmissionsDataSource=Co2Signal
+export DataSources__Configurations__Co2Signal__Type=Co2Signal
+export DataSources__Configurations__Co2Signal__APITokenHeader=[Co2Signal APITokenHeader]
+export DataSources__Configurations__Co2Signal__APIToken=[Co2Signal APIToken]`
+```
 
 ### ElectricityMaps
 
-Below are the environment variables needed to set up the
-**WattTime** data source.
+Below are the environment variables (i.e. bash shell) needed to set up the
+**ElectricityMaps** data source.
 
 ```bash
 export DataSources__ForecastDataSource=ElectricityMaps

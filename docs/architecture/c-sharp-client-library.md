@@ -43,8 +43,9 @@ The following namespaces are included:
 ### Models
 
 There are two main classes that represents the data fetched from the data
-sources (i.e `Static Json`, [WattTime](https://www.watttime.org) and
-[ElectricityMap](https://www.electricitymaps.com)):
+sources (i.e `Static Json`, [WattTime](https://www.watttime.org),
+[ElectricityMap](https://www.electricitymaps.com), and
+[CO2 Signal](https://www.co2signal.com/)):
 
 - `EmissionsData`
 - `EmissionsForecast`

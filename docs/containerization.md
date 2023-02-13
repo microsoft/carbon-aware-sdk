@@ -41,10 +41,22 @@ carbon_aware   v1        6293e2528bf2   About an hour ago   230MB
 
    ```sh
    docker run --rm -p 8000:80 \
+   > -e DataSources__EmissionsDataSource="ElectricityMaps" \
    > -e DataSources__ForecastDataSource="ElectricityMaps" \
    > -e DataSources__Configurations__ElectricityMaps__Type="ElectricityMaps" \
    > -e DataSources__Configurations__ElectricityMaps__APITokenHeader="auth-token" \
    > -e DataSources__Configurations__ElectricityMaps__APIToken="<YOUR_ELECTRICITYMAPS_TOKEN>" \
+   > carbon_aware:v1
+   ```
+
+   or the [CO2 Signal](https://www.co2signal.com/) provider
+
+   ```sh
+   docker run --rm -p 8000:80 \
+   > -e DataSources__EmissionsDataSource="Co2Signal" \
+   > -e DataSources__Configurations__Co2Signal__Type="Co2Signal" \
+   > -e DataSources__Configurations__Co2Signal__APITokenHeader="auth-token" \
+   > -e DataSources__Configurations__Co2Signal__APIToken="<YOUR_CO2SIGNAL_TOKEN>" \
    > carbon_aware:v1
    ```
 

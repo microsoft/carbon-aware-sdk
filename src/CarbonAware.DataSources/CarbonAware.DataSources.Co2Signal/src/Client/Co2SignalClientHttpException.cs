@@ -22,7 +22,7 @@ public class Co2SignalClientHttpException : CarbonAwareException, IHttpResponseE
     /// Gets the status code for the exception.  See remarks for the status codes that can be returned.
     /// </summary>
     /// <remarks>
-    /// 400:  Returned when missing arguments (no zone passed or lat/lon don't map to a known zone)
+    /// 400:  Returned when missing arguments (no country code passed or lat/lon don't map to a known country code)
     /// 401:  Returned when trying to access a path or location that isn't authorized for the token.
     /// </remarks>
     public int? Status { get; }

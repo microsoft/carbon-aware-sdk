@@ -36,6 +36,9 @@ client generation
     - [ElectricityMaps](#electricitymaps)
       - [Locations](#electricitymaps-locations)
       - [Exception Handling](#electricitymaps-exception-handling)
+    - [CO2 Signal](#co2-signal)
+      - [Locations](#locations)
+      - [Exception Handling](#exception-handling)
 
 ## Endpoints
 
@@ -547,4 +550,23 @@ If ElectricityMaps responds with a 4XX or 5XX status code the ElectricityMaps
 Data Source will forward the response code and message back to the caller. Refer
 to the
 [ElectricityMapsHttpClientException](../src/CarbonAware.DataSources/CarbonAware.DataSources.ElectricityMaps/src/Client/ElectricityMapsClientHttpException.cs)
+class for documentation on expected error codes.
+
+### CO2 Signal
+
+#### Locations
+
+Each CO2 Signal emissions data point is associated with a particular named
+country code. While the CO2 Signal endpoint supports calling with lat/long
+geoposition as well, the result will always be a corresponding country code.
+They provide a
+[route on their parent API (ElectricityMaps)](https://static.electricitymaps.com/api/docs/index.html#zones)
+which can be queried to list all the country codes you have access to given your
+token
+
+#### Exception Handling
+
+If CO2 Signal responds with a 4XX or 5XX status code the CO2 Signal Data Source
+will forward the response code and message back to the caller. Refer to the
+[CO2 SignalHttpClientException](../src/CarbonAware.DataSources/CarbonAware.DataSources.Co2Signal/src/Client/Co2SignalClientHttpException.cs)
 class for documentation on expected error codes.

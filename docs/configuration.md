@@ -16,6 +16,10 @@
       - [BaseUrl](#baseurl)
       - [Emission Factor Type](#emission-factor-type)
       - [Disable Estimations](#disable-estimations)
+    - [CO2 Signal Configuration](#co2-signal-configuration)
+      - [API Token Header](#api-token-header)
+      - [API Token](#api-token)
+      - [BaseUrl](#baseurl)
   - [CarbonAwareVars](#carbonawarevars)
     - [Tracing and Monitoring Configuration](#tracing-and-monitoring-configuration)
     - [Verbosity](#verbosity)
@@ -25,6 +29,7 @@
   - [Configuration for Emissions data Using WattTime](#configuration-for-emissions-data-using-watttime)
   - [Configuration for Forecast data Using ElectricityMaps](#configuration-for-forecast-data-using-electricitymaps)
   - [Configuration for Emissions data using ElectricityMaps and Forecast data using WattTime](#configuration-for-emissions-data-using-electricitymaps-and-forecast-data-using-watttime)
+  - [Configuration for Emissions data using CO2 Signal and Forecast data using WattTime](#configuration-for-emissions-data-using-co2-signal-and-forecast-data-using-watttime)
   - [Configuration For Emissions data Using JSON](#configuration-for-emissions-data-using-json)
   - [Configuration Using WattTime and Defined Location Source Files](#configuration-using-watttime-and-defined-location-source-files)
 
@@ -285,6 +290,48 @@ See the
 [ElectricityMaps API Documentation](https://static.electricitymaps.com/api/docs/index.html#estimations)
 for more details.
 
+### CO2 Signal Configuration
+
+If using the CO2 Signal data source, CO2 Signal configuration is required.
+
+**With an account token:**
+
+> **NOTE** The CO2 Signal API does not currently support access to historical
+> forecasts. This means that functionality such as the CLI
+> `emissions-forecasts` > `--requested-at` flag and the API `/forecasts/batch` >
+> `requestedAt` input will respond with a `NotImplemented` error.
+>
+> The CO2 Signal API also does not currently support access to historical
+> emissions data. It only supports getting the single latest emissions data
+> point for the given location
+>
+> If either of these restrictions are an issue, a data source that has support
+> for historical forecasts, such as [WattTime](#watttime-configuration) or
+> historical emissions, such as
+> [ElectricityMaps](#electricitymaps-configuration) may be preferable.
+
+```json
+{
+  "APITokenHeader": "auth-token",
+  "APIToken": "<api-token>",
+  "baseUrl": "https://api.co2signal.com/v1/"
+}
+```
+
+#### API Token Header
+
+The API Token Header for CO2 Signal. The header is "auth-token".
+
+#### API Token
+
+The CO2 Signal token you receive with your account.
+
+#### BaseUrl
+
+The url to use when connecting to CO2 Signal. Defaults to
+"https://api.co2signal.com/v1/" but can be overridden in the config if needed
+(such as to enable integration testing scenarios).
+
 ## CarbonAwareVars
 
 This section contains the global settings for the SDK. The configuration looks
@@ -500,6 +547,29 @@ DataSources__Configurations__WattTime__Password="wattTimePassword"
         "APITokenHeader": "auth-token",
         "APIToken": "token",
         "BaseURL": "https://api.electricitymap.org/v3/"
+      }
+    }
+  }
+```
+
+## Configuration for Emissions data using CO2 Signal and Forecast data using WattTime
+
+```json
+  "DataSources": {
+    "EmissionsDataSource": "Co2Signal",
+    "ForecastDataSource": "WattTime",
+    "Configurations": {
+      "WattTime": {
+        "Type": "WattTime",
+        "Username": "username",
+        "Password": "password",
+        "BaseURL": "https://api2.watttime.org/v2/",
+      },
+      "Co2Signal": {
+        "Type": "Co2Signal",
+        "APITokenHeader": "auth-token",
+        "APIToken": "token",
+        "BaseURL": "https://api.co2signal.com/v1/"
       }
     }
   }
