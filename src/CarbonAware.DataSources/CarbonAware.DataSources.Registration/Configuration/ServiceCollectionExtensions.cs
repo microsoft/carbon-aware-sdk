@@ -1,4 +1,5 @@
 using CarbonAware.Configuration;
+using CarbonAware.DataSources.Co2Signal.Configuration;
 using CarbonAware.DataSources.ElectricityMaps.Configuration;
 using CarbonAware.DataSources.Json.Configuration;
 using CarbonAware.DataSources.WattTime.Configuration;
@@ -33,6 +34,11 @@ public static class ServiceCollectionExtensions
             case DataSourceType.ElectricityMaps:
             {
                 services.AddElectricityMapsEmissionsDataSource(dataSources);
+                break;
+            }
+            case DataSourceType.Co2Signal:
+            {
+                services.AddCo2SignalEmissionsDataSource(dataSources);
                 break;
             }
             case DataSourceType.None:
