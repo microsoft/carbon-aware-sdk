@@ -2,6 +2,7 @@
 using CarbonAware.CLI.Model;
 using GSF.CarbonAware.Handlers;
 using GSF.CarbonAware.Handlers.CarbonAware;
+using ServiceStack.Text;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Text.Json;
@@ -104,7 +105,9 @@ class EmissionsForecastsCommand : Command
                emissionsForecast = results.Select(forecast => (EmissionsForecastDTO)forecast).ToList();
             }
         }
-        var serializedOuput = JsonSerializer.Serialize(emissionsForecast);
-        context.Console.WriteLine(serializedOuput);
+        /* var serializedOuput = JsonSerializer.Serialize(emissionsForecast);
+         context.Console.WriteLine(serializedOuput);*/
+        var csvOutput = CsvSerializer.SerializeToCsv(emissionsForecast);
+        context.Console.WriteLine(csvOutput);
     }
 }

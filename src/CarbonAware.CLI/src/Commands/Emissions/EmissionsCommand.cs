@@ -2,6 +2,7 @@ using CarbonAware.CLI.Common;
 using CarbonAware.CLI.Model;
 using GSF.CarbonAware.Handlers;
 using GSF.CarbonAware.Handlers.CarbonAware;
+using ServiceStack.Text;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
@@ -126,9 +127,12 @@ class EmissionsCommand : Command
                 emissions = results.Select(emission => (EmissionsDataDTO)emission).ToList();
             }
         }
-       
-        var serializedOuput = JsonSerializer.Serialize(emissions);
-        context.Console.WriteLine(serializedOuput);
+
+        //var serializedOuput = JsonSerializer.Serialize(emissions);
+        //context.Console.WriteLine(serializedOuput);
+
+        var csvOutput = CsvSerializer.SerializeToCsv(emissions);
+        context.Console.WriteLine(csvOutput);
         context.ExitCode = 0;
     }
 }
