@@ -2,6 +2,7 @@
 using CarbonAware.CLI.Model;
 using GSF.CarbonAware.Handlers;
 using GSF.CarbonAware.Handlers.CarbonAware;
+using ServiceStack;
 using ServiceStack.Text;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -107,7 +108,30 @@ class EmissionsForecastsCommand : Command
         }
         /* var serializedOuput = JsonSerializer.Serialize(emissionsForecast);
          context.Console.WriteLine(serializedOuput);*/
-        var csvOutput = CsvSerializer.SerializeToCsv(emissionsForecast);
+        emissionsForecast.ForEach(f => {
+            f.DataStartAt = startTime ?? DateTimeOffset.Now;
+            f.DataEndAt = endTime ?? DateTimeOffset.Now;
+            f.Location = 
+            });
+        var lines = emissionsForecast.SelectMany(d => d.ForecastData.Select(s => new CsvDTO
+        {
+            GeneratedAt = d.GeneratedAt,
+            DataStartAt = d.DataStartAt,
+            DataEndAt = d.DataEndAt,
+            RequestedAt = d.RequestedAt,
+            WindowSize = d.WindowSize,
+            Location = d.Location,
+            Rating = s.Rating,
+            Duration = s.Duration,
+        }));
+
+    
+        var csvOutput = CsvSerializer.SerializeToCsv(lines);
         context.Console.WriteLine(csvOutput);
+        
+
+       //context.Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(emissionsForecast));
+      //  context.Console.ToCsv();
+
     }
 }

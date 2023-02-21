@@ -1,4 +1,5 @@
 ﻿using GSF.CarbonAware.Models;
+using ServiceStack;
 
 namespace CarbonAware.CLI.Model;
 class EmissionsForecastDTO
