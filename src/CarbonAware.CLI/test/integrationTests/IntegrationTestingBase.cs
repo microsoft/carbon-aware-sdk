@@ -50,6 +50,7 @@ public abstract class IntegrationTestingBase
 
         // set working directory
         proc.StartInfo.WorkingDirectory = Environment.CurrentDirectory;
+        proc.StartInfo.Environment.Add("ASPNETCORE_ENVIRONMENT", "Development");
 
         // Set the console to use the TestConsole for standard output and error.
         Console.SetOut(_console.Out.CreateTextWriter());

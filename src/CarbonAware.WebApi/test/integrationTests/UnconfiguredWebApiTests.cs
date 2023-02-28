@@ -31,4 +31,15 @@ public class UnconfiguredWebApiTests : IntegrationTestingBase
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
     }
+
+    [Test]
+    public async Task Telemetry_HealthCheck_ReturnsOK()
+    {
+        Environment.SetEnvironmentVariable("CarbonAwareVars__TelemetryProvider", "ApplicationInsights");
+        Environment.SetEnvironmentVariable("AppInsights_InstrumentationKey", null);
+        Environment.SetEnvironmentVariable("ApplicationInsights_Connection_String", null);
+        var result = await _client.GetAsync(healthURI);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+    }
 }

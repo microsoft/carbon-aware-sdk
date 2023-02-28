@@ -12,7 +12,6 @@ public class LocationsController : ControllerBase
 
     private readonly ILocationHandler _locationSource;
 
-
     public LocationsController(ILogger<CarbonAwareController> logger, ILocationHandler locationSouce)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
